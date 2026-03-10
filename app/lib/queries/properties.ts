@@ -1,0 +1,183 @@
+import { createClient } from "@/lib/supabase/server";
+import type { PropertyFilters } from "@/types";
+
+const PROPERTY_LIST_SELECT = `
+  id, slug, title, price, currency, type, transaction_type,
+  area_sqm, rooms, living_rooms, floor, is_featured, views_count, created_at,
+  city:cities(id, name, slug),
+  district:districts(id, name, slug),
+  images:property_images(url, alt_text, is_cover)
+`;
+
+const PROPERTY_DETAIL_SELECT = `
+  *,
+  city:cities(id, name, slug),
+  district:districts(id, name, slug),
+  neighborhood:neighborhoods(id, name, slug),
+  agent:agents(id, name, title, slug, phone, email, photo_url),
+  images:property_images(id, url, alt_text, sort_order, is_cover),
+  features:property_features(feature:features(id, name, slug, icon, category))
+`;
+
+const PAGE_SIZE = 20;
+
+export async function getProperties(filters: PropertyFilters) {
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("properties")
+    .select(PROPERTY_LIST_SELECT, { count: "exact" })
+    .eq("is_active", true);
+
+  // Transaction type
+  if (filters.islem) {
+    query = query.eq(
+      "transaction_type",
+      filters.islem === "satilik" ? "sale" : "rent"
+    );
+  }
+
+  // Property type
+  if (filters.tip?.length) {
+    query = query.in("type", filters.tip);
+  }
+
+  // Location cascade
+  if (filters.mahalle) {
+    // Need to get neighborhood_id by slug
+    const { data: nh } = await supabase
+      .from("neighborhoods")
+      .select("id")
+      .eq("slug", filters.mahalle)
+      .single();
+    if (nh) query = query.eq("neighborhood_id", nh.id);
+  } else if (filters.ilce) {
+    const { data: d } = await supabase
+      .from("districts")
+      .select("id")
+      .eq("slug", filters.ilce)
+      .single();
+    if (d) query = query.eq("district_id", d.id);
+  } else if (filters.sehir) {
+    const { data: c } = await supabase
+      .from("cities")
+      .select("id")
+      .eq("slug", filters.sehir)
+      .single();
+    if (c) query = query.eq("city_id", c.id);
+  }
+
+  // Price range
+  if (filters.fiyat_min) query = query.gte("price", filters.fiyat_min);
+  if (filters.fiyat_max) query = query.lte("price", filters.fiyat_max);
+
+  // Area range
+  if (filters.m2_min) query = query.gte("area_sqm", filters.m2_min);
+  if (filters.m2_max) query = query.lte("area_sqm", filters.m2_max);
+
+  // Room count
+  if (filters.oda?.length) {
+    const conditions = filters.oda
+      .map((r) => {
+        if (r === "studio" || r === "1+0")
+          return "and(rooms.eq.1,living_rooms.eq.0)";
+        const parts = r.split("+");
+        if (parts.length === 2)
+          return `and(rooms.eq.${parts[0]},living_rooms.eq.${parts[1]})`;
+        return null;
+      })
+      .filter(Boolean);
+    if (conditions.length) query = query.or(conditions.join(","));
+  }
+
+  // Floor range
+  if (filters.kat_min) query = query.gte("floor", filters.kat_min);
+  if (filters.kat_max) query = query.lte("floor", filters.kat_max);
+
+  // Building age
+  if (filters.bina_yasi_max) {
+    const minYear = new Date().getFullYear() - filters.bina_yasi_max;
+    query = query.gte("year_built", minYear);
+  }
+
+  // Heating
+  if (filters.isitma) query = query.eq("heating_type", filters.isitma);
+
+  // Sorting
+  switch (filters.siralama) {
+    case "fiyat_artan":
+      query = query.order("price", { ascending: true });
+      break;
+    case "fiyat_azalan":
+      query = query.order("price", { ascending: false });
+      break;
+    case "m2_artan":
+      query = query.order("area_sqm", { ascending: true });
+      break;
+    case "m2_azalan":
+      query = query.order("area_sqm", { ascending: false });
+      break;
+    case "cok_izlenen":
+      query = query.order("views_count", { ascending: false });
+      break;
+    case "eski":
+      query = query.order("created_at", { ascending: true });
+      break;
+    default:
+      query = query.order("created_at", { ascending: false });
+  }
+
+  // Pagination
+  const page = filters.sayfa ?? 1;
+  query = query.range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+
+  return query;
+}
+
+export async function getPropertyBySlug(slug: string) {
+  const supabase = await createClient();
+  return supabase
+    .from("properties")
+    .select(PROPERTY_DETAIL_SELECT)
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .single();
+}
+
+export async function getFeaturedProperties(limit = 6) {
+  const supabase = await createClient();
+  return supabase
+    .from("properties")
+    .select(PROPERTY_LIST_SELECT)
+    .eq("is_active", true)
+    .eq("is_featured", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+}
+
+export async function getRecentProperties(limit = 8) {
+  const supabase = await createClient();
+  return supabase
+    .from("properties")
+    .select(PROPERTY_LIST_SELECT)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+}
+
+export async function getRelatedProperties(
+  propertyId: string,
+  cityId: number,
+  type: string,
+  limit = 4
+) {
+  const supabase = await createClient();
+  return supabase
+    .from("properties")
+    .select(PROPERTY_LIST_SELECT)
+    .eq("is_active", true)
+    .eq("city_id", cityId)
+    .eq("type", type)
+    .neq("id", propertyId)
+    .limit(limit);
+}

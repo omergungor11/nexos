@@ -1,0 +1,102 @@
+import type { Metadata } from "next";
+import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ContactForm } from "./contact-form";
+
+export const metadata: Metadata = {
+  title: "İletişim",
+  description:
+    "NexOS Emlak ile iletişime geçin. Gayrimenkul danışmanlığı, mülk değerleme ve sorularınız için bize ulaşın.",
+};
+
+export default function IletisimPage() {
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="mb-12 text-center">
+        <h1 className="text-3xl font-bold">Bize Ulaşın</h1>
+        <p className="mt-2 text-muted-foreground">
+          Sorularınız ve talepleriniz için bizimle iletişime geçmekten çekinmeyin.
+        </p>
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Contact Info Cards */}
+        <div className="space-y-4">
+          <Card>
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                <Phone className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Telefon</p>
+                <a
+                  href="tel:+905551234567"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  0555 123 45 67
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                <Mail className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">E-posta</p>
+                <a
+                  href="mailto:info@nexos.com.tr"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  info@nexos.com.tr
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Adres</p>
+                <p className="text-sm text-muted-foreground">
+                  Atatürk Cad. No:123, Merkez, İstanbul
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                <Clock className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Çalışma Saatleri</p>
+                <p className="text-sm text-muted-foreground">
+                  Pzt–Cmt: 09:00–18:00
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Contact Form */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Mesaj Gönderin</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ContactForm />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
