@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { WhatsAppButton } from "@/components/shared/whatsapp-button";
+import { CookieBanner } from "@/components/shared/cookie-banner";
+import { ScrollToTop } from "@/components/shared/scroll-to-top";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -13,11 +18,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Nexos Emlak — Güvenilir Gayrimenkul Danışmanlığı",
+    default: "Nexos Emlak | Güvenilir Gayrimenkul Danışmanlığı",
     template: "%s | Nexos Emlak",
   },
   description:
-    "Nexos Emlak ile hayalinizdeki evi bulun. Satılık ve kiralık daire, villa, arsa ve ticari gayrimenkul ilanları. Gelişmiş arama ve filtreleme ile kolay ilan bulma.",
+    "Nexos Gayrimenkul - Satılık ve kiralık emlak ilanları, güvenilir danışmanlık hizmeti.",
   keywords: [
     "emlak",
     "gayrimenkul",
@@ -27,6 +32,9 @@ export const metadata: Metadata = {
     "arsa",
     "emlak ilanları",
   ],
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  ),
   openGraph: {
     type: "website",
     locale: "tr_TR",
@@ -35,6 +43,9 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   },
 };
 
@@ -45,12 +56,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${inter.className} antialiased`}>
         <Providers>
           <Header />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer />
+          <WhatsAppButton />
+          <ScrollToTop />
+          <CookieBanner />
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

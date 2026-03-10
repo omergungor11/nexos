@@ -17,6 +17,15 @@ export interface PropertyFilters {
   bina_yasi_max?: number;
   ozellikler?: string[];
   isitma?: HeatingType;
+  otopark?: boolean;
+  esyali?: boolean;
+  asansor?: boolean;
+  havuz?: boolean;
+  bahce?: boolean;
+  guvenlik?: boolean;
+  balkon?: boolean;
+  durum?: string;
+  one_cikan?: boolean;
   siralama?: SortOption;
   sayfa?: number;
   gorunum?: "liste" | "kart" | "harita";

@@ -1,0 +1,377 @@
+"use server";
+
+import { revalidateTag } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import type { TablesInsert, TablesUpdate } from "@/types/supabase";
+import type { Property } from "@/types/property";
+
+// ---------------------------------------------------------------------------
+// Input types
+// ---------------------------------------------------------------------------
+
+export type PropertyCreateInput = {
+  title: string;
+  description?: string;
+  price: number;
+  currency?: "TRY" | "USD" | "EUR";
+  type: string;
+  transaction_type: string;
+  area_sqm?: number;
+  gross_area_sqm?: number;
+  rooms?: number;
+  living_rooms?: number;
+  bathrooms?: number;
+  floor?: number;
+  total_floors?: number;
+  year_built?: number;
+  heating_type?: string;
+  parking?: boolean;
+  furnished?: boolean;
+  balcony_count?: number;
+  elevator?: boolean;
+  pool?: boolean;
+  garden?: boolean;
+  security_24_7?: boolean;
+  lat?: number;
+  lng?: number;
+  address?: string;
+  city_id: number;
+  district_id?: number;
+  neighborhood_id?: number;
+  agent_id?: string;
+  is_featured?: boolean;
+  seo_title?: string;
+  seo_description?: string;
+};
+
+export type PropertyUpdateInput = Partial<PropertyCreateInput>;
+
+// ---------------------------------------------------------------------------
+// Action return types
+// ---------------------------------------------------------------------------
+
+type ActionResult<T> =
+  | { data: T; error?: never }
+  | { data?: never; error: string };
+
+// ---------------------------------------------------------------------------
+// Private helpers
+// ---------------------------------------------------------------------------
+
+function slugify(text: string): string {
+  const turkishMap: Record<string, string> = {
+    ı: "i",
+    İ: "i",
+    ö: "o",
+    Ö: "o",
+    ü: "u",
+    Ü: "u",
+    ş: "s",
+    Ş: "s",
+    ç: "c",
+    Ç: "c",
+    ğ: "g",
+    Ğ: "g",
+  };
+
+  return text
+    .split("")
+    .map((c) => turkishMap[c] ?? c)
+    .join("")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/**
+ * Generates a URL-safe slug from `title` that is unique within the
+ * `properties` table. Appends a short random hex suffix on collision.
+ */
+async function generateUniqueSlug(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  title: string,
+  excludeId?: string
+): Promise<string> {
+  const base = slugify(title);
+  let candidate = base;
+  let attempt = 0;
+
+  while (true) {
+    let query = supabase
+      .from("properties")
+      .select("id")
+      .eq("slug", candidate)
+      .limit(1);
+
+    if (excludeId) {
+      query = query.neq("id", excludeId);
+    }
+
+    const { data } = await query;
+
+    if (!data || data.length === 0) {
+      return candidate;
+    }
+
+    attempt += 1;
+    // Use a short random hex segment to avoid sequential guessing
+    const suffix = Math.random().toString(16).slice(2, 6);
+    candidate = `${base}-${suffix}`;
+
+    // Safety valve: prevent infinite loops in pathological cases
+    if (attempt > 10) {
+      candidate = `${base}-${Date.now()}`;
+      return candidate;
+    }
+  }
+}
+
+type AdminCheckSuccess = { error: null; supabase: Awaited<ReturnType<typeof createClient>> };
+type AdminCheckFailure = { error: string; supabase: null };
+type AdminCheckResult = AdminCheckSuccess | AdminCheckFailure;
+
+async function requireAdmin(): Promise<AdminCheckResult> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Giriş yapmanız gerekiyor", supabase: null };
+  }
+
+  const isAdmin = user.user_metadata?.role === "admin";
+  if (!isAdmin) {
+    return { error: "Yetkiniz yok", supabase: null };
+  }
+
+  return { error: null, supabase };
+}
+
+// ---------------------------------------------------------------------------
+// createProperty
+// ---------------------------------------------------------------------------
+
+export async function createProperty(
+  data: PropertyCreateInput
+): Promise<ActionResult<Property>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const slug = await generateUniqueSlug(supabase, data.title);
+
+  // Build a strictly-typed insert payload. We cast the string-typed enum
+  // fields through `as` because PropertyCreateInput intentionally uses
+  // plain `string` to avoid coupling callers to the DB enum literals, but
+  // the DB will reject invalid values at runtime anyway.
+  const payload: TablesInsert<"properties"> = {
+    title: data.title,
+    slug,
+    price: data.price,
+    city_id: data.city_id,
+    type: data.type as TablesInsert<"properties">["type"],
+    transaction_type:
+      data.transaction_type as TablesInsert<"properties">["transaction_type"],
+    description: data.description ?? null,
+    currency: data.currency ?? "TRY",
+    area_sqm: data.area_sqm ?? null,
+    gross_area_sqm: data.gross_area_sqm ?? null,
+    rooms: data.rooms ?? null,
+    living_rooms: data.living_rooms ?? null,
+    bathrooms: data.bathrooms ?? null,
+    floor: data.floor ?? null,
+    total_floors: data.total_floors ?? null,
+    year_built: data.year_built ?? null,
+    heating_type: data.heating_type as TablesInsert<"properties">["heating_type"],
+    parking: data.parking ?? null,
+    furnished: data.furnished ?? null,
+    balcony_count: data.balcony_count ?? 0,
+    elevator: data.elevator ?? null,
+    pool: data.pool ?? null,
+    garden: data.garden ?? null,
+    security_24_7: data.security_24_7 ?? null,
+    lat: data.lat ?? null,
+    lng: data.lng ?? null,
+    address: data.address ?? null,
+    district_id: data.district_id ?? null,
+    neighborhood_id: data.neighborhood_id ?? null,
+    agent_id: data.agent_id ?? null,
+    is_featured: data.is_featured ?? false,
+    seo_title: data.seo_title ?? null,
+    seo_description: data.seo_description ?? null,
+  };
+
+  const { data: property, error } = await supabase
+    .from("properties")
+    .insert(payload)
+    .select()
+    .single();
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("properties", {});
+  return { data: property as Property };
+}
+
+// ---------------------------------------------------------------------------
+// updateProperty
+// ---------------------------------------------------------------------------
+
+export async function updateProperty(
+  id: string,
+  data: PropertyUpdateInput
+): Promise<ActionResult<Property>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  // Build the update payload, only including fields that were provided.
+  // `undefined` values are intentionally omitted so we don't overwrite DB
+  // columns with null when the caller simply did not supply those fields.
+  const payload: TablesUpdate<"properties"> = {};
+
+  if (data.title !== undefined) {
+    payload.title = data.title;
+    // Re-generate slug only when title changes, preserving the existing
+    // slug for all other update scenarios.
+    payload.slug = await generateUniqueSlug(supabase, data.title, id);
+  }
+  if (data.description !== undefined) payload.description = data.description;
+  if (data.price !== undefined) payload.price = data.price;
+  if (data.currency !== undefined) payload.currency = data.currency;
+  if (data.type !== undefined)
+    payload.type = data.type as TablesUpdate<"properties">["type"];
+  if (data.transaction_type !== undefined)
+    payload.transaction_type =
+      data.transaction_type as TablesUpdate<"properties">["transaction_type"];
+  if (data.area_sqm !== undefined) payload.area_sqm = data.area_sqm;
+  if (data.gross_area_sqm !== undefined)
+    payload.gross_area_sqm = data.gross_area_sqm;
+  if (data.rooms !== undefined) payload.rooms = data.rooms;
+  if (data.living_rooms !== undefined) payload.living_rooms = data.living_rooms;
+  if (data.bathrooms !== undefined) payload.bathrooms = data.bathrooms;
+  if (data.floor !== undefined) payload.floor = data.floor;
+  if (data.total_floors !== undefined) payload.total_floors = data.total_floors;
+  if (data.year_built !== undefined) payload.year_built = data.year_built;
+  if (data.heating_type !== undefined)
+    payload.heating_type =
+      data.heating_type as TablesUpdate<"properties">["heating_type"];
+  if (data.parking !== undefined) payload.parking = data.parking;
+  if (data.furnished !== undefined) payload.furnished = data.furnished;
+  if (data.balcony_count !== undefined)
+    payload.balcony_count = data.balcony_count;
+  if (data.elevator !== undefined) payload.elevator = data.elevator;
+  if (data.pool !== undefined) payload.pool = data.pool;
+  if (data.garden !== undefined) payload.garden = data.garden;
+  if (data.security_24_7 !== undefined)
+    payload.security_24_7 = data.security_24_7;
+  if (data.lat !== undefined) payload.lat = data.lat;
+  if (data.lng !== undefined) payload.lng = data.lng;
+  if (data.address !== undefined) payload.address = data.address;
+  if (data.city_id !== undefined) payload.city_id = data.city_id;
+  if (data.district_id !== undefined) payload.district_id = data.district_id;
+  if (data.neighborhood_id !== undefined)
+    payload.neighborhood_id = data.neighborhood_id;
+  if (data.agent_id !== undefined) payload.agent_id = data.agent_id;
+  if (data.is_featured !== undefined) payload.is_featured = data.is_featured;
+  if (data.seo_title !== undefined) payload.seo_title = data.seo_title;
+  if (data.seo_description !== undefined)
+    payload.seo_description = data.seo_description;
+
+  const { data: property, error } = await supabase
+    .from("properties")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("properties", {});
+  return { data: property as Property };
+}
+
+// ---------------------------------------------------------------------------
+// deleteProperty
+// ---------------------------------------------------------------------------
+
+export async function deleteProperty(
+  id: string
+): Promise<ActionResult<{ id: string }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const { error } = await supabase
+    .from("properties")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("properties", {});
+  return { data: { id } };
+}
+
+// ---------------------------------------------------------------------------
+// togglePropertyStatus
+// ---------------------------------------------------------------------------
+
+export async function togglePropertyStatus(
+  id: string,
+  isActive: boolean
+): Promise<ActionResult<{ id: string; is_active: boolean }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const { error } = await supabase
+    .from("properties")
+    .update({ is_active: isActive })
+    .eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("properties", {});
+  return { data: { id, is_active: isActive } };
+}
+
+// ---------------------------------------------------------------------------
+// togglePropertyFeatured
+// ---------------------------------------------------------------------------
+
+export async function togglePropertyFeatured(
+  id: string,
+  isFeatured: boolean
+): Promise<ActionResult<{ id: string; is_featured: boolean }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const { error } = await supabase
+    .from("properties")
+    .update({ is_featured: isFeatured })
+    .eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("properties", {});
+  return { data: { id, is_featured: isFeatured } };
+}

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import { getBlogPostBySlug } from "@/lib/queries/content";
 import { formatDate } from "@/lib/format";
+import { JsonLd } from "@/components/shared/json-ld";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -15,13 +16,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data: post } = await getBlogPostBySlug(slug);
   if (!post) return {};
 
+  const title = post.seo_title || post.title;
+  const description = post.seo_description || post.excerpt || undefined;
+  const ogSubtitle = post.excerpt || "Nexos Emlak Blog";
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(ogSubtitle)}&type=blog`;
+
   return {
-    title: post.seo_title || post.title,
-    description: post.seo_description || post.excerpt || undefined,
+    title,
+    description,
     openGraph: {
       title: post.title,
-      description: post.excerpt || undefined,
-      images: post.cover_image ? [post.cover_image] : [],
+      description: description,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+        ...(post.cover_image ? [{ url: post.cover_image }] : []),
+      ],
     },
   };
 }
@@ -32,8 +46,33 @@ export default async function BlogPostPage({ params }: Props) {
 
   if (!post) notFound();
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const postUrl = `${siteUrl}/blog/${post.slug}`;
+
+  const jsonLdData: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    url: postUrl,
+    ...(post.excerpt && { description: post.excerpt }),
+    ...(post.cover_image && { image: post.cover_image }),
+    ...(post.published_at && { datePublished: post.published_at }),
+    author: {
+      "@type": "Person",
+      name: post.author,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Nexos Emlak",
+      url: siteUrl,
+    },
+  };
+
   return (
-    <article className="container mx-auto max-w-3xl px-4 py-12">
+    <>
+      <JsonLd data={jsonLdData} />
+      <article className="container mx-auto max-w-3xl px-4 py-12">
       <Link
         href="/blog"
         className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -77,5 +116,6 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
     </article>
+    </>
   );
 }

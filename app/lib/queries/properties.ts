@@ -103,6 +103,29 @@ export async function getProperties(filters: PropertyFilters) {
   // Heating
   if (filters.isitma) query = query.eq("heating_type", filters.isitma);
 
+  // Boolean amenities
+  if (filters.otopark) query = query.eq("parking", true);
+  if (filters.esyali) query = query.eq("furnished", true);
+  if (filters.asansor) query = query.eq("elevator", true);
+  if (filters.havuz) query = query.eq("pool", true);
+  if (filters.bahce) query = query.eq("garden", true);
+  if (filters.guvenlik) query = query.eq("security_24_7", true);
+  if (filters.balkon) query = query.gte("balcony_count", 1);
+
+  // Status filter (for admin views)
+  if (filters.durum) {
+    const statusMap: Record<string, string> = {
+      musait: "available",
+      satildi: "sold",
+      kiralandi: "rented",
+      rezerve: "reserved",
+    };
+    query = query.eq("status", statusMap[filters.durum] ?? filters.durum);
+  }
+
+  // Featured only
+  if (filters.one_cikan) query = query.eq("is_featured", true);
+
   // Sorting
   switch (filters.siralama) {
     case "fiyat_artan":
@@ -179,5 +202,25 @@ export async function getRelatedProperties(
     .eq("city_id", cityId)
     .eq("type", type)
     .neq("id", propertyId)
+    .limit(limit);
+}
+
+export async function getPropertyCount() {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("properties")
+    .select("*", { count: "exact", head: true })
+    .eq("is_active", true);
+  return count ?? 0;
+}
+
+export async function getPropertiesByAgent(agentId: string, limit = 20) {
+  const supabase = await createClient();
+  return supabase
+    .from("properties")
+    .select(PROPERTY_LIST_SELECT)
+    .eq("is_active", true)
+    .eq("agent_id", agentId)
+    .order("created_at", { ascending: false })
     .limit(limit);
 }

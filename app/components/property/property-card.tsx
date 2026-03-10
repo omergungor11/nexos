@@ -12,9 +12,10 @@ import type { PropertyListItem } from "@/types";
 
 interface PropertyCardProps {
   property: PropertyListItem;
+  priority?: boolean;
 }
 
-export function PropertyCard({ property }: PropertyCardProps) {
+export function PropertyCard({ property, priority = false }: PropertyCardProps) {
   const coverImage =
     property.cover_image || "/placeholder-property.jpg";
   const location = [property.district?.name, property.city.name]
@@ -32,6 +33,8 @@ export function PropertyCard({ property }: PropertyCardProps) {
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
+            loading={priority ? undefined : "lazy"}
           />
           <div className="absolute top-2 left-2 flex gap-1.5">
             <Badge variant="secondary" className="bg-primary text-primary-foreground">

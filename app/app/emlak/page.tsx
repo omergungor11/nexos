@@ -144,6 +144,7 @@ function mapListItem(raw: Record<string, unknown>): PropertyListItem {
     rooms: raw.rooms as number | null,
     living_rooms: raw.living_rooms as number | null,
     floor: raw.floor as number | null,
+    status: raw.status as PropertyListItem["status"],
     is_featured: raw.is_featured as boolean,
     views_count: raw.views_count as number,
     city: raw.city as PropertyListItem["city"],

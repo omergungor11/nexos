@@ -5,8 +5,8 @@
 - Gelişmiş ilan filtreleme, harita entegrasyonu, admin paneli
 
 ## Project Status
-- **Phase 0**: IN_PROGRESS — Proje kurulumu
-- **Phase 1-7**: PENDING
+- **Phase 0-7**: ALL COMPLETED — 78/78 tasks (100%)
+- **GitHub**: https://github.com/omergungor11/nexos
 
 ## Key Technical Decisions
 - Supabase tercih edildi (Prisma yerine) — realtime, auth, storage hepsi tek platformda
@@ -24,4 +24,7 @@
 - Server Components varsayılan, client sadece interaktif bileşenler
 
 ## Known Issues / Gotchas
-- (henüz yok)
+- revalidateTag Next.js 16'da 2 argüman istiyor: `revalidateTag("tag", {})`
+- Supabase local dev henüz kurulmadı — remote DB kullanılıyor
+- Playwright chromium WSL2'de system deps eksik olabilir
+- 002_saved_searches.sql migration'ı Supabase Dashboard'da çalıştırılmalı

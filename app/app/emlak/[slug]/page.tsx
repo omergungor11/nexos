@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/shared/json-ld";
 import {
   MapPin,
   Maximize2,
@@ -44,15 +45,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data: property } = await getPropertyBySlug(slug);
   if (!property) return {};
 
+  const title = property.seo_title || property.title;
+  const description =
+    property.seo_description ||
+    `${property.title} - ${formatPrice(property.price, property.currency)}`;
+  const ogSubtitle = `${TRANSACTION_TYPE_LABELS[property.transaction_type]} ${PROPERTY_TYPE_LABELS[property.type]} — ${formatPrice(property.price, property.currency)}`;
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(property.title)}&subtitle=${encodeURIComponent(ogSubtitle)}&type=property`;
+
   return {
-    title: property.seo_title || property.title,
-    description:
-      property.seo_description ||
-      `${property.title} - ${formatPrice(property.price, property.currency)}`,
+    title,
+    description,
     openGraph: {
       title: property.title,
-      description: `${TRANSACTION_TYPE_LABELS[property.transaction_type]} ${PROPERTY_TYPE_LABELS[property.type]} - ${formatPrice(property.price, property.currency)}`,
-      images: property.images?.[0]?.url ? [property.images[0].url] : [],
+      description: ogSubtitle,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: property.title,
+        },
+        ...(property.images?.[0]?.url ? [{ url: property.images[0].url }] : []),
+      ],
     },
   };
 }
@@ -89,8 +103,35 @@ export default async function PropertyDetailPage({ params }: Props) {
       f.feature
   );
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const propertyUrl = `${siteUrl}/emlak/${property.slug}`;
+  const imageUrls = (property.images ?? []).map(
+    (img: { url: string }) => img.url
+  );
+
+  const jsonLdData: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: property.title,
+    url: propertyUrl,
+    description:
+      property.seo_description ||
+      property.description ||
+      `${TRANSACTION_TYPE_LABELS[property.transaction_type]} ${PROPERTY_TYPE_LABELS[property.type]}`,
+    ...(imageUrls.length > 0 && { image: imageUrls }),
+    offers: {
+      "@type": "Offer",
+      price: property.price,
+      priceCurrency: property.currency || "TRY",
+    },
+    ...(location && { address: location }),
+  };
+
   return (
-    <div className="container mx-auto px-4 py-6">
+    <>
+      <JsonLd data={jsonLdData} />
+      <div className="container mx-auto px-4 py-6">
       {/* Breadcrumb */}
       <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/emlak" className="flex items-center gap-1 hover:text-foreground">
@@ -390,6 +431,7 @@ export default async function PropertyDetailPage({ params }: Props) {
         </section>
       )}
     </div>
+    </>
   );
 }
 
@@ -428,6 +470,7 @@ function mapRelatedItem(p: Record<string, unknown>): PropertyListItem {
     rooms: p.rooms as number | null,
     living_rooms: p.living_rooms as number | null,
     floor: p.floor as number | null,
+    status: p.status as PropertyListItem["status"],
     is_featured: p.is_featured as boolean,
     views_count: p.views_count as number,
     city: p.city as PropertyListItem["city"],

@@ -1,17 +1,53 @@
 import type { Metadata } from "next";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { JsonLd } from "@/components/shared/json-ld";
 import { ContactForm } from "./contact-form";
 
 export const metadata: Metadata = {
   title: "İletişim",
   description:
-    "NexOS Emlak ile iletişime geçin. Gayrimenkul danışmanlığı, mülk değerleme ve sorularınız için bize ulaşın.",
+    "Nexos Emlak ile iletişime geçin. Gayrimenkul danışmanlığı, mülk değerleme ve sorularınız için bize ulaşın.",
+};
+
+const contactJsonLd: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  name: "Nexos Emlak",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  description:
+    "Nexos Emlak — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Atatürk Cad. No:123",
+    addressLocality: "Merkez",
+    addressRegion: "İstanbul",
+    addressCountry: "TR",
+  },
+  telephone: "+905551234567",
+  email: "info@nexos.com.tr",
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+      opens: "09:00",
+      closes: "18:00",
+    },
+  ],
 };
 
 export default function IletisimPage() {
   return (
-    <div className="container mx-auto px-4 py-12">
+    <>
+      <JsonLd data={contactJsonLd} />
+      <div className="container mx-auto px-4 py-12">
       <div className="mb-12 text-center">
         <h1 className="text-3xl font-bold">Bize Ulaşın</h1>
         <p className="mt-2 text-muted-foreground">
@@ -98,5 +134,6 @@ export default function IletisimPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

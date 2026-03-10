@@ -1,6 +1,18 @@
-// Property-related TypeScript types
+// Property-related domain types
+// NOTE: PropertyWithRelations and PropertyListItem are intentionally defined
+// in types/index.ts where they are anchored to the Database type. The types
+// here are the primitive enum unions and simple entity interfaces that are
+// safe to use without importing the full Database generic.
+
+// ---------------------------------------------------------------------------
+// Enum unions — these mirror the DB enums in types/supabase.ts so that
+// existing component code that imports from "./property" keeps working.
+// They are structurally identical to the *Enum types in supabase.ts, which
+// means TypeScript treats them as the same type (structural compatibility).
+// ---------------------------------------------------------------------------
 
 export type TransactionType = "sale" | "rent";
+
 export type PropertyType =
   | "apartment"
   | "villa"
@@ -9,7 +21,9 @@ export type PropertyType =
   | "office"
   | "shop"
   | "warehouse";
+
 export type PropertyStatus = "available" | "sold" | "rented" | "reserved";
+
 export type HeatingType =
   | "none"
   | "central"
@@ -19,14 +33,24 @@ export type HeatingType =
   | "solar"
   | "coal"
   | "air_condition";
+
 export type Currency = "TRY" | "USD" | "EUR";
+
 export type FeatureCategory =
   | "interior"
   | "exterior"
   | "building"
   | "neighborhood"
   | "accessibility";
+
 export type ContactStatus = "new" | "in_progress" | "resolved" | "spam";
+
+// ---------------------------------------------------------------------------
+// Simple entity interfaces
+// These retain created_at / updated_at only where the DB row has them.
+// They are intentionally kept light — use the DB-anchored Row types from
+// types/index.ts when you need the full column set.
+// ---------------------------------------------------------------------------
 
 export interface City {
   id: number;
@@ -34,6 +58,7 @@ export interface City {
   slug: string;
   plate_code: number | null;
   is_active: boolean;
+  created_at: string;
 }
 
 export interface District {
@@ -42,6 +67,7 @@ export interface District {
   name: string;
   slug: string;
   is_active: boolean;
+  created_at: string;
 }
 
 export interface Neighborhood {
@@ -50,18 +76,22 @@ export interface Neighborhood {
   name: string;
   slug: string;
   is_active: boolean;
+  created_at: string;
 }
 
 export interface Agent {
   id: string;
+  user_id: string | null;
   name: string;
   title: string | null;
+  slug: string;
   phone: string | null;
   email: string | null;
   photo_url: string | null;
   bio: string | null;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Feature {
@@ -80,6 +110,7 @@ export interface PropertyImage {
   alt_text: string | null;
   sort_order: number;
   is_cover: boolean;
+  created_at: string;
 }
 
 export interface Property {
@@ -101,13 +132,13 @@ export interface Property {
   total_floors: number | null;
   year_built: number | null;
   heating_type: HeatingType;
-  parking: boolean;
-  furnished: boolean;
+  parking: boolean | null;
+  furnished: boolean | null;
   balcony_count: number;
-  elevator: boolean;
-  pool: boolean;
-  garden: boolean;
-  security_24_7: boolean;
+  elevator: boolean | null;
+  pool: boolean | null;
+  garden: boolean | null;
+  security_24_7: boolean | null;
   lat: number | null;
   lng: number | null;
   address: string | null;
@@ -124,34 +155,6 @@ export interface Property {
   updated_at: string;
 }
 
-export interface PropertyWithRelations extends Property {
-  city: City;
-  district: District | null;
-  neighborhood: Neighborhood | null;
-  agent: Agent | null;
-  images: PropertyImage[];
-  features: Feature[];
-}
-
-export interface PropertyListItem {
-  id: string;
-  slug: string;
-  title: string;
-  price: number;
-  currency: Currency;
-  type: PropertyType;
-  transaction_type: TransactionType;
-  area_sqm: number | null;
-  rooms: number | null;
-  living_rooms: number | null;
-  floor: number | null;
-  is_featured: boolean;
-  views_count: number;
-  city: Pick<City, "id" | "name" | "slug">;
-  district: Pick<District, "id" | "name" | "slug"> | null;
-  cover_image: string | null;
-}
-
 export interface BlogPost {
   id: string;
   title: string;
@@ -166,6 +169,7 @@ export interface BlogPost {
   seo_description: string | null;
   views_count: number;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Page {
@@ -176,6 +180,8 @@ export interface Page {
   seo_title: string | null;
   seo_description: string | null;
   is_published: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ContactRequest {
@@ -187,7 +193,10 @@ export interface ContactRequest {
   property_id: string | null;
   agent_id: string | null;
   status: ContactStatus;
+  ip_address: string | null;
+  user_agent: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface SiteSetting {
@@ -195,4 +204,5 @@ export interface SiteSetting {
   value: string | null;
   value_type: string;
   label: string | null;
+  updated_at: string;
 }

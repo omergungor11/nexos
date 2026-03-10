@@ -2,12 +2,14 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function getPageBySlug(slug: string) {
   const supabase = await createClient();
-  return supabase
+  const { data, error } = await supabase
     .from("pages")
     .select("*")
     .eq("slug", slug)
     .eq("is_published", true)
     .single();
+  if (error) return null;
+  return data;
 }
 
 export async function getBlogPosts(page = 1, pageSize = 12) {

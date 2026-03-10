@@ -5,9 +5,54 @@ import { Card, CardContent } from "@/components/ui/card";
 import { HeroSearch } from "@/components/shared/hero-search";
 import { SectionHeader } from "@/components/shared/section-header";
 import { PropertyCard } from "@/components/property/property-card";
+import { JsonLd } from "@/components/shared/json-ld";
 import { getFeaturedProperties, getRecentProperties } from "@/lib/queries/properties";
 import { PROPERTY_TYPE_LABELS } from "@/lib/constants";
 import type { PropertyListItem } from "@/types";
+
+export const metadata = {
+  title: "Nexos Emlak | Güvenilir Gayrimenkul Danışmanlığı",
+  description:
+    "Nexos Emlak ile hayalinizdeki evi bulun. Satılık ve kiralık daire, villa, arsa ve ticari gayrimenkul ilanları.",
+  openGraph: {
+    images: [
+      {
+        url: "/api/og?title=Nexos+Emlak&subtitle=G%C3%BCvenilir+Gayrimenkul+Dan%C4%B1%C5%9Fmanl%C4%B1%C4%9F%C4%B1",
+        width: 1200,
+        height: 630,
+        alt: "Nexos Emlak",
+      },
+    ],
+  },
+};
+
+const localBusinessJsonLd: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  name: "Nexos Emlak",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/logo.png`,
+  description:
+    "Nexos Emlak — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Atatürk Cad. No:123",
+    addressLocality: "Merkez",
+    addressRegion: "İstanbul",
+    addressCountry: "TR",
+  },
+  telephone: "+905551234567",
+  email: "info@nexos.com.tr",
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "09:00",
+      closes: "18:00",
+    },
+  ],
+  sameAs: [],
+};
 
 export default async function HomePage() {
   const [{ data: featured }, { data: recent }] = await Promise.all([
@@ -17,6 +62,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={localBusinessJsonLd} />
       {/* Hero Section */}
       <section className="relative flex min-h-[520px] items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4 py-20">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
@@ -159,6 +205,7 @@ function mapListItem(raw: Record<string, unknown>): PropertyListItem {
     rooms: raw.rooms as number | null,
     living_rooms: raw.living_rooms as number | null,
     floor: raw.floor as number | null,
+    status: raw.status as PropertyListItem["status"],
     is_featured: raw.is_featured as boolean,
     views_count: raw.views_count as number,
     city: raw.city as PropertyListItem["city"],
