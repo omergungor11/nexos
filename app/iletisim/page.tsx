@@ -20,10 +20,10 @@ const contactJsonLd: Record<string, unknown> = {
     "Nexos Emlak — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Atatürk Cad. No:123",
-    addressLocality: "Merkez",
-    addressRegion: "İstanbul",
-    addressCountry: "TR",
+    streetAddress: "İskele Merkez",
+    addressLocality: "İskele",
+    addressRegion: "Kuzey Kıbrıs",
+    addressCountry: "CY",
   },
   telephone: "+905551234567",
   email: "info@nexos.com.tr",
@@ -101,7 +101,7 @@ export default function IletisimPage() {
               <div>
                 <p className="text-sm font-medium">Adres</p>
                 <p className="text-sm text-muted-foreground">
-                  Atatürk Cad. No:123, Merkez, İstanbul
+                  İskele, Kuzey Kıbrıs
                 </p>
               </div>
             </CardContent>

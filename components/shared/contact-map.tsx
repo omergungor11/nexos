@@ -16,9 +16,9 @@ const defaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = defaultIcon;
 
-// Nexos Emlak office location (Istanbul, Merkez)
-const OFFICE_LAT = 41.0082;
-const OFFICE_LNG = 28.9784;
+// Nexos Emlak office location (İskele, Kuzey Kıbrıs)
+const OFFICE_LAT = 35.2856;
+const OFFICE_LNG = 33.8839;
 
 export default function ContactMap() {
   return (
@@ -37,7 +37,7 @@ export default function ContactMap() {
           <div className="space-y-1">
             <p className="font-semibold">Nexos Emlak</p>
             <p className="text-sm text-gray-600">
-              Atatürk Cad. No:123, Merkez, İstanbul
+              İskele, Kuzey Kıbrıs
             </p>
             <p className="text-xs text-gray-500">Pzt–Cmt: 09:00–18:00</p>
           </div>

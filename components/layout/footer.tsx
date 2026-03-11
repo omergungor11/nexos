@@ -81,7 +81,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>Atatürk Cad. No:123, Merkez, İstanbul</span>
+                <span>İskele, Kuzey Kıbrıs</span>
               </li>
               <li>
                 <a
