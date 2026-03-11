@@ -1,6 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building2, Home, MapPin, TrendingUp, CheckCircle2 } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  Home,
+  MapPin,
+  TrendingUp,
+  CheckCircle2,
+  KeyRound,
+  HandCoins,
+  LineChart,
+  Scale,
+  Handshake,
+  PaintBucket,
+} from "lucide-react";
 // no import needed for inline Link styles
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroSearch } from "@/components/shared/hero-search";
@@ -121,6 +134,63 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Services Section */}
+      <section className="border-t bg-muted/20">
+        <div className="container mx-auto px-4 py-16">
+          <SectionHeader
+            title="Hizmetlerimiz"
+            description="Gayrimenkul ihtiyaçlarınız için kapsamlı çözümler"
+            href="/hizmetlerimiz"
+          />
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                icon: HandCoins,
+                title: "Satılık Gayrimenkul",
+                desc: "Daire, villa, arsa ve ticari mülklerde geniş satılık portföyümüzle hayalinizdeki mülkü bulun.",
+              },
+              {
+                icon: KeyRound,
+                title: "Kiralık Gayrimenkul",
+                desc: "Konut ve işyeri kiralamada güvenilir seçenekler. Kısa ve uzun dönem kiralama çözümleri.",
+              },
+              {
+                icon: LineChart,
+                title: "Yatırım Danışmanlığı",
+                desc: "Piyasa analizleri ve değerleme raporlarıyla en doğru yatırım kararını vermenize yardımcı oluyoruz.",
+              },
+              {
+                icon: Scale,
+                title: "Hukuki Danışmanlık",
+                desc: "Tapu işlemleri, sözleşme hazırlığı ve gayrimenkul hukuku konularında profesyonel destek.",
+              },
+              {
+                icon: Handshake,
+                title: "Kurumsal Çözümler",
+                desc: "Şirketler için ofis, depo ve ticari alan tedarikinde özel kurumsal danışmanlık hizmeti.",
+              },
+              {
+                icon: PaintBucket,
+                title: "Tadilat & Dekorasyon",
+                desc: "Mülkünüzün değerini artırmak için tadilat, iç mimari ve home staging hizmetleri.",
+              },
+            ].map((service) => (
+              <Card key={service.title} className="group transition-shadow hover:shadow-md">
+                <CardContent className="p-6">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/20">
+                    <service.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="mb-2 font-semibold">{service.title}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {service.desc}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Quick Category Links */}
       <section className="container mx-auto px-4 py-16">
