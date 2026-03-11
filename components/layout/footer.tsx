@@ -16,6 +16,7 @@ const FOOTER_LINKS = {
     { href: "/ekibimiz", label: "Ekibimiz" },
     { href: "/blog", label: "Blog" },
     { href: "/iletisim", label: "İletişim" },
+    { href: "/sss", label: "SSS" },
   ],
 };
 
