@@ -13,6 +13,10 @@ import {
   Scale,
   Handshake,
   PaintBucket,
+  ShieldCheck,
+  Clock,
+  Users,
+  HeartHandshake,
 } from "lucide-react";
 // no import needed for inline Link styles
 import { Card, CardContent } from "@/components/ui/card";
@@ -301,6 +305,84 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Why Choose Us Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          {/* Image — Left */}
+          <div className="relative">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+              <Image
+                src="/images/why-us.jpg"
+                alt="Modern yaşam alanı"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </div>
+            {/* Floating stat card */}
+            <div className="absolute -bottom-4 -right-4 rounded-xl bg-primary px-5 py-4 text-primary-foreground shadow-xl sm:bottom-6 sm:right-6">
+              <p className="text-3xl font-bold">850+</p>
+              <p className="text-sm text-primary-foreground/80">Mutlu Müşteri</p>
+            </div>
+          </div>
+
+          {/* Content — Right */}
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+                Neden Bizi Seçmelisiniz?
+              </p>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Kıbrıs&apos;ta Gayrimenkul Yatırımınız İçin{" "}
+                <span className="text-primary">Güvenilir Partneriniz</span>
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Kuzey Kıbrıs&apos;ın en değerli lokasyonlarında, yatırım ve
+                yaşam odaklı gayrimenkul çözümleri sunuyoruz. Her adımda
+                yanınızdayız.
+              </p>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              {[
+                {
+                  icon: ShieldCheck,
+                  title: "Güvenilir Hizmet",
+                  desc: "Şeffaf süreç yönetimi ve tapu güvencesi ile her işlemde yanınızdayız.",
+                },
+                {
+                  icon: Clock,
+                  title: "Hızlı Süreç",
+                  desc: "Uzman kadromuz ile mülk alım-satım süreçlerinizi en kısa sürede tamamlıyoruz.",
+                },
+                {
+                  icon: Users,
+                  title: "Uzman Kadro",
+                  desc: "Sektörde deneyimli danışmanlarımız size en doğru yatırım kararlarında yol gösterir.",
+                },
+                {
+                  icon: HeartHandshake,
+                  title: "Müşteri Memnuniyeti",
+                  desc: "Satış sonrası destek dahil, uzun vadeli müşteri ilişkileri kuruyoruz.",
+                },
+              ].map((item) => (
+                <div key={item.title} className="flex gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <item.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold">{item.title}</h3>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="bg-primary text-primary-foreground">
