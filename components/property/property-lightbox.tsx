@@ -123,7 +123,7 @@ export function PropertyLightbox({ images, initialIndex = 0 }: PropertyLightboxP
               src={images[index].url}
               alt={images[index].alt_text || `Fotoğraf ${index + 1}`}
               fill
-              className="object-contain"
+              className="object-contain rounded-2xl"
               sizes="90vw"
               priority
             />
