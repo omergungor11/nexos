@@ -33,7 +33,7 @@ export default async function BlogPage({ searchParams }: Props) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <Link key={post.id} href={`/blog/${post.slug}`}>
-              <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
+              <Card className="group h-full gap-0 overflow-hidden py-0 transition-shadow hover:shadow-lg">
                 {post.cover_image && (
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
