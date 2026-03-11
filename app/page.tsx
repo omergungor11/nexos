@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building2, Home, MapPin, TrendingUp } from "lucide-react";
+import { ArrowRight, Building2, Home, MapPin, TrendingUp, CheckCircle2 } from "lucide-react";
 // no import needed for inline Link styles
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroSearch } from "@/components/shared/hero-search";
@@ -166,6 +167,68 @@ export default async function HomePage() {
                 </Card>
               </Link>
             ))}
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="border-t bg-muted/20">
+        <div className="container mx-auto px-4 py-16">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            {/* Text — Left */}
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+                  Hakkımızda
+                </p>
+                <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                  Güvenilir Emlak Danışmanlığında{" "}
+                  <span className="text-primary">10 Yılı Aşkın Deneyim</span>
+                </h2>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                Nexos Investment olarak, gayrimenkul sektöründe edindığımız
+                deneyimle müşterilerimize en doğru yatırım kararlarını
+                vermelerinde yol gösteriyoruz. Satılık ve kiralık
+                gayrimenkullerde profesyonel danışmanlık hizmeti sunuyoruz.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Profesyonel ve deneyimli danışman kadrosu",
+                  "Şeffaf ve güvenilir hizmet anlayışı",
+                  "Geniş portföy ve hızlı çözüm",
+                  "Yatırım danışmanlığı ve piyasa analizi",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-2.5 text-sm text-muted-foreground"
+                  >
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/hakkimizda"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+              >
+                Daha Fazla Bilgi
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            {/* Image — Right */}
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+              <Image
+                src="/images/about-team.jpg"
+                alt="Nexos Investment ekibi"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+              {/* Decorative accent */}
+              <div className="absolute -bottom-3 -right-3 -z-10 h-full w-full rounded-2xl bg-primary/10" />
+            </div>
+          </div>
         </div>
       </section>
 
