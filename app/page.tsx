@@ -64,8 +64,9 @@ export default async function HomePage() {
     <>
       <JsonLd data={localBusinessJsonLd} />
       {/* Hero Section */}
-      <section className="relative flex min-h-[520px] items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4 py-20">
-        <div className="absolute inset-0 bg-[url('/hero-bg.svg')] bg-cover bg-center opacity-60" />
+      <section className="relative flex min-h-[520px] items-center justify-center px-4 py-20">
+        <div className="absolute inset-0 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-900/70 to-slate-800/80" />
         <div className="relative z-10 flex flex-col items-center gap-8 text-center">
           <div className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">

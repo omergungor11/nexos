@@ -15,9 +15,26 @@ interface PropertyCardProps {
   priority?: boolean;
 }
 
+const PLACEHOLDER_IMAGES = [
+  "/images/property-1.jpg",
+  "/images/property-2.jpg",
+  "/images/property-3.jpg",
+  "/images/property-4.jpg",
+  "/images/property-5.jpg",
+  "/images/property-6.jpg",
+];
+
+function getPlaceholderImage(id: string): string {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = ((hash << 5) - hash + id.charCodeAt(i)) | 0;
+  }
+  return PLACEHOLDER_IMAGES[Math.abs(hash) % PLACEHOLDER_IMAGES.length];
+}
+
 export function PropertyCard({ property, priority = false }: PropertyCardProps) {
   const coverImage =
-    property.cover_image || "/placeholder-property.svg";
+    property.cover_image || getPlaceholderImage(property.id);
   const location = [property.district?.name, property.city.name]
     .filter(Boolean)
     .join(", ");
