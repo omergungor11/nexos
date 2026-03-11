@@ -65,6 +65,6 @@ export const NAV_LINKS = [
   { href: "/emlak?islem=kiralik", label: "Kiralık" },
   { href: "/harita", label: "Harita" },
   { href: "/ekibimiz", label: "Ekibimiz" },
-  { href: "/blog", label: "Blog" },
+  { href: "/blog", label: "Rehber" },
   { href: "/iletisim", label: "İletişim" },
 ];

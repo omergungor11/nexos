@@ -6,9 +6,9 @@ import { getBlogPosts } from "@/lib/queries/content";
 import { formatRelativeDate } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Rehber",
   description:
-    "Gayrimenkul sektörü haberleri, yatırım ipuçları ve emlak trendleri.",
+    "Kuzey Kıbrıs gayrimenkul rehberi — yatırım ipuçları, tapu bilgileri ve emlak trendleri.",
 };
 
 interface Props {
@@ -23,9 +23,9 @@ export default async function BlogPage({ searchParams }: Props) {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mb-12 text-center">
-        <h1 className="text-3xl font-bold">Blog</h1>
+        <h1 className="text-3xl font-bold">Rehber</h1>
         <p className="mt-2 text-muted-foreground">
-          Gayrimenkul dünyasından son haberler ve yatırım ipuçları
+          Kuzey Kıbrıs gayrimenkul dünyasından rehberler ve yatırım ipuçları
         </p>
       </div>
 
@@ -68,7 +68,7 @@ export default async function BlogPage({ searchParams }: Props) {
         </div>
       ) : (
         <div className="py-16 text-center text-muted-foreground">
-          Henüz blog yazısı yayınlanmamış.
+          Henüz rehber yazısı yayınlanmamış.
         </div>
       )}
     </div>

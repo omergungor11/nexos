@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = post.seo_title || post.title;
   const description = post.seo_description || post.excerpt || undefined;
-  const ogSubtitle = post.excerpt || "Nexos Emlak Blog";
+  const ogSubtitle = post.excerpt || "Nexos Emlak Rehber";
   const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(ogSubtitle)}&type=blog`;
 
   return {
@@ -78,7 +78,7 @@ export default async function BlogPostPage({ params }: Props) {
         className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        Blog
+        Rehber
       </Link>
 
       <h1 className="text-3xl font-bold leading-tight sm:text-4xl">
