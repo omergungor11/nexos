@@ -67,7 +67,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
           {property.is_featured && (
             <Badge
               variant="secondary"
-              className="absolute top-2 right-2 bg-amber-500 text-white"
+              className="absolute top-2 right-2 bg-primary text-primary-foreground"
             >
               Vitrin
             </Badge>
