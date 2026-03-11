@@ -385,7 +385,7 @@ async function main() {
   const cityMap = Object.fromEntries(cityRows.map(c => [c.slug, c.id]));
   console.log(`   ${cityRows.length} cities created`);
 
-  // 2) Districts
+  // 2) Districts (upsert using city_id + slug unique constraint)
   console.log("2) Creating districts...");
   const districtInserts = [];
   for (const [citySlug, dists] of Object.entries(DISTRICTS)) {
@@ -393,15 +393,17 @@ async function main() {
       districtInserts.push({ ...d, city_id: cityMap[citySlug], is_active: true });
     }
   }
-  // Delete existing districts first, then insert
-  await supabase.from("districts").delete().neq("id", 0);
-  const { data: districtRows, error: distErr } = await supabase
-    .from("districts")
-    .insert(districtInserts)
-    .select("id, slug, city_id");
-  if (distErr) throw distErr;
-  const districtMap = Object.fromEntries(districtRows.map(d => [d.slug, { id: d.id, city_id: d.city_id }]));
-  console.log(`   ${districtRows.length} districts created`);
+  const districtMap = {};
+  for (const d of districtInserts) {
+    const { data: row, error: err } = await supabase
+      .from("districts")
+      .upsert(d, { onConflict: "city_id,slug" })
+      .select("id, slug, city_id")
+      .single();
+    if (err) { console.error(`   District error for "${d.slug}":`, err.message); continue; }
+    districtMap[row.slug] = { id: row.id, city_id: row.city_id };
+  }
+  console.log(`   ${Object.keys(districtMap).length} districts created/updated`);
 
   // 3) Agents
   console.log("3) Creating agents...");
@@ -468,7 +470,7 @@ async function main() {
   console.log(`   ${created}/${PROPERTIES.length} properties created`);
 
   console.log("\nDone! Demo data seeded successfully.");
-  console.log(`Summary: ${Object.keys(cityMap).length} cities, ${districtRows.length} districts, ${agentRows.length} agents, ${created} properties`);
+  console.log(`Summary: ${Object.keys(cityMap).length} cities, ${Object.keys(districtMap).length} districts, ${agentRows.length} agents, ${created} properties`);
 }
 
 main().catch(err => { console.error("FATAL:", err); process.exit(1); });
