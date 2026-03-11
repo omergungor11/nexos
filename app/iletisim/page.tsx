@@ -3,6 +3,7 @@ import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JsonLd } from "@/components/shared/json-ld";
 import { ContactForm } from "./contact-form";
+import { ContactMapWrapper } from "@/components/shared/contact-map-wrapper";
 
 export const metadata: Metadata = {
   title: "İletişim",
@@ -131,6 +132,14 @@ export default function IletisimPage() {
               <ContactForm />
             </CardContent>
           </Card>
+        </div>
+      </div>
+
+      {/* Map Section */}
+      <div className="mt-12">
+        <h2 className="mb-4 text-xl font-bold">Konumumuz</h2>
+        <div className="h-[350px] overflow-hidden rounded-lg border">
+          <ContactMapWrapper />
         </div>
       </div>
     </div>
