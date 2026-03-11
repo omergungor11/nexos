@@ -122,24 +122,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Recent Properties */}
-      {recent && recent.length > 0 && (
-        <section className="border-t bg-muted/20">
-          <div className="container mx-auto px-4 py-16">
-            <SectionHeader
-              title="Son Eklenen İlanlar"
-              description="En güncel gayrimenkul ilanları"
-              href="/emlak?siralama=yeni"
-            />
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {recent.map((property) => (
-                <PropertyCard key={property.id} property={mapListItem(property)} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Quick Category Links */}
       <section className="container mx-auto px-4 py-16">
         <SectionHeader
@@ -231,6 +213,24 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Recent Properties */}
+      {recent && recent.length > 0 && (
+        <section className="border-t bg-muted/20">
+          <div className="container mx-auto px-4 py-16">
+            <SectionHeader
+              title="Son Eklenen İlanlar"
+              description="En güncel gayrimenkul ilanları"
+              href="/emlak?siralama=yeni"
+            />
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {recent.map((property) => (
+                <PropertyCard key={property.id} property={mapListItem(property)} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="bg-primary text-primary-foreground">
