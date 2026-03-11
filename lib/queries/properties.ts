@@ -16,7 +16,8 @@ const PROPERTY_DETAIL_SELECT = `
   neighborhood:neighborhoods(id, name, slug),
   agent:agents(id, name, title, slug, phone, email, photo_url),
   images:property_images(id, url, alt_text, sort_order, is_cover),
-  features:property_features(feature:features(id, name, slug, icon, category))
+  features:property_features(feature:features(id, name, slug, icon, category)),
+  price_history:property_price_history(id, old_price, new_price, currency, changed_at)
 `;
 
 const PAGE_SIZE = 20;

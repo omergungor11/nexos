@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -12,10 +11,10 @@ import {
   Flame,
   Eye,
   ArrowLeft,
-  Share2,
   Heart,
   Phone,
   Mail,
+  MessageCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,6 +33,14 @@ import {
   HEATING_TYPE_LABELS,
 } from "@/lib/constants";
 import { PropertyCard } from "@/components/property/property-card";
+import { PropertyLightbox } from "@/components/property/property-lightbox";
+import { PropertyMap } from "@/components/property/property-map-wrapper";
+import { ShareButtons } from "@/components/property/share-buttons";
+import { PrintButton } from "@/components/property/print-button";
+import { PropertyQrCode } from "@/components/property/property-qr-code";
+import { NearbyPlaces } from "@/components/property/nearby-places";
+import { VideoTour } from "@/components/property/video-tour";
+import { PriceHistory } from "@/components/property/price-history";
 import type { PropertyListItem } from "@/types";
 
 interface Props {
@@ -81,7 +88,6 @@ export default async function PropertyDetailPage({ params }: Props) {
     (a: { sort_order: number }, b: { sort_order: number }) =>
       a.sort_order - b.sort_order
   );
-  const coverImage = images.find((i: { is_cover: boolean }) => i.is_cover) ?? images[0];
 
   const location = [
     property.neighborhood?.name,
@@ -101,6 +107,11 @@ export default async function PropertyDetailPage({ params }: Props) {
   const features = (property.features ?? []).map(
     (f: { feature: { name: string; icon: string | null; category: string } }) =>
       f.feature
+  );
+
+  const priceHistory = (property.price_history ?? []).sort(
+    (a: { changed_at: string }, b: { changed_at: string }) =>
+      new Date(b.changed_at).getTime() - new Date(a.changed_at).getTime()
   );
 
   const siteUrl =
@@ -128,6 +139,10 @@ export default async function PropertyDetailPage({ params }: Props) {
     ...(location && { address: location }),
   };
 
+  const agentWhatsApp = property.agent?.phone
+    ? property.agent.phone.replace(/[\s()-]/g, "").replace(/^\+/, "")
+    : null;
+
   return (
     <>
       <JsonLd data={jsonLdData} />
@@ -145,53 +160,19 @@ export default async function PropertyDetailPage({ params }: Props) {
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Main Content */}
         <div className="space-y-6 lg:col-span-2">
-          {/* Image Gallery */}
-          <div className="overflow-hidden rounded-xl">
-            {coverImage ? (
-              <div className="relative aspect-[16/10]">
-                <Image
-                  src={coverImage.url}
-                  alt={coverImage.alt_text || property.title}
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 66vw"
-                />
-              </div>
-            ) : (
-              <div className="flex aspect-[16/10] items-center justify-center bg-muted">
-                <Building2 className="h-16 w-16 text-muted-foreground" />
-              </div>
-            )}
-            {images.length > 1 && (
-              <div className="mt-2 grid grid-cols-4 gap-2">
-                {images.slice(1, 5).map(
-                  (
-                    img: { url: string; alt_text: string | null; id: string },
-                    i: number
-                  ) => (
-                    <div
-                      key={img.id}
-                      className="relative aspect-[4/3] overflow-hidden rounded-lg"
-                    >
-                      <Image
-                        src={img.url}
-                        alt={img.alt_text || `Fotoğraf ${i + 2}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 1024px) 25vw, 16vw"
-                      />
-                      {i === 3 && images.length > 5 && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white font-semibold">
-                          +{images.length - 5}
-                        </div>
-                      )}
-                    </div>
-                  )
-                )}
-              </div>
-            )}
-          </div>
+          {/* 1. Lightbox Image Gallery */}
+          {images.length > 0 ? (
+            <PropertyLightbox
+              images={images.map((img: { url: string; alt_text: string | null }) => ({
+                url: img.url,
+                alt_text: img.alt_text,
+              }))}
+            />
+          ) : (
+            <div className="flex aspect-[16/10] items-center justify-center rounded-xl bg-muted">
+              <Building2 className="h-16 w-16 text-muted-foreground" />
+            </div>
+          )}
 
           {/* Title & Price */}
           <div>
@@ -222,13 +203,13 @@ export default async function PropertyDetailPage({ params }: Props) {
                 <p className="text-3xl font-bold text-primary">
                   {formatPrice(property.price, property.currency)}
                 </p>
-                <div className="mt-2 flex gap-2">
+                {/* 4. Share + 5. Print buttons */}
+                <div className="mt-2 flex items-center justify-end gap-2">
                   <Button variant="outline" size="icon">
                     <Heart className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
+                  <PrintButton propertySlug={property.slug} />
+                  <ShareButtons url={propertyUrl} title={property.title} />
                 </div>
               </div>
             </div>
@@ -328,6 +309,33 @@ export default async function PropertyDetailPage({ params }: Props) {
             </div>
           )}
 
+          {/* 8. Video / 3D Tour */}
+          <VideoTour
+            videoUrl={property.video_url}
+            virtualTourUrl={property.virtual_tour_url}
+          />
+
+          {/* 7. Nearby Places */}
+          <NearbyPlaces lat={property.lat} lng={property.lng} />
+
+          {/* 1. Property Map */}
+          <div>
+            <h2 className="mb-3 text-lg font-semibold">Konum</h2>
+            <PropertyMap
+              lat={property.lat}
+              lng={property.lng}
+              title={property.title}
+              address={property.address}
+            />
+          </div>
+
+          {/* 10. Price History */}
+          <PriceHistory
+            history={priceHistory}
+            currentPrice={property.price}
+            currency={property.currency}
+          />
+
           {/* Date */}
           <p className="text-sm text-muted-foreground">
             İlan Tarihi: {formatDate(property.created_at)}
@@ -342,7 +350,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               <CardHeader>
                 <CardTitle className="text-base">Emlak Danışmanı</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={property.agent.photo_url ?? undefined} />
@@ -365,7 +373,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                 {property.agent.phone && (
                   <a
                     href={`tel:${property.agent.phone}`}
-                    className="flex h-8 w-full items-center justify-center gap-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-muted"
+                    className="flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-muted"
                   >
                     <Phone className="h-4 w-4" />
                     {property.agent.phone}
@@ -374,10 +382,22 @@ export default async function PropertyDetailPage({ params }: Props) {
                 {property.agent.email && (
                   <a
                     href={`mailto:${property.agent.email}`}
-                    className="flex h-8 w-full items-center justify-center gap-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-muted"
+                    className="flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-muted"
                   >
                     <Mail className="h-4 w-4" />
                     E-posta Gönder
+                  </a>
+                )}
+                {/* 3. WhatsApp Button */}
+                {agentWhatsApp && (
+                  <a
+                    href={`https://wa.me/${agentWhatsApp}?text=${encodeURIComponent(`Merhaba, "${property.title}" ilanı hakkında bilgi almak istiyorum.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] text-sm font-medium text-white hover:bg-[#20bd5a]"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp ile Ulaş
                   </a>
                 )}
               </CardContent>
@@ -411,6 +431,16 @@ export default async function PropertyDetailPage({ params }: Props) {
                   Mesaj Gönder
                 </Button>
               </form>
+            </CardContent>
+          </Card>
+
+          {/* 9. QR Code */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">QR Kod</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PropertyQrCode url={propertyUrl} />
             </CardContent>
           </Card>
         </div>
