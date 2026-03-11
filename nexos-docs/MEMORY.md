@@ -1,8 +1,9 @@
 # Nexos Emlak Project Memory
 
 ## Project Info
-- Kurumsal emlak web sitesi — Next.js 15 + Supabase + Vercel
+- Kurumsal emlak web sitesi — Next.js 16 + Supabase + Vercel
 - Gelişmiş ilan filtreleme, harita entegrasyonu, admin paneli
+- Proje yapısı: Next.js root = git root (app/ alt dizini değil)
 
 ## Project Status
 - **Phase 0-7**: ALL COMPLETED — 78/78 tasks (100%)
@@ -28,3 +29,4 @@
 - Supabase local dev henüz kurulmadı — remote DB kullanılıyor
 - Playwright chromium WSL2'de system deps eksik olabilir
 - 002_saved_searches.sql migration'ı Supabase Dashboard'da çalıştırılmalı
+- Vercel deployment: Root Directory BOŞ olmalı (proje git root'ta). Eski app/ yapısı kaldırıldı (2026-03-11)

@@ -1,9 +1,10 @@
 # Nexos Emlak
 
 ## Proje
-Nexos Emlak — Next.js 15, Supabase ve Vercel ile geliştirilmiş kurumsal emlak web sitesi. Gelişmiş ilan listeleme, filtreleme, harita entegrasyonu ve admin paneli.
+Nexos Emlak — Next.js 16, Supabase ve Vercel ile geliştirilmiş kurumsal emlak web sitesi. Gelişmiş ilan listeleme, filtreleme, harita entegrasyonu ve admin paneli.
 
-- **GitHub**: [henüz oluşturulmadı]
+- **GitHub**: https://github.com/omergungor11/nexos
+- **Vercel**: https://nexos-sand.vercel.app
 
 ## Slash Commandlar
 
@@ -18,7 +19,7 @@ Nexos Emlak — Next.js 15, Supabase ve Vercel ile geliştirilmiş kurumsal emla
 
 ## Mevcut Durum
 
-**Progress**: 0/70 task (%0) — Phase 0 başlıyor.
+**Progress**: 78/78 task (%100) — Tüm phase'ler tamamlandı. Vercel deployment düzeltiliyor.
 
 > Her yeni session'da `nexos-tasks/task-index.md` oku veya `/cold-start` çalıştır.
 
@@ -27,33 +28,32 @@ Nexos Emlak — Next.js 15, Supabase ve Vercel ile geliştirilmiş kurumsal emla
 ## Workspace
 
 ```
-nexos/
-├── app/                    → Next.js 15 App Router
-│   ├── (auth)/             → Login/Register sayfaları
-│   ├── admin/              → Admin paneli
-│   ├── emlak/              → İlan listeleme + detay
-│   ├── harita/             → Tam ekran harita
-│   ├── blog/               → Blog
-│   ├── ekibimiz/           → Danışmanlar
-│   └── api/                → API Routes
-├── components/             → React componentler
-│   ├── layout/             → Header, Footer, AdminLayout
-│   ├── property/           → İlan kartları, filtreler, galeri
-│   ├── admin/              → Admin form ve tablo bileşenleri
-│   ├── shared/             → Ortak bileşenler
-│   └── ui/                 → shadcn/ui primitives
-├── lib/                    → Supabase client, queries, utils
-├── types/                  → TypeScript tip tanımları
-├── hooks/                  → Custom React hooks
-├── store/                  → Zustand store'lar
-├── actions/                → Next.js Server Actions
-├── public/                 → Statik dosyalar
-├── supabase/               → Migration dosyaları
-│   └── migrations/
-├── nexos-tasks/            → Task tracking
-├── nexos-config/           → Proje kuralları
-├── nexos-docs/             → Hafıza ve changelog
-└── nexos-plans/            → Mimari planlar
+nexos/                         → Git root + Next.js proje kökü
+├── app/                       → Next.js 16 App Router
+│   ├── admin/                 → Admin paneli
+│   ├── emlak/                 → İlan listeleme + detay
+│   ├── harita/                → Tam ekran harita
+│   ├── blog/                  → Blog
+│   ├── ekibimiz/              → Danışmanlar
+│   ├── giris/, kayit/         → Auth sayfaları
+│   └── api/                   → API Routes
+├── components/                → React componentler
+│   ├── layout/                → Header, Footer, AdminLayout
+│   ├── property/              → İlan kartları, filtreler, galeri
+│   ├── admin/                 → Admin form ve tablo bileşenleri
+│   ├── shared/                → Ortak bileşenler
+│   └── ui/                    → shadcn/ui primitives
+├── lib/                       → Supabase client, queries, utils
+├── types/                     → TypeScript tip tanımları
+├── hooks/                     → Custom React hooks
+├── store/                     → Zustand store'lar
+├── actions/                   → Next.js Server Actions
+├── public/                    → Statik dosyalar
+├── supabase/migrations/       → Migration dosyaları
+├── nexos-tasks/               → Task tracking
+├── nexos-config/              → Proje kuralları
+├── nexos-docs/                → Hafıza ve changelog
+└── nexos-plans/               → Mimari planlar
 ```
 
 ## Temel Komutlar

@@ -1,6 +1,33 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-03-11
+
+### Yapılanlar
+- **Proje yapısı yeniden düzenlendi**: Next.js projesi `app/` alt dizininden git root'a taşındı
+  - Eski: `nexos/app/` (Next.js root) → `nexos/app/app/` (App Router)
+  - Yeni: `nexos/` (Next.js root) → `nexos/app/` (App Router)
+- Tüm dosyalar taşındı: components, lib, actions, types, store, hooks, public, supabase, config dosyaları
+- Local build başarıyla test edildi (`pnpm build` → tüm route'lar OK)
+- Git commit + push yapıldı (e517b06)
+
+### Yarım Kalanlar
+- **Vercel deployment hala 404 veriyor** — push yapıldı, Vercel Dashboard'da Root Directory boşaltıldı ama henüz doğrulanmadı
+- Vercel build log'ları kontrol edilmeli — build başarılı mı?
+- Vercel env variables kontrol edilmeli (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)
+
+### Sıradakiler
+- **Vercel deployment'ı düzelt** — build log kontrol et, 404 sorununu çöz
+- Framework Preset = Next.js olduğunu doğrula
+- Site canlıya geçtikten sonra smoke test yap
+
+### Dikkat Edilecekler
+- Vercel Root Directory artık **boş** olmalı (app/ DEĞİL)
+- package.json artık git root'ta — Vercel otomatik algılamalı
+- Eski `app/` alt dizini yapısı tamamen kaldırıldı
+
+---
+
 ## 2026-03-09
 
 ### Yapılanlar
