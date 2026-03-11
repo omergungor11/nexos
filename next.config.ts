@@ -47,7 +47,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://unpkg.com https://*.tile.openstreetmap.org",
+              "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://unpkg.com https://*.tile.openstreetmap.org https://api.qrserver.com",
               "font-src 'self'",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com",
               "frame-src 'self' https://www.youtube-nocookie.com https://my.matterport.com",
