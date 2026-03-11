@@ -118,7 +118,7 @@ export function PropertyLightbox({ images, initialIndex = 0 }: PropertyLightboxP
           )}
 
           {/* Image */}
-          <div className="relative h-[80vh] w-[90vw] max-w-5xl">
+          <div className="relative h-[80vh] w-[90vw] max-w-5xl overflow-hidden rounded-2xl">
             <Image
               src={images[index].url}
               alt={images[index].alt_text || `Fotoğraf ${index + 1}`}
