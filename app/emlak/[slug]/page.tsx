@@ -139,6 +139,11 @@ export default async function PropertyDetailPage({ params }: Props) {
     ...(location && { address: location }),
   };
 
+  // Generate listing number from UUID (stable 6-digit number)
+  const listingNumber = Math.abs(
+    property.id.split("").reduce((acc: number, ch: string) => ((acc << 5) - acc + ch.charCodeAt(0)) | 0, 0)
+  ) % 900000 + 100000;
+
   const agentWhatsApp = property.agent?.phone
     ? property.agent.phone.replace(/[\s()-]/g, "").replace(/^\+/, "")
     : null;
@@ -178,7 +183,10 @@ export default async function PropertyDetailPage({ params }: Props) {
           <div>
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="space-y-2">
-                <div className="flex gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline" className="font-mono text-xs">
+                    İlan No: {listingNumber}
+                  </Badge>
                   <Badge>
                     {TRANSACTION_TYPE_LABELS[property.transaction_type]}
                   </Badge>

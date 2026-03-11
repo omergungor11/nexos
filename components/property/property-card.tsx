@@ -38,6 +38,9 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
   const location = [property.district?.name, property.city.name]
     .filter(Boolean)
     .join(", ");
+  const listingNumber = Math.abs(
+    property.id.split("").reduce((acc: number, ch: string) => ((acc << 5) - acc + ch.charCodeAt(0)) | 0, 0)
+  ) % 900000 + 100000;
 
   return (
     <Card className="group gap-0 overflow-hidden py-0 transition-shadow hover:shadow-lg">
@@ -73,9 +76,14 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
 
         {/* Content */}
         <CardContent className="p-4">
-          <p className="text-lg font-bold text-primary">
-            {formatPrice(property.price, property.currency)}
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-lg font-bold text-primary">
+              {formatPrice(property.price, property.currency)}
+            </p>
+            <span className="font-mono text-[10px] text-muted-foreground">
+              #{listingNumber}
+            </span>
+          </div>
 
           <h3 className="mt-1 line-clamp-1 text-sm font-semibold">
             {property.title}
