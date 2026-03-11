@@ -40,7 +40,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
     .join(", ");
 
   return (
-    <Card className="group overflow-hidden transition-shadow hover:shadow-lg">
+    <Card className="group gap-0 overflow-hidden py-0 transition-shadow hover:shadow-lg">
       <Link href={`/emlak/${property.slug}`}>
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden">
