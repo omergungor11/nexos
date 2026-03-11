@@ -13,6 +13,7 @@ const FOOTER_LINKS = {
   ],
   kurumsal: [
     { href: "/hakkimizda", label: "Hakkımızda" },
+    { href: "/hizmetlerimiz", label: "Hizmetlerimiz" },
     { href: "/ekibimiz", label: "Ekibimiz" },
     { href: "/blog", label: "Rehber" },
     { href: "/iletisim", label: "İletişim" },
