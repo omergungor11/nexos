@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -26,10 +27,13 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
-                N
-              </div>
-              <span className="text-xl font-bold tracking-tight">NexOS</span>
+              <Image
+                src="/logo.jpeg"
+                alt="Nexos Investment"
+                width={140}
+                height={40}
+                className="h-9 w-auto object-contain"
+              />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Profesyonel emlak danışmanlığı ile hayalinizdeki mülke ulaşmanızı

@@ -17,7 +17,7 @@ interface PropertyCardProps {
 
 export function PropertyCard({ property, priority = false }: PropertyCardProps) {
   const coverImage =
-    property.cover_image || "/placeholder-property.jpg";
+    property.cover_image || "/placeholder-property.svg";
   const location = [property.district?.name, property.city.name]
     .filter(Boolean)
     .join(", ");

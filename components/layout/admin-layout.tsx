@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -131,7 +132,13 @@ export function AdminLayout({
           className="flex items-center gap-2"
           onClick={() => setSidebarOpen(false)}
         >
-          <Building2 className="size-6 text-blue-400" />
+          <Image
+            src="/logo-square.jpeg"
+            alt="Nexos"
+            width={32}
+            height={32}
+            className="size-8 rounded"
+          />
           <span className="text-lg font-semibold text-white">
             Nexos{" "}
             <span className="text-sm font-normal text-slate-400">Admin</span>

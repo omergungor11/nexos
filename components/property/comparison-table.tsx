@@ -161,7 +161,7 @@ export function ComparisonTable() {
                     {/* Cover image */}
                     <div className="relative mx-auto aspect-[4/3] w-full max-w-[180px] overflow-hidden rounded-lg">
                       <Image
-                        src={property.cover_image ?? "/placeholder-property.jpg"}
+                        src={property.cover_image ?? "/placeholder-property.svg"}
                         alt={property.title}
                         fill
                         className="object-cover"

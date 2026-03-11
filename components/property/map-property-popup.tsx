@@ -28,7 +28,7 @@ interface MapPropertyPopupProps {
 }
 
 export function MapPropertyPopup({ property }: MapPropertyPopupProps) {
-  const coverImage = property.cover_image ?? "/placeholder-property.jpg";
+  const coverImage = property.cover_image ?? "/placeholder-property.svg";
 
   return (
     <div className="w-56">
