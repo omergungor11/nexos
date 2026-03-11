@@ -31,7 +31,7 @@ const localBusinessJsonLd: Record<string, unknown> = {
   "@type": "RealEstateAgent",
   name: "Nexos Emlak",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/logo.png`,
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/logo.jpeg`,
   description:
     "Nexos Emlak — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
   address: {
