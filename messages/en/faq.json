@@ -1,0 +1,14 @@
+{
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "description": "Comprehensive answers to {count}+ questions about buying, selling, renting, investing, living, and legal processes in North Cyprus.",
+    "category": "Category",
+    "questionsAndAnswers": "Q&A",
+    "whatsappSupport": "WhatsApp Support",
+    "freeConsultancy": "Free Consultancy",
+    "notFoundTitle": "Couldn't find the answer you're looking for?",
+    "notFoundDescription": "Our expert team is ready to answer all your questions. Contact us now for free consultancy.",
+    "contactUs": "Contact Us",
+    "whatsappWrite": "Write on WhatsApp"
+  }
+}

@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Search, MapPin, Home, SlidersHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { PROPERTY_TYPE_LABELS } from "@/lib/constants";
+import { PROPERTY_TYPE_TKEYS } from "@/lib/constants";
 
 interface CityOption {
   id: number;
@@ -28,14 +29,16 @@ interface HeroSearchProps {
   cities?: CityOption[];
 }
 
-const TABS = [
-  { value: "", label: "Hepsi" },
-  { value: "satilik", label: "Satılık" },
-  { value: "kiralik", label: "Kiralık" },
-];
-
 export function HeroSearch({ cities = [] }: HeroSearchProps) {
   const router = useRouter();
+  const t = useTranslations();
+
+  const TABS = [
+    { value: "", label: t("search.all") },
+    { value: "satilik", label: t("search.forSale") },
+    { value: "kiralik", label: t("search.forRent") },
+  ];
+
   const [activeTab, setActiveTab] = useState("");
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("");
@@ -115,6 +118,8 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
     </svg>
   );
 
+  const propertyTypeEntries = Object.entries(PROPERTY_TYPE_TKEYS);
+
   return (
     <div className="w-full max-w-4xl px-2 sm:px-0">
       {/* Tabs */}
@@ -141,15 +146,14 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
 
       {/* Search bar */}
       <div ref={searchRef} className="relative">
-        {/* ── Desktop layout ── */}
+        {/* Desktop layout */}
         <div className="hidden rounded-2xl bg-white/95 p-2.5 shadow-xl backdrop-blur sm:block">
           <div className="flex items-center">
-            {/* Search input */}
             <div className="relative flex-1 border-r border-gray-200">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Hızlı arama..."
+                placeholder={t("search.quickSearch")}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => results.length > 0 && setShowResults(true)}
@@ -157,8 +161,6 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                 className="h-11 w-full bg-transparent pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
               />
             </div>
-
-            {/* City */}
             <div className="relative border-r border-gray-200">
               <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <select
@@ -166,15 +168,13 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                 onChange={(e) => setCity(e.target.value)}
                 className="h-11 w-44 appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none"
               >
-                <option value="">Lokasyon</option>
+                <option value="">{t("search.location")}</option>
                 {cities.map((c) => (
                   <option key={c.id} value={c.slug}>{c.name}</option>
                 ))}
               </select>
               {chevronSvg}
             </div>
-
-            {/* Type */}
             <div className="relative border-r border-gray-200">
               <Home className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <select
@@ -182,15 +182,13 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                 onChange={(e) => setTip(e.target.value)}
                 className="h-11 w-36 appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none"
               >
-                <option value="">Türü</option>
-                {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
+                <option value="">{t("search.propertyType")}</option>
+                {propertyTypeEntries.map(([value, tKey]) => (
+                  <option key={value} value={value}>{t(tKey)}</option>
                 ))}
               </select>
               {chevronSvg}
             </div>
-
-            {/* Actions */}
             <div className="flex items-center gap-2 pl-3 pr-1">
               <button
                 type="button"
@@ -202,13 +200,13 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                 className="flex items-center gap-1.5 text-sm text-gray-500 whitespace-nowrap hover:text-gray-900"
               >
                 <SlidersHorizontal className="h-4 w-4" />
-                Detaylı
+                {t("search.detailed")}
               </button>
               <button
                 type="button"
                 onClick={handleSearch}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 active:scale-95"
-                aria-label="Ara"
+                aria-label={t("search.search")}
               >
                 <Search className="h-5 w-5" />
               </button>
@@ -216,14 +214,13 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
           </div>
         </div>
 
-        {/* ── Mobile layout ── */}
+        {/* Mobile layout */}
         <div className="rounded-2xl bg-white/95 p-4 shadow-xl backdrop-blur sm:hidden">
-          {/* Search input */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="İlan ara..."
+              placeholder={t("search.searchListings")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => results.length > 0 && setShowResults(true)}
@@ -231,8 +228,6 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
               className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none"
             />
           </div>
-
-          {/* Selects row */}
           <div className="mt-3 grid grid-cols-2 gap-2">
             <div className="relative">
               <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -241,7 +236,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                 onChange={(e) => setCity(e.target.value)}
                 className="h-10 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-8 text-sm text-gray-900 focus:border-primary focus:outline-none"
               >
-                <option value="">Lokasyon</option>
+                <option value="">{t("search.location")}</option>
                 {cities.map((c) => (
                   <option key={c.id} value={c.slug}>{c.name}</option>
                 ))}
@@ -255,33 +250,31 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                 onChange={(e) => setTip(e.target.value)}
                 className="h-10 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-8 text-sm text-gray-900 focus:border-primary focus:outline-none"
               >
-                <option value="">Türü</option>
-                {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
+                <option value="">{t("search.propertyType")}</option>
+                {propertyTypeEntries.map(([value, tKey]) => (
+                  <option key={value} value={value}>{t(tKey)}</option>
                 ))}
               </select>
               {chevronSvg}
             </div>
           </div>
-
-          {/* Search button full width */}
           <button
             type="button"
             onClick={handleSearch}
             className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 active:scale-[0.98]"
           >
             <Search className="h-4 w-4" />
-            Ara
+            {t("search.search")}
           </button>
         </div>
 
-        {/* ── Results dropdown (shared) ── */}
+        {/* Results dropdown */}
         {showResults && (
           <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-auto rounded-xl border bg-white shadow-2xl sm:max-h-96">
             {results.length > 0 ? (
               <>
                 <div className="px-4 py-2 text-xs font-medium uppercase tracking-wider text-gray-400">
-                  {results.length} sonuç bulundu
+                  {t("search.resultsFound", { count: results.length })}
                 </div>
                 {results.map((r) => {
                   const cover = r.images?.find((i) => i.is_cover)?.url || r.images?.[0]?.url;
@@ -318,7 +311,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                   onClick={handleSearch}
                   className="flex w-full items-center justify-center gap-1 border-t px-4 py-3 text-sm font-medium text-primary hover:bg-gray-50"
                 >
-                  Tüm sonuçları gör
+                  {t("search.viewAll")}
                 </button>
               </>
             ) : (
@@ -326,14 +319,14 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                 <div className="px-4 py-6 text-center">
                   <Search className="mx-auto h-6 w-6 text-gray-300" />
                   <p className="mt-2 text-sm text-gray-500">
-                    &ldquo;{query}&rdquo; için sonuç bulunamadı
+                    {t("search.noResults", { query })}
                   </p>
                   <button
                     type="button"
                     onClick={handleSearch}
                     className="mt-2 text-sm font-medium text-primary hover:underline"
                   >
-                    Tüm ilanlarda ara
+                    {t("search.searchAll")}
                   </button>
                 </div>
               )
@@ -344,7 +337,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
         {searching && query.length >= 2 && !showResults && (
           <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border bg-white p-4 text-center text-sm text-gray-500 shadow-xl">
             <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            <p className="mt-2">Aranıyor...</p>
+            <p className="mt-2">{t("search.searching")}</p>
           </div>
         )}
       </div>

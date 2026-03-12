@@ -1,0 +1,660 @@
+import { setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
+import {
+  Home,
+  Scale,
+  Banknote,
+  Globe,
+  FileText,
+  ShieldCheck,
+  Building2,
+  HelpCircle,
+  ChevronDown,
+  Sun,
+  TrendingUp,
+  GraduationCap,
+  Plane,
+  HeartPulse,
+  Landmark,
+  Key,
+  Palmtree,
+} from "lucide-react";
+import { JsonLd } from "@/components/shared/json-ld";
+
+export const metadata: Metadata = {
+  title: "Sıkça Sorulan Sorular (SSS)",
+  description:
+    "Kuzey Kıbrıs'ta gayrimenkul alım-satım, kiralama, tapu, yatırım, yaşam ve yasal süreçler hakkında 80+ soruya kapsamlı cevaplar.",
+};
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface FaqCategory {
+  title: string;
+  icon: React.ElementType;
+  description: string;
+  items: FaqItem[];
+}
+
+const FAQ_CATEGORIES: FaqCategory[] = [
+  {
+    title: "Kuzey Kıbrıs'ta Neden Yatırım Yapmalı?",
+    icon: TrendingUp,
+    description: "Kuzey Kıbrıs'ı cazip kılan ekonomik ve stratejik avantajlar",
+    items: [
+      {
+        question: "Kuzey Kıbrıs neden gayrimenkul yatırımı için cazip?",
+        answer:
+          "Kuzey Kıbrıs, Akdeniz'in en hızlı büyüyen emlak pazarlarından biridir. Son 5 yılda gayrimenkul değerleri yıllık ortalama %20-30 artış göstermiştir. Düşük satın alma maliyetleri, yüksek kira getirisi (%6-12 yıllık), 300+ günlük güneş, İngilizce'nin yaygın kullanımı, Türkiye'ye yakınlık, AB ile sınır komşuluğu ve gelişen turizm sektörü başlıca cazip kılan faktörlerdir. Ayrıca üniversite öğrenci nüfusunun yüksekliği kiralama talebini sürekli canlı tutmaktadır.",
+      },
+      {
+        question: "Kuzey Kıbrıs'ta gayrimenkul fiyatları diğer Akdeniz ülkelerine göre nasıl?",
+        answer:
+          "Kuzey Kıbrıs'ta metrekare fiyatları İspanya, Yunanistan, Güney Kıbrıs ve İtalya'ya kıyasla ortalama %40-60 daha düşüktür. Örneğin denize sıfır bir 1+1 daire İskele Long Beach'te 80.000-120.000 GBP iken, benzer lokasyondaki bir mülk Güney Kıbrıs'ta 200.000+ EUR, İspanya Costa del Sol'da 180.000+ EUR'dur. Bu fiyat avantajı hem yaşam hem yatırım amacıyla alıcıları cezbetmektedir.",
+      },
+      {
+        question: "Hangi bölgeler yatırım için en çok öne çıkıyor?",
+        answer:
+          "İskele (Long Beach, Bafra, Boğaz): En yüksek değer artışı, yeni projeler ve turizm potansiyeli. Girne: Yerleşik altyapı, marina, lüks segment, yabancı rezidans talebi. Lefkoşa: Üniversiteler sayesinde istikrarlı kira getirisi. Gazimağusa: Doğu Akdeniz Üniversitesi çevresi ve tarihi doku. Güzelyurt: Tarım arazisi ve düşük giriş fiyatlı mülkler. Son dönemde en büyük değer artışı İskele bölgesinde yaşanmaktadır.",
+      },
+      {
+        question: "Kuzey Kıbrıs'ta gayrimenkul balonu riski var mı?",
+        answer:
+          "Her emlak piyasasında dalgalanma riski mevcuttur. Ancak Kuzey Kıbrıs'ta konut arzı henüz talebin altında kalmaktadır. Üniversite öğrencileri, emekliler, dijital göçebeler ve tatilcilerin oluşturduğu sürekli talep fiyatları desteklemektedir. Buna rağmen, profesyonel danışmanlık almadan, araştırma yapmadan ve lokasyon-fiyat analizi yapılmadan alım yapılmamalıdır. Nexos olarak biz her müşterimize bağımsız değerleme ve karşılaştırmalı piyasa analizi sunuyoruz.",
+      },
+      {
+        question: "Kısa dönem (Airbnb) kiralama geliri ne kadar?",
+        answer:
+          "İskele Long Beach ve Girne gibi turistik bölgelerde 1+1 daireler yaz sezonunda (Haziran-Eylül) günlük 50-120 GBP, 2+1 daireler 80-180 GBP, villalar 150-400 GBP kira getirisi sağlayabilir. Yıllık doluluk oranı profesyonel yönetimle %60-75 arasında tutulabilir. Kış aylarında fiyatlar düşse de üniversite öğrencileri ve uzun dönem kiracılarla gelir sürekliliği sağlanabilir. Nexos kiralama yönetimi hizmetiyle mülkünüzü sizin adınıza yönetebiliriz.",
+      },
+    ],
+  },
+  {
+    title: "Kuzey Kıbrıs'ta Yaşam",
+    icon: Sun,
+    description: "İklim, günlük yaşam, altyapı ve yaşam kalitesi",
+    items: [
+      {
+        question: "Kuzey Kıbrıs'ta yaşam maliyeti nasıl?",
+        answer:
+          "Kuzey Kıbrıs'ta yaşam maliyeti Avrupa ortalamasının önemli ölçüde altındadır. İki kişilik bir aile için aylık ortalama harcamalar: market 400-600 GBP, elektrik-su 80-150 GBP, internet-telefon 30-50 GBP, ulaşım 100-200 GBP, dışarıda yemek (kişi başı) 8-20 GBP, sağlık sigortası 50-100 GBP. Kira hariç aylık toplam yaşam maliyeti yaklaşık 800-1.500 GBP arasındadır.",
+      },
+      {
+        question: "İklim ve hava durumu nasıl?",
+        answer:
+          "Kuzey Kıbrıs tipik Akdeniz iklimine sahiptir. Yılda ortalama 320+ güneşli gün yaşanır. Yazlar sıcak ve kurak (Haziran-Eylül, 30-40°C), kışlar ılıman ve yağışlı (Aralık-Şubat, 10-18°C). Deniz suyu sıcaklığı Mayıs-Kasım arası yüzmeye uygundur (22-28°C). Kar yağışı son derece nadirdir. Bu iklim özellikle Kuzey Avrupa'dan gelen emekliler ve dijital göçebeler için büyük bir çekim noktasıdır.",
+      },
+      {
+        question: "Altyapı ve ulaşım imkanları nasıl?",
+        answer:
+          "Ercan Havalimanı'ndan Türkiye'nin birçok şehrine direkt uçuşlar mevcuttur (İstanbul 1.5 saat). Ada içi ulaşım araçla yapılır, doğu-batı arası yaklaşık 2 saattir. Yollar genel olarak iyi durumdadır. Fiber internet altyapısı yaygınlaşmaktadır (50-100 Mbps). Elektrik şebekesi bazen dalgalanma gösterebilir; bu nedenle çoğu yeni proje jeneratör ve güneş paneli sistemi içermektedir. Süpermarketler, alışveriş merkezleri ve restoranlar her bölgede mevcuttur.",
+      },
+      {
+        question: "Sağlık hizmetleri kaliteli mi?",
+        answer:
+          "Kuzey Kıbrıs'ta hem devlet hastaneleri hem özel sağlık kuruluşları bulunmaktadır. Girne ve Lefkoşa'daki özel hastaneler modern ekipmanlarla donatılmış olup çoğu doktor İngiltere, Türkiye veya AB ülkelerinde eğitim almıştır. Acil sağlık hizmetleri ücretsizdir. Özel sağlık sigortası yıllık 500-1.500 GBP arasında değişmektedir. Ciddi operasyonlar için Türkiye'deki hastanelere hızlı ulaşım imkanı da avantajdır.",
+      },
+      {
+        question: "Çocuklu aileler için uygun mu?",
+        answer:
+          "Kuzey Kıbrıs güvenli bir yaşam ortamı sunar; suç oranları Avrupa ortalamasının çok altındadır. İngilizce eğitim veren özel okullar (anaokulu-lise), uluslararası okullar ve 20'den fazla üniversite bulunmaktadır. Plajlar, doğa parkları ve spor tesisleri çocuklar için ideal aktivite alanlarıdır. Özel okul ücretleri yıllık 2.000-6.000 GBP arasındadır. Birçok yeni konut projesi çocuk oyun alanları ve aile dostu ortak alanlar içermektedir.",
+      },
+      {
+        question: "Günlük yaşamda hangi diller konuşuluyor?",
+        answer:
+          "Resmi dil Türkçe'dir ancak İngilizce çok yaygın olarak konuşulmaktadır. Resmi kurumlar, bankalar, hastaneler ve çoğu işletmede İngilizce hizmet alabilirsiniz. Üniversiteler sayesinde çok kültürlü bir ortam mevcuttur. Ayrıca Rusça ve Almanca konuşan topluluklar da bulunmaktadır. Bu çok dilli ortam yabancı yatırımcılar ve yaşayanlar için büyük kolaylık sağlar.",
+      },
+    ],
+  },
+  {
+    title: "Genel Bilgiler",
+    icon: HelpCircle,
+    description: "Nexos Emlak ve hizmetlerimiz hakkında temel sorular",
+    items: [
+      {
+        question: "Nexos Emlak ne tür hizmetler sunuyor?",
+        answer:
+          "Nexos Emlak, Kuzey Kıbrıs'ta kapsamlı gayrimenkul hizmetleri sunmaktadır: satılık ve kiralık mülk danışmanlığı, profesyonel mülk değerleme, yatırım portföy danışmanlığı, tapu devir ve hukuki süreç yönetimi, kiralama yönetimi (kiracı bulma, kira tahsilatı, bakım koordinasyonu), anahtar teslim mobilya ve dekorasyon hizmeti, oturma izni danışmanlığı ve satış sonrası destek. Uzman kadromuzla alım-satım sürecinin her aşamasında yanınızdayız.",
+      },
+      {
+        question: "Hangi bölgelerde hizmet veriyorsunuz?",
+        answer:
+          "Ağırlıklı olarak İskele, Gazimağusa, Girne, Lefkoşa ve Güzelyurt bölgelerinde hizmet vermekteyiz. İskele Long Beach ve çevresi özellikle yatırım açısından en aktif çalıştığımız bölgedir. Ayrıca Bafra, Tatlısu, Karpaz, Esentepe ve Alsancak gibi gelişen bölgelerde de geniş portföyümüz bulunmaktadır.",
+      },
+      {
+        question: "İlanlarınız ne sıklıkla güncelleniyor?",
+        answer:
+          "İlanlarımız günlük olarak güncellenmektedir. Satılan veya kiralanan mülkler aynı gün içinde sistemden kaldırılır. Yeni ilanlar eklendikçe web sitemizde ve sosyal medya hesaplarımızda paylaşılır. Fiyat güncellemeleri ve kampanyalar anlık olarak yansıtılır.",
+      },
+      {
+        question: "Danışmanlarınızla nasıl iletişime geçebilirim?",
+        answer:
+          "Web sitemizdeki iletişim formunu doldurabilir, WhatsApp hattımızdan mesaj atabilir, doğrudan ofisimizi arayabilir veya ilan sayfalarındaki danışman iletişim bilgilerini kullanabilirsiniz. Çalışma saatlerimiz hafta içi ve Cumartesi 09:00-18:00 arasıdır. Acil durumlar için WhatsApp hattımız 7/24 aktiftir.",
+      },
+      {
+        question: "Nexos ile çalışmanın avantajı ne?",
+        answer:
+          "Bölgeyi çok iyi tanıyan yerli uzman kadromuz, şeffaf ve dürüst danışmanlık anlayışımız, geniş mülk portföyümüz, hukuki süreçlerde tam destek, satış sonrası kiralama yönetimi ve 7/24 WhatsApp iletişim hattımız sizi her adımda destekler. Müşterilerimizin %80'i referans yoluyla bize ulaşmaktadır — bu, güven ve memnuniyetin en somut göstergesidir.",
+      },
+    ],
+  },
+  {
+    title: "Satın Alma Süreci",
+    icon: Home,
+    description: "Mülk satın alma adımları ve dikkat edilmesi gerekenler",
+    items: [
+      {
+        question: "Kuzey Kıbrıs'ta ev satın alma süreci nasıl işliyor?",
+        answer:
+          "Süreç şu adımlardan oluşur: 1) İhtiyaç analizi ve bütçe belirleme, 2) Mülk seçimi ve yerinde inceleme (biz organize ediyoruz), 3) Fiyat müzakeresi, 4) Ön sözleşme ve depozito ödenmesi (genellikle 1.000-5.000 GBP), 5) Bağımsız avukat kontrolü ve tapu araştırması, 6) Satış sözleşmesinin imzalanması ve Tapu Dairesi'ne kaydı, 7) Ödeme planına göre ödemelerin yapılması, 8) Bakanlar Kurulu izni başvurusu (yabancılar için), 9) Tapu devri. Süreç ortalama 3-6 ay sürmektedir.",
+      },
+      {
+        question: "Satın almadan önce nelere dikkat etmeliyim?",
+        answer:
+          "Mutlaka kontrol edilmesi gerekenler: tapu türü (Türk Koçanı en güvenli), mülkün imar durumu ve yapı ruhsatı, altyapı durumu (su, elektrik, kanalizasyon, yol erişimi), inşaat kalitesi ve kullanılan malzemeler, bölgenin gelişim potansiyeli ve master planı, mülk üzerinde ipotek veya haciz olup olmadığı, müteahhidin geçmiş projeleri ve referansları, site aidatı ve yıllık masraflar. Bağımsız bir avukat tutmanızı şiddetle tavsiye ederiz.",
+      },
+      {
+        question: "Ev alırken hangi masraflar çıkar?",
+        answer:
+          "Tapu devir vergisi (%6, genellikle alıcı-satıcı yarı yarıya paylaşır — ilk mülk alımında %3 indirim), KDV (%5, yeni mülklerde), damga vergisi (%0.5), avukatlık ücreti (mülk değerinin %1-2'si), emlak komisyonu (%3-5, genellikle satıcıdan alınır), tapu kayıt harcı ve translator ücreti (gerekirse). Toplam ek masraflar mülk değerinin yaklaşık %10-13'ü kadardır. Bunları bütçenize dahil etmeniz önemlidir.",
+      },
+      {
+        question: "Taksitli satış seçenekleri var mı?",
+        answer:
+          "Evet, özellikle yeni projelerde taksitli ödeme planları yaygındır. Genel yapı: %30-40 peşinat, kalan tutar 12-60 ay arası taksitlendirilir. Bazı projeler faizsiz taksit, %0 peşinat kampanyaları veya anahtar teslimde ödeme gibi esnek seçenekler sunar. İkinci el mülklerde taksit seçeneği sınırlı olup satıcıyla müzakereye bağlıdır. Nexos olarak en uygun ödeme planını sizin için müzakere ediyoruz.",
+      },
+      {
+        question: "Mülkü görmeden satın alabilir miyim?",
+        answer:
+          "Teknik olarak mümkündür ancak tavsiye etmiyoruz. Yine de yurt dışından alım yapan müşterilerimiz için şu hizmetleri sunuyoruz: profesyonel video tur ve canlı görüntülü gezi (WhatsApp/Zoom), detaylı fotoğraf ve drone çekimleri, bölge tanıtım videoları, vekaletname ile işlem yapma imkanı. En ideal seçenek 2-3 günlük bir keşif gezisi planlamaktır — havalimanı transferi ve konaklama organizasyonunda da yardımcı oluyoruz.",
+      },
+    ],
+  },
+  {
+    title: "Tapu ve Hukuki Süreçler",
+    icon: Scale,
+    description: "Tapu türleri, yasal haklar ve resmi prosedürler",
+    items: [
+      {
+        question: "Kuzey Kıbrıs'ta kaç tür tapu vardır?",
+        answer:
+          "Üç ana tapu türü vardır: 1) Türk Koçanı — 1974 öncesi Türk mülkiyetinde olan araziler, en güvenli ve değerli tapu türüdür. 2) Eşdeğer Koçan (İTEM) — Güneye göç eden Kıbrıslı Türklere verilen eşdeğer mülkler, devlet güvencesindedir ve güvenilirdir. 3) Tahsis — Devlet tarafından tahsis edilmiş araziler, koşullu mülkiyet hakkı verir, bazı kısıtlamalar içerebilir. Tapu türü mülkün değerini ve yasal güvenliğini doğrudan etkiler; Türk Koçanı ve Eşdeğer Koçan en çok tercih edilen türlerdir.",
+      },
+      {
+        question: "Tapu devri ne kadar sürer?",
+        answer:
+          "TC vatandaşları için tapu devri genellikle 1-2 hafta içinde tamamlanır. Yabancı uyruklu alıcılar için Bakanlar Kurulu izni gerektiğinden süreç 3-12 ay arasında değişebilir. Bu süre zarfında satış sözleşmesi Tapu Dairesi'ne kaydedilerek (Specific Performance) alıcının hakları tam olarak güvence altına alınır — mülk başkasına satılamaz, ipotek konulamaz.",
+      },
+      {
+        question: "Sözleşmemi Tapu Dairesi'ne kaydettirmeli miyim?",
+        answer:
+          "Kesinlikle evet — bu en kritik adımdır. Satış sözleşmesinin Tapu Dairesi'ne kaydı (Specific Performance), mülkün üçüncü şahıslara satılmasını, üzerine ipotek konulmasını veya haciz işlemi yapılmasını engeller. Bu kayıt yasal hakkınızı korur ve tapu devri tamamlanana kadar en önemli güvencenizdir. Kayıt işlemi avukatınız tarafından yapılır ve küçük bir harç ödenir.",
+      },
+      {
+        question: "Avukat tutmak zorunlu mu?",
+        answer:
+          "Yasal olarak zorunlu olmasa da kesinlikle tavsiye edilir — hatta Nexos olarak biz bunu bir gereklilik olarak görüyoruz. Bağımsız bir avukat: tapu araştırması yapar, sözleşmeyi inceler ve müzakere eder, Tapu Dairesi kayıt işlemini takip eder, Bakanlar Kurulu başvurusunu hazırlar ve takip eder, olası hukuki riskleri önceden tespit eder. Avukatlık ücreti genellikle mülk değerinin %1-2'si kadardır. Güvenilir avukat önerisi için bize danışabilirsiniz.",
+      },
+      {
+        question: "Vekaletname ile işlem yapabilir miyim?",
+        answer:
+          "Evet, yurt dışında yaşıyorsanız noter tasdikli vekaletname ile avukatınıza veya güvendiğiniz bir kişiye yetki verebilirsiniz. Vekaletname Türkiye'deki noter veya konsolosluklardan düzenlenebilir. Vekaletnamede hangi işlemlerin yapılabileceği açıkça belirtilmelidir. Apostil şerhi gerekebilir. Bu yöntem uzaktan alım yapan yatırımcılar tarafından sıklıkla kullanılmaktadır.",
+      },
+    ],
+  },
+  {
+    title: "Yabancı Alıcılar",
+    icon: Globe,
+    description: "Yabancı uyrukluların mülk edinme koşulları ve hakları",
+    items: [
+      {
+        question: "Yabancılar Kuzey Kıbrıs'ta mülk satın alabilir mi?",
+        answer:
+          "Evet, yabancı uyruklu kişiler Kuzey Kıbrıs'ta mülk satın alabilir. Ancak Bakanlar Kurulu'ndan izin alınması gerekir. Her yabancı vatandaş kendi adına bir adet mülk (maksimum 1 dönüm = 1.338 m² arazi) satın alabilir. Bu sınır, KKTC'de şirket kurarak yasal olarak aşılabilir — birçok yatırımcı bu yöntemi tercih etmektedir.",
+      },
+      {
+        question: "Bakanlar Kurulu izni nedir ve nasıl alınır?",
+        answer:
+          "Yabancı uyrukluların mülk edinimi için gereken resmi izindir. Başvuru belgeleri: pasaport kopyası, sabıka kaydı (apostilli), satış sözleşmesi, tapu fotokopisi ve mülk fotoğrafları. Avukatınız başvuruyu İçişleri Bakanlığı'na yapar, süreç 3-12 ay arası sürebilir. Bu sürede mülkünüzü kullanabilir, kiraya verebilir ve tadilat yapabilirsiniz — sözleşmeniz Tapu Dairesi kaydıyla korunmaktadır.",
+      },
+      {
+        question: "Türk vatandaşları için farklı kurallar var mı?",
+        answer:
+          "Evet, TC vatandaşları Kuzey Kıbrıs'ta önemli avantajlara sahiptir: Bakanlar Kurulu izni gerekmez, tapu devri doğrudan ve hızlıca yapılır. Mülk sayısı ve arazi büyüklüğü sınırlaması yoktur, birden fazla mülk satın alabilirsiniz. Oturma izni almak daha kolaydır. Banka kredisi kullanma imkanı daha geniştir. Bu avantajlar TC vatandaşlarını Kuzey Kıbrıs emlak piyasasının en aktif alıcı grubu yapmaktadır.",
+      },
+      {
+        question: "İngiliz, Rus veya diğer ülke vatandaşları alabilir mi?",
+        answer:
+          "Evet, tüm yabancı uyruklu kişiler aynı koşullarla mülk satın alabilir. İngiliz vatandaşları en büyük yabancı alıcı grubunu oluşturmaktadır. Rus, Alman, İskandinav, İranlı ve Arap alıcılar da piyasada aktiftir. Nexos olarak İngilizce ve Türkçe dillerinde tam hizmet sunmaktayız. Çeviri ve noter işlemlerinde yardımcı oluyoruz.",
+      },
+      {
+        question: "Şirket kurarak daha fazla mülk alabilir miyim?",
+        answer:
+          "Evet, KKTC'de limited şirket kurarak mülk sayısı sınırlamasını aşabilirsiniz. Şirket kurulumu yaklaşık 1-2 hafta sürer ve maliyeti 1.500-3.000 GBP arasındadır. Şirket üzerinden alınan mülklerde Bakanlar Kurulu izni gerekmez. Ayrıca vergisel avantajlar da sağlayabilir. Bu yöntem özellikle portföy yatırımcıları ve birden fazla mülk almak isteyen alıcılar için idealdir.",
+      },
+    ],
+  },
+  {
+    title: "Oturma İzni ve Vatandaşlık",
+    icon: Landmark,
+    description: "İkamet, oturma izni ve uzun süreli kalış koşulları",
+    items: [
+      {
+        question: "Mülk alınca oturma izni alabilir miyim?",
+        answer:
+          "Evet, mülk sahibi olan yabancılar geçici oturma izni başvurusunda bulunabilir. Oturma izni genellikle 1 yıllık verilir ve yenilenebilir. Başvuru İçişleri Bakanlığı Muhaceret Dairesi'ne yapılır. Gerekli belgeler: pasaport, mülk tapu/sözleşme kopyası, banka hesap dökümü, sağlık raporu ve sabıka kaydı. Süreç 2-4 hafta sürmektedir.",
+      },
+      {
+        question: "Oturma izni ne gibi haklar sağlıyor?",
+        answer:
+          "Oturma izni ile KKTC'de yasal olarak ikamet edebilir, banka hesabı açabilir, araç satın alabilir ve günlük yaşamınızı sürdürebilirsiniz. Ancak oturma izni çalışma hakkı vermez — bunun için ayrı çalışma izni gerekir. Oturma izni süresince ülkeye giriş-çıkışlarınız serbesttir. Çocuklarınızı okullara kayıt ettirebilirsiniz.",
+      },
+      {
+        question: "KKTC vatandaşlığı almak mümkün mü?",
+        answer:
+          "KKTC vatandaşlığı belirli koşullar altında mümkündür ancak gayrimenkul alımı otomatik vatandaşlık hakkı vermez. Vatandaşlık genellikle evlilik, uzun süreli ikamet (5+ yıl) veya yatırım yoluyla değerlendirilir. Süreç Bakanlar Kurulu kararına bağlıdır. Vatandaşlık konusunda güncel bilgi için bir avukata danışmanızı öneririz.",
+      },
+      {
+        question: "Emekli olarak Kuzey Kıbrıs'a yerleşebilir miyim?",
+        answer:
+          "Kuzey Kıbrıs, emekliler için mükemmel bir yaşam destinasyonudur. Düşük yaşam maliyeti, ılıman iklim, güvenli ortam ve İngilizce'nin yaygınlığı özellikle İngiliz ve Kuzey Avrupalı emeklileri cezbetmektedir. Emekli maaşınızla rahat yaşayabilir, sağlık hizmetlerinden yararlanabilir ve aktif bir sosyal yaşam sürdürebilirsiniz. Mülk alımıyla oturma izni alarak kalıcı yerleşim mümkündür.",
+      },
+    ],
+  },
+  {
+    title: "Yatırım ve Finansman",
+    icon: Banknote,
+    description: "Gayrimenkul yatırımı, getiri ve finansman seçenekleri",
+    items: [
+      {
+        question: "Kuzey Kıbrıs'ta gayrimenkul yatırımı karlı mı?",
+        answer:
+          "Son 5 yılda özellikle İskele ve Girne bölgelerinde yıllık %20-30 arası değer artışı gözlenmiştir. Uzun dönem kiralık getiri oranı yıllık %6-10, kısa dönem (tatil kiralama) ile %10-15'e kadar çıkabilir. Üniversite öğrencileri, tatilciler, dijital göçebeler ve emekliler sayesinde kiralama talebi sürekli yüksektir. Döviz bazında yatırım yapma imkanı da (GBP, EUR, USD) ek avantaj sağlar. Ancak her yatırım gibi riskleri de vardır, profesyonel danışmanlık almanızı öneririz.",
+      },
+      {
+        question: "Uzun dönem kira geliri ne kadar bekleyebilirim?",
+        answer:
+          "Bölge ve mülk tipine göre aylık kira gelirleri: İskele Long Beach — 1+1 daire: 400-600 GBP, 2+1 daire: 600-900 GBP, 3+1 penthouse: 900-1.400 GBP. Girne merkez — 1+1: 450-700 GBP, 2+1: 700-1.100 GBP, villa: 1.200-3.000 GBP. Lefkoşa (üniversite çevresi) — stüdyo: 250-400 GBP, 2+1: 500-750 GBP. Bu rakamlar piyasa koşullarına göre değişebilir.",
+      },
+      {
+        question: "Banka kredisi kullanabilir miyim?",
+        answer:
+          "Kuzey Kıbrıs'taki bankalar konut kredisi vermektedir: mülk değerinin %50-60'ına kadar kredi, vade 10-15 yıl, faiz oranları yıllık %8-12 arası. TC vatandaşları Türkiye'deki bankalardan da kredi kullanabilir. İngiliz vatandaşları ise İngiltere'deki equity release veya bridging finance seçeneklerini değerlendirebilir. Proje bazlı taksitli ödeme planları genellikle banka kredisinden daha avantajlıdır.",
+      },
+      {
+        question: "Mülkümü kiraya vermemi yönetebilir misiniz?",
+        answer:
+          "Evet, Nexos kiralama yönetimi hizmetimiz kapsamında: kiracı bulma ve seçme (referans kontrolü dahil), kira sözleşmesi hazırlama, aylık kira tahsilatı ve havale, bakım-onarım koordinasyonu (7/24 acil destek), periyodik mülk kontrolü ve raporlama, Airbnb/Booking yönetimi (kısa dönem için), fatura takibi ve ödeme. Özellikle yurt dışında yaşayan mülk sahipleri için tam kapsamlı yönetim hizmeti sunuyoruz.",
+      },
+      {
+        question: "Hangi döviz cinsinden yatırım yapmalıyım?",
+        answer:
+          "Kuzey Kıbrıs'ta mülk fiyatları genellikle GBP (İngiliz Sterlini) olarak belirlenir, bazı projeler EUR veya USD kullanır. TL'nin döviz karşısındaki değer kaybı göz önüne alındığında, döviz bazında yatırım yapmak değer koruma açısından avantajlıdır. Kira gelirleri de genellikle GBP veya EUR üzerinden elde edilir. Ödeme planları döviz cinsinden sabitlenebilir.",
+      },
+    ],
+  },
+  {
+    title: "Kiralama",
+    icon: Key,
+    description: "Kiralık mülk arama, haklar ve sorumluluklar",
+    items: [
+      {
+        question: "Kiralama süreci nasıl işliyor?",
+        answer:
+          "Mülk seçimi sonrası kira sözleşmesi hazırlanır. Standart koşullar: 1 yıllık sözleşme, 2-3 aylık depozito ve ilk ay kirası peşin ödenir. Sözleşme İngilizce ve Türkçe olarak iki dilde hazırlanır. Kimlik/pasaport fotokopisi ve bazen iş/gelir belgesi istenir. Kiracı ve ev sahibi hakları yasalarla korunmaktadır. Nexos olarak sözleşme hazırlama, anahtar teslim ve mülk durumu tespitinde yardımcı oluyoruz.",
+      },
+      {
+        question: "Kiracı olarak haklarım nelerdir?",
+        answer:
+          "Kira sözleşmesi süresince yasal haklarınız: mülkten haksız yere çıkarılamazsınız, depozito sözleşme bitiminde (hasar yoksa) iade edilir, ev sahibi habersiz mülke giremez, kira artışı yıllık enflasyon oranıyla sınırlıdır, mülkteki yapısal arızaların giderilmesi ev sahibinin sorumluluğundadır. Anlaşmazlık durumunda Kira Mahkemesi'ne başvurulabilir.",
+      },
+      {
+        question: "Evcil hayvan kabul eden mülkler var mı?",
+        answer:
+          "Bazı mülk sahipleri evcil hayvanlara izin vermektedir. Bu durum ilan detayında belirtilir veya danışmanımıza sorabilirsiniz. Evcil hayvan kabul eden mülklerde genellikle ek depozito (1 aylık kira) istenebilir. Villa ve müstakil evlerde evcil hayvan izni apartman dairelerine göre daha yaygındır.",
+      },
+      {
+        question: "Faturalar ve aidatlar kiraya dahil mi?",
+        answer:
+          "Genellikle elektrik, su ve internet faturaları kiraya dahil değildir ve kiracı tarafından ödenir. Site yönetimli komplekslerde ortak alan aidatı (havuz, güvenlik, bahçe, jeneratör) da kiracıya aittir — aylık 50-150 GBP arası. Bazı kiralık dairelerde klima ve internet dahil olabilir. Tüm detaylar kira sözleşmesinde açıkça belirtilir.",
+      },
+      {
+        question: "Kısa dönem kiralama (Airbnb) yapmak yasal mı?",
+        answer:
+          "Evet, KKTC'de kısa dönem kiralama yasal olup giderek yaygınlaşmaktadır. Ancak belediyeden turizm amaçlı kiralama izni (ruhsat) almanız önerilir. Vergi yükümlülükleri uzun dönem kiralamadan farklıdır. Site yönetimi olan bazı komplekslerde kısa dönem kiralama kısıtlaması olabilir — alım öncesinde bu durumu kontrol etmeniz önemlidir.",
+      },
+    ],
+  },
+  {
+    title: "İnşaat ve Yeni Projeler",
+    icon: Building2,
+    description: "Yeni projeler, inşaat kalitesi ve teslim süreçleri",
+    items: [
+      {
+        question: "Off-plan (proje aşamasında) mülk almak güvenli mi?",
+        answer:
+          "Güvenilir müteahhitlerden off-plan mülk almak %15-30 fiyat avantajı sağlayabilir. Güvenli alım için: müteahhidin tamamlanmış en az 2-3 projesini bizzat ziyaret edin, teslim garantisi ve gecikme cezası içeren sözleşme yapın, ödeme planını inşaat ilerlemesine (milestone) bağlayın, sözleşmeyi bağımsız avukata inceletin, tapunun müteahhit üzerinde olduğunu doğrulayın. Nexos olarak sadece güvenilirliğini doğruladığımız müteahhitlerle çalışıyoruz.",
+      },
+      {
+        question: "İnşaat kalitesini nasıl değerlendirebilirim?",
+        answer:
+          "Dikkat edilecek kriterler: depreme dayanıklılık sınıfı (C30+ beton), ısı ve ses yalıtımı kalitesi, dış cephe malzemesi (taş kaplama, kompozit vs.), pencere ve kapı markası (PVC çift cam minimum), tesisat altyapısı, elektrik sistemi ve jeneratör kapasitesi, güneş paneli sistemi, asansör markası ve kapasitesi. Mümkünse bağımsız bir inşaat mühendisi ile kontrol yaptırın. Nexos olarak mülk inceleme hizmetimizde bu kontrolleri sizin adınıza yapıyoruz.",
+      },
+      {
+        question: "Teslim tarihi gecikirse ne olur?",
+        answer:
+          "İyi hazırlanmış bir satış sözleşmesinde gecikme durumunda: aylık cezai şart (genellikle aylık kira bedeli kadar tazminat), belirli bir süre sonra (6-12 ay) sözleşmeden cayma ve tam iade hakkı, faiz ile birlikte geri ödeme garantisi bulunmalıdır. Bu maddelerin sözleşmede yer aldığından emin olun. Kuzey Kıbrıs'ta inşaat gecikmeleri yaygın olduğundan bu korunma kritik öneme sahiptir.",
+      },
+      {
+        question: "Hangi müteahhitler güvenilir?",
+        answer:
+          "Güvenilir müteahhit kriterleri: minimum 5 yıllık sektör deneyimi, en az 2-3 tamamlanmış ve teslim edilmiş proje, zamanında teslim geçmişi, mevcut proje sakinlerinin memnuniyeti, İnşaat Mühendisleri Odası kaydı, mali sağlamlık ve banka referansları. Nexos olarak portföyümüzdeki tüm projelerin müteahhitlerini titizlikle araştırıyor ve sadece güvenilir firmalarla çalışıyoruz.",
+      },
+      {
+        question: "Mobilya ve dekorasyon paketi sunuyor musunuz?",
+        answer:
+          "Evet, anahtar teslim mobilya ve dekorasyon paketlerimiz mevcuttur. Temel paket (yatak, koltuk, mutfak eşyaları) 3.000-5.000 GBP, standart paket (tam mobilya + beyaz eşya + dekorasyon) 5.000-10.000 GBP, premium paket (tasarım mobilya + dekorasyon + ev tekstili) 10.000-20.000 GBP arasındadır. Özellikle yatırım amaçlı mülklerde kiralama potansiyelini artıran profesyonel iç tasarım hizmeti de sunuyoruz.",
+      },
+    ],
+  },
+  {
+    title: "Vergiler ve Masraflar",
+    icon: ShieldCheck,
+    description: "Emlak vergileri, harçlar ve yıllık masraflar",
+    items: [
+      {
+        question: "Gayrimenkul sahipliğinde hangi vergiler var?",
+        answer:
+          "Yıllık emlak vergisi: mülk değerine göre belirlenir ve çok düşüktür (yıllık 50-300 TL arası). Kira geliri vergisi: elde edilen kira geliri üzerinden gelir vergisi beyannamesi verilmesi gerekir, oranlar %10-30 arası kademeli. Değer artış kazancı vergisi: mülk satışında kazanç üzerinden vergi uygulanabilir. Genel olarak Kuzey Kıbrıs vergi oranları Türkiye ve Avrupa ülkelerine göre oldukça düşüktür.",
+      },
+      {
+        question: "Tapu devir vergisi ne kadar?",
+        answer:
+          "Tapu devir vergisi mülk değerinin %6'sıdır. Ancak ilk kez mülk alan kişiler (yabancılar dahil) için bu oran %3'tür — bu önemli bir tasarruf sağlar. Genellikle alıcı ve satıcı bu vergiyi yarı yarıya paylaşır, ancak bu müzakereye bağlıdır. Damga vergisi %0.5 olarak eklenir. KDV yeni mülklerde %5'tir.",
+      },
+      {
+        question: "Site aidatı ne kadar?",
+        answer:
+          "Site aidatları kompleksin sunduğu hizmetlere göre değişir: temel site (güvenlik, bahçe): aylık 30-60 GBP, orta segment (havuz, fitness, güvenlik): aylık 60-120 GBP, lüks site (SPA, plaj, concierge): aylık 120-250 GBP. Aidatlar genellikle aylık veya üç aylık peşin olarak ödenir. Aidatı mülk satın almadan önce mutlaka öğrenin ve bütçenize dahil edin.",
+      },
+      {
+        question: "Mülkü satarken hangi masraflar çıkar?",
+        answer:
+          "Satış sırasında: tapu devir vergisi payı (genellikle alıcıyla %3 + %3 paylaşılır), emlak komisyonu (%3-5, genellikle satıcıdan), varsa değer artış kazancı vergisi, avukatlık ücreti. Önemli not: satış bedelinin sözleşmede gerçeğe uygun yazılması hem alıcı hem satıcı için yasal güvenlik açısından kritiktir.",
+      },
+      {
+        question: "Sigorta yaptırmak zorunlu mu?",
+        answer:
+          "Yasal olarak zorunlu değildir ancak şiddetle tavsiye edilir. Sigorta türleri ve yıllık yaklaşık maliyetleri: yangın sigortası 100-200 GBP, deprem sigortası 100-200 GBP, kapsamlı konut sigortası (yangın + deprem + hırsızlık + sel) 250-500 GBP, mobilya ve eşya sigortası 100-300 GBP. Özellikle yatırım amaçlı ve kiralık mülklerde kapsamlı sigorta yaptırmak riskleri minimize eder.",
+      },
+    ],
+  },
+  {
+    title: "Ulaşım ve Seyahat",
+    icon: Plane,
+    description: "Kuzey Kıbrıs'a nasıl ulaşılır, vize ve giriş koşulları",
+    items: [
+      {
+        question: "Kuzey Kıbrıs'a nasıl gidilir?",
+        answer:
+          "Kuzey Kıbrıs'a ulaşım Ercan Havalimanı üzerinden gerçekleşir. Türkiye'nin birçok şehrinden (İstanbul, Ankara, İzmir, Antalya, Adana) direkt uçuşlar mevcuttur. İstanbul'dan uçuş süresi yaklaşık 1.5 saattir. Ayrıca Mersin ve Taşucu'ndan Girne/Gazimağusa'ya feribot seferleri bulunmaktadır. İngiltere'den genellikle aktarmalı uçuşlar (İstanbul üzerinden) tercih edilir.",
+      },
+      {
+        question: "Vize gerekiyor mu?",
+        answer:
+          "TC vatandaşları vizesiz olarak KKTC'ye girebilir, sadece kimlik kartı yeterlidir. İngiliz, AB ülkeleri, Rusya, Ukrayna ve birçok ülke vatandaşı da vizesiz giriş yapabilir (30-90 gün). Vize gerektiren ülkelerin listesi KKTC Dışişleri Bakanlığı'ndan kontrol edilebilir. Mülk sahipleri oturma izni alarak süresiz kalabilir.",
+      },
+      {
+        question: "Havalimanından mülklerize transfer var mı?",
+        answer:
+          "Nexos olarak tüm müşterilerimize ücretsiz havalimanı transfer hizmeti sunuyoruz. Ercan Havalimanı'ndan İskele'ye yaklaşık 40 dakika, Girne'ye 30 dakika, Lefkoşa'ya 20 dakika sürmektedir. Keşif gezisi planlayan müşterilerimiz için mülk turları boyunca araçlı transfer sağlıyoruz.",
+      },
+      {
+        question: "Ada içinde ulaşım nasıl sağlanır?",
+        answer:
+          "Ada içi ulaşım ağırlıklı olarak araçla yapılır. Araç kiralama günlük 20-40 GBP arasındadır. İkinci el araç fiyatları Avrupa'ya göre düşüktür. Trafik soldan akar (İngiliz sistemi). Toplu taşıma sınırlıdır; dolmuş (minibüs) hatları şehirler arası ulaşımda kullanılır. Taksi hizmetleri mevcuttur ve uygulamalar (BiTaksi) yaygınlaşmaktadır. Doğu-batı arası (Karpaz-Güzelyurt) yaklaşık 2.5 saattir.",
+      },
+    ],
+  },
+  {
+    title: "Eğitim ve Üniversiteler",
+    icon: GraduationCap,
+    description: "Eğitim imkanları, okullar ve üniversiteler",
+    items: [
+      {
+        question: "Kuzey Kıbrıs'ta eğitim kalitesi nasıl?",
+        answer:
+          "Kuzey Kıbrıs'ta 20'den fazla üniversite bulunmaktadır ve birçoğu uluslararası akreditasyona sahiptir. Doğu Akdeniz Üniversitesi (DAÜ), Yakın Doğu Üniversitesi (YDÜ), Girne Amerikan Üniversitesi (GAÜ) ve Uluslararası Kıbrıs Üniversitesi (UKÜ) en tanınmış kurumlardır. İngilizce eğitim veren ilk-orta-lise düzeyinde özel okullar da mevcuttur. Eğitim maliyetleri Avrupa ve hatta Türkiye ortalamasının altındadır.",
+      },
+      {
+        question: "Üniversite öğrencileri kiralama piyasasını nasıl etkiliyor?",
+        answer:
+          "Kuzey Kıbrıs'ta 100.000'den fazla üniversite öğrencisi bulunmaktadır ve bu sayı her yıl artmaktadır. Öğrenciler kiralama talebinin önemli bir bölümünü oluşturur — özellikle Lefkoşa, Gazimağusa ve Girne'deki üniversite çevrelerinde. Bu durum yatırımcılar için istikrarlı ve sürekli kira geliri anlamına gelir. Stüdyo ve 1+1 daireler öğrenci pazarında en çok talep gören mülk tipleridir.",
+      },
+      {
+        question: "Çocuğumu uluslararası okula kaydedebilir miyim?",
+        answer:
+          "Evet, Kuzey Kıbrıs'ta İngilizce müfredatlı uluslararası okullar mevcuttur. Girne ve Lefkoşa'da English School of Kyrenia, The Heritage School gibi okullar Cambridge/IGCSE müfredatı uygulamaktadır. Yıllık ücretler 2.000-6.000 GBP arasındadır — bu rakamlar Avrupa'daki benzer okulların çok altındadır. Mülk sahibi ve oturma izinli aileler çocuklarını kolaylıkla kaydettirebilir.",
+      },
+    ],
+  },
+  {
+    title: "Sağlık ve Güvenlik",
+    icon: HeartPulse,
+    description: "Sağlık hizmetleri, sigorta ve güvenlik durumu",
+    items: [
+      {
+        question: "Sağlık sistemi nasıl işliyor?",
+        answer:
+          "Kuzey Kıbrıs'ta hem devlet hem özel sağlık kuruluşları bulunmaktadır. Devlet hastaneleri ücretsiz acil hizmet verir. Özel hastaneler (Near East Hospital, Dr. Burhan Nalbantoğlu Devlet Hastanesi, Girne'deki özel klinikler) modern ekipmanlarla donatılmıştır. Çoğu doktor İngiltere, Türkiye veya AB ülkelerinde eğitim almıştır. Özel sağlık sigortası yıllık 500-1.500 GBP arasındadır ve kapsamlı hizmet sunar.",
+      },
+      {
+        question: "Kuzey Kıbrıs güvenli mi?",
+        answer:
+          "Kuzey Kıbrıs, dünyada en düşük suç oranlarına sahip bölgelerden biridir. Cinayet, silahlı soygun ve organize suç oranları Avrupa ortalamasının çok altındadır. Gece yarısı sokakta yürümek, kapınızı açık bırakmak yaygın bir yaşam tarzıdır. Polis teşkilatı toplum odaklı çalışır. Bu güvenli ortam özellikle aileler ve emekliler için büyük bir çekim noktasıdır. Deprem riski düşüktür ve ciddi doğal afet geçmişi yoktur.",
+      },
+      {
+        question: "Acil durumda ne yapmalıyım?",
+        answer:
+          "Acil yardım numaraları: 112 (genel acil), 199 (yangın), 155 (polis). Özel hastanelerin 7/24 acil servisleri mevcuttur. Nexos olarak mülk sahiplerimize acil durum iletişim rehberi ve 7/24 WhatsApp destek hattı sunuyoruz. Ciddi tıbbi müdahale gerektiren durumlarda Türkiye'deki hastanelere ambulans uçakla transfer mümkündür.",
+      },
+    ],
+  },
+  {
+    title: "Yaşam Tarzı ve Kültür",
+    icon: Palmtree,
+    description: "Plajlar, aktiviteler, yemek kültürü ve sosyal yaşam",
+    items: [
+      {
+        question: "Kuzey Kıbrıs'ta hangi aktiviteler yapılabilir?",
+        answer:
+          "Su sporları (dalış, sörf, yelken, jet ski), golf (2 uluslararası golf sahası), trekking ve doğa yürüyüşleri (Beşparmak Dağları, Karpaz yarımadası), tarihi keşif (Salamis antik kenti, St. Hilarion Kalesi, Bellapais Manastırı), casino ve gece hayatı, plaj kulüpleri, balıkçılık, bisiklet turları ve yoga kampları. Her mevsim farklı festivaller düzenlenmektedir.",
+      },
+      {
+        question: "Yemek kültürü nasıl?",
+        answer:
+          "Kuzey Kıbrıs mutfağı Türk, Yunan ve Ortadoğu mutfağının eşsiz bir karışımıdır. Hellim peyniri, molehiya, kolokas, şeftali kebabı ve pilavuna en bilinen yerel lezzetlerdir. Taze deniz ürünleri her yerde mevcuttur. Restoran fiyatları oldukça uygun — iki kişilik bir akşam yemeği 25-60 GBP arasındadır. İngiliz pub'ları, İtalyan restoranları ve uluslararası mutfaklar da yaygındır.",
+      },
+      {
+        question: "Plajlar ve deniz kalitesi nasıl?",
+        answer:
+          "Kuzey Kıbrıs'ın 396 km'lik kıyı şeridinde onlarca muhteşem plaj bulunmaktadır. Altınkum (Golden Beach / Karpaz), Escape Beach (Girne), Long Beach (İskele), Glapsides (Gazimağusa) en popüler plajlardır. Deniz suyu berrak ve temizdir, Akdeniz'in en iyi su kalitesine sahiptir. Caretta caretta deniz kaplumbağalarının yuvalama alanları korunmaktadır. Kum plajları ve kaya koyları seçeneği mevcuttur.",
+      },
+      {
+        question: "Expat (yabancı) topluluğu var mı?",
+        answer:
+          "Kuzey Kıbrıs'ta büyüyen bir expat topluluğu mevcuttur — özellikle İngiliz, Alman, Rus, İskandinav ve İranlı topluluklar aktiftir. Girne'de İngiliz expat topluluğu en kalabalık gruptur. Facebook grupları, expat buluşmaları, spor kulüpleri ve sosyal etkinlikler aracılığıyla kolaylıkla sosyalleşebilirsiniz. İngilizce konuşan birçok restoran, kafe ve işletme bulunmaktadır.",
+      },
+    ],
+  },
+];
+
+// Generate FAQ structured data for SEO
+function generateFaqJsonLd(categories: FaqCategory[]) {
+  const allQuestions = categories.flatMap((cat) =>
+    cat.items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    }))
+  );
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allQuestions,
+  };
+}
+
+export default async function SSSPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const faqJsonLd = generateFaqJsonLd(FAQ_CATEGORIES);
+  const totalQuestions = FAQ_CATEGORIES.reduce(
+    (sum, cat) => sum + cat.items.length,
+    0
+  );
+
+  return (
+    <>
+      <JsonLd data={faqJsonLd} />
+      <div className="container mx-auto px-4 py-12">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <h1 className="text-3xl font-bold sm:text-4xl">
+            Sıkça Sorulan Sorular
+          </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+            Kuzey Kıbrıs&apos;ta gayrimenkul alım-satım, kiralama, yatırım,
+            yaşam ve yasal süreçler hakkında {totalQuestions}+ soruya kapsamlı
+            cevaplar.
+          </p>
+        </div>
+
+        {/* Category navigation */}
+        <nav className="mb-12 flex flex-wrap justify-center gap-2">
+          {FAQ_CATEGORIES.map((cat) => (
+            <a
+              key={cat.title}
+              href={`#${slugify(cat.title)}`}
+              className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-primary hover:text-white sm:px-4 sm:py-2 sm:text-sm"
+            >
+              <cat.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              {cat.title}
+            </a>
+          ))}
+        </nav>
+
+        {/* FAQ Categories */}
+        <div className="space-y-14">
+          {FAQ_CATEGORIES.map((category) => (
+            <section key={category.title} id={slugify(category.title)}>
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <category.icon className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">{category.title}</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {category.description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {category.items.map((item) => (
+                  <details
+                    key={item.question}
+                    className="group rounded-lg border bg-card transition-shadow hover:shadow-sm"
+                  >
+                    <summary className="flex cursor-pointer items-center justify-between gap-4 p-4 font-medium [&::-webkit-details-marker]:hidden">
+                      <span>{item.question}</span>
+                      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                    </summary>
+                    <div className="border-t px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+                      {item.answer}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        {/* Stats */}
+        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="rounded-xl border bg-card p-4 text-center">
+            <p className="text-2xl font-bold text-primary">
+              {FAQ_CATEGORIES.length}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Kategori</p>
+          </div>
+          <div className="rounded-xl border bg-card p-4 text-center">
+            <p className="text-2xl font-bold text-primary">{totalQuestions}+</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Soru & Cevap
+            </p>
+          </div>
+          <div className="rounded-xl border bg-card p-4 text-center">
+            <p className="text-2xl font-bold text-primary">7/24</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              WhatsApp Destek
+            </p>
+          </div>
+          <div className="rounded-xl border bg-card p-4 text-center">
+            <p className="text-2xl font-bold text-primary">%100</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Ücretsiz Danışmanlık
+            </p>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="mt-12 rounded-2xl bg-primary/5 p-8 text-center sm:p-12">
+          <h2 className="text-2xl font-bold">
+            Sorunuzun cevabını bulamadınız mı?
+          </h2>
+          <p className="mt-2 text-muted-foreground">
+            Uzman ekibimiz tüm sorularınızı yanıtlamaya hazır. Ücretsiz
+            danışmanlık için hemen iletişime geçin.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="/iletisim"
+              className="inline-flex h-10 items-center rounded-lg bg-primary px-6 text-sm font-medium text-white transition-colors hover:bg-primary/90"
+            >
+              Bize Ulaşın
+            </a>
+            <a
+              href="https://wa.me/905551234567"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 items-center rounded-lg border px-6 text-sm font-medium transition-colors hover:bg-muted"
+            >
+              WhatsApp ile Yazın
+            </a>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ü/g, "u")
+    .replace(/ş/g, "s")
+    .replace(/ç/g, "c")
+    .replace(/ğ/g, "g")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}

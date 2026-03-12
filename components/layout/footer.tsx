@@ -1,34 +1,36 @@
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Separator } from "@/components/ui/separator";
 
-const FOOTER_LINKS = {
-  emlak: [
-    { href: "/emlak?islem=satilik", label: "Satılık" },
-    { href: "/emlak?islem=kiralik", label: "Kiralık" },
-    { href: "/emlak?tip=villa", label: "Villa" },
-    { href: "/emlak?tip=apartment", label: "Daire" },
-    { href: "/emlak?tip=land", label: "Arsa" },
-  ],
-  kurumsal: [
-    { href: "/hakkimizda", label: "Hakkımızda" },
-    { href: "/hizmetlerimiz", label: "Hizmetlerimiz" },
-    { href: "/ekibimiz", label: "Ekibimiz" },
-    { href: "/blog", label: "Rehber" },
-    { href: "/iletisim", label: "İletişim" },
-    { href: "/sss", label: "SSS" },
-  ],
-};
-
 export function Footer() {
+  const t = useTranslations("footer");
+
+  const emlakLinks = [
+    { href: "/emlak?islem=satilik", tKey: "forSale" as const },
+    { href: "/emlak?islem=kiralik", tKey: "forRent" as const },
+    { href: "/emlak?tip=villa", tKey: "villa" as const },
+    { href: "/emlak?tip=apartment", tKey: "apartment" as const },
+    { href: "/emlak?tip=land", tKey: "land" as const },
+  ];
+
+  const kurumsalLinks = [
+    { href: "/hakkimizda" as const, tKey: "aboutUs" as const },
+    { href: "/hizmetlerimiz" as const, tKey: "services" as const },
+    { href: "/ekibimiz" as const, tKey: "team" as const },
+    { href: "/blog" as const, tKey: "guide" as const },
+    { href: "/iletisim" as const, tKey: "contact" as const },
+    { href: "/sss" as const, tKey: "faq" as const },
+  ];
+
   return (
     <footer className="border-t bg-muted/30">
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        {/* Mobile: compact 2-row layout */}
-        {/* Desktop: 4-col grid */}
         <div className="grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4">
-          {/* Brand — full width on mobile */}
+          {/* Brand */}
           <div className="col-span-2 space-y-3 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2">
               <Image
@@ -40,22 +42,23 @@ export function Footer() {
               />
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Profesyonel emlak danışmanlığı ile hayalinizdeki mülke ulaşmanızı
-              sağlıyoruz.
+              {t("description")}
             </p>
           </div>
 
           {/* Emlak links */}
           <div>
-            <h3 className="mb-3 text-sm font-semibold sm:mb-4">Emlak</h3>
+            <h3 className="mb-3 text-sm font-semibold sm:mb-4">
+              {t("realEstate")}
+            </h3>
             <ul className="space-y-2">
-              {FOOTER_LINKS.emlak.map((link) => (
-                <li key={link.href}>
+              {emlakLinks.map((link) => (
+                <li key={link.tKey}>
                   <Link
-                    href={link.href}
+                    href={link.href as never}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {link.label}
+                    {t(link.tKey)}
                   </Link>
                 </li>
               ))}
@@ -64,28 +67,32 @@ export function Footer() {
 
           {/* Kurumsal links */}
           <div>
-            <h3 className="mb-3 text-sm font-semibold sm:mb-4">Kurumsal</h3>
+            <h3 className="mb-3 text-sm font-semibold sm:mb-4">
+              {t("corporate")}
+            </h3>
             <ul className="space-y-2">
-              {FOOTER_LINKS.kurumsal.map((link) => (
-                <li key={link.href}>
+              {kurumsalLinks.map((link) => (
+                <li key={link.tKey}>
                   <Link
                     href={link.href}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {link.label}
+                    {t(link.tKey)}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact — full width on mobile */}
+          {/* Contact */}
           <div className="col-span-2 lg:col-span-1">
-            <h3 className="mb-3 text-sm font-semibold sm:mb-4">İletişim</h3>
+            <h3 className="mb-3 text-sm font-semibold sm:mb-4">
+              {t("contactTitle")}
+            </h3>
             <ul className="flex flex-wrap gap-x-6 gap-y-2 sm:flex-col sm:gap-3">
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 shrink-0" />
-                <span>İskele, Kuzey Kıbrıs</span>
+                <span>{t("location")}</span>
               </li>
               <li>
                 <a
@@ -113,20 +120,21 @@ export function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} NexOS Emlak. Tüm hakları saklıdır.
+            Nexos Investment &copy; {new Date().getFullYear()}{" "}
+            {t("rights")}
           </p>
           <div className="flex gap-4">
             <Link
-              href="/gizlilik-politikasi"
+              href={"/gizlilik-politikasi" as never}
               className="text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
-              Gizlilik Politikası
+              {t("privacy")}
             </Link>
             <Link
-              href="/kullanim-sartlari"
+              href={"/kullanim-sartlari" as never}
               className="text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
-              Kullanım Şartları
+              {t("terms")}
             </Link>
           </div>
         </div>

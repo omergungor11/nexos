@@ -1,0 +1,166 @@
+{
+  "nav": {
+    "forSale": "For Sale",
+    "forRent": "For Rent",
+    "map": "Map",
+    "services": "Services",
+    "guide": "Guide",
+    "team": "Our Team",
+    "about": "About Us",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "contactUs": "Contact Us",
+    "menu": "Menu"
+  },
+  "hero": {
+    "title1": "Your Dream Home",
+    "title2": "Is Just a Step Away",
+    "description": "Discover properties for sale and rent with advanced filtering options."
+  },
+  "search": {
+    "all": "All",
+    "forSale": "For Sale",
+    "forRent": "For Rent",
+    "quickSearch": "Quick search...",
+    "searchListings": "Search listings...",
+    "location": "Location",
+    "propertyType": "Type",
+    "detailed": "Advanced",
+    "search": "Search",
+    "resultsFound": "{count} results found",
+    "noResults": "No results found for \"{query}\"",
+    "viewAll": "View all results",
+    "searchAll": "Search all listings",
+    "searching": "Searching..."
+  },
+  "stats": {
+    "activeListings": "Active Listings",
+    "completedSales": "Completed Sales",
+    "cities": "Cities",
+    "yearsExperience": "Years Experience"
+  },
+  "featured": {
+    "title": "Featured Properties",
+    "description": "Highlighted real estate opportunities"
+  },
+  "services": {
+    "title": "Our Services",
+    "description": "Comprehensive solutions for your real estate needs",
+    "forSale": "Properties for Sale",
+    "forSaleDesc": "Find your dream property from our wide portfolio of apartments, villas, land, and commercial properties.",
+    "forRent": "Rental Properties",
+    "forRentDesc": "Reliable options for residential and commercial rentals. Short and long-term leasing solutions.",
+    "investment": "Investment Advisory",
+    "investmentDesc": "We help you make the best investment decisions with market analysis and valuation reports.",
+    "legal": "Legal Consultancy",
+    "legalDesc": "Professional support in title deed procedures, contract preparation, and real estate law.",
+    "corporate": "Corporate Solutions",
+    "corporateDesc": "Specialized corporate advisory for office, warehouse, and commercial space procurement.",
+    "renovation": "Renovation & Decoration",
+    "renovationDesc": "Renovation, interior design, and home staging services to increase your property's value."
+  },
+  "categories": {
+    "title": "Browse by Category",
+    "description": "Quickly find the property type you're looking for",
+    "viewListings": "View Listings"
+  },
+  "about": {
+    "label": "About Us",
+    "title": "Trusted Real Estate Advisory with",
+    "titleHighlight": "Over 10 Years of Experience",
+    "description": "At Nexos Investment, we guide our clients in making the best investment decisions with our expertise in the real estate sector. We offer professional advisory services for properties for sale and rent.",
+    "features": {
+      "team": "Professional and experienced advisory team",
+      "transparency": "Transparent and reliable service approach",
+      "portfolio": "Wide portfolio and quick solutions",
+      "consultancy": "Investment advisory and market analysis"
+    },
+    "moreInfo": "Learn More"
+  },
+  "recent": {
+    "title": "Recently Added",
+    "description": "Latest real estate listings"
+  },
+  "whyUs": {
+    "label": "Why Choose Us?",
+    "title": "For Your Real Estate Investment in Cyprus",
+    "titleHighlight": "Your Trusted Partner",
+    "description": "We offer investment and lifestyle-oriented real estate solutions in North Cyprus's most valuable locations. We're with you every step of the way.",
+    "happyCustomers": "Happy Customers",
+    "reliable": "Reliable Service",
+    "reliableDesc": "We're with you in every transaction with transparent process management and title deed guarantee.",
+    "fast": "Fast Process",
+    "fastDesc": "Our expert team completes your property buying and selling processes in the shortest time.",
+    "expert": "Expert Team",
+    "expertDesc": "Our experienced consultants guide you in making the best investment decisions.",
+    "satisfaction": "Customer Satisfaction",
+    "satisfactionDesc": "We build long-term customer relationships, including after-sales support."
+  },
+  "cta": {
+    "title": "Want to Evaluate Your Property?",
+    "description": "Schedule a free valuation appointment with our expert team. Let us help you sell or rent your property at the best price.",
+    "button": "Get Free Valuation"
+  },
+  "property": {
+    "featured": "Featured",
+    "floor": "{floor}th floor",
+    "apartment": "Apartment",
+    "villa": "Villa",
+    "detached": "Detached House",
+    "land": "Land",
+    "office": "Office",
+    "shop": "Shop",
+    "warehouse": "Warehouse",
+    "sale": "For Sale",
+    "rent": "For Rent"
+  },
+  "sort": {
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "priceAsc": "Price (Low to High)",
+    "priceDesc": "Price (High to Low)",
+    "areaAsc": "Area (Low to High)",
+    "areaDesc": "Area (High to Low)",
+    "mostViewed": "Most Viewed"
+  },
+  "footer": {
+    "description": "We help you reach your dream property with professional real estate advisory.",
+    "realEstate": "Real Estate",
+    "forSale": "For Sale",
+    "forRent": "For Rent",
+    "villa": "Villa",
+    "apartment": "Apartment",
+    "land": "Land",
+    "corporate": "Corporate",
+    "aboutUs": "About Us",
+    "services": "Services",
+    "team": "Our Team",
+    "guide": "Guide",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "contactTitle": "Contact",
+    "location": "Iskele, North Cyprus",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
+  },
+  "cookie": {
+    "message": "This website uses cookies to improve your experience.",
+    "moreInfo": "Learn More",
+    "accept": "Accept"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or may have been moved.",
+    "home": "Home Page"
+  },
+  "metadata": {
+    "homeTitle": "Nexos Real Estate | Trusted Property Advisory",
+    "homeDescription": "Find your dream home with Nexos Real Estate. Apartments, villas, land, and commercial properties for sale and rent.",
+    "siteDescription": "Nexos Real Estate - Property listings for sale and rent, trusted advisory services."
+  },
+  "language": {
+    "tr": "Türkçe",
+    "en": "English"
+  }
+}

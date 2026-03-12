@@ -1,0 +1,14 @@
+{
+  "faq": {
+    "title": "Sıkça Sorulan Sorular",
+    "description": "Kuzey Kıbrıs'ta gayrimenkul alım-satım, kiralama, yatırım, yaşam ve yasal süreçler hakkında {count}+ soruya kapsamlı cevaplar.",
+    "category": "Kategori",
+    "questionsAndAnswers": "Soru & Cevap",
+    "whatsappSupport": "WhatsApp Destek",
+    "freeConsultancy": "Ücretsiz Danışmanlık",
+    "notFoundTitle": "Sorunuzun cevabını bulamadınız mı?",
+    "notFoundDescription": "Uzman ekibimiz tüm sorularınızı yanıtlamaya hazır. Ücretsiz danışmanlık için hemen iletişime geçin.",
+    "contactUs": "Bize Ulaşın",
+    "whatsappWrite": "WhatsApp ile Yazın"
+  }
+}

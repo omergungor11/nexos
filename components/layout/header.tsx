@@ -1,17 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations();
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -42,17 +45,18 @@ export function Header() {
         <nav className="hidden items-center gap-1 md:flex">
           {NAV_LINKS.map((link) => (
             <Link
-              key={link.href}
-              href={link.href}
+              key={link.tKey}
+              href={link.href as never}
               className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              {link.label}
+              {t(link.tKey)}
             </Link>
           ))}
         </nav>
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitcher />
           <a
             href="tel:+905551234567"
             className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
@@ -61,21 +65,24 @@ export function Header() {
             0555 123 45 67
           </a>
           <Link href="/iletisim" className={buttonVariants({ size: "sm" })}>
-            Bize Ulaşın
+            {t("nav.contactUs")}
           </Link>
         </div>
 
         {/* Mobile Menu */}
         <div ref={menuRef} className="relative md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setOpen(!open)}
-            render={<span />}
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            <span className="sr-only">Menü</span>
-          </Button>
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setOpen(!open)}
+              render={<span />}
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <span className="sr-only">{t("nav.menu")}</span>
+            </Button>
+          </div>
 
           {open && (
             <>
@@ -89,12 +96,12 @@ export function Header() {
                 <nav className="flex flex-col gap-0.5">
                   {NAV_LINKS.map((link) => (
                     <Link
-                      key={link.href}
-                      href={link.href}
+                      key={link.tKey}
+                      href={link.href as never}
                       onClick={() => setOpen(false)}
                       className="rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                     >
-                      {link.label}
+                      {t(link.tKey)}
                     </Link>
                   ))}
                   <HrSeparator className="my-2" />
@@ -110,7 +117,7 @@ export function Header() {
                     onClick={() => setOpen(false)}
                     className={cn(buttonVariants(), "mt-1 rounded-xl")}
                   >
-                    Bize Ulaşın
+                    {t("nav.contactUs")}
                   </Link>
                 </nav>
               </div>

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 interface SectionHeaderProps {
   title: string;
@@ -26,7 +26,7 @@ export function SectionHeader({
       </div>
       {href && (
         <Link
-          href={href}
+          href={href as never}
           className="hidden items-center gap-1 text-sm font-medium text-primary hover:underline sm:flex"
         >
           {linkLabel}

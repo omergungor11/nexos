@@ -1,0 +1,166 @@
+{
+  "nav": {
+    "forSale": "Satılık",
+    "forRent": "Kiralık",
+    "map": "Harita",
+    "services": "Hizmetlerimiz",
+    "guide": "Rehber",
+    "team": "Ekibimiz",
+    "about": "Hakkımızda",
+    "faq": "SSS",
+    "contact": "İletişim",
+    "contactUs": "Bize Ulaşın",
+    "menu": "Menü"
+  },
+  "hero": {
+    "title1": "Hayalinizdeki Eve",
+    "title2": "Bir Adım Uzaktasınız",
+    "description": "Satılık ve kiralık gayrimenkul ilanlarını gelişmiş filtreleme ile kolayca keşfedin."
+  },
+  "search": {
+    "all": "Hepsi",
+    "forSale": "Satılık",
+    "forRent": "Kiralık",
+    "quickSearch": "Hızlı arama...",
+    "searchListings": "İlan ara...",
+    "location": "Lokasyon",
+    "propertyType": "Türü",
+    "detailed": "Detaylı",
+    "search": "Ara",
+    "resultsFound": "{count} sonuç bulundu",
+    "noResults": "\"{query}\" için sonuç bulunamadı",
+    "viewAll": "Tüm sonuçları gör",
+    "searchAll": "Tüm ilanlarda ara",
+    "searching": "Aranıyor..."
+  },
+  "stats": {
+    "activeListings": "Aktif İlan",
+    "completedSales": "Tamamlanan Satış",
+    "cities": "Şehir",
+    "yearsExperience": "Yıllık Deneyim"
+  },
+  "featured": {
+    "title": "Vitrin İlanlar",
+    "description": "Öne çıkan gayrimenkul fırsatları"
+  },
+  "services": {
+    "title": "Hizmetlerimiz",
+    "description": "Gayrimenkul ihtiyaçlarınız için kapsamlı çözümler",
+    "forSale": "Satılık Gayrimenkul",
+    "forSaleDesc": "Daire, villa, arsa ve ticari mülklerde geniş satılık portföyümüzle hayalinizdeki mülkü bulun.",
+    "forRent": "Kiralık Gayrimenkul",
+    "forRentDesc": "Konut ve işyeri kiralamada güvenilir seçenekler. Kısa ve uzun dönem kiralama çözümleri.",
+    "investment": "Yatırım Danışmanlığı",
+    "investmentDesc": "Piyasa analizleri ve değerleme raporlarıyla en doğru yatırım kararını vermenize yardımcı oluyoruz.",
+    "legal": "Hukuki Danışmanlık",
+    "legalDesc": "Tapu işlemleri, sözleşme hazırlığı ve gayrimenkul hukuku konularında profesyonel destek.",
+    "corporate": "Kurumsal Çözümler",
+    "corporateDesc": "Şirketler için ofis, depo ve ticari alan tedarikinde özel kurumsal danışmanlık hizmeti.",
+    "renovation": "Tadilat & Dekorasyon",
+    "renovationDesc": "Mülkünüzün değerini artırmak için tadilat, iç mimari ve home staging hizmetleri."
+  },
+  "categories": {
+    "title": "Kategoriye Göre Ara",
+    "description": "İstediğiniz emlak tipini hızla bulun",
+    "viewListings": "İlanları Görüntüle"
+  },
+  "about": {
+    "label": "Hakkımızda",
+    "title": "Güvenilir Emlak Danışmanlığında",
+    "titleHighlight": "10 Yılı Aşkın Deneyim",
+    "description": "Nexos Investment olarak, gayrimenkul sektöründe edindığımız deneyimle müşterilerimize en doğru yatırım kararlarını vermelerinde yol gösteriyoruz. Satılık ve kiralık gayrimenkullerde profesyonel danışmanlık hizmeti sunuyoruz.",
+    "features": {
+      "team": "Profesyonel ve deneyimli danışman kadrosu",
+      "transparency": "Şeffaf ve güvenilir hizmet anlayışı",
+      "portfolio": "Geniş portföy ve hızlı çözüm",
+      "consultancy": "Yatırım danışmanlığı ve piyasa analizi"
+    },
+    "moreInfo": "Daha Fazla Bilgi"
+  },
+  "recent": {
+    "title": "Son Eklenen İlanlar",
+    "description": "En güncel gayrimenkul ilanları"
+  },
+  "whyUs": {
+    "label": "Neden Bizi Seçmelisiniz?",
+    "title": "Kıbrıs'ta Gayrimenkul Yatırımınız İçin",
+    "titleHighlight": "Güvenilir Partneriniz",
+    "description": "Kuzey Kıbrıs'ın en değerli lokasyonlarında, yatırım ve yaşam odaklı gayrimenkul çözümleri sunuyoruz. Her adımda yanınızdayız.",
+    "happyCustomers": "Mutlu Müşteri",
+    "reliable": "Güvenilir Hizmet",
+    "reliableDesc": "Şeffaf süreç yönetimi ve tapu güvencesi ile her işlemde yanınızdayız.",
+    "fast": "Hızlı Süreç",
+    "fastDesc": "Uzman kadromuz ile mülk alım-satım süreçlerinizi en kısa sürede tamamlıyoruz.",
+    "expert": "Uzman Kadro",
+    "expertDesc": "Sektörde deneyimli danışmanlarımız size en doğru yatırım kararlarında yol gösterir.",
+    "satisfaction": "Müşteri Memnuniyeti",
+    "satisfactionDesc": "Satış sonrası destek dahil, uzun vadeli müşteri ilişkileri kuruyoruz."
+  },
+  "cta": {
+    "title": "Mülkünüzü Değerlendirmek İster misiniz?",
+    "description": "Uzman ekibimiz ile ücretsiz değerleme randevusu alın. Mülkünüzü en doğru fiyatla satmanıza veya kiralamanıza yardımcı olalım.",
+    "button": "Ücretsiz Değerleme Alın"
+  },
+  "property": {
+    "featured": "Vitrin",
+    "floor": "{floor}. kat",
+    "apartment": "Daire",
+    "villa": "Villa",
+    "detached": "Müstakil Ev",
+    "land": "Arsa",
+    "office": "Ofis",
+    "shop": "Dükkan",
+    "warehouse": "Depo",
+    "sale": "Satılık",
+    "rent": "Kiralık"
+  },
+  "sort": {
+    "newest": "En Yeni",
+    "oldest": "En Eski",
+    "priceAsc": "Fiyat (Artan)",
+    "priceDesc": "Fiyat (Azalan)",
+    "areaAsc": "m² (Artan)",
+    "areaDesc": "m² (Azalan)",
+    "mostViewed": "En Çok İzlenen"
+  },
+  "footer": {
+    "description": "Profesyonel emlak danışmanlığı ile hayalinizdeki mülke ulaşmanızı sağlıyoruz.",
+    "realEstate": "Emlak",
+    "forSale": "Satılık",
+    "forRent": "Kiralık",
+    "villa": "Villa",
+    "apartment": "Daire",
+    "land": "Arsa",
+    "corporate": "Kurumsal",
+    "aboutUs": "Hakkımızda",
+    "services": "Hizmetlerimiz",
+    "team": "Ekibimiz",
+    "guide": "Rehber",
+    "contact": "İletişim",
+    "faq": "SSS",
+    "contactTitle": "İletişim",
+    "location": "İskele, Kuzey Kıbrıs",
+    "rights": "Tüm hakları saklıdır.",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Şartları"
+  },
+  "cookie": {
+    "message": "Bu web sitesi deneyiminizi geliştirmek için çerezleri kullanmaktadır.",
+    "moreInfo": "Daha Fazla Bilgi",
+    "accept": "Kabul Et"
+  },
+  "notFound": {
+    "title": "Sayfa Bulunamadı",
+    "description": "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
+    "home": "Ana Sayfa"
+  },
+  "metadata": {
+    "homeTitle": "Nexos Emlak | Güvenilir Gayrimenkul Danışmanlığı",
+    "homeDescription": "Nexos Emlak ile hayalinizdeki evi bulun. Satılık ve kiralık daire, villa, arsa ve ticari gayrimenkul ilanları.",
+    "siteDescription": "Nexos Gayrimenkul - Satılık ve kiralık emlak ilanları, güvenilir danışmanlık hizmeti."
+  },
+  "language": {
+    "tr": "Türkçe",
+    "en": "English"
+  }
+}

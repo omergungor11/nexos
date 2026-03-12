@@ -4,12 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/providers";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { WhatsAppButton } from "@/components/shared/whatsapp-button";
-import { PhoneButton } from "@/components/shared/phone-button";
-import { CookieBanner } from "@/components/shared/cookie-banner";
-import { ScrollToTop } from "@/components/shared/scroll-to-top";
+import { getLocale } from "next-intl/server";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -50,22 +45,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.variable} ${inter.className} antialiased`}>
         <Providers>
-          <Header />
-          <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-          <Footer />
-          <PhoneButton />
-          <WhatsAppButton />
-          <ScrollToTop />
-          <CookieBanner />
+          {children}
         </Providers>
         <Analytics />
         <SpeedInsights />

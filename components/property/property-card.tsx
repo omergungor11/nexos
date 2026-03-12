@@ -1,12 +1,13 @@
 import Image from "next/image";
-import Link from "next/link";
 import { MapPin, Maximize2, BedDouble, Building2, Eye } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatPrice, formatArea, formatRooms } from "@/lib/format";
 import {
-  PROPERTY_TYPE_LABELS,
-  TRANSACTION_TYPE_LABELS,
+  PROPERTY_TYPE_TKEYS,
+  TRANSACTION_TYPE_TKEYS,
 } from "@/lib/constants";
 import type { PropertyListItem } from "@/types";
 
@@ -33,6 +34,7 @@ function getPlaceholderImage(id: string): string {
 }
 
 export function PropertyCard({ property, priority = false }: PropertyCardProps) {
+  const t = useTranslations();
   const coverImage =
     property.cover_image || getPlaceholderImage(property.id);
   const location = [property.district?.name, property.city.name]
@@ -42,9 +44,19 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
     property.id.split("").reduce((acc: number, ch: string) => ((acc << 5) - acc + ch.charCodeAt(0)) | 0, 0)
   ) % 900000 + 100000;
 
+  const transactionLabel =
+    TRANSACTION_TYPE_TKEYS[property.transaction_type]
+      ? t(TRANSACTION_TYPE_TKEYS[property.transaction_type])
+      : property.transaction_type;
+
+  const typeLabel =
+    PROPERTY_TYPE_TKEYS[property.type]
+      ? t(PROPERTY_TYPE_TKEYS[property.type])
+      : property.type;
+
   return (
     <Card className="group gap-0 overflow-hidden py-0 transition-shadow hover:shadow-lg">
-      <Link href={`/emlak/${property.slug}`}>
+      <Link href={{ pathname: "/emlak/[slug]", params: { slug: property.slug } }}>
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
@@ -58,10 +70,10 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
           />
           <div className="absolute top-2 left-2 flex gap-1.5">
             <Badge variant="secondary" className="bg-primary text-primary-foreground">
-              {TRANSACTION_TYPE_LABELS[property.transaction_type] ?? property.transaction_type}
+              {transactionLabel}
             </Badge>
             <Badge variant="secondary">
-              {PROPERTY_TYPE_LABELS[property.type] ?? property.type}
+              {typeLabel}
             </Badge>
           </div>
           {property.is_featured && (
@@ -69,7 +81,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
               variant="secondary"
               className="absolute top-2 right-2 bg-primary text-primary-foreground"
             >
-              Vitrin
+              {t("property.featured")}
             </Badge>
           )}
         </div>
@@ -113,7 +125,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
             {property.floor !== null && (
               <span className="flex items-center gap-1">
                 <Building2 className="h-3.5 w-3.5" />
-                {property.floor}. kat
+                {t("property.floor", { floor: property.floor })}
               </span>
             )}
             {property.views_count > 0 && (
