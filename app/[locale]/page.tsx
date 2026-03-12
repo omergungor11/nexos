@@ -242,7 +242,8 @@ export default async function HomePage({ params }: Props) {
                   {t("about.label")}
                 </p>
                 <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                  {t("about.title")}{" "}
+                  {t("about.title")}
+                  <br />
                   <span className="text-primary">{t("about.titleHighlight")}</span>
                 </h2>
               </div>
@@ -324,7 +325,8 @@ export default async function HomePage({ params }: Props) {
                 {t("whyUs.label")}
               </p>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                {t("whyUs.title")}{" "}
+                {t("whyUs.title")}
+                <br />
                 <span className="text-primary">{t("whyUs.titleHighlight")}</span>
               </h2>
               <p className="text-muted-foreground leading-relaxed">
