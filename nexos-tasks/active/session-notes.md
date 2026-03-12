@@ -1,6 +1,33 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-03-12
+
+### Yapılanlar
+- **Danışman atama özelliği eklendi**: İlanları ekip üyelerine atama
+  - Admin ilan formu (yeni + düzenle): "Sorumlu Danışman" dropdown eklendi (Temel Bilgiler sekmesi)
+  - Admin ilan listesi tablosuna "Danışman" kolonu eklendi
+  - `PropertyCreateInput` tipi `agent_id: string | null` destekliyor
+  - `buildPayload` ve `updateProperty` agent kaldırma (`null`) durumunu doğru işliyor
+- **Danışman kartı yeniden tasarlandı** (ilan detay sayfası sidebar):
+  - Büyük avatar + açık renkli header arka planı
+  - Telefon, e-posta, WhatsApp iletişim butonları (sol hizalı, ikonlu)
+  - "Danışman Profilini Gör" linki (`/ekibimiz/[slug]`)
+- **Agent atama bug fix**: Select value `""` ↔ `__none__` uyumsuzluğu düzeltildi, `null` gönderimi sağlandı
+- Commits: f0f2657, e2d081c, 9132e56
+
+### Yarım Kalanlar
+- Yok — tüm istenen özellikler tamamlandı ve push edildi
+
+### Sıradakiler
+- Danışman atamasını canlıda test et (admin panelden bir ilana danışman ata, detay sayfasında kartın göründüğünü doğrula)
+- Gerekirse danışman kartına ilan bazlı mesaj şablonu eklenebilir
+
+### Dikkat Edilecekler
+- `i18n/navigation` Link'i typed pathname kullanır: `{ pathname: "/ekibimiz/[slug]", params: { slug } }` — template literal kullanma
+- Select component'te `value=""` ile `SelectItem` eşleşmezse placeholder görünmez, `"__none__"` sentinel kullan
+- `agent_id` `undefined` gönderilirse `updateProperty` o alanı atlar (güncelleme yapmaz); `null` gönderilmesi gerekir
+
 ## 2026-03-11
 
 ### Yapılanlar
