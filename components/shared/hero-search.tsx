@@ -18,8 +18,10 @@ interface SearchResult {
   title: string;
   price: number;
   currency: string;
+  type: string;
   city: { name: string } | null;
   district: { name: string } | null;
+  images: { url: string; is_cover: boolean }[];
 }
 
 interface HeroSearchProps {
@@ -59,6 +61,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
       setShowResults(true);
     } catch {
       setResults([]);
+      setShowResults(true);
     } finally {
       setSearching(false);
     }
@@ -224,43 +227,76 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
         </div>
 
         {/* Live search results dropdown */}
-        {showResults && results.length > 0 && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-auto rounded-xl border bg-white shadow-xl">
-            {results.map((r) => (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => handleResultClick(r.slug)}
-                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-gray-900">
-                    {r.title}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {[r.district?.name, r.city?.name].filter(Boolean).join(", ")}
-                  </p>
+        {showResults && (
+          <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-auto rounded-xl border bg-white shadow-2xl">
+            {results.length > 0 ? (
+              <>
+                <div className="px-4 py-2 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  {results.length} sonuç bulundu
                 </div>
-                <span className="shrink-0 text-sm font-bold text-primary">
-                  {formatPrice(r.price, r.currency)}
-                </span>
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={handleSearch}
-              className="flex w-full items-center justify-center gap-1 border-t px-4 py-2.5 text-sm font-medium text-primary hover:bg-gray-50"
-            >
-              Tüm sonuçları gör
-              <span className="text-xs text-gray-400">({results.length})</span>
-            </button>
+                {results.map((r) => {
+                  const cover = r.images?.find((i) => i.is_cover)?.url || r.images?.[0]?.url;
+                  return (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => handleResultClick(r.slug)}
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-gray-50"
+                    >
+                      {cover && (
+                        <img
+                          src={cover}
+                          alt=""
+                          className="h-12 w-16 shrink-0 rounded-lg object-cover"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-gray-900">
+                          {r.title}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {[r.district?.name, r.city?.name].filter(Boolean).join(", ")}
+                        </p>
+                      </div>
+                      <span className="shrink-0 text-sm font-bold text-primary">
+                        {formatPrice(r.price, r.currency)}
+                      </span>
+                    </button>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={handleSearch}
+                  className="flex w-full items-center justify-center gap-1 border-t px-4 py-3 text-sm font-medium text-primary hover:bg-gray-50"
+                >
+                  Tüm sonuçları gör
+                </button>
+              </>
+            ) : (
+              !searching && (
+                <div className="px-4 py-6 text-center">
+                  <Search className="mx-auto h-6 w-6 text-gray-300" />
+                  <p className="mt-2 text-sm text-gray-500">
+                    &ldquo;{query}&rdquo; için sonuç bulunamadı
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleSearch}
+                    className="mt-2 text-sm font-medium text-primary hover:underline"
+                  >
+                    Tüm ilanlarda ara
+                  </button>
+                </div>
+              )
+            )}
           </div>
         )}
 
         {/* Searching indicator */}
-        {searching && query.length >= 2 && (
+        {searching && query.length >= 2 && !showResults && (
           <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border bg-white p-4 text-center text-sm text-gray-500 shadow-xl">
-            Aranıyor...
+            <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <p className="mt-2">Aranıyor...</p>
           </div>
         )}
       </div>
