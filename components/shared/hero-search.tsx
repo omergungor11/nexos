@@ -166,7 +166,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
               <select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="h-11 w-44 appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none"
+                className="h-11 w-44 appearance-none rounded-lg bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none"
               >
                 <option value="">{t("search.location")}</option>
                 {cities.map((c) => (
@@ -180,7 +180,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
               <select
                 value={tip}
                 onChange={(e) => setTip(e.target.value)}
-                className="h-11 w-36 appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none"
+                className="h-11 w-36 appearance-none rounded-lg bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none"
               >
                 <option value="">{t("search.propertyType")}</option>
                 {propertyTypeEntries.map(([value, tKey]) => (
