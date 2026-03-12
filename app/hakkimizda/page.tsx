@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Target,
@@ -119,13 +118,8 @@ export default function HakkimizdaPage() {
     <div>
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 text-white sm:py-28">
-        <Image
-          src="/images/hero-bg.jpg"
-          alt=""
-          fill
-          className="object-cover opacity-20"
-          priority
-        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(249,203,45,0.15),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(249,203,45,0.1),transparent_50%)]" />
         <div className="container relative mx-auto px-4 text-center">
           <p className="mb-3 text-sm font-medium uppercase tracking-widest text-primary">
             Kuzey Kıbrıs&apos;ın Güvenilir Emlak Danışmanı
@@ -189,18 +183,39 @@ export default function HakkimizdaPage() {
             </div>
           </div>
           <div className="relative">
-            <div className="overflow-hidden rounded-2xl">
-              <Image
-                src="/images/about-team.jpg"
-                alt="Nexos Emlak Ekibi"
-                width={800}
-                height={600}
-                className="aspect-[4/3] w-full object-cover"
-              />
-            </div>
-            <div className="absolute -bottom-4 -left-4 rounded-xl border bg-card p-4 shadow-lg sm:-bottom-6 sm:-left-6">
-              <p className="text-2xl font-bold text-primary">8+</p>
-              <p className="text-xs text-muted-foreground">Yıllık Deneyim</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-3">
+                <div className="flex aspect-square items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 p-6">
+                  <div className="text-center">
+                    <Users className="mx-auto h-10 w-10 text-primary" />
+                    <p className="mt-2 text-sm font-semibold">15+</p>
+                    <p className="text-xs text-muted-foreground">Uzman Danışman</p>
+                  </div>
+                </div>
+                <div className="flex aspect-[3/2] items-center justify-center rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 text-white">
+                  <div className="text-center">
+                    <Award className="mx-auto h-8 w-8 text-primary" />
+                    <p className="mt-2 text-sm font-semibold">%80</p>
+                    <p className="text-xs text-gray-400">Referans Oranı</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-3 pt-6">
+                <div className="flex aspect-[3/2] items-center justify-center rounded-2xl bg-primary p-6 text-white">
+                  <div className="text-center">
+                    <Home className="mx-auto h-8 w-8" />
+                    <p className="mt-2 text-sm font-semibold">1.200+</p>
+                    <p className="text-xs text-white/80">İlan Portföyü</p>
+                  </div>
+                </div>
+                <div className="flex aspect-square items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 p-6">
+                  <div className="text-center">
+                    <MapPin className="mx-auto h-10 w-10 text-primary" />
+                    <p className="mt-2 text-sm font-semibold">5 Bölge</p>
+                    <p className="text-xs text-muted-foreground">Ada Geneli</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -344,43 +359,23 @@ export default function HakkimizdaPage() {
               Tüm Hizmetlerimiz
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="overflow-hidden rounded-2xl">
-              <Image
-                src="/images/property-1.jpg"
-                alt="Satılık villa"
-                width={400}
-                height={300}
-                className="aspect-[4/3] w-full object-cover transition-transform hover:scale-105"
-              />
-            </div>
-            <div className="overflow-hidden rounded-2xl">
-              <Image
-                src="/images/property-2.jpg"
-                alt="Modern daire"
-                width={400}
-                height={300}
-                className="aspect-[4/3] w-full object-cover transition-transform hover:scale-105"
-              />
-            </div>
-            <div className="overflow-hidden rounded-2xl">
-              <Image
-                src="/images/property-3.jpg"
-                alt="Deniz manzaralı mülk"
-                width={400}
-                height={300}
-                className="aspect-[4/3] w-full object-cover transition-transform hover:scale-105"
-              />
-            </div>
-            <div className="overflow-hidden rounded-2xl">
-              <Image
-                src="/images/property-4.jpg"
-                alt="Lüks residence"
-                width={400}
-                height={300}
-                className="aspect-[4/3] w-full object-cover transition-transform hover:scale-105"
-              />
-            </div>
+          <div className="space-y-4">
+            {[
+              { icon: Home, title: "Satılık & Kiralık Danışmanlık", desc: "Her bütçeye uygun mülk portföyü" },
+              { icon: Shield, title: "Tapu & Hukuki Süreç Yönetimi", desc: "Güvenli ve şeffaf işlem süreci" },
+              { icon: TrendingUp, title: "Yatırım Portföy Danışmanlığı", desc: "Karlı yatırım fırsatları" },
+              { icon: Handshake, title: "Kiralama Yönetimi", desc: "Mülkünüz bizimle güvende" },
+            ].map((item) => (
+              <div key={item.title} className="flex items-center gap-4 rounded-xl border bg-card p-4 transition-shadow hover:shadow-md">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                  <item.icon className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold">{item.title}</p>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -397,14 +392,25 @@ export default function HakkimizdaPage() {
                 Müşterilerimizin bizi tercih etme sebepleri.
               </p>
             </div>
-            <div className="overflow-hidden rounded-2xl">
-              <Image
-                src="/images/why-us.jpg"
-                alt="Nexos Emlak ofisi"
-                width={800}
-                height={450}
-                className="aspect-video w-full object-cover"
-              />
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex aspect-square items-center justify-center rounded-2xl bg-primary p-4 text-white">
+                <div className="text-center">
+                  <p className="text-2xl font-bold">500+</p>
+                  <p className="text-xs text-white/80">Mutlu Müşteri</p>
+                </div>
+              </div>
+              <div className="flex aspect-square items-center justify-center rounded-2xl bg-gray-900 p-4 text-white">
+                <div className="text-center">
+                  <p className="text-2xl font-bold">8+</p>
+                  <p className="text-xs text-gray-400">Yıl Deneyim</p>
+                </div>
+              </div>
+              <div className="flex aspect-square items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 p-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-primary">7/24</p>
+                  <p className="text-xs text-muted-foreground">Destek</p>
+                </div>
+              </div>
             </div>
           </div>
           <div className="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2">
@@ -451,12 +457,7 @@ export default function HakkimizdaPage() {
       {/* CTA */}
       <section className="container mx-auto px-4 py-16 sm:py-20">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-center text-white sm:p-14">
-          <Image
-            src="/images/property-5.jpg"
-            alt=""
-            fill
-            className="object-cover opacity-10"
-          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(249,203,45,0.12),transparent_70%)]" />
           <h2 className="relative text-2xl font-bold sm:text-3xl">
             Hayalinizdeki Mülkü Birlikte Bulalım
           </h2>
