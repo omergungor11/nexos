@@ -38,7 +38,7 @@ export type PropertyCreateInput = {
   city_id: number;
   district_id?: number;
   neighborhood_id?: number;
-  agent_id?: string;
+  agent_id?: string | null;
   is_featured?: boolean;
   seo_title?: string;
   seo_description?: string;
@@ -278,7 +278,7 @@ export async function updateProperty(
   if (data.district_id !== undefined) payload.district_id = data.district_id;
   if (data.neighborhood_id !== undefined)
     payload.neighborhood_id = data.neighborhood_id;
-  if (data.agent_id !== undefined) payload.agent_id = data.agent_id;
+  if (data.agent_id !== undefined) payload.agent_id = data.agent_id ?? null;
   if (data.is_featured !== undefined) payload.is_featured = data.is_featured;
   if (data.seo_title !== undefined) payload.seo_title = data.seo_title;
   if (data.seo_description !== undefined)

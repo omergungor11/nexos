@@ -318,7 +318,7 @@ function buildInitialState(
     is_featured: initialData?.is_featured ?? false,
     seo_title: initialData?.seo_title ?? "",
     seo_description: initialData?.seo_description ?? "",
-    agent_id: initialData?.agent_id ?? "",
+    agent_id: initialData?.agent_id ?? "__none__",
   };
 }
 
@@ -571,7 +571,7 @@ export function PropertyForm({
       is_featured: form.is_featured,
       seo_title: form.seo_title.trim() || undefined,
       seo_description: form.seo_description.trim() || undefined,
-      agent_id: form.agent_id || undefined,
+      agent_id: form.agent_id !== "__none__" ? form.agent_id : null,
     };
   }
 
@@ -732,7 +732,7 @@ export function PropertyForm({
               <Select
                 value={form.agent_id}
                 onValueChange={(v) =>
-                  handleSelectChange("agent_id", v === "__none__" ? "" : v)
+                  handleSelectChange("agent_id", v)
                 }
               >
                 <SelectTrigger id="agent_id" className="w-full sm:w-80">
