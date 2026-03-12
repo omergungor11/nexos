@@ -119,7 +119,13 @@ export default function HakkimizdaPage() {
     <div>
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 text-white sm:py-28">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+        <Image
+          src="/images/hero-bg.jpg"
+          alt=""
+          fill
+          className="object-cover opacity-20"
+          priority
+        />
         <div className="container relative mx-auto px-4 text-center">
           <p className="mb-3 text-sm font-medium uppercase tracking-widest text-primary">
             Kuzey Kıbrıs&apos;ın Güvenilir Emlak Danışmanı
@@ -183,17 +189,18 @@ export default function HakkimizdaPage() {
             </div>
           </div>
           <div className="relative">
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5">
-              <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-                <Home className="h-16 w-16 text-primary" />
-                <p className="mt-4 text-lg font-semibold">Nexos Emlak</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  İskele, Kuzey Kıbrıs
-                </p>
-                <p className="mt-4 text-sm text-muted-foreground">
-                  &ldquo;Sadece ev satmıyoruz, hayat tarzı sunuyoruz.&rdquo;
-                </p>
-              </div>
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/images/about-team.jpg"
+                alt="Nexos Emlak Ekibi"
+                width={800}
+                height={600}
+                className="aspect-[4/3] w-full object-cover"
+              />
+            </div>
+            <div className="absolute -bottom-4 -left-4 rounded-xl border bg-card p-4 shadow-lg sm:-bottom-6 sm:-left-6">
+              <p className="text-2xl font-bold text-primary">8+</p>
+              <p className="text-xs text-muted-foreground">Yıllık Deneyim</p>
             </div>
           </div>
         </div>
@@ -337,34 +344,42 @@ export default function HakkimizdaPage() {
               Tüm Hizmetlerimiz
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-2xl bg-primary/10 p-6 text-center">
-              <Home className="mx-auto h-8 w-8 text-primary" />
-              <p className="mt-2 text-sm font-semibold">Satılık Mülkler</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Daire, villa, arsa
-              </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/images/property-1.jpg"
+                alt="Satılık villa"
+                width={400}
+                height={300}
+                className="aspect-[4/3] w-full object-cover transition-transform hover:scale-105"
+              />
             </div>
-            <div className="rounded-2xl bg-primary/10 p-6 text-center">
-              <MapPin className="mx-auto h-8 w-8 text-primary" />
-              <p className="mt-2 text-sm font-semibold">5 Bölge</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Ada genelinde hizmet
-              </p>
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/images/property-2.jpg"
+                alt="Modern daire"
+                width={400}
+                height={300}
+                className="aspect-[4/3] w-full object-cover transition-transform hover:scale-105"
+              />
             </div>
-            <div className="rounded-2xl bg-primary/10 p-6 text-center">
-              <Users className="mx-auto h-8 w-8 text-primary" />
-              <p className="mt-2 text-sm font-semibold">Çok Dilli Ekip</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                TR, EN, RU destek
-              </p>
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/images/property-3.jpg"
+                alt="Deniz manzaralı mülk"
+                width={400}
+                height={300}
+                className="aspect-[4/3] w-full object-cover transition-transform hover:scale-105"
+              />
             </div>
-            <div className="rounded-2xl bg-primary/10 p-6 text-center">
-              <Phone className="mx-auto h-8 w-8 text-primary" />
-              <p className="mt-2 text-sm font-semibold">7/24 Destek</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                WhatsApp hattı
-              </p>
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/images/property-4.jpg"
+                alt="Lüks residence"
+                width={400}
+                height={300}
+                className="aspect-[4/3] w-full object-cover transition-transform hover:scale-105"
+              />
             </div>
           </div>
         </div>
@@ -373,13 +388,24 @@ export default function HakkimizdaPage() {
       {/* Neden Bizi Seçmelisiniz */}
       <section className="bg-muted/30 py-16 sm:py-20">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Neden Nexos Emlak?
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-              Müşterilerimizin bizi tercih etme sebepleri.
-            </p>
+          <div className="mb-12 grid items-center gap-8 lg:grid-cols-2">
+            <div>
+              <h2 className="text-3xl font-bold sm:text-4xl">
+                Neden Nexos Emlak?
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Müşterilerimizin bizi tercih etme sebepleri.
+              </p>
+            </div>
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/images/why-us.jpg"
+                alt="Nexos Emlak ofisi"
+                width={800}
+                height={450}
+                className="aspect-video w-full object-cover"
+              />
+            </div>
           </div>
           <div className="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2">
             {[
@@ -424,16 +450,22 @@ export default function HakkimizdaPage() {
 
       {/* CTA */}
       <section className="container mx-auto px-4 py-16 sm:py-20">
-        <div className="rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-center text-white sm:p-14">
-          <h2 className="text-2xl font-bold sm:text-3xl">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-center text-white sm:p-14">
+          <Image
+            src="/images/property-5.jpg"
+            alt=""
+            fill
+            className="object-cover opacity-10"
+          />
+          <h2 className="relative text-2xl font-bold sm:text-3xl">
             Hayalinizdeki Mülkü Birlikte Bulalım
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-gray-300">
+          <p className="relative mx-auto mt-3 max-w-xl text-gray-300">
             Kuzey Kıbrıs&apos;ta yatırım yapmak, yaşamak veya tatil evi
             almak istiyorsanız, uzman ekibimizle ücretsiz danışmanlık için
             hemen iletişime geçin.
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/iletisim"
               className="inline-flex h-11 items-center rounded-lg bg-primary px-8 text-sm font-medium text-white transition-colors hover:bg-primary/90"

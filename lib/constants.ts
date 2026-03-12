@@ -64,10 +64,10 @@ export const NAV_LINKS = [
   { href: "/emlak?islem=satilik", label: "Satılık" },
   { href: "/emlak?islem=kiralik", label: "Kiralık" },
   { href: "/harita", label: "Harita" },
-  { href: "/hakkimizda", label: "Hakkımızda" },
   { href: "/hizmetlerimiz", label: "Hizmetlerimiz" },
   { href: "/ekibimiz", label: "Ekibimiz" },
   { href: "/blog", label: "Rehber" },
   { href: "/sss", label: "SSS" },
+  { href: "/hakkimizda", label: "Hakkımızda" },
   { href: "/iletisim", label: "İletişim" },
 ];
