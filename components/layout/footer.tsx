@@ -30,10 +30,10 @@ export function Footer() {
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/logo.jpeg"
+                src="/logo-trans.png"
                 alt="Nexos Investment"
-                width={140}
-                height={40}
+                width={160}
+                height={44}
                 className="h-9 w-auto object-contain"
               />
             </Link>

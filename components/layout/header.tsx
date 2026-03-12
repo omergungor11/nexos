@@ -19,11 +19,11 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logo.jpeg"
+            src="/logo-trans.png"
             alt="Nexos Investment"
-            width={140}
-            height={40}
-            className="h-9 w-auto object-contain"
+            width={180}
+            height={50}
+            className="h-12 w-auto object-contain"
             priority
           />
         </Link>
