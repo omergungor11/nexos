@@ -180,46 +180,39 @@ export default async function PropertyDetailPage({ params }: Props) {
           )}
 
           {/* Title & Price */}
-          <div>
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="outline" className="font-mono text-xs">
-                    İlan No: {listingNumber}
-                  </Badge>
-                  <Badge>
-                    {TRANSACTION_TYPE_LABELS[property.transaction_type]}
-                  </Badge>
-                  <Badge variant="outline">
-                    {PROPERTY_TYPE_LABELS[property.type]}
-                  </Badge>
-                  <Badge variant="secondary">
-                    {PROPERTY_STATUS_LABELS[property.status]}
-                  </Badge>
-                </div>
-                <h1 className="text-2xl font-bold sm:text-3xl">
-                  {property.title}
-                </h1>
-                {location && (
-                  <p className="flex items-center gap-1 text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    {location}
-                  </p>
-                )}
-              </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-primary">
-                  {formatPrice(property.price, property.currency)}
-                </p>
-                {/* 4. Share + 5. Print buttons */}
-                <div className="mt-2 flex items-center justify-end gap-2">
-                  <Button variant="outline" size="icon">
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                  <PrintButton propertySlug={property.slug} />
-                  <ShareButtons url={propertyUrl} title={property.title} />
-                </div>
-              </div>
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className="font-mono text-xs">
+                İlan No: {listingNumber}
+              </Badge>
+              <Badge>
+                {TRANSACTION_TYPE_LABELS[property.transaction_type]}
+              </Badge>
+              <Badge variant="outline">
+                {PROPERTY_TYPE_LABELS[property.type]}
+              </Badge>
+              <Badge variant="secondary">
+                {PROPERTY_STATUS_LABELS[property.status]}
+              </Badge>
+            </div>
+            <h1 className="text-2xl font-bold sm:text-3xl">
+              {property.title}
+            </h1>
+            {location && (
+              <p className="flex items-center gap-1 text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                {location}
+              </p>
+            )}
+            <p className="text-3xl font-bold text-primary">
+              {formatPrice(property.price, property.currency)}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="icon">
+                <Heart className="h-4 w-4" />
+              </Button>
+              <PrintButton propertySlug={property.slug} />
+              <ShareButtons url={propertyUrl} title={property.title} />
             </div>
           </div>
 
