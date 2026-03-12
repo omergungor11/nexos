@@ -15,15 +15,15 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-20 items-center justify-between px-4">
+      <div className="container mx-auto flex h-24 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo-trans.png"
             alt="Nexos Investment"
-            width={240}
-            height={64}
-            className="h-20 w-auto object-contain"
+            width={300}
+            height={80}
+            className="h-28 w-auto object-contain"
             priority
           />
         </Link>
