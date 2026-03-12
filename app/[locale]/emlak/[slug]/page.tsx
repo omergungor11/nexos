@@ -16,6 +16,7 @@ import {
   Phone,
   Mail,
   MessageCircle,
+  User,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -349,59 +350,64 @@ export default async function PropertyDetailPage({ params }: Props) {
         <div className="space-y-6">
           {/* Agent Card */}
           {property.agent && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Emlak Danışmanı</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
+            <Card className="overflow-hidden">
+              <div className="bg-primary/5 px-6 pt-6 pb-4">
+                <div className="flex flex-col items-center text-center">
+                  <Avatar className="h-20 w-20 border-4 border-background shadow-md">
                     <AvatarImage src={property.agent.photo_url ?? undefined} />
-                    <AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">
                       {property.agent.name
                         .split(" ")
                         .map((n: string) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="font-semibold">{property.agent.name}</p>
-                    {property.agent.title && (
-                      <p className="text-sm text-muted-foreground">
-                        {property.agent.title}
-                      </p>
-                    )}
-                  </div>
+                  <h3 className="mt-3 text-lg font-semibold">{property.agent.name}</h3>
+                  {property.agent.title && (
+                    <p className="text-sm text-muted-foreground">
+                      {property.agent.title}
+                    </p>
+                  )}
                 </div>
+              </div>
+              <CardContent className="space-y-2.5 p-4">
                 {property.agent.phone && (
                   <a
                     href={`tel:${property.agent.phone}`}
-                    className="flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-muted"
+                    className="flex h-10 w-full items-center gap-3 rounded-lg border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-muted"
                   >
-                    <Phone className="h-4 w-4" />
+                    <Phone className="h-4 w-4 shrink-0 text-primary" />
                     {property.agent.phone}
                   </a>
                 )}
                 {property.agent.email && (
                   <a
                     href={`mailto:${property.agent.email}`}
-                    className="flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-muted"
+                    className="flex h-10 w-full items-center gap-3 rounded-lg border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-muted"
                   >
-                    <Mail className="h-4 w-4" />
+                    <Mail className="h-4 w-4 shrink-0 text-primary" />
                     E-posta Gönder
                   </a>
                 )}
-                {/* 3. WhatsApp Button */}
                 {agentWhatsApp && (
                   <a
                     href={`https://wa.me/${agentWhatsApp}?text=${encodeURIComponent(`Merhaba, "${property.title}" ilanı hakkında bilgi almak istiyorum.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] text-sm font-medium text-white hover:bg-[#20bd5a]"
+                    className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] text-sm font-medium text-white transition-colors hover:bg-[#20bd5a]"
                   >
                     <MessageCircle className="h-4 w-4" />
                     WhatsApp ile Ulaş
                   </a>
+                )}
+                {property.agent.slug && (
+                  <Link
+                    href={{ pathname: "/ekibimiz/[slug]", params: { slug: property.agent.slug } }}
+                    className="flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-primary/20 bg-primary/5 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                  >
+                    <User className="h-4 w-4" />
+                    Danışman Profilini Gör
+                  </Link>
                 )}
               </CardContent>
             </Card>
