@@ -46,7 +46,6 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
   const searchRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Live search
   const doSearch = useCallback(async (q: string) => {
     if (q.length < 2) {
       setResults([]);
@@ -75,7 +74,6 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
     };
   }, [query, doSearch]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -105,8 +103,20 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
     return `${sym}${price.toLocaleString("tr-TR")}`;
   }
 
+  const chevronSvg = (
+    <svg
+      className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  );
+
   return (
-    <div className="w-full max-w-4xl">
+    <div className="w-full max-w-4xl px-2 sm:px-0">
       {/* Tabs */}
       <div className="mb-3 flex justify-center gap-1">
         {TABS.map((tab) => (
@@ -130,108 +140,147 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
       </div>
 
       {/* Search bar */}
-      <div
-        ref={searchRef}
-        className="relative rounded-2xl bg-white/95 p-2 shadow-xl backdrop-blur sm:p-2.5"
-      >
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0">
-          {/* Quick search input */}
-          <div className="relative flex-1 sm:border-r sm:border-gray-200">
+      <div ref={searchRef} className="relative">
+        {/* ── Desktop layout ── */}
+        <div className="hidden rounded-2xl bg-white/95 p-2.5 shadow-xl backdrop-blur sm:block">
+          <div className="flex items-center">
+            {/* Search input */}
+            <div className="relative flex-1 border-r border-gray-200">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Hızlı arama..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => results.length > 0 && setShowResults(true)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                className="h-11 w-full bg-transparent pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+              />
+            </div>
+
+            {/* City */}
+            <div className="relative border-r border-gray-200">
+              <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="h-11 w-44 appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none"
+              >
+                <option value="">Lokasyon</option>
+                {cities.map((c) => (
+                  <option key={c.id} value={c.slug}>{c.name}</option>
+                ))}
+              </select>
+              {chevronSvg}
+            </div>
+
+            {/* Type */}
+            <div className="relative border-r border-gray-200">
+              <Home className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <select
+                value={tip}
+                onChange={(e) => setTip(e.target.value)}
+                className="h-11 w-36 appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none"
+              >
+                <option value="">Türü</option>
+                {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+              {chevronSvg}
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 pl-3 pr-1">
+              <button
+                type="button"
+                onClick={() => {
+                  const params = new URLSearchParams();
+                  if (activeTab) params.set("islem", activeTab);
+                  router.push(`/emlak?${params.toString()}`);
+                }}
+                className="flex items-center gap-1.5 text-sm text-gray-500 whitespace-nowrap hover:text-gray-900"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                Detaylı
+              </button>
+              <button
+                type="button"
+                onClick={handleSearch}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 active:scale-95"
+                aria-label="Ara"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Mobile layout ── */}
+        <div className="rounded-2xl bg-white/95 p-4 shadow-xl backdrop-blur sm:hidden">
+          {/* Search input */}
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Hızlı arama..."
+              placeholder="İlan ara..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => results.length > 0 && setShowResults(true)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="h-11 w-full bg-transparent pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+              className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none"
             />
           </div>
 
-          {/* City select */}
-          <div className="relative sm:border-r sm:border-gray-200">
-            <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="h-11 w-full appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none sm:w-44"
-            >
-              <option value="">Lokasyon</option>
-              {cities.map((c) => (
-                <option key={c.id} value={c.slug}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <svg
-              className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
+          {/* Selects row */}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="relative">
+              <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="h-10 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-8 text-sm text-gray-900 focus:border-primary focus:outline-none"
+              >
+                <option value="">Lokasyon</option>
+                {cities.map((c) => (
+                  <option key={c.id} value={c.slug}>{c.name}</option>
+                ))}
+              </select>
+              {chevronSvg}
+            </div>
+            <div className="relative">
+              <Home className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <select
+                value={tip}
+                onChange={(e) => setTip(e.target.value)}
+                className="h-10 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-8 text-sm text-gray-900 focus:border-primary focus:outline-none"
+              >
+                <option value="">Türü</option>
+                {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+              {chevronSvg}
+            </div>
           </div>
 
-          {/* Type select */}
-          <div className="relative sm:border-r sm:border-gray-200">
-            <Home className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <select
-              value={tip}
-              onChange={(e) => setTip(e.target.value)}
-              className="h-11 w-full appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none sm:w-36"
-            >
-              <option value="">Türü</option>
-              {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <svg
-              className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-
-          {/* More filters link + search button */}
-          <div className="flex items-center gap-2 pl-3 pr-1">
-            <button
-              type="button"
-              onClick={() => {
-                const params = new URLSearchParams();
-                if (activeTab) params.set("islem", activeTab);
-                router.push(`/emlak?${params.toString()}`);
-              }}
-              className="hidden items-center gap-1.5 text-sm text-gray-500 whitespace-nowrap hover:text-gray-900 sm:flex"
-            >
-              <SlidersHorizontal className="h-4 w-4" />
-              Detaylı
-            </button>
-            <button
-              type="button"
-              onClick={handleSearch}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 active:scale-95"
-              aria-label="Ara"
-            >
-              <Search className="h-5 w-5" />
-            </button>
-          </div>
+          {/* Search button full width */}
+          <button
+            type="button"
+            onClick={handleSearch}
+            className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 active:scale-[0.98]"
+          >
+            <Search className="h-4 w-4" />
+            Ara
+          </button>
         </div>
 
-        {/* Live search results dropdown */}
+        {/* ── Results dropdown (shared) ── */}
         {showResults && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-auto rounded-xl border bg-white shadow-2xl">
+          <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-auto rounded-xl border bg-white shadow-2xl sm:max-h-96">
             {results.length > 0 ? (
               <>
-                <div className="px-4 py-2 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <div className="px-4 py-2 text-xs font-medium uppercase tracking-wider text-gray-400">
                   {results.length} sonuç bulundu
                 </div>
                 {results.map((r) => {
@@ -247,7 +296,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                         <img
                           src={cover}
                           alt=""
-                          className="h-12 w-16 shrink-0 rounded-lg object-cover"
+                          className="h-10 w-14 shrink-0 rounded-lg object-cover sm:h-12 sm:w-16"
                         />
                       )}
                       <div className="min-w-0 flex-1">
@@ -258,7 +307,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                           {[r.district?.name, r.city?.name].filter(Boolean).join(", ")}
                         </p>
                       </div>
-                      <span className="shrink-0 text-sm font-bold text-primary">
+                      <span className="shrink-0 text-xs font-bold text-primary sm:text-sm">
                         {formatPrice(r.price, r.currency)}
                       </span>
                     </button>
@@ -292,7 +341,6 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
           </div>
         )}
 
-        {/* Searching indicator */}
         {searching && query.length >= 2 && !showResults && (
           <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border bg-white p-4 text-center text-sm text-gray-500 shadow-xl">
             <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
