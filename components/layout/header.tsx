@@ -2,16 +2,26 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, Phone } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -56,43 +66,57 @@ export function Header() {
         </div>
 
         {/* Mobile Menu */}
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger className="md:hidden">
-            <Button variant="ghost" size="icon" render={<span />}>
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Menü</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-72">
-            <nav className="mt-8 flex flex-col gap-1">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-base font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <HrSeparator className="my-3" />
-              <a
-                href="tel:+905551234567"
-                className="flex items-center gap-2 px-3 py-2.5 text-base font-medium text-muted-foreground"
-              >
-                <Phone className="h-4 w-4" />
-                0555 123 45 67
-              </a>
-              <Link
-                href="/iletisim"
+        <div ref={menuRef} className="relative md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setOpen(!open)}
+            render={<span />}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <span className="sr-only">Menü</span>
+          </Button>
+
+          {open && (
+            <>
+              {/* Backdrop */}
+              <div
+                className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
                 onClick={() => setOpen(false)}
-                className={cn(buttonVariants(), "mt-2")}
-              >
-                Bize Ulaşın
-              </Link>
-            </nav>
-          </SheetContent>
-        </Sheet>
+              />
+              {/* Floating card */}
+              <div className="absolute right-0 top-full z-50 mt-2 w-64 animate-in fade-in slide-in-from-top-2 rounded-2xl border bg-background/95 p-3 shadow-xl backdrop-blur">
+                <nav className="flex flex-col gap-0.5">
+                  {NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setOpen(false)}
+                      className="rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  <HrSeparator className="my-2" />
+                  <a
+                    href="tel:+905551234567"
+                    className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent"
+                  >
+                    <Phone className="h-4 w-4" />
+                    0555 123 45 67
+                  </a>
+                  <Link
+                    href="/iletisim"
+                    onClick={() => setOpen(false)}
+                    className={cn(buttonVariants(), "mt-1 rounded-xl")}
+                  >
+                    Bize Ulaşın
+                  </Link>
+                </nav>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
