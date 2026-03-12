@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react";
 
 import { getCities } from "@/lib/queries/locations";
 import { getFeaturesByCategory } from "@/lib/queries/features";
+import { getAgents } from "@/lib/queries/content";
 import { PropertyForm } from "@/components/admin/property-form";
 
 export const metadata: Metadata = {
@@ -11,9 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPropertyNewPage() {
-  const [cities, featuresByCategory] = await Promise.all([
+  const [cities, featuresByCategory, agentsResult] = await Promise.all([
     getCities(),
     getFeaturesByCategory(),
+    getAgents(),
   ]);
 
   // Normalise featuresByCategory to the shape PropertyForm expects
@@ -59,6 +61,11 @@ export default async function AdminPropertyNewPage() {
       <PropertyForm
         cities={cityOptions}
         featuresByCategory={normalisedFeatures}
+        agents={(agentsResult.data ?? []).map((a) => ({
+          id: a.id,
+          name: a.name,
+          title: a.title,
+        }))}
       />
     </div>
   );

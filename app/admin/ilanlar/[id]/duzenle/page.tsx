@@ -6,6 +6,7 @@ import { ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCities } from "@/lib/queries/locations";
 import { getFeaturesByCategory, getPropertyFeatures } from "@/lib/queries/features";
+import { getAgents } from "@/lib/queries/content";
 import { PropertyForm } from "@/components/admin/property-form";
 import { ImageManager } from "@/components/admin/image-manager";
 import type { PropertyImage } from "@/types/property";
@@ -23,7 +24,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
 
   const supabase = await createClient();
 
-  const [propertyResult, cities, featuresByCategory, propertyFeatures] =
+  const [propertyResult, cities, featuresByCategory, propertyFeatures, agentsResult] =
     await Promise.all([
       supabase
         .from("properties")
@@ -35,7 +36,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
           parking, furnished, elevator, pool, garden, security_24_7, balcony_count,
           lat, lng, address,
           city_id, district_id, neighborhood_id,
-          is_featured, seo_title, seo_description,
+          is_featured, seo_title, seo_description, agent_id,
           images:property_images(id, url, alt_text, sort_order, is_cover, created_at, property_id)
         `
         )
@@ -44,6 +45,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
       getCities(),
       getFeaturesByCategory(),
       getPropertyFeatures(id),
+      getAgents(),
     ]);
 
   if (propertyResult.error || !propertyResult.data) {
@@ -131,8 +133,15 @@ export default async function AdminPropertyEditPage({ params }: Props) {
     is_featured: property.is_featured,
     seo_title: property.seo_title,
     seo_description: property.seo_description,
+    agent_id: property.agent_id ?? null,
     feature_ids: featureIds,
   };
+
+  const agentOptions = (agentsResult.data ?? []).map((a) => ({
+    id: a.id,
+    name: a.name,
+    title: a.title,
+  }));
 
   return (
     <div className="space-y-8">
@@ -156,6 +165,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
       <PropertyForm
         cities={cityOptions}
         featuresByCategory={normalisedFeatures}
+        agents={agentOptions}
         initialData={initialData}
         propertyId={id}
       />

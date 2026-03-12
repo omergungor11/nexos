@@ -51,9 +51,12 @@ type NeighborhoodOption = {
 };
 type FeatureOption = { id: number; name: string; icon: string | null };
 
+type AgentOption = { id: string; name: string; title: string | null };
+
 export interface PropertyFormProps {
   cities: CityOption[];
   featuresByCategory: Record<string, FeatureOption[]>;
+  agents?: AgentOption[];
   initialData?: Partial<InitialPropertyData>;
   propertyId?: string;
 }
@@ -92,6 +95,7 @@ interface InitialPropertyData {
   is_featured: boolean;
   seo_title: string | null;
   seo_description: string | null;
+  agent_id: string | null;
   feature_ids?: number[];
 }
 
@@ -128,6 +132,7 @@ interface FormState {
   is_featured: boolean;
   seo_title: string;
   seo_description: string;
+  agent_id: string;
 }
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
@@ -313,6 +318,7 @@ function buildInitialState(
     is_featured: initialData?.is_featured ?? false,
     seo_title: initialData?.seo_title ?? "",
     seo_description: initialData?.seo_description ?? "",
+    agent_id: initialData?.agent_id ?? "",
   };
 }
 
@@ -335,6 +341,7 @@ interface NeighborhoodResponse {
 export function PropertyForm({
   cities,
   featuresByCategory,
+  agents = [],
   initialData,
   propertyId,
 }: PropertyFormProps) {
@@ -564,6 +571,7 @@ export function PropertyForm({
       is_featured: form.is_featured,
       seo_title: form.seo_title.trim() || undefined,
       seo_description: form.seo_description.trim() || undefined,
+      agent_id: form.agent_id || undefined,
     };
   }
 
@@ -714,6 +722,34 @@ export function PropertyForm({
               </Select>
             </Field>
           </div>
+
+          {agents.length > 0 && (
+            <Field
+              label="Sorumlu Danışman"
+              htmlFor="agent_id"
+              hint="Bu ilanla ilgilenecek ekip üyesini seçin"
+            >
+              <Select
+                value={form.agent_id}
+                onValueChange={(v) =>
+                  handleSelectChange("agent_id", v === "__none__" ? "" : v)
+                }
+              >
+                <SelectTrigger id="agent_id" className="w-full sm:w-80">
+                  <SelectValue placeholder="Danışman seçiniz (opsiyonel)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">Danışman yok</SelectItem>
+                  {agents.map((agent) => (
+                    <SelectItem key={agent.id} value={agent.id}>
+                      {agent.name}
+                      {agent.title ? ` — ${agent.title}` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          )}
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}

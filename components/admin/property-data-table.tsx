@@ -61,6 +61,11 @@ type City = {
   name: string;
 };
 
+type Agent = {
+  id: string;
+  name: string;
+};
+
 export type AdminPropertyRow = {
   id: string;
   slug: string;
@@ -77,6 +82,7 @@ export type AdminPropertyRow = {
   city: City | null;
   district: { name: string } | null;
   images: PropertyImage[];
+  agent: Agent | null;
 };
 
 type SortKey = keyof Pick<
@@ -420,6 +426,7 @@ export function PropertyDataTable({
                 <SortIcon column="price" currentKey={sortKey} currentDir={sortDir} />
               </th>
               <th className={thClass}>Şehir</th>
+              <th className={thClass}>Danışman</th>
               <th
                 className={thSortClass}
                 onClick={() => handleSort("status")}
@@ -436,7 +443,7 @@ export function PropertyDataTable({
             {paginated.length === 0 ? (
               <tr>
                 <td
-                  colSpan={10}
+                  colSpan={11}
                   className="px-3 py-8 text-center text-muted-foreground"
                 >
                   İlan bulunamadı.
@@ -502,6 +509,11 @@ export function PropertyDataTable({
                     <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
                       {row.city?.name ?? "—"}
                       {row.district ? ` / ${row.district.name}` : ""}
+                    </td>
+
+                    {/* Agent */}
+                    <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
+                      {row.agent?.name ?? "—"}
                     </td>
 
                     {/* Status */}

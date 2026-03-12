@@ -22,7 +22,8 @@ export default async function AdminIlanlarPage() {
       is_active, is_featured, views_count, created_at,
       city:cities(name),
       district:districts(name),
-      images:property_images(url, is_cover)
+      images:property_images(url, is_cover),
+      agent:agents(id, name)
     `
     )
     .order("created_at", { ascending: false });
