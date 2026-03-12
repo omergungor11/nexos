@@ -1,79 +1,268 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Search, MapPin, Home, SlidersHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { PROPERTY_TYPE_LABELS } from "@/lib/constants";
 
-export function HeroSearch() {
+interface CityOption {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+interface SearchResult {
+  id: string;
+  slug: string;
+  title: string;
+  price: number;
+  currency: string;
+  city: { name: string } | null;
+  district: { name: string } | null;
+}
+
+interface HeroSearchProps {
+  cities?: CityOption[];
+}
+
+const TABS = [
+  { value: "", label: "Hepsi" },
+  { value: "satilik", label: "Satılık" },
+  { value: "kiralik", label: "Kiralık" },
+];
+
+export function HeroSearch({ cities = [] }: HeroSearchProps) {
   const router = useRouter();
-  const [islem, setIslem] = useState<string>("satilik");
-  const [tip, setTip] = useState<string>("");
-  const [sehir, setSehir] = useState<string>("");
+  const [activeTab, setActiveTab] = useState("");
+  const [query, setQuery] = useState("");
+  const [city, setCity] = useState("");
+  const [tip, setTip] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Live search
+  const doSearch = useCallback(async (q: string) => {
+    if (q.length < 2) {
+      setResults([]);
+      setShowResults(false);
+      return;
+    }
+    setSearching(true);
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+      const json = await res.json();
+      setResults(json.data ?? []);
+      setShowResults(true);
+    } catch {
+      setResults([]);
+    } finally {
+      setSearching(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => doSearch(query), 300);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query, doSearch]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   function handleSearch() {
     const params = new URLSearchParams();
-    if (islem) params.set("islem", islem);
+    if (activeTab) params.set("islem", activeTab);
     if (tip) params.set("tip", tip);
-    if (sehir) params.set("sehir", sehir);
+    if (city) params.set("sehir", city);
+    if (query.length >= 2) params.set("q", query);
     router.push(`/emlak?${params.toString()}`);
   }
 
+  function handleResultClick(slug: string) {
+    setShowResults(false);
+    router.push(`/emlak/${slug}`);
+  }
+
+  function formatPrice(price: number, currency: string) {
+    const sym = currency === "GBP" ? "£" : currency === "USD" ? "$" : currency === "EUR" ? "€" : "₺";
+    return `${sym}${price.toLocaleString("tr-TR")}`;
+  }
+
   return (
-    <div className="w-full max-w-3xl rounded-xl border bg-background/95 p-4 shadow-lg backdrop-blur sm:p-6">
-      {/* Transaction Type Tabs */}
-      <div className="mb-4 flex gap-2">
-        <Button
-          variant={islem === "satilik" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setIslem("satilik")}
-        >
-          Satılık
-        </Button>
-        <Button
-          variant={islem === "kiralik" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setIslem("kiralik")}
-        >
-          Kiralık
-        </Button>
+    <div className="w-full max-w-4xl">
+      {/* Tabs */}
+      <div className="mb-3 flex justify-center gap-1">
+        {TABS.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => setActiveTab(tab.value)}
+            className={cn(
+              "relative px-5 py-2 text-sm font-medium transition-colors",
+              activeTab === tab.value
+                ? "text-white"
+                : "text-white/70 hover:text-white"
+            )}
+          >
+            {tab.label}
+            {activeTab === tab.value && (
+              <span className="absolute bottom-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-primary" />
+            )}
+          </button>
+        ))}
       </div>
 
-      {/* Search Fields */}
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Select value={tip} onValueChange={(v) => setTip(v ?? "")}>
-          <SelectTrigger className="sm:w-40">
-            <SelectValue placeholder="Emlak Tipi" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
+      {/* Search bar */}
+      <div
+        ref={searchRef}
+        className="relative rounded-2xl bg-white/95 p-2 shadow-xl backdrop-blur sm:p-2.5"
+      >
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0">
+          {/* Quick search input */}
+          <div className="relative flex-1 sm:border-r sm:border-gray-200">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Hızlı arama..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => results.length > 0 && setShowResults(true)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              className="h-11 w-full bg-transparent pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+            />
+          </div>
+
+          {/* City select */}
+          <div className="relative sm:border-r sm:border-gray-200">
+            <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <select
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="h-11 w-full appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none sm:w-44"
+            >
+              <option value="">Lokasyon</option>
+              {cities.map((c) => (
+                <option key={c.id} value={c.slug}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <svg
+              className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+
+          {/* Type select */}
+          <div className="relative sm:border-r sm:border-gray-200">
+            <Home className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <select
+              value={tip}
+              onChange={(e) => setTip(e.target.value)}
+              className="h-11 w-full appearance-none bg-transparent pl-10 pr-8 text-sm text-gray-900 focus:outline-none sm:w-36"
+            >
+              <option value="">Türü</option>
+              {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <svg
+              className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+
+          {/* More filters link + search button */}
+          <div className="flex items-center gap-2 pl-3 pr-1">
+            <button
+              type="button"
+              onClick={() => {
+                const params = new URLSearchParams();
+                if (activeTab) params.set("islem", activeTab);
+                router.push(`/emlak?${params.toString()}`);
+              }}
+              className="hidden items-center gap-1.5 text-sm text-gray-500 whitespace-nowrap hover:text-gray-900 sm:flex"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              Detaylı
+            </button>
+            <button
+              type="button"
+              onClick={handleSearch}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 active:scale-95"
+              aria-label="Ara"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Live search results dropdown */}
+        {showResults && results.length > 0 && (
+          <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-auto rounded-xl border bg-white shadow-xl">
+            {results.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => handleResultClick(r.slug)}
+                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {r.title}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {[r.district?.name, r.city?.name].filter(Boolean).join(", ")}
+                  </p>
+                </div>
+                <span className="shrink-0 text-sm font-bold text-primary">
+                  {formatPrice(r.price, r.currency)}
+                </span>
+              </button>
             ))}
-          </SelectContent>
-        </Select>
+            <button
+              type="button"
+              onClick={handleSearch}
+              className="flex w-full items-center justify-center gap-1 border-t px-4 py-2.5 text-sm font-medium text-primary hover:bg-gray-50"
+            >
+              Tüm sonuçları gör
+              <span className="text-xs text-gray-400">({results.length})</span>
+            </button>
+          </div>
+        )}
 
-        <Input
-          placeholder="Şehir, ilçe veya mahalle ara..."
-          value={sehir}
-          onChange={(e) => setSehir(e.target.value)}
-          className="flex-1"
-        />
-
-        <Button onClick={handleSearch} className="gap-2">
-          <Search className="h-4 w-4" />
-          Ara
-        </Button>
+        {/* Searching indicator */}
+        {searching && query.length >= 2 && (
+          <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border bg-white p-4 text-center text-sm text-gray-500 shadow-xl">
+            Aranıyor...
+          </div>
+        )}
       </div>
     </div>
   );

@@ -25,6 +25,7 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { PropertyCard } from "@/components/property/property-card";
 import { JsonLd } from "@/components/shared/json-ld";
 import { getFeaturedProperties, getRecentProperties } from "@/lib/queries/properties";
+import { getCities } from "@/lib/queries/locations";
 import { PROPERTY_TYPE_LABELS } from "@/lib/constants";
 import type { PropertyListItem } from "@/types";
 
@@ -73,9 +74,10 @@ const localBusinessJsonLd: Record<string, unknown> = {
 };
 
 export default async function HomePage() {
-  const [{ data: featured }, { data: recent }] = await Promise.all([
+  const [{ data: featured }, { data: recent }, cities] = await Promise.all([
     getFeaturedProperties(6),
     getRecentProperties(8),
+    getCities(),
   ]);
 
   return (
@@ -97,7 +99,7 @@ export default async function HomePage() {
               kolayca keşfedin.
             </p>
           </div>
-          <HeroSearch />
+          <HeroSearch cities={cities} />
         </div>
       </section>
 
