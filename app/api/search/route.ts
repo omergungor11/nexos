@@ -9,7 +9,7 @@ const SEARCH_SELECT = `
   images:property_images(url, is_cover)
 `;
 
-const SEARCH_LIMIT = 20;
+const SEARCH_LIMIT = 10;
 const MIN_QUERY_LENGTH = 2;
 
 export async function GET(request: NextRequest) {
@@ -22,34 +22,20 @@ export async function GET(request: NextRequest) {
   const sanitisedQ = q.trim();
   const supabase = await createClient();
 
-  // Primary path: Postgres full-text search with Turkish language config.
+  // Use ilike for reliable partial matching across title, address, and description
+  const pattern = `%${sanitisedQ}%`;
+
   const { data, error } = await supabase
     .from("properties")
     .select(SEARCH_SELECT)
     .eq("is_active", true)
-    .textSearch("title", sanitisedQ, { type: "websearch", config: "turkish" })
+    .or(`title.ilike.${pattern},address.ilike.${pattern},description.ilike.${pattern}`)
+    .order("is_featured", { ascending: false })
+    .order("views_count", { ascending: false })
     .limit(SEARCH_LIMIT);
 
-  if (!error) {
-    return NextResponse.json({
-      data: data ?? [],
-      meta: { total: data?.length ?? 0 },
-    });
-  }
-
-  // Fallback path: textSearch failed (e.g. Turkish FTS config not installed on
-  // the current Supabase instance). Use a case-insensitive LIKE match instead.
-  console.error("search textSearch error, falling back to ilike:", error);
-
-  const { data: fallback, error: fallbackError } = await supabase
-    .from("properties")
-    .select(SEARCH_SELECT)
-    .eq("is_active", true)
-    .ilike("title", `%${sanitisedQ}%`)
-    .limit(SEARCH_LIMIT);
-
-  if (fallbackError) {
-    console.error("search ilike fallback error:", fallbackError);
+  if (error) {
+    console.error("search error:", error);
     return NextResponse.json(
       { error: { code: "SEARCH_ERROR", message: "Arama sırasında hata oluştu" } },
       { status: 500 }
@@ -57,7 +43,7 @@ export async function GET(request: NextRequest) {
   }
 
   return NextResponse.json({
-    data: fallback ?? [],
-    meta: { total: fallback?.length ?? 0 },
+    data: data ?? [],
+    meta: { total: data?.length ?? 0 },
   });
 }
