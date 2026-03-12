@@ -32,9 +32,9 @@ export function Footer() {
               <Image
                 src="/logo-trans.png"
                 alt="Nexos Investment"
-                width={160}
-                height={44}
-                className="h-9 w-auto object-contain"
+                width={220}
+                height={60}
+                className="h-16 w-auto object-contain"
               />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
