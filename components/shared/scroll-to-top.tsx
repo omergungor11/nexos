@@ -26,7 +26,7 @@ export function ScrollToTop() {
   return (
     <button
       onClick={handleClick}
-      className="fixed bottom-24 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-background border border-border text-foreground shadow-md transition-all hover:scale-110 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="fixed bottom-38 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gray-800 text-white shadow-lg transition-transform hover:scale-110"
       aria-label="Sayfanın başına dön"
     >
       <ChevronUp className="h-5 w-5" />
