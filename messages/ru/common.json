@@ -114,6 +114,37 @@
     "sale": "Продажа",
     "rent": "Аренда"
   },
+  "propertyCategories": {
+    "residential": "Жилая",
+    "land": "Земля",
+    "commercial": "Коммерческая"
+  },
+  "propertyTypes": {
+    "villa": "Вилла",
+    "apartment": "Квартира",
+    "twin_villa": "Дуплекс",
+    "penthouse": "Пентхаус",
+    "residence": "Резиденция",
+    "bungalow": "Бунгало",
+    "detached": "Дом",
+    "building": "Целое здание",
+    "timeshare": "Таймшер",
+    "derelict": "Заброшенное здание",
+    "unfinished": "Незавершённое строительство",
+    "residential_land": "Жилой участок",
+    "mixed_land": "Участок смешанного назначения",
+    "commercial_land": "Коммерческий участок",
+    "industrial_land": "Промышленный участок",
+    "tourism_land": "Туристический участок",
+    "field": "Поле",
+    "olive_grove": "Оливковая роща",
+    "shop": "Магазин",
+    "hotel": "Отель",
+    "workplace": "Рабочее помещение",
+    "warehouse": "Склад",
+    "business_transfer": "Продажа бизнеса",
+    "office": "Офис"
+  },
   "sort": {
     "newest": "Сначала новые",
     "oldest": "Сначала старые",
@@ -177,7 +208,8 @@
     "clearFilters": "Сбросить фильтры",
     "filters": "Фильтры",
     "min": "Мин",
-    "max": "Макс"
+    "max": "Макс",
+    "detailed": "Расширенный"
   },
   "heatingType": {
     "none": "Без отопления",

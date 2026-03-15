@@ -14,13 +14,35 @@
 export type TransactionType = "sale" | "rent";
 
 export type PropertyType =
-  | "apartment"
+  // Konut (Residential)
   | "villa"
+  | "apartment"
+  | "twin_villa"
+  | "penthouse"
+  | "residence"
+  | "bungalow"
   | "detached"
-  | "land"
-  | "office"
+  | "building"
+  | "timeshare"
+  | "derelict"
+  | "unfinished"
+  // Arsa (Land)
+  | "residential_land"
+  | "mixed_land"
+  | "commercial_land"
+  | "industrial_land"
+  | "tourism_land"
+  | "field"
+  | "olive_grove"
+  // Ticari (Commercial)
   | "shop"
-  | "warehouse";
+  | "hotel"
+  | "workplace"
+  | "warehouse"
+  | "business_transfer"
+  | "office"
+  // Legacy (backward compat)
+  | "land";
 
 export type PropertyStatus = "available" | "sold" | "rented" | "reserved";
 

@@ -114,6 +114,37 @@
     "sale": "For Sale",
     "rent": "For Rent"
   },
+  "propertyCategories": {
+    "residential": "Residential",
+    "land": "Land",
+    "commercial": "Commercial"
+  },
+  "propertyTypes": {
+    "villa": "Villa",
+    "apartment": "Apartment",
+    "twin_villa": "Twin Villa",
+    "penthouse": "Penthouse",
+    "residence": "Residence",
+    "bungalow": "Bungalow",
+    "detached": "Detached House",
+    "building": "Entire Building",
+    "timeshare": "Timeshare",
+    "derelict": "Derelict Building",
+    "unfinished": "Unfinished Construction",
+    "residential_land": "Residential Zoned Land",
+    "mixed_land": "Mixed-Use Zoned Land",
+    "commercial_land": "Commercial Zoned Land",
+    "industrial_land": "Industrial Zoned Land",
+    "tourism_land": "Tourism Zoned Land",
+    "field": "Field",
+    "olive_grove": "Olive Grove",
+    "shop": "Shop",
+    "hotel": "Hotel",
+    "workplace": "Workplace",
+    "warehouse": "Warehouse",
+    "business_transfer": "Business for Transfer",
+    "office": "Office"
+  },
   "sort": {
     "newest": "Newest",
     "oldest": "Oldest",
@@ -177,7 +208,8 @@
     "clearFilters": "Clear Filters",
     "filters": "Filters",
     "min": "Min",
-    "max": "Max"
+    "max": "Max",
+    "detailed": "Advanced"
   },
   "heatingType": {
     "none": "None",

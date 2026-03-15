@@ -146,14 +146,36 @@ const TRANSACTION_TYPE_LABELS: Record<TransactionType, string> = {
   rent: "Kiralık",
 };
 
-const PROPERTY_TYPE_LABELS: Record<PropertyType, string> = {
-  apartment: "Daire",
+const PROPERTY_TYPE_LABELS: Record<string, string> = {
+  // Konut
   villa: "Villa",
+  apartment: "Daire",
+  twin_villa: "İkiz Villa",
+  penthouse: "Penthouse",
+  residence: "Residence",
+  bungalow: "Bungalow",
   detached: "Müstakil Ev",
-  land: "Arsa",
-  office: "Ofis",
+  building: "Komple Bina",
+  timeshare: "Devremülk",
+  derelict: "Metruk Bina",
+  unfinished: "Yarım İnşaat",
+  // Arsa
+  residential_land: "Konut İmarlı Arsa",
+  mixed_land: "Konut ve Ticari İmarlı Arsa",
+  commercial_land: "Ticari İmarlı Arsa",
+  industrial_land: "Sanayi İmarlı Arsa",
+  tourism_land: "Turizm İmarlı Arsa",
+  field: "Tarla",
+  olive_grove: "Zeytinlik",
+  // Ticari
   shop: "Dükkan",
+  hotel: "Hotel",
+  workplace: "İş Yeri",
   warehouse: "Depo",
+  business_transfer: "Devren Satılık İşyeri",
+  office: "Ofis",
+  // Legacy
+  land: "Arsa",
 };
 
 const PROPERTY_STATUS_LABELS: Record<PropertyStatus, string> = {

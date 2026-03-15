@@ -1,12 +1,58 @@
 // Structural data — labels come from translations via t()
-export const PROPERTY_TYPES = [
-  "apartment",
-  "villa",
-  "detached",
+
+// Property type categories
+export type PropertyCategory = "residential" | "land" | "commercial";
+
+export const PROPERTY_CATEGORIES: PropertyCategory[] = [
+  "residential",
   "land",
-  "office",
+  "commercial",
+];
+
+export const RESIDENTIAL_TYPES = [
+  "villa",
+  "apartment",
+  "twin_villa",
+  "penthouse",
+  "residence",
+  "bungalow",
+  "detached",
+  "building",
+  "timeshare",
+  "derelict",
+  "unfinished",
+] as const;
+
+export const LAND_TYPES = [
+  "residential_land",
+  "mixed_land",
+  "commercial_land",
+  "industrial_land",
+  "tourism_land",
+  "field",
+  "olive_grove",
+] as const;
+
+export const COMMERCIAL_TYPES = [
   "shop",
+  "hotel",
+  "workplace",
   "warehouse",
+  "business_transfer",
+  "office",
+] as const;
+
+export const CATEGORY_SUBTYPES: Record<PropertyCategory, readonly string[]> = {
+  residential: RESIDENTIAL_TYPES,
+  land: LAND_TYPES,
+  commercial: COMMERCIAL_TYPES,
+};
+
+// Flat list for backward compat
+export const PROPERTY_TYPES = [
+  ...RESIDENTIAL_TYPES,
+  ...LAND_TYPES,
+  ...COMMERCIAL_TYPES,
 ] as const;
 
 export const TRANSACTION_TYPES = ["sale", "rent"] as const;
@@ -59,13 +105,41 @@ export const SORT_KEYS = [
 
 // Translation key mappings
 export const PROPERTY_TYPE_TKEYS: Record<string, string> = {
-  apartment: "property.apartment",
-  villa: "property.villa",
-  detached: "property.detached",
-  land: "property.land",
-  office: "property.office",
-  shop: "property.shop",
-  warehouse: "property.warehouse",
+  // Residential
+  villa: "propertyTypes.villa",
+  apartment: "propertyTypes.apartment",
+  twin_villa: "propertyTypes.twin_villa",
+  penthouse: "propertyTypes.penthouse",
+  residence: "propertyTypes.residence",
+  bungalow: "propertyTypes.bungalow",
+  detached: "propertyTypes.detached",
+  building: "propertyTypes.building",
+  timeshare: "propertyTypes.timeshare",
+  derelict: "propertyTypes.derelict",
+  unfinished: "propertyTypes.unfinished",
+  // Land
+  residential_land: "propertyTypes.residential_land",
+  mixed_land: "propertyTypes.mixed_land",
+  commercial_land: "propertyTypes.commercial_land",
+  industrial_land: "propertyTypes.industrial_land",
+  tourism_land: "propertyTypes.tourism_land",
+  field: "propertyTypes.field",
+  olive_grove: "propertyTypes.olive_grove",
+  // Commercial
+  shop: "propertyTypes.shop",
+  hotel: "propertyTypes.hotel",
+  workplace: "propertyTypes.workplace",
+  warehouse: "propertyTypes.warehouse",
+  business_transfer: "propertyTypes.business_transfer",
+  office: "propertyTypes.office",
+  // Legacy
+  land: "propertyTypes.residential_land",
+};
+
+export const CATEGORY_TKEYS: Record<PropertyCategory, string> = {
+  residential: "propertyCategories.residential",
+  land: "propertyCategories.land",
+  commercial: "propertyCategories.commercial",
 };
 
 export const TRANSACTION_TYPE_TKEYS: Record<string, string> = {
@@ -98,13 +172,31 @@ export const NAV_LINKS = [
 
 // Legacy label accessors for components that don't have translation context (e.g. admin)
 export const PROPERTY_TYPE_LABELS: Record<string, string> = {
-  apartment: "Daire",
   villa: "Villa",
+  apartment: "Daire",
+  twin_villa: "İkiz Villa",
+  penthouse: "Penthouse",
+  residence: "Residence",
+  bungalow: "Bungalow",
   detached: "Müstakil Ev",
-  land: "Arsa",
-  office: "Ofis",
+  building: "Komple Bina",
+  timeshare: "Devremülk",
+  derelict: "Metruk Bina",
+  unfinished: "Yarım İnşaat",
+  residential_land: "Konut İmarlı Arsa",
+  mixed_land: "Konut ve Ticari İmarlı Arsa",
+  commercial_land: "Ticari İmarlı Arsa",
+  industrial_land: "Sanayi İmarlı Arsa",
+  tourism_land: "Turizm İmarlı Arsa",
+  field: "Tarla",
+  olive_grove: "Zeytinlik",
   shop: "Dükkan",
+  hotel: "Hotel",
+  workplace: "İş Yeri",
   warehouse: "Depo",
+  business_transfer: "Devren Satılık İşyeri",
+  office: "Ofis",
+  land: "Arsa",
 };
 
 export const TRANSACTION_TYPE_LABELS: Record<string, string> = {
@@ -139,3 +231,7 @@ export const SORT_OPTIONS = [
   { value: "m2_azalan", label: "m² (Azalan)" },
   { value: "cok_izlenen", label: "En Çok İzlenen" },
 ];
+
+// Price/Area range presets for sliders
+export const PRICE_RANGE = { min: 0, max: 5_000_000, step: 10_000 };
+export const AREA_RANGE = { min: 0, max: 1000, step: 10 };

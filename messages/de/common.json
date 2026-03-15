@@ -114,6 +114,37 @@
     "sale": "Zum Verkauf",
     "rent": "Zur Miete"
   },
+  "propertyCategories": {
+    "residential": "Wohnimmobilien",
+    "land": "Grundstücke",
+    "commercial": "Gewerbe"
+  },
+  "propertyTypes": {
+    "villa": "Villa",
+    "apartment": "Wohnung",
+    "twin_villa": "Doppelhaushälfte",
+    "penthouse": "Penthouse",
+    "residence": "Residenz",
+    "bungalow": "Bungalow",
+    "detached": "Einfamilienhaus",
+    "building": "Gesamtes Gebäude",
+    "timeshare": "Ferienwohnrecht",
+    "derelict": "Ruine",
+    "unfinished": "Rohbau",
+    "residential_land": "Wohnbauland",
+    "mixed_land": "Mischbauland",
+    "commercial_land": "Gewerbegrundstück",
+    "industrial_land": "Industriegrundstück",
+    "tourism_land": "Tourismusbauland",
+    "field": "Acker",
+    "olive_grove": "Olivenhain",
+    "shop": "Geschäft",
+    "hotel": "Hotel",
+    "workplace": "Geschäftslokal",
+    "warehouse": "Lager",
+    "business_transfer": "Geschäftsübernahme",
+    "office": "Büro"
+  },
   "sort": {
     "newest": "Neueste",
     "oldest": "Älteste",
@@ -177,7 +208,8 @@
     "clearFilters": "Filter zurücksetzen",
     "filters": "Filter",
     "min": "Min",
-    "max": "Max"
+    "max": "Max",
+    "detailed": "Erweitert"
   },
   "heatingType": {
     "none": "Keine",

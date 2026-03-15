@@ -114,6 +114,37 @@
     "sale": "فروشی",
     "rent": "اجاره‌ای"
   },
+  "propertyCategories": {
+    "residential": "مسکونی",
+    "land": "زمین",
+    "commercial": "تجاری"
+  },
+  "propertyTypes": {
+    "villa": "ویلا",
+    "apartment": "آپارتمان",
+    "twin_villa": "ویلای دوقلو",
+    "penthouse": "پنت‌هاوس",
+    "residence": "رزیدانس",
+    "bungalow": "بانگلو",
+    "detached": "خانه مستقل",
+    "building": "ساختمان کامل",
+    "timeshare": "تایم‌شر",
+    "derelict": "ساختمان متروکه",
+    "unfinished": "نیمه‌کاره",
+    "residential_land": "زمین مسکونی",
+    "mixed_land": "زمین مختلط",
+    "commercial_land": "زمین تجاری",
+    "industrial_land": "زمین صنعتی",
+    "tourism_land": "زمین گردشگری",
+    "field": "مزرعه",
+    "olive_grove": "باغ زیتون",
+    "shop": "مغازه",
+    "hotel": "هتل",
+    "workplace": "محل کار",
+    "warehouse": "انبار",
+    "business_transfer": "واگذاری کسب‌وکار",
+    "office": "دفتر"
+  },
   "sort": {
     "newest": "جدیدترین",
     "oldest": "قدیمی‌ترین",
@@ -177,7 +208,8 @@
     "clearFilters": "پاک کردن فیلترها",
     "filters": "فیلترها",
     "min": "حداقل",
-    "max": "حداکثر"
+    "max": "حداکثر",
+    "detailed": "پیشرفته"
   },
   "heatingType": {
     "none": "بدون سیستم گرمایش",
