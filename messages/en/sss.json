@@ -1,0 +1,390 @@
+{
+  "sss": {
+    "meta": {
+      "title": "Frequently Asked Questions (FAQ)",
+      "description": "Comprehensive answers to 80+ questions about buying, selling, renting, title deeds, investment, living, and legal processes for real estate in Northern Cyprus."
+    },
+    "heading": "Frequently Asked Questions",
+    "subheading": "Comprehensive answers to {totalQuestions}+ questions about buying, selling, renting, investment, living, and legal processes for real estate in Northern Cyprus.",
+    "stats": {
+      "categories": "Categories",
+      "questionsAndAnswers": "Questions & Answers",
+      "whatsappSupport": "WhatsApp Support",
+      "freeConsultation": "Free Consultation"
+    },
+    "cta": {
+      "title": "Couldn't find the answer to your question?",
+      "description": "Our expert team is ready to answer all your questions. Get in touch now for a free consultation.",
+      "contactUs": "Contact Us",
+      "whatsapp": "Message Us on WhatsApp"
+    },
+    "categories": [
+      {
+        "title": "Why Invest in Northern Cyprus?",
+        "description": "Economic and strategic advantages that make Northern Cyprus attractive",
+        "items": [
+          {
+            "question": "Why is Northern Cyprus attractive for real estate investment?",
+            "answer": "Northern Cyprus is one of the fastest-growing property markets in the Mediterranean. Over the past 5 years, property values have increased by an average of 20-30% annually. Key attracting factors include low purchase costs, high rental yields (6-12% annually), 300+ days of sunshine, widespread use of English, proximity to Turkey, border proximity to the EU, and a growing tourism sector. Additionally, the large university student population keeps rental demand consistently strong."
+          },
+          {
+            "question": "How do property prices in Northern Cyprus compare to other Mediterranean countries?",
+            "answer": "Price per square metre in Northern Cyprus is on average 40-60% lower compared to Spain, Greece, Southern Cyprus, and Italy. For example, a beachfront 1-bedroom apartment in Iskele Long Beach costs 80,000-120,000 GBP, while a comparable property in Southern Cyprus is 200,000+ EUR and in Spain's Costa del Sol 180,000+ EUR. This price advantage attracts buyers for both living and investment purposes."
+          },
+          {
+            "question": "Which regions stand out most for investment?",
+            "answer": "Iskele (Long Beach, Bafra, Bogaz): Highest value appreciation, new projects, and tourism potential. Kyrenia: Established infrastructure, marina, luxury segment, foreign resident demand. Nicosia: Stable rental income thanks to universities. Famagusta: Eastern Mediterranean University area and historic character. Guzelyurt: Agricultural land and low entry-price properties. The greatest value appreciation in recent years has been in the Iskele region."
+          },
+          {
+            "question": "Is there a real estate bubble risk in Northern Cyprus?",
+            "answer": "Fluctuation risk exists in every property market. However, in Northern Cyprus, housing supply still falls short of demand. Continuous demand from university students, retirees, digital nomads, and holidaymakers supports prices. Nevertheless, purchases should not be made without professional advice, thorough research, and location-price analysis. At Nexos, we provide every client with an independent valuation and comparative market analysis."
+          },
+          {
+            "question": "How much income can short-term (Airbnb) rentals generate?",
+            "answer": "In tourist areas like Iskele Long Beach and Kyrenia, 1-bedroom apartments can generate 50-120 GBP per night during summer season (June-September), 2-bedroom apartments 80-180 GBP, and villas 150-400 GBP. Annual occupancy rates can be maintained at 60-75% with professional management. Although prices drop in winter months, income continuity can be ensured through university students and long-term tenants. With Nexos rental management service, we can manage your property on your behalf."
+          }
+        ]
+      },
+      {
+        "title": "Living in Northern Cyprus",
+        "description": "Climate, daily life, infrastructure, and quality of life",
+        "items": [
+          {
+            "question": "What is the cost of living in Northern Cyprus?",
+            "answer": "The cost of living in Northern Cyprus is significantly below the European average. Monthly average expenses for a couple: groceries 400-600 GBP, electricity-water 80-150 GBP, internet-phone 30-50 GBP, transportation 100-200 GBP, dining out (per person) 8-20 GBP, health insurance 50-100 GBP. The total monthly cost of living excluding rent is approximately 800-1,500 GBP."
+          },
+          {
+            "question": "What is the climate and weather like?",
+            "answer": "Northern Cyprus has a typical Mediterranean climate. There are an average of 320+ sunny days per year. Summers are hot and dry (June-September, 30-40°C), winters are mild and rainy (December-February, 10-18°C). Sea water temperature is suitable for swimming from May to November (22-28°C). Snowfall is extremely rare. This climate is a major draw for retirees from Northern Europe and digital nomads in particular."
+          },
+          {
+            "question": "What is the infrastructure and transportation like?",
+            "answer": "Direct flights from Ercan Airport connect to many cities in Turkey (Istanbul 1.5 hours). Getting around the island is done by car, with the east-west journey taking approximately 2 hours. Roads are generally in good condition. Fibre internet infrastructure is expanding (50-100 Mbps). The electricity grid may occasionally fluctuate, which is why most new developments include generator and solar panel systems. Supermarkets, shopping centres, and restaurants are available in every region."
+          },
+          {
+            "question": "Are the healthcare services of good quality?",
+            "answer": "Northern Cyprus has both public hospitals and private healthcare facilities. Private hospitals in Kyrenia and Nicosia are equipped with modern equipment, and most doctors have been trained in the UK, Turkey, or EU countries. Emergency healthcare is free. Private health insurance ranges from 500-1,500 GBP annually. Quick access to hospitals in Turkey for serious operations is also an advantage."
+          },
+          {
+            "question": "Is it suitable for families with children?",
+            "answer": "Northern Cyprus offers a safe living environment; crime rates are well below the European average. There are private schools offering English-language education (nursery to secondary), international schools, and more than 20 universities. Beaches, nature parks, and sports facilities provide ideal activities for children. Private school fees range from 2,000-6,000 GBP per year. Many new residential projects include children's playgrounds and family-friendly communal areas."
+          },
+          {
+            "question": "Which languages are spoken in daily life?",
+            "answer": "The official language is Turkish, but English is very widely spoken. You can receive service in English at official institutions, banks, hospitals, and most businesses. Thanks to universities, a multicultural environment exists. There are also Russian- and German-speaking communities. This multilingual environment provides great convenience for foreign investors and residents."
+          }
+        ]
+      },
+      {
+        "title": "General Information",
+        "description": "Basic questions about Nexos Real Estate and our services",
+        "items": [
+          {
+            "question": "What types of services does Nexos Real Estate offer?",
+            "answer": "Nexos Real Estate provides comprehensive property services in Northern Cyprus: sales and rental property consultancy, professional property valuation, investment portfolio advisory, title deed transfer and legal process management, rental management (tenant sourcing, rent collection, maintenance coordination), turnkey furniture and decoration service, residence permit consultancy, and after-sales support. Our expert team is by your side at every stage of the buying and selling process."
+          },
+          {
+            "question": "Which regions do you serve?",
+            "answer": "We primarily serve the Iskele, Famagusta, Kyrenia, Nicosia, and Guzelyurt regions. Iskele Long Beach and its surroundings is our most active area particularly from an investment perspective. We also have an extensive portfolio in developing areas such as Bafra, Tatlisu, Karpaz, Esentepe, and Alsancak."
+          },
+          {
+            "question": "How frequently are your listings updated?",
+            "answer": "Our listings are updated daily. Properties that are sold or rented are removed from the system on the same day. New listings are shared on our website and social media accounts as they are added. Price updates and campaigns are reflected instantly."
+          },
+          {
+            "question": "How can I contact your consultants?",
+            "answer": "You can fill in the contact form on our website, send a message via our WhatsApp line, call our office directly, or use the consultant contact details on listing pages. Our working hours are weekdays and Saturday 09:00-18:00. For urgent matters, our WhatsApp line is active 24/7."
+          },
+          {
+            "question": "What is the advantage of working with Nexos?",
+            "answer": "Our local expert team who know the region well, our transparent and honest advisory approach, our extensive property portfolio, full support in legal processes, after-sales rental management, and our 24/7 WhatsApp communication line support you at every step. 80% of our clients reach us through referrals — this is the most tangible indicator of trust and satisfaction."
+          }
+        ]
+      },
+      {
+        "title": "Purchasing Process",
+        "description": "Steps for buying property and what to look out for",
+        "items": [
+          {
+            "question": "How does the property buying process work in Northern Cyprus?",
+            "answer": "The process consists of the following steps: 1) Needs analysis and budget setting, 2) Property selection and on-site inspection (we organise this), 3) Price negotiation, 4) Pre-contract and deposit payment (typically 1,000-5,000 GBP), 5) Independent solicitor review and title deed research, 6) Signing the sales contract and registering it at the Land Registry, 7) Making payments according to the payment plan, 8) Council of Ministers permit application (for foreign buyers), 9) Title deed transfer. The process typically takes 3-6 months."
+          },
+          {
+            "question": "What should I look out for before buying?",
+            "answer": "Essential checks include: title deed type (Turkish Title is the most secure), the property's zoning status and building permit, infrastructure status (water, electricity, sewage, road access), construction quality and materials used, the area's development potential and master plan, whether there are any mortgages or liens on the property, the developer's past projects and references, and maintenance fees and annual costs. We strongly recommend hiring an independent solicitor."
+          },
+          {
+            "question": "What costs are involved when buying a property?",
+            "answer": "Title deed transfer tax (6%, typically split equally between buyer and seller — reduced to 3% for first-time buyers), VAT (5%, on new properties), stamp duty (0.5%), solicitor fee (1-2% of property value), estate agent commission (3-5%, usually paid by the seller), title registration fee, and translator fee (if required). Total additional costs amount to approximately 10-13% of the property value. It is important to include these in your budget."
+          },
+          {
+            "question": "Are instalment payment options available?",
+            "answer": "Yes, instalment payment plans are common, particularly in new developments. The typical structure: 30-40% down payment, with the remaining amount spread over 12-60 months. Some projects offer interest-free instalments, 0% deposit campaigns, or payment on handover and other flexible options. Instalment options on resale properties are limited and subject to negotiation with the seller. At Nexos, we negotiate the most suitable payment plan for you."
+          },
+          {
+            "question": "Can I buy a property without seeing it in person?",
+            "answer": "Technically possible, but we do not recommend it. However, for clients buying from abroad, we offer the following services: professional video tours and live video walkthroughs (WhatsApp/Zoom), detailed photography and drone footage, area introduction videos, and the option to transact via power of attorney. The ideal option is to plan a 2-3 day discovery trip — we also assist with airport transfers and accommodation arrangements."
+          }
+        ]
+      },
+      {
+        "title": "Title Deeds and Legal Processes",
+        "description": "Title deed types, legal rights, and official procedures",
+        "items": [
+          {
+            "question": "How many types of title deeds are there in Northern Cyprus?",
+            "answer": "There are three main types: 1) Turkish Title (Turk Kocani) — land that was under Turkish ownership before 1974; this is the most secure and valuable title type. 2) Equivalent Title (ITEM) — equivalent properties given to Turkish Cypriots who migrated to the south; these are state-guaranteed and reliable. 3) Allocation (Tahsis) — land allocated by the state; grants conditional ownership rights and may include certain restrictions. The title type directly affects the property's value and legal security; Turkish Title and Equivalent Title are the most preferred types."
+          },
+          {
+            "question": "How long does the title deed transfer take?",
+            "answer": "For Turkish citizens, the title deed transfer is typically completed within 1-2 weeks. For foreign nationals, since Council of Ministers permission is required, the process can take 3-12 months. During this period, the sales contract is registered at the Land Registry (Specific Performance), which fully secures the buyer's rights — the property cannot be sold to anyone else or have a mortgage placed on it."
+          },
+          {
+            "question": "Should I register my contract at the Land Registry?",
+            "answer": "Absolutely yes — this is the most critical step. Registering the sales contract at the Land Registry (Specific Performance) prevents the property from being sold to third parties, having a mortgage placed on it, or being subject to seizure proceedings. This registration protects your legal rights and is your most important safeguard until the title deed transfer is completed. The registration is handled by your solicitor for a small fee."
+          },
+          {
+            "question": "Is it mandatory to hire a solicitor?",
+            "answer": "While not legally mandatory, it is strongly recommended — in fact, at Nexos we consider it a necessity. An independent solicitor: conducts title deed research, reviews and negotiates the contract, follows up on Land Registry registration, prepares and tracks the Council of Ministers application, and identifies potential legal risks in advance. Solicitor fees are typically 1-2% of the property value. Contact us for trusted solicitor recommendations."
+          },
+          {
+            "question": "Can I carry out transactions via power of attorney?",
+            "answer": "Yes, if you are living abroad, you can authorise your solicitor or a trusted person via a notarised power of attorney. The power of attorney can be arranged at a notary or consulate in Turkey. It must clearly state which transactions can be carried out. An apostille endorsement may be required. This method is frequently used by investors purchasing remotely."
+          }
+        ]
+      },
+      {
+        "title": "Foreign Buyers",
+        "description": "Conditions and rights for foreign nationals purchasing property",
+        "items": [
+          {
+            "question": "Can foreigners buy property in Northern Cyprus?",
+            "answer": "Yes, foreign nationals can purchase property in Northern Cyprus. However, permission from the Council of Ministers is required. Each foreign citizen can purchase one property in their own name (maximum 1 donum = 1,338 sqm of land). This limit can be legally overcome by establishing a company in the TRNC — many investors prefer this method."
+          },
+          {
+            "question": "What is the Council of Ministers permission and how is it obtained?",
+            "answer": "This is the official permit required for foreign nationals to acquire property. Application documents include: passport copy, criminal record certificate (apostilled), sales contract, title deed photocopy, and property photographs. Your solicitor submits the application to the Ministry of Interior, and the process can take 3-12 months. During this period, you can use, rent out, and renovate your property — your contract is protected through Land Registry registration."
+          },
+          {
+            "question": "Are there different rules for Turkish citizens?",
+            "answer": "Yes, Turkish citizens enjoy significant advantages in Northern Cyprus: Council of Ministers permission is not required, and title deed transfer is carried out directly and quickly. There are no restrictions on the number of properties or land size — you can purchase multiple properties. Obtaining a residence permit is easier. Access to bank loans is broader. These advantages make Turkish citizens the most active buyer group in the Northern Cyprus property market."
+          },
+          {
+            "question": "Can British, Russian, or other nationalities buy property?",
+            "answer": "Yes, all foreign nationals can purchase property under the same conditions. British citizens represent the largest foreign buyer group. Russian, German, Scandinavian, Iranian, and Arab buyers are also active in the market. At Nexos, we provide full service in English and Turkish. We assist with translation and notary processes."
+          },
+          {
+            "question": "Can I buy more properties by setting up a company?",
+            "answer": "Yes, by establishing a limited company in the TRNC, you can bypass the property number restriction. Company formation takes approximately 1-2 weeks and costs between 1,500-3,000 GBP. Properties purchased through a company do not require Council of Ministers permission. It can also provide tax advantages. This method is ideal for portfolio investors and buyers looking to purchase multiple properties."
+          }
+        ]
+      },
+      {
+        "title": "Residence Permits and Citizenship",
+        "description": "Residency, residence permits, and conditions for long-term stays",
+        "items": [
+          {
+            "question": "Can I obtain a residence permit by buying property?",
+            "answer": "Yes, foreign property owners can apply for a temporary residence permit. The residence permit is typically issued for 1 year and is renewable. Applications are made to the Immigration Department of the Ministry of Interior. Required documents include: passport, property title/contract copy, bank statement, health report, and criminal record certificate. The process takes 2-4 weeks."
+          },
+          {
+            "question": "What rights does a residence permit provide?",
+            "answer": "With a residence permit, you can legally reside in the TRNC, open a bank account, purchase a vehicle, and carry on with your daily life. However, a residence permit does not grant the right to work — a separate work permit is required for that. During your residence permit, you are free to enter and exit the country. You can enrol your children in schools."
+          },
+          {
+            "question": "Is it possible to obtain TRNC citizenship?",
+            "answer": "TRNC citizenship is possible under certain conditions, but purchasing property does not automatically grant citizenship. Citizenship is generally considered through marriage, long-term residence (5+ years), or investment. The process depends on a Council of Ministers decision. We recommend consulting a solicitor for up-to-date information on citizenship."
+          },
+          {
+            "question": "Can I settle in Northern Cyprus as a retiree?",
+            "answer": "Northern Cyprus is an excellent living destination for retirees. Low cost of living, mild climate, safe environment, and the prevalence of English particularly attract British and Northern European retirees. You can live comfortably on your pension, benefit from healthcare services, and maintain an active social life. Permanent settlement is possible by obtaining a residence permit through property purchase."
+          }
+        ]
+      },
+      {
+        "title": "Investment and Financing",
+        "description": "Property investment, returns, and financing options",
+        "items": [
+          {
+            "question": "Is real estate investment in Northern Cyprus profitable?",
+            "answer": "Over the past 5 years, annual value appreciation of 20-30% has been observed, particularly in the Iskele and Kyrenia regions. Long-term rental yield rates are 6-10% annually, and can reach up to 10-15% with short-term (holiday) rentals. Rental demand remains consistently high thanks to university students, holidaymakers, digital nomads, and retirees. The ability to invest in foreign currency (GBP, EUR, USD) provides an additional advantage. However, like any investment, there are risks, and we recommend seeking professional advice."
+          },
+          {
+            "question": "How much long-term rental income can I expect?",
+            "answer": "Monthly rental income by region and property type: Iskele Long Beach — 1-bed apartment: 400-600 GBP, 2-bed apartment: 600-900 GBP, 3-bed penthouse: 900-1,400 GBP. Kyrenia centre — 1-bed: 450-700 GBP, 2-bed: 700-1,100 GBP, villa: 1,200-3,000 GBP. Nicosia (university area) — studio: 250-400 GBP, 2-bed: 500-750 GBP. These figures may vary depending on market conditions."
+          },
+          {
+            "question": "Can I use a bank mortgage?",
+            "answer": "Banks in Northern Cyprus provide mortgages: up to 50-60% of the property value, with terms of 10-15 years and annual interest rates of 8-12%. Turkish citizens can also use loans from banks in Turkey. British citizens may consider equity release or bridging finance options in the UK. Project-based instalment payment plans are generally more advantageous than bank mortgages."
+          },
+          {
+            "question": "Can you manage the rental of my property?",
+            "answer": "Yes, under our Nexos rental management service we provide: tenant sourcing and selection (including reference checks), lease agreement preparation, monthly rent collection and transfer, maintenance and repair coordination (24/7 emergency support), periodic property inspections and reporting, Airbnb/Booking management (for short-term), and utility bill tracking and payment. We offer a comprehensive management service especially for property owners living abroad."
+          },
+          {
+            "question": "In which currency should I invest?",
+            "answer": "Property prices in Northern Cyprus are generally quoted in GBP (British Pounds Sterling), with some projects using EUR or USD. Given the depreciation of the Turkish Lira against foreign currencies, investing in foreign currency is advantageous for value preservation. Rental income is also typically earned in GBP or EUR. Payment plans can be fixed in foreign currency."
+          }
+        ]
+      },
+      {
+        "title": "Rentals",
+        "description": "Searching for rental properties, rights, and responsibilities",
+        "items": [
+          {
+            "question": "How does the rental process work?",
+            "answer": "After property selection, a lease agreement is prepared. Standard conditions: 1-year contract, 2-3 months' deposit, and the first month's rent paid upfront. The contract is prepared in both English and Turkish. A copy of your ID/passport and sometimes proof of employment/income is required. Tenant and landlord rights are protected by law. At Nexos, we assist with contract preparation, key handover, and property condition assessment."
+          },
+          {
+            "question": "What are my rights as a tenant?",
+            "answer": "Your legal rights during the lease period: you cannot be unfairly evicted, the deposit is returned at the end of the contract (if no damage), the landlord cannot enter the property without notice, rent increases are limited to the annual inflation rate, and the landlord is responsible for fixing structural defects. In case of disputes, you can apply to the Rent Tribunal."
+          },
+          {
+            "question": "Are there pet-friendly properties?",
+            "answer": "Some property owners allow pets. This is indicated in the listing details, or you can ask our consultant. Pet-friendly properties may typically require an additional deposit (1 month's rent). Pet permission is more common in villas and detached houses than in apartment flats."
+          },
+          {
+            "question": "Are utility bills and maintenance fees included in the rent?",
+            "answer": "Generally, electricity, water, and internet bills are not included in the rent and are paid by the tenant. In managed complexes, communal area maintenance fees (pool, security, garden, generator) are also the tenant's responsibility — ranging from 50-150 GBP monthly. Some rental apartments may include air conditioning and internet. All details are clearly specified in the lease agreement."
+          },
+          {
+            "question": "Is short-term rental (Airbnb) legal?",
+            "answer": "Yes, short-term rental is legal in the TRNC and is becoming increasingly common. However, it is recommended to obtain a tourism rental licence from the municipality. Tax obligations differ from long-term rentals. Some managed complexes may have short-term rental restrictions — it is important to check this before purchasing."
+          }
+        ]
+      },
+      {
+        "title": "Construction and New Projects",
+        "description": "New developments, construction quality, and handover processes",
+        "items": [
+          {
+            "question": "Is it safe to buy off-plan property?",
+            "answer": "Buying off-plan from reputable developers can provide a 15-30% price advantage. For a safe purchase: visit at least 2-3 of the developer's completed projects in person, sign a contract that includes delivery guarantee and delay penalties, tie the payment plan to construction milestones, have the contract reviewed by an independent solicitor, and verify that the title deed is in the developer's name. At Nexos, we only work with developers whose reliability we have verified."
+          },
+          {
+            "question": "How can I assess construction quality?",
+            "answer": "Key criteria to check: earthquake resistance class (C30+ concrete), thermal and sound insulation quality, exterior cladding material (stone cladding, composite, etc.), window and door brand (PVC double glazing minimum), plumbing infrastructure, electrical system and generator capacity, solar panel system, and lift brand and capacity. If possible, have an independent structural engineer carry out an inspection. At Nexos, we perform these checks on your behalf as part of our property inspection service."
+          },
+          {
+            "question": "What happens if the handover date is delayed?",
+            "answer": "A well-prepared sales contract should include: a monthly penalty clause (typically compensation equal to monthly rent), the right to cancel the contract after a specified period (6-12 months) with a full refund, and a guarantee of repayment with interest. Make sure these clauses are included in your contract. This protection is critically important as construction delays are common in Northern Cyprus."
+          },
+          {
+            "question": "Which developers are trustworthy?",
+            "answer": "Trustworthy developer criteria: minimum 5 years of industry experience, at least 2-3 completed and delivered projects, a track record of on-time delivery, satisfaction of current project residents, registration with the Chamber of Civil Engineers, and financial soundness with bank references. At Nexos, we thoroughly research the developers of all projects in our portfolio and only work with reliable firms."
+          },
+          {
+            "question": "Do you offer furniture and decoration packages?",
+            "answer": "Yes, we have turnkey furniture and decoration packages available. Basic package (bed, sofa, kitchen essentials) 3,000-5,000 GBP, standard package (full furniture + white goods + decoration) 5,000-10,000 GBP, premium package (designer furniture + decoration + home textiles) 10,000-20,000 GBP. We also offer professional interior design services that enhance rental potential, particularly for investment properties."
+          }
+        ]
+      },
+      {
+        "title": "Taxes and Costs",
+        "description": "Property taxes, fees, and annual expenses",
+        "items": [
+          {
+            "question": "What taxes apply to property ownership?",
+            "answer": "Annual property tax: determined by property value and is very low (50-300 TL per year). Rental income tax: an income tax return must be filed on rental income received, with rates ranging from 10-30% on a progressive scale. Capital gains tax: tax may apply on profit from property sales. Overall, tax rates in Northern Cyprus are considerably lower than in Turkey and European countries."
+          },
+          {
+            "question": "How much is the title deed transfer tax?",
+            "answer": "Title deed transfer tax is 6% of the property value. However, for first-time buyers (including foreign nationals), this rate is reduced to 3% — providing a significant saving. The buyer and seller typically split this tax equally, although this is subject to negotiation. Stamp duty of 0.5% is also added. VAT on new properties is 5%."
+          },
+          {
+            "question": "How much are the maintenance fees?",
+            "answer": "Maintenance fees vary according to the services offered by the complex: basic complex (security, garden): 30-60 GBP monthly, mid-range (pool, gym, security): 60-120 GBP monthly, luxury complex (spa, beach, concierge): 120-250 GBP monthly. Fees are typically paid monthly or quarterly in advance. Make sure to find out the maintenance fees before purchasing and include them in your budget."
+          },
+          {
+            "question": "What costs are involved when selling a property?",
+            "answer": "When selling: title deed transfer tax share (typically split 3% + 3% with the buyer), estate agent commission (3-5%, usually from the seller), capital gains tax if applicable, and solicitor fees. Important note: it is critical for both buyer and seller that the sale price is accurately stated in the contract for legal security purposes."
+          },
+          {
+            "question": "Is insurance mandatory?",
+            "answer": "Not legally mandatory, but strongly recommended. Insurance types and approximate annual costs: fire insurance 100-200 GBP, earthquake insurance 100-200 GBP, comprehensive home insurance (fire + earthquake + theft + flood) 250-500 GBP, contents insurance 100-300 GBP. Comprehensive insurance is particularly important for investment and rental properties to minimise risks."
+          }
+        ]
+      },
+      {
+        "title": "Transport and Travel",
+        "description": "How to get to Northern Cyprus, visa and entry requirements",
+        "items": [
+          {
+            "question": "How do I get to Northern Cyprus?",
+            "answer": "Travel to Northern Cyprus is via Ercan Airport. Direct flights are available from many cities in Turkey (Istanbul, Ankara, Izmir, Antalya, Adana). Flight time from Istanbul is approximately 1.5 hours. Additionally, ferry services operate from Mersin and Tasucu to Kyrenia/Famagusta. From the UK, connecting flights (via Istanbul) are typically preferred."
+          },
+          {
+            "question": "Is a visa required?",
+            "answer": "Turkish citizens can enter the TRNC without a visa — only an ID card is needed. British, EU, Russian, Ukrainian, and many other nationals can also enter visa-free (30-90 days). The list of countries requiring visas can be checked with the TRNC Ministry of Foreign Affairs. Property owners can stay indefinitely by obtaining a residence permit."
+          },
+          {
+            "question": "Is there a transfer from the airport to the properties?",
+            "answer": "At Nexos, we offer a complimentary airport transfer service to all our clients. From Ercan Airport, it is approximately 40 minutes to Iskele, 30 minutes to Kyrenia, and 20 minutes to Nicosia. For clients planning a discovery trip, we provide chauffeured transfers throughout property tours."
+          },
+          {
+            "question": "How does getting around the island work?",
+            "answer": "Getting around the island is mainly by car. Car hire costs 20-40 GBP per day. Second-hand car prices are lower than in Europe. Traffic drives on the left (British system). Public transport is limited; dolmus (minibus) routes are used for intercity travel. Taxi services are available and apps (BiTaksi) are becoming more widespread. The east-west journey (Karpaz to Guzelyurt) takes approximately 2.5 hours."
+          }
+        ]
+      },
+      {
+        "title": "Education and Universities",
+        "description": "Education opportunities, schools, and universities",
+        "items": [
+          {
+            "question": "What is the quality of education in Northern Cyprus?",
+            "answer": "Northern Cyprus has more than 20 universities, many of which hold international accreditation. Eastern Mediterranean University (EMU), Near East University (NEU), Girne American University (GAU), and Cyprus International University (CIU) are the most recognised institutions. Private schools offering English-language education at primary, secondary, and high school levels are also available. Education costs are below the European and even Turkish averages."
+          },
+          {
+            "question": "How do university students affect the rental market?",
+            "answer": "Northern Cyprus has more than 100,000 university students, and this number is increasing every year. Students make up a significant portion of rental demand — particularly around universities in Nicosia, Famagusta, and Kyrenia. This translates to stable and continuous rental income for investors. Studios and 1-bedroom apartments are the most in-demand property types in the student market."
+          },
+          {
+            "question": "Can I enrol my child in an international school?",
+            "answer": "Yes, international schools with English-language curricula are available in Northern Cyprus. Schools such as the English School of Kyrenia and The Heritage School in Kyrenia and Nicosia follow the Cambridge/IGCSE curriculum. Annual fees range from 2,000-6,000 GBP — well below comparable schools in Europe. Property-owning families with residence permits can easily enrol their children."
+          }
+        ]
+      },
+      {
+        "title": "Health and Safety",
+        "description": "Healthcare services, insurance, and security situation",
+        "items": [
+          {
+            "question": "How does the healthcare system work?",
+            "answer": "Northern Cyprus has both public and private healthcare facilities. Public hospitals provide free emergency services. Private hospitals (Near East Hospital, Dr Burhan Nalbantoglu State Hospital, private clinics in Kyrenia) are equipped with modern facilities. Most doctors have been trained in the UK, Turkey, or EU countries. Private health insurance ranges from 500-1,500 GBP annually and provides comprehensive coverage."
+          },
+          {
+            "question": "Is Northern Cyprus safe?",
+            "answer": "Northern Cyprus is one of the regions with the lowest crime rates in the world. Murder, armed robbery, and organised crime rates are well below the European average. Walking the streets at midnight and leaving your door unlocked is a common way of life. The police force operates with a community-focused approach. This safe environment is a major draw particularly for families and retirees. Earthquake risk is low and there is no history of significant natural disasters."
+          },
+          {
+            "question": "What should I do in an emergency?",
+            "answer": "Emergency numbers: 112 (general emergency), 199 (fire), 155 (police). Private hospitals have 24/7 emergency departments. At Nexos, we provide our property owners with an emergency contact guide and 24/7 WhatsApp support line. In cases requiring serious medical intervention, air ambulance transfer to hospitals in Turkey is available."
+          }
+        ]
+      },
+      {
+        "title": "Lifestyle and Culture",
+        "description": "Beaches, activities, food culture, and social life",
+        "items": [
+          {
+            "question": "What activities are available in Northern Cyprus?",
+            "answer": "Water sports (diving, surfing, sailing, jet ski), golf (2 international golf courses), trekking and nature walks (Besparmak Mountains, Karpaz peninsula), historical exploration (Salamis ancient city, St Hilarion Castle, Bellapais Monastery), casinos and nightlife, beach clubs, fishing, cycling tours, and yoga camps. Various festivals are held throughout every season."
+          },
+          {
+            "question": "What is the food culture like?",
+            "answer": "Northern Cyprus cuisine is a unique blend of Turkish, Greek, and Middle Eastern cooking. Halloumi cheese, molehiya, kolokas, sheftali kebab, and pilavuna are the best-known local delicacies. Fresh seafood is available everywhere. Restaurant prices are very affordable — dinner for two costs between 25-60 GBP. British pubs, Italian restaurants, and international cuisines are also widely available."
+          },
+          {
+            "question": "What are the beaches and sea quality like?",
+            "answer": "Northern Cyprus's 396 km coastline features dozens of stunning beaches. Altinkum (Golden Beach / Karpaz), Escape Beach (Kyrenia), Long Beach (Iskele), and Glapsides (Famagusta) are the most popular beaches. The sea water is crystal clear and clean, with some of the best water quality in the Mediterranean. Loggerhead sea turtle nesting sites are protected. Both sandy beaches and rocky coves are available."
+          },
+          {
+            "question": "Is there an expat community?",
+            "answer": "Northern Cyprus has a growing expat community — particularly British, German, Russian, Scandinavian, and Iranian communities are active. The British expat community in Kyrenia is the largest group. You can easily socialise through Facebook groups, expat meetups, sports clubs, and social events. There are many English-speaking restaurants, cafes, and businesses."
+          }
+        ]
+      }
+    ]
+  }
+}

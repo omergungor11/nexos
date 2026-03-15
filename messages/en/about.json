@@ -1,0 +1,181 @@
+{
+  "aboutPage": {
+    "meta": {
+      "title": "About Us",
+      "description": "Nexos Real Estate — Northern Cyprus's trusted property consultancy. Our mission, vision, values and story."
+    },
+    "hero": {
+      "subtitle": "Northern Cyprus's Trusted Property Consultant",
+      "titleLine1": "Reach Your Dream Property",
+      "titleLine2": "With Confidence",
+      "description": "At Nexos Real Estate, we are by your side throughout every step of buying, selling and renting property in Northern Cyprus. With our professional team, transparent approach and deep local knowledge, we find the right investment for you."
+    },
+    "stats": {
+      "happyClients": "Happy Clients",
+      "portfolio": "Property Portfolio",
+      "experience": "Years of Experience",
+      "consultants": "Expert Consultants"
+    },
+    "whoWeAre": {
+      "title": "Who We Are",
+      "paragraph1": "Nexos Real Estate is one of Northern Cyprus's leading property consultancy firms. Founded in Iskele in 2016, our company now operates across a wide service network covering Iskele, Kyrenia, Nicosia, Famagusta and Guzelyurt.",
+      "paragraph2": "We provide end-to-end services across every area of real estate, from sales and rental consultancy to investment portfolio management, title deed processing and rental management. The fact that 80% of our clients reach us through referrals is the strongest proof of our trust and quality-driven approach.",
+      "paragraph3": "We serve clients from Turkey, the UK, Germany, Russia and many other nationalities in both Turkish and English. We create tailored solutions for every client and maintain transparent, honest communication throughout every stage of the purchasing process."
+    },
+    "infoCards": {
+      "consultants": {
+        "value": "15+",
+        "label": "Expert Consultants"
+      },
+      "referralRate": {
+        "value": "80%",
+        "label": "Referral Rate"
+      },
+      "portfolio": {
+        "value": "1,200+",
+        "label": "Property Portfolio"
+      },
+      "regions": {
+        "value": "5 Regions",
+        "label": "Island-Wide"
+      }
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "To manage the property buying, selling and renting processes in Northern Cyprus in a transparent, reliable and professional manner, helping our clients make the right investment decisions. By offering tailored solutions to every client, we transform the property acquisition journey into a stress-free and enjoyable experience."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "To become the most recognised and trusted real estate consultancy brand in Northern Cyprus on the international stage. By embracing technology and innovative approaches, we aim to lead the industry, set no limits on customer satisfaction, and pursue sustainable growth."
+    },
+    "values": {
+      "title": "Our Values",
+      "description": "At Nexos Real Estate, these values guide every decision we make and every client relationship we build.",
+      "trustTransparency": {
+        "title": "Trust & Transparency",
+        "description": "We ensure complete transparency in every transaction. No hidden costs, surprise commissions or misleading information. We offer honest and open communication to our clients at every stage."
+      },
+      "customerFocus": {
+        "title": "Customer Focus",
+        "description": "Understanding our clients' needs, budgets and aspirations is our top priority. We work with a solution-oriented mindset, not a sales-driven one. Every client is special to us."
+      },
+      "professionalism": {
+        "title": "Professionalism",
+        "description": "We are a team that stays up to date with the latest industry knowledge and continuously improves. We deliver services at international standards and meticulously attend to every detail."
+      },
+      "longTermRelationship": {
+        "title": "Long-Term Relationships",
+        "description": "We build lifelong relationships, not one-time sales. With our after-sales support, rental management and consultancy services, we are always by your side."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "We leverage technology and innovative marketing methods to reach the widest audience for your property. We make a difference through digital marketing, virtual tours and data analytics."
+      },
+      "teamSpirit": {
+        "title": "Team Spirit",
+        "description": "Our team members, coming from diverse areas of expertise, work together to provide the most comprehensive service to our clients. Each consultant complements the others."
+      }
+    },
+    "timeline": {
+      "title": "Our Story",
+      "description": "The growth journey of Nexos Real Estate from 2016 to today.",
+      "2016": {
+        "title": "Foundation",
+        "description": "Nexos Real Estate was founded with a small office in Iskele. In our first year, we helped more than 50 families find their dream home."
+      },
+      "2018": {
+        "title": "Growth",
+        "description": "We expanded our team and began serving in Kyrenia and Nicosia as well. Our portfolio grew to over 300 properties."
+      },
+      "2020": {
+        "title": "Digital Transformation",
+        "description": "During the pandemic, we strengthened our digital infrastructure. We introduced virtual tours, online consultancy and digital contract processes."
+      },
+      "2022": {
+        "title": "International Expansion",
+        "description": "We established our multilingual service infrastructure for British, German and Russian clients. We started participating in international real estate exhibitions."
+      },
+      "2024": {
+        "title": "Market Leadership",
+        "description": "We became the most preferred property consultancy in the Iskele region. Over 1,000 happy clients and a team of 15+ specialists."
+      }
+    },
+    "services": {
+      "title": "What We Do",
+      "description": "We provide end-to-end professional services across every area of real estate. Whatever your needs, our expert team is here for you.",
+      "items": {
+        "salesRental": "Sales and rental property consultancy",
+        "valuation": "Professional property valuation",
+        "investment": "Investment portfolio advisory",
+        "titleDeed": "Title deed transfer and legal process management",
+        "rentalManagement": "Rental management (tenant sourcing, collection, maintenance)",
+        "furnishing": "Turnkey furniture and interior design",
+        "residencePermit": "Residence permit consultancy",
+        "transfer": "Airport transfer and property tours",
+        "airbnb": "Short-term rental (Airbnb) management",
+        "afterSales": "Full after-sales support"
+      },
+      "viewAllButton": "View All Services",
+      "cards": {
+        "salesRental": {
+          "title": "Sales & Rental Consultancy",
+          "description": "Property portfolio for every budget"
+        },
+        "legalProcess": {
+          "title": "Title Deed & Legal Process",
+          "description": "Secure and transparent transaction process"
+        },
+        "investmentAdvisory": {
+          "title": "Investment Portfolio Advisory",
+          "description": "Profitable investment opportunities"
+        },
+        "rentalManagement": {
+          "title": "Rental Management",
+          "description": "Your property is safe with us"
+        }
+      }
+    },
+    "whyNexos": {
+      "title": "Why Nexos Real Estate?",
+      "description": "The reasons our clients choose us.",
+      "statsLabels": {
+        "happyClients": "Happy Clients",
+        "yearsExperience": "Years Experience",
+        "support": "Support"
+      },
+      "features": {
+        "regionalExpertise": {
+          "title": "Regional Expertise",
+          "description": "We know Iskele, Kyrenia, Nicosia and all of Northern Cyprus inside out. We know the potential of every neighbourhood and the strengths and weaknesses of every project."
+        },
+        "transparentPricing": {
+          "title": "Transparent Pricing",
+          "description": "No hidden costs. We openly share all expenses, taxes and commissions from the very first meeting."
+        },
+        "legalAssurance": {
+          "title": "Legal Assurance",
+          "description": "Our partner lawyers provide full support with title deed research, contract review and all legal processes."
+        },
+        "afterSalesSupport": {
+          "title": "After-Sales Support",
+          "description": "We stay by your side even after the purchase. Support with furniture, renovation, rental management and residence permit processes."
+        },
+        "widePortfolio": {
+          "title": "Extensive Portfolio",
+          "description": "With 1,200+ active listings, we offer property options to suit every budget and requirement."
+        },
+        "digitalExperience": {
+          "title": "Digital Experience",
+          "description": "Search properties on our website, take virtual tours, book online appointments and track the entire process digitally."
+        }
+      }
+    },
+    "cta": {
+      "title": "Let's Find Your Dream Property Together",
+      "description": "Whether you're looking to invest, live or buy a holiday home in Northern Cyprus, get in touch with our expert team for a free consultation today.",
+      "consultButton": "Free Consultation",
+      "whatsappButton": "Message on WhatsApp",
+      "teamButton": "Meet Our Team"
+    }
+  }
+}

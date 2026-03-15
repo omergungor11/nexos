@@ -1,0 +1,191 @@
+{
+  "servicesPage": {
+    "meta": {
+      "title": "Unsere Dienstleistungen",
+      "description": "Nexos Immobilien Dienstleistungen — Immobilienberatung, Investitionsbegleitung, Immobilienbewertung, Mietverwaltung und mehr. Vertrauenswürdige Immobilienlösungen in Nordzypern."
+    },
+    "hero": {
+      "title": "Professionelle Immobilien",
+      "titleHighlight": "Dienstleistungen",
+      "description": "Umfassende professionelle Beratung für den Kauf, Verkauf, die Vermietung und Investition von Immobilien in Nordzypern. Wir begleiten Sie bei jedem Schritt.",
+      "ctaConsultation": "Kostenlose Beratung",
+      "ctaListings": "Angebote durchsuchen"
+    },
+    "stats": {
+      "happyClients": {
+        "value": "850+",
+        "label": "Zufriedene Kunden"
+      },
+      "satisfactionRate": {
+        "value": "98%",
+        "label": "Zufriedenheitsrate"
+      },
+      "yearsExperience": {
+        "value": "10+",
+        "label": "Jahre Erfahrung"
+      },
+      "completedTransactions": {
+        "value": "1.200+",
+        "label": "Abgeschlossene Transaktionen"
+      }
+    },
+    "servicesSection": {
+      "title": "Unsere Dienstleistungen",
+      "description": "Umfassende Immobilienlösungen, maßgeschneidert auf Ihre Bedürfnisse"
+    },
+    "services": {
+      "saleConsultancy": {
+        "title": "Immobilienverkaufsberatung",
+        "description": "Wir bieten umfassende Beratung, um Ihnen bei der Suche nach Ihrer Traumimmobilie in Nordzypern zu helfen. Von der Bedarfsanalyse bis zur Eigentumsübertragung stehen wir Ihnen in jeder Phase zur Seite.",
+        "features": {
+          "f1": "Personalisierte Immobiliensuche und Filterung",
+          "f2": "Organisation von Besichtigungen vor Ort",
+          "f3": "Preisverhandlung und Unterstützung",
+          "f4": "Grundbuchrecherche und rechtliche Prüfung",
+          "f5": "Erstellung des Kaufvertrags",
+          "f6": "Verfolgung der Eigentumsübertragung"
+        }
+      },
+      "rentalServices": {
+        "title": "Mietimmobilien-Dienstleistungen",
+        "description": "Wir bieten sowohl Immobilieneigentümern als auch Mietern professionelle Unterstützung bei Wohn- und Gewerbemietprozessen.",
+        "features": {
+          "f1": "Mietersuche und Vorprüfung",
+          "f2": "Erstellung des Mietvertrags",
+          "f3": "Kautions- und Zahlungsverfolgung",
+          "f4": "Regelmäßige Immobilieninspektionen",
+          "f5": "Vermittlung zwischen Mieter und Vermieter",
+          "f6": "Verwaltung von Räumungsverfahren"
+        }
+      },
+      "investmentConsultancy": {
+        "title": "Investitionsberatung",
+        "description": "Wir analysieren renditestarke Möglichkeiten auf dem Immobilienmarkt in Nordzypern und entwickeln gemeinsam mit Ihnen Ihre Investitionsstrategie.",
+        "features": {
+          "f1": "Marktanalyse und regionaler Vergleich",
+          "f2": "Berechnung der Kapitalrendite (ROI)",
+          "f3": "Bewertung von Neubauprojekten",
+          "f4": "Empfehlungen zur Portfoliodiversifikation",
+          "f5": "Mieteinnahmenprognosen",
+          "f6": "Planung der Wiederverkaufsstrategie"
+        }
+      },
+      "propertyValuation": {
+        "title": "Immobilienbewertung",
+        "description": "Wir ermitteln den tatsächlichen Marktwert Ihrer Immobilie mit professionellen Bewertungsgutachten und schaffen eine solide Grundlage für Ihre Kauf- und Verkaufsentscheidungen.",
+        "features": {
+          "f1": "Vergleichende Marktanalyse",
+          "f2": "Regionaler Werttrendbericht",
+          "f3": "Bewertung des baulichen Zustands",
+          "f4": "Ertragswertanalyse (Anlageimmobilien)",
+          "f5": "Erstellung offizieller Bewertungsgutachten",
+          "f6": "Unterstützung bei Bank- und Kreditanträgen"
+        }
+      },
+      "projectMarketing": {
+        "title": "Projektvermarktung",
+        "description": "Wir bieten maßgeschneiderte Marketinglösungen für Bauträger und Projekteigentümer und verbinden Ihre Projekte mit der richtigen Zielgruppe.",
+        "features": {
+          "f1": "Entwicklung der Projektvermarktungsstrategie",
+          "f2": "Professionelle Fotografie und Videografie",
+          "f3": "Digitales Marketing und Social-Media-Management",
+          "f4": "Zugang zu internationalem Investorennetzwerk",
+          "f5": "Organisation von Messen und Veranstaltungen",
+          "f6": "Einrichtung und Verwaltung des Verkaufsbüros"
+        }
+      },
+      "legalSupport": {
+        "title": "Rechtliche Unterstützung",
+        "description": "Wir arbeiten mit unserem erfahrenen Anwaltsnetzwerk zusammen, um rechtliche Verfahren bei Immobilientransaktionen zu begleiten und Ihre Rechte während des gesamten Prozesses zu schützen.",
+        "features": {
+          "f1": "Vermittlung unabhängiger Rechtsanwälte",
+          "f2": "Grundbuchrecherche und Überprüfung",
+          "f3": "Vertragsprüfung und Überarbeitung",
+          "f4": "Verfolgung von Genehmigungsanträgen beim Ministerrat",
+          "f5": "Erb- und Nachlassverfahren",
+          "f6": "Prüfung von Bebauungs- und Baugenehmigungen"
+        }
+      },
+      "renovationGuidance": {
+        "title": "Renovierung und Innenarchitektur",
+        "description": "Wir arbeiten mit bewährten Renovierungs- und Designfirmen zusammen, um den Wert Ihrer Immobilie zu steigern oder Ihren Wohnraum individuell zu gestalten.",
+        "features": {
+          "f1": "Vermittlung von Innenarchitekturberatung",
+          "f2": "Referenzen für vertrauenswürdige Handwerker und Auftragnehmer",
+          "f3": "Renovierungskostenschätzungen",
+          "f4": "Unterstützung bei Materialauswahl und Beschaffung",
+          "f5": "Projektüberwachung und Qualitätskontrolle",
+          "f6": "Beratung zur Möbel- und Gerätebeschaffung"
+        }
+      },
+      "relocationGuidance": {
+        "title": "Umzugs- und Lebensberatung",
+        "description": "Wir bieten umfassende Umzugsberatung für alle, die einen Umzug nach Nordzypern in Betracht ziehen, und sorgen für einen reibungslosen Übergang in Ihr neues Leben.",
+        "features": {
+          "f1": "Orientierung zu Gegend und Nachbarschaft",
+          "f2": "Informationen zu Schulen und Gesundheitseinrichtungen",
+          "f3": "Beratung zum Aufenthaltserlaubnisantrag",
+          "f4": "Unterstützung bei Strom-, Wasser- und Internetanmeldung",
+          "f5": "Beratung zur Bankkontoeröffnung",
+          "f6": "Alltagstipps und Orientierungshilfe"
+        }
+      }
+    },
+    "process": {
+      "title": "So arbeiten wir",
+      "subtitle": "In 4 Schritten zum Immobilieneigentümer",
+      "steps": {
+        "step1": {
+          "number": "01",
+          "title": "Bedarfsanalyse",
+          "description": "Wir bewerten Ihr Budget, Ihren Standortwunsch, den Immobilientyp und Ihre Erwartungen im Detail."
+        },
+        "step2": {
+          "number": "02",
+          "title": "Immobilienauswahl",
+          "description": "Wir filtern passende Immobilien nach Ihren Kriterien und organisieren Besichtigungen vor Ort."
+        },
+        "step3": {
+          "number": "03",
+          "title": "Verhandlung und Vertrag",
+          "description": "Wir übernehmen die Preisverhandlung und erstellen den Vertrag mit anwaltlicher Prüfung."
+        },
+        "step4": {
+          "number": "04",
+          "title": "Eigentumsübertragung und Übergabe",
+          "description": "Wir begleiten den Eigentumsübertragungsprozess und übergeben Ihnen Ihre Immobilie reibungslos."
+        }
+      }
+    },
+    "whyUs": {
+      "title": "Warum",
+      "titleHighlight": "Nexos Immobilien?",
+      "description": "Mit über 10 Jahren Erfahrung im Immobiliensektor Nordzyperns bieten wir unseren Kunden einen zuverlässigen, transparenten und ergebnisorientierten Service. Wir verwandeln jede Immobilientransaktion in ein persönliches Erlebnis.",
+      "imageAlt": "Nexos Immobilien Büro",
+      "features": {
+        "reliable": {
+          "title": "Zuverlässig und transparent",
+          "description": "Wir gewährleisten offene Kommunikation und rechtliche Sicherheit bei allen Transaktionen."
+        },
+        "personalized": {
+          "title": "Persönlicher Service",
+          "description": "Wir bieten individuelle Bedarfsanalysen und Lösungen für jeden Kunden."
+        },
+        "valuation": {
+          "title": "Präzise Bewertung",
+          "description": "Wir erstellen realistische Immobilienbewertungen auf Basis aktueller Marktdaten."
+        },
+        "localExpertise": {
+          "title": "Lokale Expertise",
+          "description": "Sie arbeiten mit dem Team, das Iskele und Umgebung am besten kennt."
+        }
+      }
+    },
+    "cta": {
+      "title": "Lassen Sie uns gemeinsam Ihre Traumimmobilie finden",
+      "description": "Kontaktieren Sie uns für eine kostenlose Beratung. Unser Expertenteam beantwortet gerne all Ihre Fragen.",
+      "ctaContact": "Kontaktieren Sie uns",
+      "ctaFaq": "Häufig gestellte Fragen"
+    }
+  }
+}

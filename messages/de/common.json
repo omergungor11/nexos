@@ -1,0 +1,230 @@
+{
+  "nav": {
+    "forSale": "Kaufen",
+    "forRent": "Mieten",
+    "map": "Karte",
+    "services": "Dienstleistungen",
+    "guide": "Ratgeber",
+    "team": "Unser Team",
+    "about": "Über uns",
+    "faq": "FAQ",
+    "contact": "Kontakt",
+    "contactUs": "Kontaktieren Sie uns",
+    "menu": "Menü"
+  },
+  "hero": {
+    "title1": "Ihr Traumhaus",
+    "title2": "Ist nur einen Schritt entfernt",
+    "description": "Entdecken Sie Immobilien zum Kauf und zur Miete mit erweiterten Filteroptionen."
+  },
+  "search": {
+    "all": "Alle",
+    "forSale": "Kaufen",
+    "forRent": "Mieten",
+    "quickSearch": "Schnellsuche...",
+    "searchListings": "Inserate durchsuchen...",
+    "location": "Standort",
+    "propertyType": "Typ",
+    "detailed": "Erweitert",
+    "search": "Suchen",
+    "resultsFound": "{count} Ergebnisse gefunden",
+    "noResults": "Keine Ergebnisse für \"{query}\" gefunden",
+    "viewAll": "Alle Ergebnisse anzeigen",
+    "searchAll": "Alle Inserate durchsuchen",
+    "searching": "Suche läuft..."
+  },
+  "stats": {
+    "activeListings": "Aktive Inserate",
+    "completedSales": "Abgeschlossene Verkäufe",
+    "cities": "Städte",
+    "yearsExperience": "Jahre Erfahrung"
+  },
+  "featured": {
+    "title": "Ausgewählte Immobilien",
+    "description": "Hervorgehobene Immobilienangebote"
+  },
+  "services": {
+    "title": "Unsere Dienstleistungen",
+    "description": "Umfassende Lösungen für Ihre Immobilienbedürfnisse",
+    "forSale": "Immobilien zum Verkauf",
+    "forSaleDesc": "Finden Sie Ihre Traumimmobilie aus unserem umfangreichen Portfolio an Wohnungen, Villen, Grundstücken und Gewerbeimmobilien.",
+    "forRent": "Mietimmobilien",
+    "forRentDesc": "Zuverlässige Optionen für Wohn- und Gewerbemieten. Kurz- und langfristige Mietlösungen.",
+    "investment": "Investitionsberatung",
+    "investmentDesc": "Wir helfen Ihnen mit Marktanalysen und Bewertungsberichten die besten Investitionsentscheidungen zu treffen.",
+    "legal": "Rechtsberatung",
+    "legalDesc": "Professionelle Unterstützung bei Grundbuchverfahren, Vertragsgestaltung und Immobilienrecht.",
+    "corporate": "Unternehmenslösungen",
+    "corporateDesc": "Spezialisierte Unternehmensberatung für die Beschaffung von Büros, Lagern und Gewerbeflächen.",
+    "renovation": "Renovierung & Einrichtung",
+    "renovationDesc": "Renovierung, Innenarchitektur und Home-Staging-Dienste zur Wertsteigerung Ihrer Immobilie."
+  },
+  "categories": {
+    "title": "Nach Kategorie suchen",
+    "description": "Finden Sie schnell den gewünschten Immobilientyp",
+    "viewListings": "Inserate anzeigen"
+  },
+  "about": {
+    "label": "Über uns",
+    "title": "Vertrauenswürdige Immobilienberatung mit",
+    "titleHighlight": "Über 10 Jahren Erfahrung",
+    "description": "Bei Nexos Investment begleiten wir unsere Kunden mit unserer Expertise im Immobiliensektor bei den besten Investitionsentscheidungen. Wir bieten professionelle Beratungsdienste für Kauf- und Mietimmobilien.",
+    "features": {
+      "team": "Professionelles und erfahrenes Beraterteam",
+      "transparency": "Transparenter und zuverlässiger Serviceansatz",
+      "portfolio": "Umfangreiches Portfolio und schnelle Lösungen",
+      "consultancy": "Investitionsberatung und Marktanalyse"
+    },
+    "moreInfo": "Mehr erfahren"
+  },
+  "recent": {
+    "title": "Kürzlich hinzugefügt",
+    "description": "Neueste Immobilieninserate"
+  },
+  "whyUs": {
+    "label": "Warum uns wählen?",
+    "title": "Für Ihre Immobilieninvestition auf Zypern",
+    "titleHighlight": "Ihr vertrauenswürdiger Partner",
+    "description": "Wir bieten investitions- und lebenstilorientierte Immobilienlösungen in den wertvollsten Lagen Nordzyperns. Wir begleiten Sie bei jedem Schritt.",
+    "happyCustomers": "Zufriedene Kunden",
+    "reliable": "Zuverlässiger Service",
+    "reliableDesc": "Wir begleiten jede Transaktion mit transparentem Prozessmanagement und Grundbuchgarantie.",
+    "fast": "Schneller Prozess",
+    "fastDesc": "Unser Expertenteam schließt Ihre Immobilienkauf- und -verkaufsprozesse in kürzester Zeit ab.",
+    "expert": "Expertenteam",
+    "expertDesc": "Unsere erfahrenen Berater begleiten Sie bei den besten Investitionsentscheidungen.",
+    "satisfaction": "Kundenzufriedenheit",
+    "satisfactionDesc": "Wir bauen langfristige Kundenbeziehungen auf, einschließlich After-Sales-Support."
+  },
+  "cta": {
+    "title": "Möchten Sie Ihre Immobilie bewerten lassen?",
+    "description": "Vereinbaren Sie einen kostenlosen Bewertungstermin mit unserem Expertenteam. Lassen Sie uns Ihnen helfen, Ihre Immobilie zum besten Preis zu verkaufen oder zu vermieten.",
+    "button": "Kostenlose Bewertung erhalten"
+  },
+  "property": {
+    "featured": "Ausgewählt",
+    "floor": "{floor}. Etage",
+    "apartment": "Wohnung",
+    "villa": "Villa",
+    "detached": "Einfamilienhaus",
+    "land": "Grundstück",
+    "office": "Büro",
+    "shop": "Geschäft",
+    "warehouse": "Lager",
+    "sale": "Zum Verkauf",
+    "rent": "Zur Miete"
+  },
+  "sort": {
+    "newest": "Neueste",
+    "oldest": "Älteste",
+    "priceAsc": "Preis (aufsteigend)",
+    "priceDesc": "Preis (absteigend)",
+    "areaAsc": "Fläche (aufsteigend)",
+    "areaDesc": "Fläche (absteigend)",
+    "mostViewed": "Meistgesehen"
+  },
+  "footer": {
+    "description": "Wir helfen Ihnen mit professioneller Immobilienberatung Ihre Traumimmobilie zu finden.",
+    "realEstate": "Immobilien",
+    "forSale": "Kaufen",
+    "forRent": "Mieten",
+    "villa": "Villa",
+    "apartment": "Wohnung",
+    "land": "Grundstück",
+    "corporate": "Unternehmen",
+    "aboutUs": "Über uns",
+    "services": "Dienstleistungen",
+    "team": "Unser Team",
+    "guide": "Ratgeber",
+    "contact": "Kontakt",
+    "faq": "FAQ",
+    "contactTitle": "Kontakt",
+    "location": "Iskele, Nordzypern",
+    "rights": "Alle Rechte vorbehalten.",
+    "privacy": "Datenschutzrichtlinie",
+    "terms": "Nutzungsbedingungen"
+  },
+  "cookie": {
+    "message": "Diese Website verwendet Cookies, um Ihre Erfahrung zu verbessern.",
+    "moreInfo": "Mehr erfahren",
+    "accept": "Akzeptieren"
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "home": "Startseite"
+  },
+  "metadata": {
+    "homeTitle": "Nexos Immobilien | Vertrauenswürdige Immobilienberatung",
+    "homeDescription": "Finden Sie Ihr Traumhaus mit Nexos Immobilien. Wohnungen, Villen, Grundstücke und Gewerbeimmobilien zum Kauf und zur Miete.",
+    "siteDescription": "Nexos Immobilien — Immobilieninserate zum Kauf und zur Miete, vertrauenswürdige Beratungsdienste."
+  },
+  "language": {
+    "tr": "Türkçe",
+    "en": "English",
+    "ru": "Русский",
+    "fa": "فارسی",
+    "de": "Deutsch"
+  },
+  "filter": {
+    "transactionType": "Transaktionstyp",
+    "propertyType": "Immobilientyp",
+    "all": "Alle",
+    "priceRange": "Preisbereich",
+    "areaRange": "Flächenbereich (m²)",
+    "roomCount": "Zimmeranzahl",
+    "heating": "Heizung",
+    "clearFilters": "Filter zurücksetzen",
+    "filters": "Filter",
+    "min": "Min",
+    "max": "Max"
+  },
+  "heatingType": {
+    "none": "Keine",
+    "central": "Zentralheizung",
+    "natural_gas": "Gasheizung (Kombi)",
+    "floor_heating": "Fußbodenheizung",
+    "electric": "Elektroheizung",
+    "solar": "Solarenergie",
+    "coal": "Kohle/Ofen",
+    "air_condition": "Klimaanlage"
+  },
+  "contact": {
+    "pageTitle": "Kontaktieren Sie uns",
+    "pageSubtitle": "Zögern Sie nicht, uns bei Fragen und Anfragen zu kontaktieren.",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "address": "Adresse",
+    "addressValue": "Iskele, Nordzypern",
+    "workingHours": "Öffnungszeiten",
+    "workingHoursValue": "Mo–Sa: 09:00–18:00",
+    "sendMessage": "Nachricht senden",
+    "ourLocation": "Unser Standort",
+    "fullName": "Vollständiger Name *",
+    "phoneField": "Telefon",
+    "emailField": "E-Mail",
+    "message": "Ihre Nachricht *",
+    "send": "Senden",
+    "namePlaceholder": "Ihr vollständiger Name",
+    "phonePlaceholder": "+90 5XX XXX XX XX",
+    "emailPlaceholder": "email@beispiel.com",
+    "messagePlaceholder": "Schreiben Sie Ihre Nachricht...",
+    "success": "Ihre Nachricht wurde erfolgreich gesendet!",
+    "error": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "listing": {
+    "allListings": "Alle Immobilieninserate",
+    "saleListings": "Immobilien zum Verkauf",
+    "rentListings": "Immobilien zur Miete",
+    "filters": "Filter",
+    "found": "{count} Inserate gefunden",
+    "sortBy": "Sortieren nach"
+  },
+  "team": {
+    "title": "Unser Team",
+    "description": "Lernen Sie unsere erfahrenen Immobilienberater kennen.",
+    "call": "Anrufen",
+    "email": "E-Mail",
+    "noMembers": "Noch keine Teammitglieder hinzugefügt."
+  }
+}

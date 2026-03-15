@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Select,
   SelectContent,
@@ -8,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SORT_OPTIONS } from "@/lib/constants";
+import { SORT_KEYS, SORT_TKEYS } from "@/lib/constants";
 
 interface SortBarProps {
   totalCount: number;
@@ -17,6 +18,7 @@ interface SortBarProps {
 export function SortBar({ totalCount }: SortBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations();
 
   function handleSort(value: string | null) {
     const params = new URLSearchParams(searchParams.toString());
@@ -32,8 +34,7 @@ export function SortBar({ totalCount }: SortBarProps) {
   return (
     <div className="flex items-center justify-between gap-4">
       <p className="text-sm text-muted-foreground">
-        <span className="font-semibold text-foreground">{totalCount}</span> ilan
-        bulundu
+        {t("listing.found", { count: totalCount })}
       </p>
       <Select
         value={searchParams.get("siralama") ?? "yeni"}
@@ -43,9 +44,9 @@ export function SortBar({ totalCount }: SortBarProps) {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {SORT_OPTIONS.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>
-              {opt.label}
+          {SORT_KEYS.map((key) => (
+            <SelectItem key={key} value={key}>
+              {t(SORT_TKEYS[key])}
             </SelectItem>
           ))}
         </SelectContent>

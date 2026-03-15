@@ -161,6 +161,70 @@
   },
   "language": {
     "tr": "Türkçe",
-    "en": "English"
+    "en": "English",
+    "ru": "Русский",
+    "fa": "فارسی",
+    "de": "Deutsch"
+  },
+  "filter": {
+    "transactionType": "Transaction Type",
+    "propertyType": "Property Type",
+    "all": "All",
+    "priceRange": "Price Range",
+    "areaRange": "Area Range (m²)",
+    "roomCount": "Rooms",
+    "heating": "Heating",
+    "clearFilters": "Clear Filters",
+    "filters": "Filters",
+    "min": "Min",
+    "max": "Max"
+  },
+  "heatingType": {
+    "none": "None",
+    "central": "Central",
+    "natural_gas": "Natural Gas (Combi)",
+    "floor_heating": "Floor Heating",
+    "electric": "Electric",
+    "solar": "Solar Energy",
+    "coal": "Coal/Stove",
+    "air_condition": "Air Conditioning"
+  },
+  "contact": {
+    "pageTitle": "Contact Us",
+    "pageSubtitle": "Don't hesitate to reach out to us for your questions and requests.",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "addressValue": "Iskele, North Cyprus",
+    "workingHours": "Working Hours",
+    "workingHoursValue": "Mon–Sat: 09:00–18:00",
+    "sendMessage": "Send a Message",
+    "ourLocation": "Our Location",
+    "fullName": "Full Name *",
+    "phoneField": "Phone",
+    "emailField": "Email",
+    "message": "Your Message *",
+    "send": "Send",
+    "namePlaceholder": "Your Full Name",
+    "phonePlaceholder": "+90 5XX XXX XX XX",
+    "emailPlaceholder": "email@example.com",
+    "messagePlaceholder": "Write your message...",
+    "success": "Your message was sent successfully!",
+    "error": "An error occurred. Please try again."
+  },
+  "listing": {
+    "allListings": "All Property Listings",
+    "saleListings": "Properties for Sale",
+    "rentListings": "Properties for Rent",
+    "filters": "Filters",
+    "found": "{count} listings found",
+    "sortBy": "Sort by"
+  },
+  "team": {
+    "title": "Our Team",
+    "description": "Meet our expert real estate consultants.",
+    "call": "Call",
+    "email": "Email",
+    "noMembers": "No team members added yet."
   }
 }

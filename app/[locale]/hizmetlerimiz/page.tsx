@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
@@ -21,12 +21,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-export const metadata: Metadata = {
-  title: "Hizmetlerimiz",
-  description:
-    "Nexos Emlak hizmetleri — gayrimenkul danışmanlığı, yatırım rehberliği, mülk değerleme, kiralama yönetimi ve daha fazlası. Kuzey Kıbrıs'ta güvenilir emlak çözümleri.",
-};
-
 interface Service {
   icon: React.ElementType;
   title: string;
@@ -34,154 +28,185 @@ interface Service {
   features: string[];
 }
 
-const SERVICES: Service[] = [
-  {
-    icon: Home,
-    title: "Satılık Gayrimenkul Danışmanlığı",
-    description:
-      "Kuzey Kıbrıs'ta hayalinizdeki mülkü bulmanız için kapsamlı danışmanlık hizmeti sunuyoruz. İhtiyaç analizinden tapu devrine kadar her aşamada yanınızdayız.",
-    features: [
-      "Kişiselleştirilmiş mülk arama ve filtreleme",
-      "Yerinde mülk gezisi organizasyonu",
-      "Fiyat müzakeresi ve pazarlık desteği",
-      "Tapu araştırması ve hukuki kontrol",
-      "Satış sözleşmesi hazırlama",
-      "Tapu devir sürecinin takibi",
-    ],
-  },
-  {
-    icon: Key,
-    title: "Kiralık Gayrimenkul Hizmetleri",
-    description:
-      "Konut ve ticari kiralama süreçlerinde hem mülk sahiplerine hem kiracılara profesyonel destek sağlıyoruz.",
-    features: [
-      "Kiracı bulma ve ön değerlendirme",
-      "Kira sözleşmesi hazırlama",
-      "Depozito ve ödeme takibi",
-      "Periyodik mülk kontrolü",
-      "Kiracı-ev sahibi arabuluculuğu",
-      "Tahliye süreç yönetimi",
-    ],
-  },
-  {
-    icon: TrendingUp,
-    title: "Yatırım Danışmanlığı",
-    description:
-      "Kuzey Kıbrıs gayrimenkul piyasasında yüksek getiri potansiyeli taşıyan fırsatları analiz ediyor, yatırım stratejinizi birlikte oluşturuyoruz.",
-    features: [
-      "Piyasa analizi ve bölge karşılaştırması",
-      "Yatırım getiri hesaplaması (ROI)",
-      "Off-plan proje değerlendirmesi",
-      "Portföy çeşitlendirme önerileri",
-      "Kira geliri projeksiyonu",
-      "Yeniden satış stratejisi planlaması",
-    ],
-  },
-  {
-    icon: FileSearch,
-    title: "Mülk Değerleme",
-    description:
-      "Profesyonel değerleme raporlarıyla mülkünüzün gerçek piyasa değerini belirliyor, alım-satım kararlarınıza sağlam bir temel oluşturuyoruz.",
-    features: [
-      "Karşılaştırmalı piyasa analizi",
-      "Bölgesel değer trend raporu",
-      "Fiziksel durum değerlendirmesi",
-      "Gelir yaklaşımı analizi (yatırım mülkleri)",
-      "Resmi değerleme raporu hazırlama",
-      "Banka ve kredi başvuru desteği",
-    ],
-  },
-  {
-    icon: Building2,
-    title: "Proje Pazarlama",
-    description:
-      "Müteahhit ve proje sahiplerine özel pazarlama çözümleri sunuyor, projelerinizi doğru alıcı kitlesine ulaştırıyoruz.",
-    features: [
-      "Proje tanıtım stratejisi oluşturma",
-      "Profesyonel fotoğraf ve video çekimi",
-      "Dijital pazarlama ve sosyal medya yönetimi",
-      "Yurt dışı yatırımcı ağına erişim",
-      "Fuar ve etkinlik organizasyonu",
-      "Satış ofisi kurulumu ve yönetimi",
-    ],
-  },
-  {
-    icon: Scale,
-    title: "Hukuki Destek Koordinasyonu",
-    description:
-      "Gayrimenkul alım-satım sürecindeki hukuki işlemler için uzman avukat ağımızla koordineli çalışıyor, haklarınızı koruyoruz.",
-    features: [
-      "Bağımsız avukat yönlendirmesi",
-      "Tapu türü araştırması ve doğrulama",
-      "Sözleşme inceleme ve revizyon",
-      "Bakanlar Kurulu izin başvurusu takibi",
-      "Veraset ve miras işlemleri",
-      "İmar ve yapı ruhsatı kontrolleri",
-    ],
-  },
-  {
-    icon: PaintBucket,
-    title: "Tadilat ve Dekorasyon Rehberliği",
-    description:
-      "Mülkünüzün değerini artırmak veya yaşam alanınızı kişiselleştirmek için güvenilir tadilat ve dekorasyon firmalarıyla iş birliği yapıyoruz.",
-    features: [
-      "İç mimari danışmanlık yönlendirmesi",
-      "Güvenilir müteahhit ve usta referansları",
-      "Tadilat maliyet tahminleri",
-      "Malzeme seçimi ve tedarik desteği",
-      "Proje takibi ve kalite kontrolü",
-      "Mobilya ve beyaz eşya tedarik rehberliği",
-    ],
-  },
-  {
-    icon: MapPin,
-    title: "Yaşam ve Yerleşim Rehberliği",
-    description:
-      "Kuzey Kıbrıs'a taşınmayı düşünenler için kapsamlı yerleşim rehberliği sunuyor, yeni yaşamınıza sorunsuz geçiş yapmanızı sağlıyoruz.",
-    features: [
-      "Bölge ve mahalle tanıtımı",
-      "Okul ve sağlık kuruluşu bilgilendirme",
-      "Oturma izni başvuru rehberliği",
-      "Elektrik, su, internet abonelik desteği",
-      "Banka hesabı açma rehberliği",
-      "Günlük yaşam ipuçları ve oryantasyon",
-    ],
-  },
-];
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "servicesPage" });
 
-const PROCESS_STEPS = [
-  {
-    step: "01",
-    title: "İhtiyaç Analizi",
-    description: "Bütçe, konum, mülk tipi ve beklentilerinizi detaylı olarak değerlendiriyoruz.",
-  },
-  {
-    step: "02",
-    title: "Mülk Seçimi",
-    description: "Kriterlerinize uygun mülkleri filtreliyor ve yerinde gezi organize ediyoruz.",
-  },
-  {
-    step: "03",
-    title: "Müzakere ve Sözleşme",
-    description: "Fiyat müzakeresi yapıyor, avukat kontrolünden geçen sözleşmeyi hazırlıyoruz.",
-  },
-  {
-    step: "04",
-    title: "Tapu ve Teslim",
-    description: "Tapu devir sürecini takip ediyor, mülkünüzü sorunsuz şekilde teslim ediyoruz.",
-  },
-];
-
-const STATS = [
-  { value: "850+", label: "Mutlu Müşteri" },
-  { value: "%98", label: "Memnuniyet Oranı" },
-  { value: "10+", label: "Yıllık Deneyim" },
-  { value: "1.200+", label: "Tamamlanan İşlem" },
-];
+  return {
+    title: t("meta.title"),
+    description: t("meta.description"),
+  };
+}
 
 export default async function HizmetlerimizPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "servicesPage" });
+
+  const SERVICES: Service[] = [
+    {
+      icon: Home,
+      title: t("services.saleConsultancy.title"),
+      description: t("services.saleConsultancy.description"),
+      features: [
+        t("services.saleConsultancy.features.f1"),
+        t("services.saleConsultancy.features.f2"),
+        t("services.saleConsultancy.features.f3"),
+        t("services.saleConsultancy.features.f4"),
+        t("services.saleConsultancy.features.f5"),
+        t("services.saleConsultancy.features.f6"),
+      ],
+    },
+    {
+      icon: Key,
+      title: t("services.rentalServices.title"),
+      description: t("services.rentalServices.description"),
+      features: [
+        t("services.rentalServices.features.f1"),
+        t("services.rentalServices.features.f2"),
+        t("services.rentalServices.features.f3"),
+        t("services.rentalServices.features.f4"),
+        t("services.rentalServices.features.f5"),
+        t("services.rentalServices.features.f6"),
+      ],
+    },
+    {
+      icon: TrendingUp,
+      title: t("services.investmentConsultancy.title"),
+      description: t("services.investmentConsultancy.description"),
+      features: [
+        t("services.investmentConsultancy.features.f1"),
+        t("services.investmentConsultancy.features.f2"),
+        t("services.investmentConsultancy.features.f3"),
+        t("services.investmentConsultancy.features.f4"),
+        t("services.investmentConsultancy.features.f5"),
+        t("services.investmentConsultancy.features.f6"),
+      ],
+    },
+    {
+      icon: FileSearch,
+      title: t("services.propertyValuation.title"),
+      description: t("services.propertyValuation.description"),
+      features: [
+        t("services.propertyValuation.features.f1"),
+        t("services.propertyValuation.features.f2"),
+        t("services.propertyValuation.features.f3"),
+        t("services.propertyValuation.features.f4"),
+        t("services.propertyValuation.features.f5"),
+        t("services.propertyValuation.features.f6"),
+      ],
+    },
+    {
+      icon: Building2,
+      title: t("services.projectMarketing.title"),
+      description: t("services.projectMarketing.description"),
+      features: [
+        t("services.projectMarketing.features.f1"),
+        t("services.projectMarketing.features.f2"),
+        t("services.projectMarketing.features.f3"),
+        t("services.projectMarketing.features.f4"),
+        t("services.projectMarketing.features.f5"),
+        t("services.projectMarketing.features.f6"),
+      ],
+    },
+    {
+      icon: Scale,
+      title: t("services.legalSupport.title"),
+      description: t("services.legalSupport.description"),
+      features: [
+        t("services.legalSupport.features.f1"),
+        t("services.legalSupport.features.f2"),
+        t("services.legalSupport.features.f3"),
+        t("services.legalSupport.features.f4"),
+        t("services.legalSupport.features.f5"),
+        t("services.legalSupport.features.f6"),
+      ],
+    },
+    {
+      icon: PaintBucket,
+      title: t("services.renovationGuidance.title"),
+      description: t("services.renovationGuidance.description"),
+      features: [
+        t("services.renovationGuidance.features.f1"),
+        t("services.renovationGuidance.features.f2"),
+        t("services.renovationGuidance.features.f3"),
+        t("services.renovationGuidance.features.f4"),
+        t("services.renovationGuidance.features.f5"),
+        t("services.renovationGuidance.features.f6"),
+      ],
+    },
+    {
+      icon: MapPin,
+      title: t("services.relocationGuidance.title"),
+      description: t("services.relocationGuidance.description"),
+      features: [
+        t("services.relocationGuidance.features.f1"),
+        t("services.relocationGuidance.features.f2"),
+        t("services.relocationGuidance.features.f3"),
+        t("services.relocationGuidance.features.f4"),
+        t("services.relocationGuidance.features.f5"),
+        t("services.relocationGuidance.features.f6"),
+      ],
+    },
+  ];
+
+  const PROCESS_STEPS = [
+    {
+      step: t("process.steps.step1.number"),
+      title: t("process.steps.step1.title"),
+      description: t("process.steps.step1.description"),
+    },
+    {
+      step: t("process.steps.step2.number"),
+      title: t("process.steps.step2.title"),
+      description: t("process.steps.step2.description"),
+    },
+    {
+      step: t("process.steps.step3.number"),
+      title: t("process.steps.step3.title"),
+      description: t("process.steps.step3.description"),
+    },
+    {
+      step: t("process.steps.step4.number"),
+      title: t("process.steps.step4.title"),
+      description: t("process.steps.step4.description"),
+    },
+  ];
+
+  const STATS = [
+    { value: t("stats.happyClients.value"), label: t("stats.happyClients.label") },
+    { value: t("stats.satisfactionRate.value"), label: t("stats.satisfactionRate.label") },
+    { value: t("stats.yearsExperience.value"), label: t("stats.yearsExperience.label") },
+    { value: t("stats.completedTransactions.value"), label: t("stats.completedTransactions.label") },
+  ];
+
+  const WHY_US_FEATURES = [
+    {
+      icon: ShieldCheck,
+      title: t("whyUs.features.reliable.title"),
+      desc: t("whyUs.features.reliable.description"),
+    },
+    {
+      icon: Handshake,
+      title: t("whyUs.features.personalized.title"),
+      desc: t("whyUs.features.personalized.description"),
+    },
+    {
+      icon: Calculator,
+      title: t("whyUs.features.valuation.title"),
+      desc: t("whyUs.features.valuation.description"),
+    },
+    {
+      icon: MapPin,
+      title: t("whyUs.features.localExpertise.title"),
+      desc: t("whyUs.features.localExpertise.description"),
+    },
+  ];
+
   return (
     <div>
       {/* Hero */}
@@ -189,13 +214,11 @@ export default async function HizmetlerimizPage({ params }: { params: Promise<{ 
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-3xl font-bold sm:text-4xl lg:text-5xl">
-              Profesyonel Emlak{" "}
-              <span className="text-primary">Hizmetlerimiz</span>
+              {t("hero.title")}{" "}
+              <span className="text-primary">{t("hero.titleHighlight")}</span>
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Kuzey Kıbrıs&apos;ta gayrimenkul alım-satım, kiralama ve yatırım
-              süreçlerinde uçtan uca profesyonel danışmanlık. Her adımda
-              yanınızdayız.
+              {t("hero.description")}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
@@ -203,13 +226,13 @@ export default async function HizmetlerimizPage({ params }: { params: Promise<{ 
                 className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 <Phone className="h-4 w-4" />
-                Ücretsiz Danışmanlık
+                {t("hero.ctaConsultation")}
               </Link>
               <Link
                 href="/emlak"
                 className="inline-flex h-11 items-center gap-2 rounded-lg border px-6 text-sm font-medium transition-colors hover:bg-muted"
               >
-                İlanları İncele
+                {t("hero.ctaListings")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -235,10 +258,10 @@ export default async function HizmetlerimizPage({ params }: { params: Promise<{ 
       <section className="container mx-auto px-4 py-16">
         <div className="mb-12 text-center">
           <h2 className="text-2xl font-bold sm:text-3xl">
-            Sunduğumuz Hizmetler
+            {t("servicesSection.title")}
           </h2>
           <p className="mt-2 text-muted-foreground">
-            İhtiyacınıza özel kapsamlı gayrimenkul çözümleri
+            {t("servicesSection.description")}
           </p>
         </div>
 
@@ -279,9 +302,9 @@ export default async function HizmetlerimizPage({ params }: { params: Promise<{ 
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold sm:text-3xl">Nasıl Çalışıyoruz?</h2>
+            <h2 className="text-2xl font-bold sm:text-3xl">{t("process.title")}</h2>
             <p className="mt-2 text-muted-foreground">
-              4 adımda mülk sahibi olun
+              {t("process.subtitle")}
             </p>
           </div>
 
@@ -309,37 +332,13 @@ export default async function HizmetlerimizPage({ params }: { params: Promise<{ 
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <h2 className="text-2xl font-bold sm:text-3xl">
-              Neden <span className="text-primary">Nexos Emlak?</span>
+              {t("whyUs.title")} <span className="text-primary">{t("whyUs.titleHighlight")}</span>
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              Kuzey Kıbrıs emlak sektöründe 10 yılı aşkın deneyimimizle,
-              müşterilerimize güvenilir, şeffaf ve sonuç odaklı hizmet
-              sunuyoruz. Her mülk alım-satım sürecini kişiselleştirilmiş bir
-              deneyime dönüştürüyoruz.
+              {t("whyUs.description")}
             </p>
             <div className="mt-8 space-y-4">
-              {[
-                {
-                  icon: ShieldCheck,
-                  title: "Güvenilir ve Şeffaf",
-                  desc: "Tüm işlemlerde açık iletişim ve yasal güvence sağlıyoruz.",
-                },
-                {
-                  icon: Handshake,
-                  title: "Kişiselleştirilmiş Hizmet",
-                  desc: "Her müşteriye özel ihtiyaç analizi ve çözüm üretiyoruz.",
-                },
-                {
-                  icon: Calculator,
-                  title: "Doğru Değerleme",
-                  desc: "Piyasa verilerine dayalı gerçekçi mülk değerlemesi yapıyoruz.",
-                },
-                {
-                  icon: MapPin,
-                  title: "Yerel Uzmanlık",
-                  desc: "İskele ve çevresini en iyi bilen ekiple çalışıyorsunuz.",
-                },
-              ].map((item) => (
+              {WHY_US_FEATURES.map((item) => (
                 <div key={item.title} className="flex items-start gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                     <item.icon className="h-4.5 w-4.5 text-primary" />
@@ -355,7 +354,7 @@ export default async function HizmetlerimizPage({ params }: { params: Promise<{ 
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
             <Image
               src="/images/why-us.jpg"
-              alt="Nexos Emlak ofisi"
+              alt={t("whyUs.imageAlt")}
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -368,11 +367,10 @@ export default async function HizmetlerimizPage({ params }: { params: Promise<{ 
       <section className="bg-primary/5 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold sm:text-3xl">
-            Hayalinizdeki Mülkü Birlikte Bulalım
+            {t("cta.title")}
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            Ücretsiz danışmanlık görüşmesi için hemen iletişime geçin.
-            Uzman kadromuz tüm sorularınızı yanıtlamaya hazır.
+            {t("cta.description")}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
@@ -380,13 +378,13 @@ export default async function HizmetlerimizPage({ params }: { params: Promise<{ 
               className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               <Phone className="h-4 w-4" />
-              İletişime Geçin
+              {t("cta.ctaContact")}
             </Link>
             <Link
               href="/sss"
               className="inline-flex h-11 items-center rounded-lg border px-8 text-sm font-medium transition-colors hover:bg-muted"
             >
-              Sıkça Sorulan Sorular
+              {t("cta.ctaFaq")}
             </Link>
           </div>
         </div>

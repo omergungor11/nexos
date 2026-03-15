@@ -161,6 +161,70 @@
   },
   "language": {
     "tr": "Türkçe",
-    "en": "English"
+    "en": "English",
+    "ru": "Русский",
+    "fa": "فارسی",
+    "de": "Deutsch"
+  },
+  "filter": {
+    "transactionType": "İşlem Tipi",
+    "propertyType": "Emlak Tipi",
+    "all": "Tümü",
+    "priceRange": "Fiyat Aralığı",
+    "areaRange": "m² Aralığı",
+    "roomCount": "Oda Sayısı",
+    "heating": "Isıtma",
+    "clearFilters": "Filtreleri Temizle",
+    "filters": "Filtreler",
+    "min": "Min",
+    "max": "Max"
+  },
+  "heatingType": {
+    "none": "Yok",
+    "central": "Merkezi",
+    "natural_gas": "Doğalgaz (Kombi)",
+    "floor_heating": "Yerden Isıtma",
+    "electric": "Elektrikli",
+    "solar": "Güneş Enerjisi",
+    "coal": "Kömür/Soba",
+    "air_condition": "Klima"
+  },
+  "contact": {
+    "pageTitle": "Bize Ulaşın",
+    "pageSubtitle": "Sorularınız ve talepleriniz için bizimle iletişime geçmekten çekinmeyin.",
+    "phone": "Telefon",
+    "email": "E-posta",
+    "address": "Adres",
+    "addressValue": "İskele, Kuzey Kıbrıs",
+    "workingHours": "Çalışma Saatleri",
+    "workingHoursValue": "Pzt–Cmt: 09:00–18:00",
+    "sendMessage": "Mesaj Gönderin",
+    "ourLocation": "Konumumuz",
+    "fullName": "Ad Soyad *",
+    "phoneField": "Telefon",
+    "emailField": "E-posta",
+    "message": "Mesajınız *",
+    "send": "Gönder",
+    "namePlaceholder": "Adınız Soyadınız",
+    "phonePlaceholder": "05XX XXX XX XX",
+    "emailPlaceholder": "email@ornek.com",
+    "messagePlaceholder": "Mesajınızı yazın...",
+    "success": "Mesajınız başarıyla gönderildi!",
+    "error": "Bir hata oluştu. Lütfen tekrar deneyin."
+  },
+  "listing": {
+    "allListings": "Tüm Emlak İlanları",
+    "saleListings": "Satılık Emlak İlanları",
+    "rentListings": "Kiralık Emlak İlanları",
+    "filters": "Filtreler",
+    "found": "{count} ilan bulundu",
+    "sortBy": "Sırala"
+  },
+  "team": {
+    "title": "Ekibimiz",
+    "description": "Alanında uzman gayrimenkul danışmanlarımız ile tanışın.",
+    "call": "Ara",
+    "email": "E-posta",
+    "noMembers": "Henüz ekip üyesi eklenmemiş."
   }
 }

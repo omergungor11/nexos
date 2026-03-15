@@ -4,6 +4,15 @@ import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { Globe } from "lucide-react";
 import { useParams } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { locales, localeNames } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 
 export function LanguageSwitcher() {
   const locale = useLocale();
@@ -11,8 +20,8 @@ export function LanguageSwitcher() {
   const pathname = usePathname();
   const params = useParams();
 
-  function switchLocale() {
-    const nextLocale = locale === "tr" ? "en" : "tr";
+  function switchLocale(nextLocale: string | null) {
+    if (!nextLocale) return;
     router.replace(
       // @ts-expect-error -- params type is dynamic
       { pathname, params },
@@ -21,15 +30,18 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <button
-      onClick={switchLocale}
-      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-      aria-label={locale === "tr" ? "Switch to English" : "Türkçe'ye geç"}
-    >
-      <Globe className="h-4 w-4" />
-      <span className="hidden sm:inline">
-        {locale === "tr" ? "EN" : "TR"}
-      </span>
-    </button>
+    <Select value={locale} onValueChange={switchLocale}>
+      <SelectTrigger className="h-8 w-auto gap-1.5 border-none bg-transparent px-2 text-sm font-medium text-muted-foreground shadow-none hover:text-foreground focus:ring-0">
+        <Globe className="h-4 w-4 shrink-0" />
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align="end">
+        {locales.map((loc) => (
+          <SelectItem key={loc} value={loc}>
+            {localeNames[loc as Locale]}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

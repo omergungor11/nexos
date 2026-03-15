@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,11 +6,14 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { ContactForm } from "./contact-form";
 import { ContactMapWrapper } from "@/components/shared/contact-map-wrapper";
 
-export const metadata: Metadata = {
-  title: "İletişim",
-  description:
-    "Nexos Emlak ile iletişime geçin. Gayrimenkul danışmanlığı, mülk değerleme ve sorularınız için bize ulaşın.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "contact" });
+  return {
+    title: t("pageTitle"),
+    description: t("pageSubtitle"),
+  };
+}
 
 const contactJsonLd: Record<string, unknown> = {
   "@context": "https://schema.org",
@@ -48,14 +51,15 @@ const contactJsonLd: Record<string, unknown> = {
 export default async function IletisimPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "contact" });
   return (
     <>
       <JsonLd data={contactJsonLd} />
       <div className="container mx-auto px-4 py-12">
       <div className="mb-12 text-center">
-        <h1 className="text-3xl font-bold">Bize Ulaşın</h1>
+        <h1 className="text-3xl font-bold">{t("pageTitle")}</h1>
         <p className="mt-2 text-muted-foreground">
-          Sorularınız ve talepleriniz için bizimle iletişime geçmekten çekinmeyin.
+          {t("pageSubtitle")}
         </p>
       </div>
 
@@ -68,7 +72,7 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
                 <Phone className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">Telefon</p>
+                <p className="text-sm font-medium">{t("phone")}</p>
                 <a
                   href="tel:+905551234567"
                   className="text-sm text-muted-foreground hover:text-foreground"
@@ -85,7 +89,7 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
                 <Mail className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">E-posta</p>
+                <p className="text-sm font-medium">{t("email")}</p>
                 <a
                   href="mailto:info@nexos.com.tr"
                   className="text-sm text-muted-foreground hover:text-foreground"
@@ -102,9 +106,9 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
                 <MapPin className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">Adres</p>
+                <p className="text-sm font-medium">{t("address")}</p>
                 <p className="text-sm text-muted-foreground">
-                  İskele, Kuzey Kıbrıs
+                  {t("addressValue")}
                 </p>
               </div>
             </CardContent>
@@ -116,9 +120,9 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
                 <Clock className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">Çalışma Saatleri</p>
+                <p className="text-sm font-medium">{t("workingHours")}</p>
                 <p className="text-sm text-muted-foreground">
-                  Pzt–Cmt: 09:00–18:00
+                  {t("workingHoursValue")}
                 </p>
               </div>
             </CardContent>
@@ -129,7 +133,7 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Mesaj Gönderin</CardTitle>
+              <CardTitle>{t("sendMessage")}</CardTitle>
             </CardHeader>
             <CardContent>
               <ContactForm />
@@ -140,7 +144,7 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
 
       {/* Map Section */}
       <div className="mt-12">
-        <h2 className="mb-4 text-xl font-bold">Konumumuz</h2>
+        <h2 className="mb-4 text-xl font-bold">{t("ourLocation")}</h2>
         <div className="h-[350px] overflow-hidden rounded-lg border">
           <ContactMapWrapper />
         </div>

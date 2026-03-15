@@ -1,0 +1,390 @@
+{
+  "sss": {
+    "meta": {
+      "title": "Sikca Sorulan Sorular (SSS)",
+      "description": "Kuzey Kibris'ta gayrimenkul alim-satim, kiralama, tapu, yatirim, yasam ve yasal surecler hakkinda 80+ soruya kapsamli cevaplar."
+    },
+    "heading": "Sikca Sorulan Sorular",
+    "subheading": "Kuzey Kibris'ta gayrimenkul alim-satim, kiralama, yatirim, yasam ve yasal surecler hakkinda {totalQuestions}+ soruya kapsamli cevaplar.",
+    "stats": {
+      "categories": "Kategori",
+      "questionsAndAnswers": "Soru & Cevap",
+      "whatsappSupport": "WhatsApp Destek",
+      "freeConsultation": "Ucretsiz Danismanlik"
+    },
+    "cta": {
+      "title": "Sorunuzun cevabini bulamadiniz mi?",
+      "description": "Uzman ekibimiz tum sorularinizi yanitlamaya hazir. Ucretsiz danismanlik icin hemen iletisime gecin.",
+      "contactUs": "Bize Ulasin",
+      "whatsapp": "WhatsApp ile Yazin"
+    },
+    "categories": [
+      {
+        "title": "Kuzey Kibris'ta Neden Yatirim Yapmali?",
+        "description": "Kuzey Kibris'i cazip kilan ekonomik ve stratejik avantajlar",
+        "items": [
+          {
+            "question": "Kuzey Kibris neden gayrimenkul yatirimi icin cazip?",
+            "answer": "Kuzey Kibris, Akdeniz'in en hizli buyuyen emlak pazarlarindan biridir. Son 5 yilda gayrimenkul degerleri yillik ortalama %20-30 artis gostermistir. Dusuk satin alma maliyetleri, yuksek kira getirisi (%6-12 yillik), 300+ gunluk gunes, Ingilizce'nin yaygin kullanimi, Turkiye'ye yakinlik, AB ile sinir komsulugudu ve gelisen turizm sektoru baslica cazip kilan faktorlerdir. Ayrica universite ogrenci nufusunun yuksekligi kiralama talebini surekli canli tutmaktadir."
+          },
+          {
+            "question": "Kuzey Kibris'ta gayrimenkul fiyatlari diger Akdeniz ulkelerine gore nasil?",
+            "answer": "Kuzey Kibris'ta metrekare fiyatlari Ispanya, Yunanistan, Guney Kibris ve Italya'ya kiyasla ortalama %40-60 daha dusuktur. Ornegin denize sifir bir 1+1 daire Iskele Long Beach'te 80.000-120.000 GBP iken, benzer lokasyondaki bir mulk Guney Kibris'ta 200.000+ EUR, Ispanya Costa del Sol'da 180.000+ EUR'dur. Bu fiyat avantaji hem yasam hem yatirim amaciyla alicilari cezbetmektedir."
+          },
+          {
+            "question": "Hangi bolgeler yatirim icin en cok one cikiyor?",
+            "answer": "Iskele (Long Beach, Bafra, Bogaz): En yuksek deger artisi, yeni projeler ve turizm potansiyeli. Girne: Yerlesik altyapi, marina, luks segment, yabanci rezidans talebi. Lefkosa: Universiteler sayesinde istikrarli kira getirisi. Gazimagusa: Dogu Akdeniz Universitesi cevresi ve tarihi doku. Guzelyurt: Tarim arazisi ve dusuk giris fiyatli mulkler. Son donemde en buyuk deger artisi Iskele bolgesinde yasanmaktadir."
+          },
+          {
+            "question": "Kuzey Kibris'ta gayrimenkul balonu riski var mi?",
+            "answer": "Her emlak piyasasinda dalgalanma riski mevcuttur. Ancak Kuzey Kibris'ta konut arzi henuz talebin altinda kalmaktadir. Universite ogrencileri, emekliler, dijital gocebeler ve tatilcilerin olusturdugu surekli talep fiyatlari desteklemektedir. Buna ragmen, profesyonel danismanlik almadan, arastirma yapmadan ve lokasyon-fiyat analizi yapilmadan alim yapilmamalidir. Nexos olarak biz her musterimize bagimsiz degerleme ve karsilastirmali piyasa analizi sunuyoruz."
+          },
+          {
+            "question": "Kisa donem (Airbnb) kiralama geliri ne kadar?",
+            "answer": "Iskele Long Beach ve Girne gibi turistik bolgelerde 1+1 daireler yaz sezonunda (Haziran-Eylul) gunluk 50-120 GBP, 2+1 daireler 80-180 GBP, villalar 150-400 GBP kira getirisi saglayabilir. Yillik doluluk orani profesyonel yonetimle %60-75 arasinda tutulabilir. Kis aylarinda fiyatlar dusse de universite ogrencileri ve uzun donem kiracilarla gelir surekliligi saglanabilir. Nexos kiralama yonetimi hizmetiyle mulkunuzu sizin adiniza yonetebiliriz."
+          }
+        ]
+      },
+      {
+        "title": "Kuzey Kibris'ta Yasam",
+        "description": "Iklim, gunluk yasam, altyapi ve yasam kalitesi",
+        "items": [
+          {
+            "question": "Kuzey Kibris'ta yasam maliyeti nasil?",
+            "answer": "Kuzey Kibris'ta yasam maliyeti Avrupa ortalamasinin onemli olcude altindadir. Iki kisilik bir aile icin aylik ortalama harcamalar: market 400-600 GBP, elektrik-su 80-150 GBP, internet-telefon 30-50 GBP, ulasim 100-200 GBP, disarida yemek (kisi basi) 8-20 GBP, saglik sigortasi 50-100 GBP. Kira haric aylik toplam yasam maliyeti yaklasik 800-1.500 GBP arasindadir."
+          },
+          {
+            "question": "Iklim ve hava durumu nasil?",
+            "answer": "Kuzey Kibris tipik Akdeniz iklimine sahiptir. Yilda ortalama 320+ gunesli gun yasanir. Yazlar sicak ve kurak (Haziran-Eylul, 30-40°C), kislar iliman ve yagisli (Aralik-Subat, 10-18°C). Deniz suyu sicakligi Mayis-Kasim arasi yuzmeye uygundur (22-28°C). Kar yagisi son derece nadirdir. Bu iklim ozellikle Kuzey Avrupa'dan gelen emekliler ve dijital gocebeler icin buyuk bir cekim noktasidir."
+          },
+          {
+            "question": "Altyapi ve ulasim imkanlari nasil?",
+            "answer": "Ercan Havalimani'ndan Turkiye'nin bircok sehrine direkt ucuslar mevcuttur (Istanbul 1.5 saat). Ada ici ulasim aracla yapilir, dogu-bati arasi yaklasik 2 saattir. Yollar genel olarak iyi durumdadir. Fiber internet altyapisi yayginlasmaktadir (50-100 Mbps). Elektrik sebekesi bazen dalgalanma gosterebilir; bu nedenle cogu yeni proje jenerator ve gunes paneli sistemi icermektedir. Supermarketler, alisveris merkezleri ve restoranlar her bolgede mevcuttur."
+          },
+          {
+            "question": "Saglik hizmetleri kaliteli mi?",
+            "answer": "Kuzey Kibris'ta hem devlet hastaneleri hem ozel saglik kuruluslari bulunmaktadir. Girne ve Lefkosa'daki ozel hastaneler modern ekipmanlarla donatilmis olup cogu doktor Ingiltere, Turkiye veya AB ulkelerinde egitim almistir. Acil saglik hizmetleri ucretsizdir. Ozel saglik sigortasi yillik 500-1.500 GBP arasinda degismektedir. Ciddi operasyonlar icin Turkiye'deki hastanelere hizli ulasim imkani da avantajdir."
+          },
+          {
+            "question": "Cocuklu aileler icin uygun mu?",
+            "answer": "Kuzey Kibris guvenli bir yasam ortami sunar; suc oranlari Avrupa ortalamasinin cok altindadir. Ingilizce egitim veren ozel okullar (anaokulu-lise), uluslararasi okullar ve 20'den fazla universite bulunmaktadir. Plajlar, doga parklari ve spor tesisleri cocuklar icin ideal aktivite alanlaridir. Ozel okul ucretleri yillik 2.000-6.000 GBP arasindadir. Bircok yeni konut projesi cocuk oyun alanlari ve aile dostu ortak alanlar icermektedir."
+          },
+          {
+            "question": "Gunluk yasamda hangi diller konusuluyor?",
+            "answer": "Resmi dil Turkce'dir ancak Ingilizce cok yaygin olarak konusulmaktadir. Resmi kurumlar, bankalar, hastaneler ve cogu isletmede Ingilizce hizmet alabilirsiniz. Universiteler sayesinde cok kulturlu bir ortam mevcuttur. Ayrica Rusca ve Almanca konusan topluluklar da bulunmaktadir. Bu cok dilli ortam yabanci yatirimcilar ve yasayanlar icin buyuk kolaylik saglar."
+          }
+        ]
+      },
+      {
+        "title": "Genel Bilgiler",
+        "description": "Nexos Emlak ve hizmetlerimiz hakkinda temel sorular",
+        "items": [
+          {
+            "question": "Nexos Emlak ne tur hizmetler sunuyor?",
+            "answer": "Nexos Emlak, Kuzey Kibris'ta kapsamli gayrimenkul hizmetleri sunmaktadir: satilik ve kiralik mulk danismanligi, profesyonel mulk degerleme, yatirim portfoy danismanligi, tapu devir ve hukuki surec yonetimi, kiralama yonetimi (kiraci bulma, kira tahsilati, bakim koordinasyonu), anahtar teslim mobilya ve dekorasyon hizmeti, oturma izni danismanligi ve satis sonrasi destek. Uzman kadromuzla alim-satim surecinin her asamasinda yaninizdayiz."
+          },
+          {
+            "question": "Hangi bolgelerde hizmet veriyorsunuz?",
+            "answer": "Agirlikli olarak Iskele, Gazimagusa, Girne, Lefkosa ve Guzelyurt bolgelerinde hizmet vermekteyiz. Iskele Long Beach ve cevresi ozellikle yatirim acisindan en aktif calistigimiz bolgedir. Ayrica Bafra, Tatlisu, Karpaz, Esentepe ve Alsancak gibi gelisen bolgelerde de genis portfoyumuz bulunmaktadir."
+          },
+          {
+            "question": "Ilanlariniz ne siklikla guncelleniyor?",
+            "answer": "Ilanlarimiz gunluk olarak guncellenmektedir. Satilan veya kiralanan mulkler ayni gun icinde sistemden kaldirilir. Yeni ilanlar eklendikce web sitemizde ve sosyal medya hesaplarimizda paylasilir. Fiyat guncellemeleri ve kampanyalar anlik olarak yansitilir."
+          },
+          {
+            "question": "Danismanlarinizla nasil iletisime gecebilirim?",
+            "answer": "Web sitemizdeki iletisim formunu doldurabilir, WhatsApp hattimizdan mesaj atabilir, dogrudan ofisimizi arayabilir veya ilan sayfalarindaki danisman iletisim bilgilerini kullanabilirsiniz. Calisma saatlerimiz hafta ici ve Cumartesi 09:00-18:00 arasindadir. Acil durumlar icin WhatsApp hattimiz 7/24 aktiftir."
+          },
+          {
+            "question": "Nexos ile calismanin avantaji ne?",
+            "answer": "Bolgeyi cok iyi taniyan yerli uzman kadromuz, seffaf ve durust danismanlik anlayisimiz, genis mulk portfoyumuz, hukuki sureclerde tam destek, satis sonrasi kiralama yonetimi ve 7/24 WhatsApp iletisim hattimiz sizi her adimda destekler. Musterilerimizin %80'i referans yoluyla bize ulasmaktadir — bu, guven ve memnuniyetin en somut gostergesidir."
+          }
+        ]
+      },
+      {
+        "title": "Satin Alma Sureci",
+        "description": "Mulk satin alma adimlari ve dikkat edilmesi gerekenler",
+        "items": [
+          {
+            "question": "Kuzey Kibris'ta ev satin alma sureci nasil isliyor?",
+            "answer": "Surec su adimlardan olusur: 1) Ihtiyac analizi ve butce belirleme, 2) Mulk secimi ve yerinde inceleme (biz organize ediyoruz), 3) Fiyat muzakeresi, 4) On sozlesme ve depozito odenmesi (genellikle 1.000-5.000 GBP), 5) Bagimsiz avukat kontrolu ve tapu arastirmasi, 6) Satis sozlesmesinin imzalanmasi ve Tapu Dairesi'ne kaydi, 7) Odeme planina gore odemelerin yapilmasi, 8) Bakanlar Kurulu izni basvurusu (yabancilar icin), 9) Tapu devri. Surec ortalama 3-6 ay surmektedir."
+          },
+          {
+            "question": "Satin almadan once nelere dikkat etmeliyim?",
+            "answer": "Mutlaka kontrol edilmesi gerekenler: tapu turu (Turk Kocani en guvenli), mulkun imar durumu ve yapi ruhsati, altyapi durumu (su, elektrik, kanalizasyon, yol erisimi), insaat kalitesi ve kullanilan malzemeler, bolgenin gelisim potansiyeli ve master plani, mulk uzerinde ipotek veya haciz olup olmadigi, muteahhidin gecmis projeleri ve referanslari, site aidati ve yillik masraflar. Bagimsiz bir avukat tutmanizi siddetle tavsiye ederiz."
+          },
+          {
+            "question": "Ev alirken hangi masraflar cikar?",
+            "answer": "Tapu devir vergisi (%6, genellikle alici-satici yari yariya paylasir — ilk mulk aliminda %3 indirim), KDV (%5, yeni mulklerde), damga vergisi (%0.5), avukatlik ucreti (mulk degerinin %1-2'si), emlak komisyonu (%3-5, genellikle saticidan alinir), tapu kayit harci ve translator ucreti (gerekirse). Toplam ek masraflar mulk degerinin yaklasik %10-13'u kadardir. Bunlari butcenize dahil etmeniz onemlidir."
+          },
+          {
+            "question": "Taksitli satis secenekleri var mi?",
+            "answer": "Evet, ozellikle yeni projelerde taksitli odeme planlari yaygindir. Genel yapi: %30-40 pesinat, kalan tutar 12-60 ay arasi taksitlendirilir. Bazi projeler faizsiz taksit, %0 pesinat kampanyalari veya anahtar teslimde odeme gibi esnek secenekler sunar. Ikinci el mulklerde taksit secenegi sinirli olup saticiyla muzakereye baglidir. Nexos olarak en uygun odeme planini sizin icin muzakere ediyoruz."
+          },
+          {
+            "question": "Mulku gormeden satin alabilir miyim?",
+            "answer": "Teknik olarak mumkundur ancak tavsiye etmiyoruz. Yine de yurt disindan alim yapan musterilerimiz icin su hizmetleri sunuyoruz: profesyonel video tur ve canli goruntulu gezi (WhatsApp/Zoom), detayli fotograf ve drone cekimleri, bolge tanitim videolari, vekaletname ile islem yapma imkani. En ideal secenek 2-3 gunluk bir kesif gezisi planlamaktir — havalimani transferi ve konaklama organizasyonunda da yardimci oluyoruz."
+          }
+        ]
+      },
+      {
+        "title": "Tapu ve Hukuki Surecler",
+        "description": "Tapu turleri, yasal haklar ve resmi prosedurler",
+        "items": [
+          {
+            "question": "Kuzey Kibris'ta kac tur tapu vardir?",
+            "answer": "Uc ana tapu turu vardir: 1) Turk Kocani — 1974 oncesi Turk mulkiyetinde olan araziler, en guvenli ve degerli tapu turudur. 2) Esde ger Kocan (ITEM) — Guneye goc eden Kibrisli Turklere verilen esdeger mulkler, devlet guvencesindedir ve guvenilirdir. 3) Tahsis — Devlet tarafindan tahsis edilmis araziler, kosullu mulkiyet hakki verir, bazi kisitlamalar icerebilir. Tapu turu mulkun degerini ve yasal guvenligini dogrudan etkiler; Turk Kocani ve Esdeger Kocan en cok tercih edilen turlerdir."
+          },
+          {
+            "question": "Tapu devri ne kadar surer?",
+            "answer": "TC vatandaslari icin tapu devri genellikle 1-2 hafta icinde tamamlanir. Yabanci uyruklu alicilar icin Bakanlar Kurulu izni gerektiginden surec 3-12 ay arasinda degisebilir. Bu sure zarfinda satis sozlesmesi Tapu Dairesi'ne kaydedilerek (Specific Performance) alicinin haklari tam olarak guvence altina alinir — mulk baskasina satilamaz, ipotek konalamaz."
+          },
+          {
+            "question": "Sozlesmemi Tapu Dairesi'ne kaydettirmeli miyim?",
+            "answer": "Kesinlikle evet — bu en kritik adimdir. Satis sozlesmesinin Tapu Dairesi'ne kaydi (Specific Performance), mulkun ucuncu sahislara satilmasini, uzerine ipotek konulmasini veya haciz islemi yapilmasini engeller. Bu kayit yasal hakkinizi korur ve tapu devri tamamlanana kadar en onemli guvencenizdir. Kayit islemi avukatiniz tarafindan yapilir ve kucuk bir harc odenir."
+          },
+          {
+            "question": "Avukat tutmak zorunlu mu?",
+            "answer": "Yasal olarak zorunlu olmasa da kesinlikle tavsiye edilir — hatta Nexos olarak biz bunu bir gereklilik olarak goruyoruz. Bagimsiz bir avukat: tapu arastirmasi yapar, sozlesmeyi inceler ve muzakere eder, Tapu Dairesi kayit islemini takip eder, Bakanlar Kurulu basvurusunu hazirlar ve takip eder, olasi hukuki riskleri onceden tespit eder. Avukatlik ucreti genellikle mulk degerinin %1-2'si kadardir. Guvenilir avukat onerisi icin bize danisabilirsiniz."
+          },
+          {
+            "question": "Vekaletname ile islem yapabilir miyim?",
+            "answer": "Evet, yurt disinda yasiyorsaniz noter tasdikli vekaletname ile avukatiniza veya guvendiginiz bir kisiye yetki verebilirsiniz. Vekaletname Turkiye'deki noter veya konsolosluklardan duzenlenebilir. Vekaletnamede hangi islemlerin yapilabilecegi acikca belirtilmelidir. Apostil serhi gerekebilir. Bu yontem uzaktan alim yapan yatirimcilar tarafindan siklikla kullanilmaktadir."
+          }
+        ]
+      },
+      {
+        "title": "Yabanci Alicilar",
+        "description": "Yabanci uyruklularin mulk edinme kosullari ve haklari",
+        "items": [
+          {
+            "question": "Yabancilar Kuzey Kibris'ta mulk satin alabilir mi?",
+            "answer": "Evet, yabanci uyruklu kisiler Kuzey Kibris'ta mulk satin alabilir. Ancak Bakanlar Kurulu'ndan izin alinmasi gerekir. Her yabanci vatandas kendi adina bir adet mulk (maksimum 1 donum = 1.338 m² arazi) satin alabilir. Bu sinir, KKTC'de sirket kurarak yasal olarak asilabilir — bircok yatirimci bu yontemi tercih etmektedir."
+          },
+          {
+            "question": "Bakanlar Kurulu izni nedir ve nasil alinir?",
+            "answer": "Yabanci uyruklularin mulk edinimi icin gereken resmi izindir. Basvuru belgeleri: pasaport kopyasi, sabika kaydi (apostilli), satis sozlesmesi, tapu fotokopisi ve mulk fotograflari. Avukatiniz basvuruyu Icisleri Bakanligi'na yapar, surec 3-12 ay arasi surebilir. Bu surede mulkunuzu kullanabilir, kiraya verebilir ve tadilat yapabilirsiniz — sozlesmeniz Tapu Dairesi kaydiyla korunmaktadir."
+          },
+          {
+            "question": "Turk vatandaslari icin farkli kurallar var mi?",
+            "answer": "Evet, TC vatandaslari Kuzey Kibris'ta onemli avantajlara sahiptir: Bakanlar Kurulu izni gerekmez, tapu devri dogrudan ve hizlica yapilir. Mulk sayisi ve arazi buyuklugu sinirlamasi yoktur, birden fazla mulk satin alabilirsiniz. Oturma izni almak daha kolaydir. Banka kredisi kullanma imkani daha genistir. Bu avantajlar TC vatandaslarini Kuzey Kibris emlak piyasasinin en aktif alici grubu yapmaktadir."
+          },
+          {
+            "question": "Ingiliz, Rus veya diger ulke vatandaslari alabilir mi?",
+            "answer": "Evet, tum yabanci uyruklu kisiler ayni kosullarla mulk satin alabilir. Ingiliz vatandaslari en buyuk yabanci alici grubunu olusturmaktadir. Rus, Alman, Iskandinav, Iranli ve Arap alicilar da piyasada aktiftir. Nexos olarak Ingilizce ve Turkce dillerinde tam hizmet sunmaktayiz. Ceviri ve noter islemlerinde yardimci oluyoruz."
+          },
+          {
+            "question": "Sirket kurarak daha fazla mulk alabilir miyim?",
+            "answer": "Evet, KKTC'de limited sirket kurarak mulk sayisi sinirlamasini asabilirsiniz. Sirket kurulumu yaklasik 1-2 hafta surer ve maliyeti 1.500-3.000 GBP arasindadir. Sirket uzerinden alinan mulklerde Bakanlar Kurulu izni gerekmez. Ayrica vergisel avantajlar da saglayabilir. Bu yontem ozellikle portfoy yatirimcilari ve birden fazla mulk almak isteyen alicilar icin idealdir."
+          }
+        ]
+      },
+      {
+        "title": "Oturma Izni ve Vatandaslik",
+        "description": "Ikamet, oturma izni ve uzun sureli kalis kosullari",
+        "items": [
+          {
+            "question": "Mulk alinca oturma izni alabilir miyim?",
+            "answer": "Evet, mulk sahibi olan yabancilar gecici oturma izni basvurusunda bulunabilir. Oturma izni genellikle 1 yillik verilir ve yenilenebilir. Basvuru Icisleri Bakanligi Muhaceret Dairesi'ne yapilir. Gerekli belgeler: pasaport, mulk tapu/sozlesme kopyasi, banka hesap dokumu, saglik raporu ve sabika kaydi. Surec 2-4 hafta surmektedir."
+          },
+          {
+            "question": "Oturma izni ne gibi haklar sagliyor?",
+            "answer": "Oturma izni ile KKTC'de yasal olarak ikamet edebilir, banka hesabi acabilir, arac satin alabilir ve gunluk yasaminizi surdurebilirsiniz. Ancak oturma izni calisma hakki vermez — bunun icin ayri calisma izni gerekir. Oturma izni suresince ulkeye giris-cikislariniz serbesttir. Cocuklarinizi okullara kayit ettirebilirsiniz."
+          },
+          {
+            "question": "KKTC vatandasligi almak mumkun mu?",
+            "answer": "KKTC vatandasligi belirli kosullar altinda mumkundur ancak gayrimenkul alimi otomatik vatandaslik hakki vermez. Vatandaslik genellikle evlilik, uzun sureli ikamet (5+ yil) veya yatirim yoluyla degerlendirilir. Surec Bakanlar Kurulu kararina baglidir. Vatandaslik konusunda guncel bilgi icin bir avukata danismanizi oneririz."
+          },
+          {
+            "question": "Emekli olarak Kuzey Kibris'a yerlesebilir miyim?",
+            "answer": "Kuzey Kibris, emekliler icin mukemmel bir yasam destinasyonudur. Dusuk yasam maliyeti, iliman iklim, guvenli ortam ve Ingilizce'nin yayginligi ozellikle Ingiliz ve Kuzey Avrupali emeklileri cezbetmektedir. Emekli maasinizla rahat yasayabilir, saglik hizmetlerinden yararlanabilir ve aktif bir sosyal yasam surdurebilirsiniz. Mulk alimiyla oturma izni alarak kalici yerlesim mumkundur."
+          }
+        ]
+      },
+      {
+        "title": "Yatirim ve Finansman",
+        "description": "Gayrimenkul yatirimi, getiri ve finansman secenekleri",
+        "items": [
+          {
+            "question": "Kuzey Kibris'ta gayrimenkul yatirimi karli mi?",
+            "answer": "Son 5 yilda ozellikle Iskele ve Girne bolgelerinde yillik %20-30 arasi deger artisi gozlenmistir. Uzun donem kiralik getiri orani yillik %6-10, kisa donem (tatil kiralama) ile %10-15'e kadar cikabilir. Universite ogrencileri, tatilciler, dijital gocebeler ve emekliler sayesinde kiralama talebi surekli yuksektir. Doviz bazinda yatirim yapma imkani da (GBP, EUR, USD) ek avantaj saglar. Ancak her yatirim gibi riskleri de vardir, profesyonel danismanlik almanizi oneririz."
+          },
+          {
+            "question": "Uzun donem kira geliri ne kadar bekleyebilirim?",
+            "answer": "Bolge ve mulk tipine gore aylik kira gelirleri: Iskele Long Beach — 1+1 daire: 400-600 GBP, 2+1 daire: 600-900 GBP, 3+1 penthouse: 900-1.400 GBP. Girne merkez — 1+1: 450-700 GBP, 2+1: 700-1.100 GBP, villa: 1.200-3.000 GBP. Lefkosa (universite cevresi) — studyo: 250-400 GBP, 2+1: 500-750 GBP. Bu rakamlar piyasa kosullarina gore degisebilir."
+          },
+          {
+            "question": "Banka kredisi kullanabilir miyim?",
+            "answer": "Kuzey Kibris'taki bankalar konut kredisi vermektedir: mulk degerinin %50-60'ina kadar kredi, vade 10-15 yil, faiz oranlari yillik %8-12 arasi. TC vatandaslari Turkiye'deki bankalardan da kredi kullanabilir. Ingiliz vatandaslari ise Ingiltere'deki equity release veya bridging finance seceneklerini degerlendirebilir. Proje bazli taksitli odeme planlari genellikle banka kredisinden daha avantajlidir."
+          },
+          {
+            "question": "Mulkumu kiraya vermemi yonetebilir misiniz?",
+            "answer": "Evet, Nexos kiralama yonetimi hizmetimiz kapsaminda: kiraci bulma ve secme (referans kontrolu dahil), kira sozlesmesi hazirlama, aylik kira tahsilati ve havale, bakim-onarim koordinasyonu (7/24 acil destek), periyodik mulk kontrolu ve raporlama, Airbnb/Booking yonetimi (kisa donem icin), fatura takibi ve odeme. Ozellikle yurt disinda yasayan mulk sahipleri icin tam kapsamli yonetim hizmeti sunuyoruz."
+          },
+          {
+            "question": "Hangi doviz cinsinden yatirim yapmaliyim?",
+            "answer": "Kuzey Kibris'ta mulk fiyatlari genellikle GBP (Ingiliz Sterlini) olarak belirlenir, bazi projeler EUR veya USD kullanir. TL'nin doviz karsisindaki deger kaybi goz onune alindiginda, doviz bazinda yatirim yapmak deger koruma acisindan avantajlidir. Kira gelirleri de genellikle GBP veya EUR uzerinden elde edilir. Odeme planlari doviz cinsinden sabitlenebilir."
+          }
+        ]
+      },
+      {
+        "title": "Kiralama",
+        "description": "Kiralik mulk arama, haklar ve sorumluluklar",
+        "items": [
+          {
+            "question": "Kiralama sureci nasil isliyor?",
+            "answer": "Mulk secimi sonrasi kira sozlesmesi hazirlanir. Standart kosullar: 1 yillik sozlesme, 2-3 aylik depozito ve ilk ay kirasi pesin odenir. Sozlesme Ingilizce ve Turkce olarak iki dilde hazirlanir. Kimlik/pasaport fotokopisi ve bazen is/gelir belgesi istenir. Kiraci ve ev sahibi haklari yasalarla korunmaktadir. Nexos olarak sozlesme hazirlama, anahtar teslim ve mulk durumu tespitinde yardimci oluyoruz."
+          },
+          {
+            "question": "Kiraci olarak haklarim nelerdir?",
+            "answer": "Kira sozlesmesi suresince yasal haklariniz: mulkten haksiz yere cikarilmazsiniz, depozito sozlesme bitiminde (hasar yoksa) iade edilir, ev sahibi habersiz mulke giremez, kira artisi yillik enflasyon oraniyla sinirlidir, mulkteki yapisal arizalarin giderilmesi ev sahibinin sorumlulugundadir. Anlasmazlik durumunda Kira Mahkemesi'ne basvurulabilir."
+          },
+          {
+            "question": "Evcil hayvan kabul eden mulkler var mi?",
+            "answer": "Bazi mulk sahipleri evcil hayvanlara izin vermektedir. Bu durum ilan detayinda belirtilir veya danismanımıza sorabilirsiniz. Evcil hayvan kabul eden mulklerde genellikle ek depozito (1 aylik kira) istenebilir. Villa ve mustakil evlerde evcil hayvan izni apartman dairelerine gore daha yaygindir."
+          },
+          {
+            "question": "Faturalar ve aidatlar kiraya dahil mi?",
+            "answer": "Genellikle elektrik, su ve internet faturalari kiraya dahil degildir ve kiraci tarafindan odenir. Site yonetimli komplekslerde ortak alan aidati (havuz, guvenlik, bahce, jenerator) da kiraciya aittir — aylik 50-150 GBP arasi. Bazi kiralik dairelerde klima ve internet dahil olabilir. Tum detaylar kira sozlesmesinde acikca belirtilir."
+          },
+          {
+            "question": "Kisa donem kiralama (Airbnb) yapmak yasal mi?",
+            "answer": "Evet, KKTC'de kisa donem kiralama yasal olup giderek yayginlasmaktadir. Ancak belediyeden turizm amacli kiralama izni (ruhsat) almaniz onerilir. Vergi yukumlulukleri uzun donem kiralamadan farklidir. Site yonetimi olan bazi komplekslerde kisa donem kiralama kisitlamasi olabilir — alim oncesinde bu durumu kontrol etmeniz onemlidir."
+          }
+        ]
+      },
+      {
+        "title": "Insaat ve Yeni Projeler",
+        "description": "Yeni projeler, insaat kalitesi ve teslim surecleri",
+        "items": [
+          {
+            "question": "Off-plan (proje asamasinda) mulk almak guvenli mi?",
+            "answer": "Guvenilir muteahhitlerden off-plan mulk almak %15-30 fiyat avantaji saglayabilir. Guvenli alim icin: muteahhidin tamamlanmis en az 2-3 projesini bizzat ziyaret edin, teslim garantisi ve gecikme cezasi iceren sozlesme yapin, odeme planini insaat ilerlemesine (milestone) baglayin, sozlesmeyi bagimsiz avukata inceletin, tapunun muteahhit uzerinde oldugunu dogrulayin. Nexos olarak sadece guvenilirligini dogruladigimiz muteahhitlerle calisiyoruz."
+          },
+          {
+            "question": "Insaat kalitesini nasil degerlendirebilirim?",
+            "answer": "Dikkat edilecek kriterler: depreme dayaniklilik sinifi (C30+ beton), isi ve ses yalitimi kalitesi, dis cephe malzemesi (tas kaplama, kompozit vs.), pencere ve kapi markasi (PVC cift cam minimum), tesisat altyapisi, elektrik sistemi ve jenerator kapasitesi, gunes paneli sistemi, asansor markasi ve kapasitesi. Mumkunse bagimsiz bir insaat muhendisi ile kontrol yaptirin. Nexos olarak mulk inceleme hizmetimizde bu kontrolleri sizin adiniza yapiyoruz."
+          },
+          {
+            "question": "Teslim tarihi gecikirse ne olur?",
+            "answer": "Iyi hazirlanmis bir satis sozlesmesinde gecikme durumunda: aylik cezai sart (genellikle aylik kira bedeli kadar tazminat), belirli bir sure sonra (6-12 ay) sozlesmeden cayma ve tam iade hakki, faiz ile birlikte geri odeme garantisi bulunmalidir. Bu maddelerin sozlesmede yer aldigindan emin olun. Kuzey Kibris'ta insaat gecikmeleri yaygin oldugundan bu korunma kritik oneme sahiptir."
+          },
+          {
+            "question": "Hangi muteahhitler guvenilir?",
+            "answer": "Guvenilir muteahhit kriterleri: minimum 5 yillik sektor deneyimi, en az 2-3 tamamlanmis ve teslim edilmis proje, zamaninda teslim gecmisi, mevcut proje sakinlerinin memnuniyeti, Insaat Muhendisleri Odasi kaydi, mali saglamlik ve banka referanslari. Nexos olarak portfoyumuzdeki tum projelerin muteahhitlerini titizlikle arastiriyor ve sadece guvenilir firmalarla calisiyoruz."
+          },
+          {
+            "question": "Mobilya ve dekorasyon paketi sunuyor musunuz?",
+            "answer": "Evet, anahtar teslim mobilya ve dekorasyon paketlerimiz mevcuttur. Temel paket (yatak, koltuk, mutfak esyalari) 3.000-5.000 GBP, standart paket (tam mobilya + beyaz esya + dekorasyon) 5.000-10.000 GBP, premium paket (tasarim mobilya + dekorasyon + ev tekstili) 10.000-20.000 GBP arasindadir. Ozellikle yatirim amacli mulklerde kiralama potansiyelini artiran profesyonel ic tasarim hizmeti de sunuyoruz."
+          }
+        ]
+      },
+      {
+        "title": "Vergiler ve Masraflar",
+        "description": "Emlak vergileri, harclar ve yillik masraflar",
+        "items": [
+          {
+            "question": "Gayrimenkul sahipliginde hangi vergiler var?",
+            "answer": "Yillik emlak vergisi: mulk degerine gore belirlenir ve cok dusuktur (yillik 50-300 TL arasi). Kira geliri vergisi: elde edilen kira geliri uzerinden gelir vergisi beyannamesi verilmesi gerekir, oranlar %10-30 arasi kademeli. Deger artis kazanci vergisi: mulk satisinda kazanc uzerinden vergi uygulanabilir. Genel olarak Kuzey Kibris vergi oranlari Turkiye ve Avrupa ulkelerine gore oldukca dusuktur."
+          },
+          {
+            "question": "Tapu devir vergisi ne kadar?",
+            "answer": "Tapu devir vergisi mulk degerinin %6'sidir. Ancak ilk kez mulk alan kisiler (yabancilar dahil) icin bu oran %3'tur — bu onemli bir tasarruf saglar. Genellikle alici ve satici bu vergiyi yari yariya paylasir, ancak bu muzakereye baglidir. Damga vergisi %0.5 olarak eklenir. KDV yeni mulklerde %5'tir."
+          },
+          {
+            "question": "Site aidati ne kadar?",
+            "answer": "Site aidatlari kompleksin sundugu hizmetlere gore degisir: temel site (guvenlik, bahce): aylik 30-60 GBP, orta segment (havuz, fitness, guvenlik): aylik 60-120 GBP, luks site (SPA, plaj, concierge): aylik 120-250 GBP. Aidatlar genellikle aylik veya uc aylik pesin olarak odenir. Aidati mulk satin almadan once mutlaka ogrenin ve butcenize dahil edin."
+          },
+          {
+            "question": "Mulku satarken hangi masraflar cikar?",
+            "answer": "Satis sirasinda: tapu devir vergisi payi (genellikle aliciyla %3 + %3 paylasilir), emlak komisyonu (%3-5, genellikle saticidan), varsa deger artis kazanci vergisi, avukatlik ucreti. Onemli not: satis bedelinin sozlesmede gercege uygun yazilmasi hem alici hem satici icin yasal guvenlik acisindan kritiktir."
+          },
+          {
+            "question": "Sigorta yaptirmak zorunlu mu?",
+            "answer": "Yasal olarak zorunlu degildir ancak siddetle tavsiye edilir. Sigorta turleri ve yillik yaklasik maliyetleri: yangin sigortasi 100-200 GBP, deprem sigortasi 100-200 GBP, kapsamli konut sigortasi (yangin + deprem + hirsizlik + sel) 250-500 GBP, mobilya ve esya sigortasi 100-300 GBP. Ozellikle yatirim amacli ve kiralik mulklerde kapsamli sigorta yaptirmak riskleri minimize eder."
+          }
+        ]
+      },
+      {
+        "title": "Ulasim ve Seyahat",
+        "description": "Kuzey Kibris'a nasil ulasilir, vize ve giris kosullari",
+        "items": [
+          {
+            "question": "Kuzey Kibris'a nasil gidilir?",
+            "answer": "Kuzey Kibris'a ulasim Ercan Havalimani uzerinden gerceklesir. Turkiye'nin bircok sehrinden (Istanbul, Ankara, Izmir, Antalya, Adana) direkt ucuslar mevcuttur. Istanbul'dan ucus suresi yaklasik 1.5 saattir. Ayrica Mersin ve Tasucu'ndan Girne/Gazimagusa'ya feribot seferleri bulunmaktadir. Ingiltere'den genellikle aktarmali ucuslar (Istanbul uzerinden) tercih edilir."
+          },
+          {
+            "question": "Vize gerekiyor mu?",
+            "answer": "TC vatandaslari vizesiz olarak KKTC'ye girebilir, sadece kimlik karti yeterlidir. Ingiliz, AB ulkeleri, Rusya, Ukrayna ve bircok ulke vatandasi da vizesiz giris yapabilir (30-90 gun). Vize gerektiren ulkelerin listesi KKTC Disisleri Bakanligi'ndan kontrol edilebilir. Mulk sahipleri oturma izni alarak suresiz kalabilir."
+          },
+          {
+            "question": "Havalimanindan mulklerize transfer var mi?",
+            "answer": "Nexos olarak tum musterilerimize ucretsiz havalimani transfer hizmeti sunuyoruz. Ercan Havalimani'ndan Iskele'ye yaklasik 40 dakika, Girne'ye 30 dakika, Lefkosa'ya 20 dakika surmektedir. Kesif gezisi planlayan musterilerimiz icin mulk turlari boyunca aracli transfer sagliyoruz."
+          },
+          {
+            "question": "Ada icinde ulasim nasil saglanir?",
+            "answer": "Ada ici ulasim agirlikli olarak aracla yapilir. Arac kiralama gunluk 20-40 GBP arasindadir. Ikinci el arac fiyatlari Avrupa'ya gore dusuktur. Trafik soldan akar (Ingiliz sistemi). Toplu tasima sinirlidir; dolmus (minibus) hatlari sehirler arasi ulasimda kullanilir. Taksi hizmetleri mevcuttur ve uygulamalar (BiTaksi) yayginlasmaktadir. Dogu-bati arasi (Karpaz-Guzelyurt) yaklasik 2.5 saattir."
+          }
+        ]
+      },
+      {
+        "title": "Egitim ve Universiteler",
+        "description": "Egitim imkanlari, okullar ve universiteler",
+        "items": [
+          {
+            "question": "Kuzey Kibris'ta egitim kalitesi nasil?",
+            "answer": "Kuzey Kibris'ta 20'den fazla universite bulunmaktadir ve bircugu uluslararasi akreditasyona sahiptir. Dogu Akdeniz Universitesi (DAU), Yakin Dogu Universitesi (YDU), Girne Amerikan Universitesi (GAU) ve Uluslararasi Kibris Universitesi (UKU) en taninmis kurumlardir. Ingilizce egitim veren ilk-orta-lise duzeyinde ozel okullar da mevcuttur. Egitim maliyetleri Avrupa ve hatta Turkiye ortalamasinin altindadir."
+          },
+          {
+            "question": "Universite ogrencileri kiralama piyasasini nasil etkiliyor?",
+            "answer": "Kuzey Kibris'ta 100.000'den fazla universite ogrencisi bulunmaktadir ve bu sayi her yil artmaktadir. Ogrenciler kiralama talebinin onemli bir bolumunu olusturur — ozellikle Lefkosa, Gazimagusa ve Girne'deki universite cevrelerinde. Bu durum yatirimcilar icin istikrarli ve surekli kira geliri anlamina gelir. Studyo ve 1+1 daireler ogrenci pazarinda en cok talep goren mulk tipleridir."
+          },
+          {
+            "question": "Cocugumu uluslararasi okula kaydedebilir miyim?",
+            "answer": "Evet, Kuzey Kibris'ta Ingilizce mufredatli uluslararasi okullar mevcuttur. Girne ve Lefkosa'da English School of Kyrenia, The Heritage School gibi okullar Cambridge/IGCSE mufredati uygulamaktadir. Yillik ucretler 2.000-6.000 GBP arasindadir — bu rakamlar Avrupa'daki benzer okullarin cok altindadir. Mulk sahibi ve oturma izinli aileler cocuklarini kolaylikla kaydettirebilir."
+          }
+        ]
+      },
+      {
+        "title": "Saglik ve Guvenlik",
+        "description": "Saglik hizmetleri, sigorta ve guvenlik durumu",
+        "items": [
+          {
+            "question": "Saglik sistemi nasil isliyor?",
+            "answer": "Kuzey Kibris'ta hem devlet hem ozel saglik kuruluslari bulunmaktadir. Devlet hastaneleri ucretsiz acil hizmet verir. Ozel hastaneler (Near East Hospital, Dr. Burhan Nalbantoglu Devlet Hastanesi, Girne'deki ozel klinikler) modern ekipmanlarla donatilmistir. Cogu doktor Ingiltere, Turkiye veya AB ulkelerinde egitim almistir. Ozel saglik sigortasi yillik 500-1.500 GBP arasindadir ve kapsamli hizmet sunar."
+          },
+          {
+            "question": "Kuzey Kibris guvenli mi?",
+            "answer": "Kuzey Kibris, dunyada en dusuk suc oranlarina sahip bolgelerden biridir. Cinayet, silahli soygun ve organize suc oranlari Avrupa ortalamasinin cok altindadir. Gece yarisi sokakta yurumek, kapinizi acik birakmak yaygin bir yasam tarzidir. Polis teskilati toplum odakli calisir. Bu guvenli ortam ozellikle aileler ve emekliler icin buyuk bir cekim noktasidir. Deprem riski dusuktur ve ciddi dogal afet gecmisi yoktur."
+          },
+          {
+            "question": "Acil durumda ne yapmaliyim?",
+            "answer": "Acil yardim numaralari: 112 (genel acil), 199 (yangin), 155 (polis). Ozel hastanelerin 7/24 acil servisleri mevcuttur. Nexos olarak mulk sahiplerimize acil durum iletisim rehberi ve 7/24 WhatsApp destek hatti sunuyoruz. Ciddi tibbi mudahale gerektiren durumlarda Turkiye'deki hastanelere ambulans ucakla transfer mumkundur."
+          }
+        ]
+      },
+      {
+        "title": "Yasam Tarzi ve Kultur",
+        "description": "Plajlar, aktiviteler, yemek kulturu ve sosyal yasam",
+        "items": [
+          {
+            "question": "Kuzey Kibris'ta hangi aktiviteler yapilabilir?",
+            "answer": "Su sporlari (dalis, sorf, yelken, jet ski), golf (2 uluslararasi golf sahasi), trekking ve doga yuruyusleri (Besparmak Daglari, Karpaz yarimadasi), tarihi kesif (Salamis antik kenti, St. Hilarion Kalesi, Bellapais Manastiri), casino ve gece hayati, plaj kulupleri, balikcilik, bisiklet turlari ve yoga kamplari. Her mevsim farkli festivaller duzenlenmektedir."
+          },
+          {
+            "question": "Yemek kulturu nasil?",
+            "answer": "Kuzey Kibris mutfagi Turk, Yunan ve Ortadogu mutfaginin essiz bir karisimidir. Hellim peyniri, molehiya, kolokas, seftali kebabi ve pilavuna en bilinen yerel lezzetlerdir. Taze deniz urunleri her yerde mevcuttur. Restoran fiyatlari oldukca uygun — iki kisilik bir aksam yemegi 25-60 GBP arasindadir. Ingiliz pub'lari, Italyan restoranlari ve uluslararasi mutfaklar da yaygindir."
+          },
+          {
+            "question": "Plajlar ve deniz kalitesi nasil?",
+            "answer": "Kuzey Kibris'in 396 km'lik kiyi seridinde onlarca muhtesem plaj bulunmaktadir. Altinkum (Golden Beach / Karpaz), Escape Beach (Girne), Long Beach (Iskele), Glapsides (Gazimagusa) en populer plajlardir. Deniz suyu berrak ve temizdir, Akdeniz'in en iyi su kalitesine sahiptir. Caretta caretta deniz kaplumbagalarinin yuvalama alanlari korunmaktadir. Kum plajlari ve kaya koylari secenegi mevcuttur."
+          },
+          {
+            "question": "Expat (yabanci) toplulugu var mi?",
+            "answer": "Kuzey Kibris'ta buyuyen bir expat toplulugu mevcuttur — ozellikle Ingiliz, Alman, Rus, Iskandinav ve Iranli topluluklar aktiftir. Girne'de Ingiliz expat toplulugu en kalabalik gruptur. Facebook gruplari, expat bulusmalari, spor kulupleri ve sosyal etkinlikler araciligiyla kolaylikla sosyallesebilirsiniz. Ingilizce konusan bircok restoran, kafe ve isletme bulunmaktadir."
+          }
+        ]
+      }
+    ]
+  }
+}

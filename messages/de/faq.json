@@ -1,0 +1,14 @@
+{
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "description": "Umfassende Antworten auf {count}+ Fragen zum Kauf, Verkauf, zur Miete, Investition, zum Leben und zu rechtlichen Prozessen in Nordzypern.",
+    "category": "Kategorie",
+    "questionsAndAnswers": "Fragen & Antworten",
+    "whatsappSupport": "WhatsApp Support",
+    "freeConsultancy": "Kostenlose Beratung",
+    "notFoundTitle": "Haben Sie die Antwort nicht gefunden?",
+    "notFoundDescription": "Unser Expertenteam ist bereit, alle Ihre Fragen zu beantworten. Kontaktieren Sie uns jetzt für eine kostenlose Beratung.",
+    "contactUs": "Kontaktieren Sie uns",
+    "whatsappWrite": "Auf WhatsApp schreiben"
+  }
+}

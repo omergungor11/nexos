@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +10,7 @@ import { Loader2 } from "lucide-react";
 
 export function ContactForm() {
   const [pending, setPending] = useState(false);
+  const t = useTranslations("contact");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -32,10 +34,10 @@ export function ContactForm() {
 
       if (!res.ok) throw new Error();
 
-      toast.success("Mesajınız başarıyla gönderildi!");
+      toast.success(t("success"));
       form.reset();
     } catch {
-      toast.error("Bir hata oluştu. Lütfen tekrar deneyin.");
+      toast.error(t("error"));
     } finally {
       setPending(false);
     }
@@ -45,30 +47,30 @@ export function ContactForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium">Ad Soyad *</label>
-          <Input name="name" required placeholder="Adınız Soyadınız" />
+          <label className="mb-1.5 block text-sm font-medium">{t("fullName")}</label>
+          <Input name="name" required placeholder={t("namePlaceholder")} />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium">Telefon</label>
-          <Input name="phone" type="tel" placeholder="05XX XXX XX XX" />
+          <label className="mb-1.5 block text-sm font-medium">{t("phoneField")}</label>
+          <Input name="phone" type="tel" placeholder={t("phonePlaceholder")} />
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium">E-posta</label>
-        <Input name="email" type="email" placeholder="email@ornek.com" />
+        <label className="mb-1.5 block text-sm font-medium">{t("emailField")}</label>
+        <Input name="email" type="email" placeholder={t("emailPlaceholder")} />
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium">Mesajınız *</label>
+        <label className="mb-1.5 block text-sm font-medium">{t("message")}</label>
         <Textarea
           name="message"
           required
           rows={5}
-          placeholder="Mesajınızı yazın..."
+          placeholder={t("messagePlaceholder")}
         />
       </div>
       <Button type="submit" disabled={pending} className="w-full sm:w-auto">
         {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Gönder
+        {t("send")}
       </Button>
     </form>
   );

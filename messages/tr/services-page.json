@@ -1,0 +1,191 @@
+{
+  "servicesPage": {
+    "meta": {
+      "title": "Hizmetlerimiz",
+      "description": "Nexos Emlak hizmetleri — gayrimenkul danışmanlığı, yatırım rehberliği, mülk değerleme, kiralama yönetimi ve daha fazlası. Kuzey Kıbrıs'ta güvenilir emlak çözümleri."
+    },
+    "hero": {
+      "title": "Profesyonel Emlak",
+      "titleHighlight": "Hizmetlerimiz",
+      "description": "Kuzey Kıbrıs'ta gayrimenkul alım-satım, kiralama ve yatırım süreçlerinde uçtan uca profesyonel danışmanlık. Her adımda yanınızdayız.",
+      "ctaConsultation": "Ücretsiz Danışmanlık",
+      "ctaListings": "İlanları İncele"
+    },
+    "stats": {
+      "happyClients": {
+        "value": "850+",
+        "label": "Mutlu Müşteri"
+      },
+      "satisfactionRate": {
+        "value": "%98",
+        "label": "Memnuniyet Oranı"
+      },
+      "yearsExperience": {
+        "value": "10+",
+        "label": "Yıllık Deneyim"
+      },
+      "completedTransactions": {
+        "value": "1.200+",
+        "label": "Tamamlanan İşlem"
+      }
+    },
+    "servicesSection": {
+      "title": "Sunduğumuz Hizmetler",
+      "description": "İhtiyacınıza özel kapsamlı gayrimenkul çözümleri"
+    },
+    "services": {
+      "saleConsultancy": {
+        "title": "Satılık Gayrimenkul Danışmanlığı",
+        "description": "Kuzey Kıbrıs'ta hayalinizdeki mülkü bulmanız için kapsamlı danışmanlık hizmeti sunuyoruz. İhtiyaç analizinden tapu devrine kadar her aşamada yanınızdayız.",
+        "features": {
+          "f1": "Kişiselleştirilmiş mülk arama ve filtreleme",
+          "f2": "Yerinde mülk gezisi organizasyonu",
+          "f3": "Fiyat müzakeresi ve pazarlık desteği",
+          "f4": "Tapu araştırması ve hukuki kontrol",
+          "f5": "Satış sözleşmesi hazırlama",
+          "f6": "Tapu devir sürecinin takibi"
+        }
+      },
+      "rentalServices": {
+        "title": "Kiralık Gayrimenkul Hizmetleri",
+        "description": "Konut ve ticari kiralama süreçlerinde hem mülk sahiplerine hem kiracılara profesyonel destek sağlıyoruz.",
+        "features": {
+          "f1": "Kiracı bulma ve ön değerlendirme",
+          "f2": "Kira sözleşmesi hazırlama",
+          "f3": "Depozito ve ödeme takibi",
+          "f4": "Periyodik mülk kontrolü",
+          "f5": "Kiracı-ev sahibi arabuluculuğu",
+          "f6": "Tahliye süreç yönetimi"
+        }
+      },
+      "investmentConsultancy": {
+        "title": "Yatırım Danışmanlığı",
+        "description": "Kuzey Kıbrıs gayrimenkul piyasasında yüksek getiri potansiyeli taşıyan fırsatları analiz ediyor, yatırım stratejinizi birlikte oluşturuyoruz.",
+        "features": {
+          "f1": "Piyasa analizi ve bölge karşılaştırması",
+          "f2": "Yatırım getiri hesaplaması (ROI)",
+          "f3": "Off-plan proje değerlendirmesi",
+          "f4": "Portföy çeşitlendirme önerileri",
+          "f5": "Kira geliri projeksiyonu",
+          "f6": "Yeniden satış stratejisi planlaması"
+        }
+      },
+      "propertyValuation": {
+        "title": "Mülk Değerleme",
+        "description": "Profesyonel değerleme raporlarıyla mülkünüzün gerçek piyasa değerini belirliyor, alım-satım kararlarınıza sağlam bir temel oluşturuyoruz.",
+        "features": {
+          "f1": "Karşılaştırmalı piyasa analizi",
+          "f2": "Bölgesel değer trend raporu",
+          "f3": "Fiziksel durum değerlendirmesi",
+          "f4": "Gelir yaklaşımı analizi (yatırım mülkleri)",
+          "f5": "Resmi değerleme raporu hazırlama",
+          "f6": "Banka ve kredi başvuru desteği"
+        }
+      },
+      "projectMarketing": {
+        "title": "Proje Pazarlama",
+        "description": "Müteahhit ve proje sahiplerine özel pazarlama çözümleri sunuyor, projelerinizi doğru alıcı kitlesine ulaştırıyoruz.",
+        "features": {
+          "f1": "Proje tanıtım stratejisi oluşturma",
+          "f2": "Profesyonel fotoğraf ve video çekimi",
+          "f3": "Dijital pazarlama ve sosyal medya yönetimi",
+          "f4": "Yurt dışı yatırımcı ağına erişim",
+          "f5": "Fuar ve etkinlik organizasyonu",
+          "f6": "Satış ofisi kurulumu ve yönetimi"
+        }
+      },
+      "legalSupport": {
+        "title": "Hukuki Destek Koordinasyonu",
+        "description": "Gayrimenkul alım-satım sürecindeki hukuki işlemler için uzman avukat ağımızla koordineli çalışıyor, haklarınızı koruyoruz.",
+        "features": {
+          "f1": "Bağımsız avukat yönlendirmesi",
+          "f2": "Tapu türü araştırması ve doğrulama",
+          "f3": "Sözleşme inceleme ve revizyon",
+          "f4": "Bakanlar Kurulu izin başvurusu takibi",
+          "f5": "Veraset ve miras işlemleri",
+          "f6": "İmar ve yapı ruhsatı kontrolleri"
+        }
+      },
+      "renovationGuidance": {
+        "title": "Tadilat ve Dekorasyon Rehberliği",
+        "description": "Mülkünüzün değerini artırmak veya yaşam alanınızı kişiselleştirmek için güvenilir tadilat ve dekorasyon firmalarıyla iş birliği yapıyoruz.",
+        "features": {
+          "f1": "İç mimari danışmanlık yönlendirmesi",
+          "f2": "Güvenilir müteahhit ve usta referansları",
+          "f3": "Tadilat maliyet tahminleri",
+          "f4": "Malzeme seçimi ve tedarik desteği",
+          "f5": "Proje takibi ve kalite kontrolü",
+          "f6": "Mobilya ve beyaz eşya tedarik rehberliği"
+        }
+      },
+      "relocationGuidance": {
+        "title": "Yaşam ve Yerleşim Rehberliği",
+        "description": "Kuzey Kıbrıs'a taşınmayı düşünenler için kapsamlı yerleşim rehberliği sunuyor, yeni yaşamınıza sorunsuz geçiş yapmanızı sağlıyoruz.",
+        "features": {
+          "f1": "Bölge ve mahalle tanıtımı",
+          "f2": "Okul ve sağlık kuruluşu bilgilendirme",
+          "f3": "Oturma izni başvuru rehberliği",
+          "f4": "Elektrik, su, internet abonelik desteği",
+          "f5": "Banka hesabı açma rehberliği",
+          "f6": "Günlük yaşam ipuçları ve oryantasyon"
+        }
+      }
+    },
+    "process": {
+      "title": "Nasıl Çalışıyoruz?",
+      "subtitle": "4 adımda mülk sahibi olun",
+      "steps": {
+        "step1": {
+          "number": "01",
+          "title": "İhtiyaç Analizi",
+          "description": "Bütçe, konum, mülk tipi ve beklentilerinizi detaylı olarak değerlendiriyoruz."
+        },
+        "step2": {
+          "number": "02",
+          "title": "Mülk Seçimi",
+          "description": "Kriterlerinize uygun mülkleri filtreliyor ve yerinde gezi organize ediyoruz."
+        },
+        "step3": {
+          "number": "03",
+          "title": "Müzakere ve Sözleşme",
+          "description": "Fiyat müzakeresi yapıyor, avukat kontrolünden geçen sözleşmeyi hazırlıyoruz."
+        },
+        "step4": {
+          "number": "04",
+          "title": "Tapu ve Teslim",
+          "description": "Tapu devir sürecini takip ediyor, mülkünüzü sorunsuz şekilde teslim ediyoruz."
+        }
+      }
+    },
+    "whyUs": {
+      "title": "Neden",
+      "titleHighlight": "Nexos Emlak?",
+      "description": "Kuzey Kıbrıs emlak sektöründe 10 yılı aşkın deneyimimizle, müşterilerimize güvenilir, şeffaf ve sonuç odaklı hizmet sunuyoruz. Her mülk alım-satım sürecini kişiselleştirilmiş bir deneyime dönüştürüyoruz.",
+      "imageAlt": "Nexos Emlak ofisi",
+      "features": {
+        "reliable": {
+          "title": "Güvenilir ve Şeffaf",
+          "description": "Tüm işlemlerde açık iletişim ve yasal güvence sağlıyoruz."
+        },
+        "personalized": {
+          "title": "Kişiselleştirilmiş Hizmet",
+          "description": "Her müşteriye özel ihtiyaç analizi ve çözüm üretiyoruz."
+        },
+        "valuation": {
+          "title": "Doğru Değerleme",
+          "description": "Piyasa verilerine dayalı gerçekçi mülk değerlemesi yapıyoruz."
+        },
+        "localExpertise": {
+          "title": "Yerel Uzmanlık",
+          "description": "İskele ve çevresini en iyi bilen ekiple çalışıyorsunuz."
+        }
+      }
+    },
+    "cta": {
+      "title": "Hayalinizdeki Mülkü Birlikte Bulalım",
+      "description": "Ücretsiz danışmanlık görüşmesi için hemen iletişime geçin. Uzman kadromuz tüm sorularınızı yanıtlamaya hazır.",
+      "ctaContact": "İletişime Geçin",
+      "ctaFaq": "Sıkça Sorulan Sorular"
+    }
+  }
+}

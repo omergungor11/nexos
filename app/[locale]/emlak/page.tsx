@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SlidersHorizontal } from "lucide-react";
@@ -9,14 +9,16 @@ import { PropertyGrid } from "@/components/property/listing/property-grid";
 import { SortBar } from "@/components/property/listing/sort-bar";
 import { Pagination } from "@/components/property/listing/pagination";
 import { getProperties } from "@/lib/queries/properties";
-import { TRANSACTION_TYPE_LABELS } from "@/lib/constants";
 import type { PropertyFilters, PropertyListItem } from "@/types";
 
-export const metadata: Metadata = {
-  title: "Emlak İlanları",
-  description:
-    "Satılık ve kiralık daire, villa, arsa ve ticari gayrimenkul ilanları. Gelişmiş filtreleme ile aradığınızı kolayca bulun.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "listing" });
+  return {
+    title: t("allListings"),
+    description: t("allListings"),
+  };
+}
 
 const PAGE_SIZE = 20;
 
@@ -28,6 +30,7 @@ interface Props {
 export default async function EmlakPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale });
   const sp = await searchParams;
   const filters = parseFilters(sp);
   const { data, count } = await getProperties(filters);
@@ -37,10 +40,14 @@ export default async function EmlakPage({ params, searchParams }: Props) {
   const currentPage = filters.sayfa ?? 1;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  const pageTitle = filters.islem
-    ? TRANSACTION_TYPE_LABELS[filters.islem === "satilik" ? "sale" : "rent"] +
-      " Emlak İlanları"
-    : "Tüm Emlak İlanları";
+  let pageTitle: string;
+  if (filters.islem === "satilik") {
+    pageTitle = t("listing.saleListings");
+  } else if (filters.islem === "kiralik") {
+    pageTitle = t("listing.rentListings");
+  } else {
+    pageTitle = t("listing.allListings");
+  }
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -51,7 +58,7 @@ export default async function EmlakPage({ params, searchParams }: Props) {
         <aside className="hidden w-64 shrink-0 lg:block">
           <div className="sticky top-20 rounded-lg border p-4">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Filtreler
+              {t("listing.filters")}
             </h2>
             <Suspense>
               <FilterPanel />
@@ -66,13 +73,13 @@ export default async function EmlakPage({ params, searchParams }: Props) {
               <SheetTrigger>
                 <Button variant="outline" size="sm" className="gap-2" render={<span />}>
                   <SlidersHorizontal className="h-4 w-4" />
-                  Filtreler
+                  {t("listing.filters")}
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-80 overflow-y-auto">
                 <div className="mt-6">
                   <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                    Filtreler
+                    {t("listing.filters")}
                   </h2>
                   <Suspense>
                     <FilterPanel />

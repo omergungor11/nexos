@@ -1,0 +1,191 @@
+{
+  "servicesPage": {
+    "meta": {
+      "title": "Our Services",
+      "description": "Nexos Real Estate services — property consultancy, investment guidance, property valuation, rental management and more. Trusted real estate solutions in North Cyprus."
+    },
+    "hero": {
+      "title": "Professional Real Estate",
+      "titleHighlight": "Services",
+      "description": "End-to-end professional consultancy for property buying, selling, renting and investing in North Cyprus. We are with you every step of the way.",
+      "ctaConsultation": "Free Consultation",
+      "ctaListings": "Browse Listings"
+    },
+    "stats": {
+      "happyClients": {
+        "value": "850+",
+        "label": "Happy Clients"
+      },
+      "satisfactionRate": {
+        "value": "98%",
+        "label": "Satisfaction Rate"
+      },
+      "yearsExperience": {
+        "value": "10+",
+        "label": "Years of Experience"
+      },
+      "completedTransactions": {
+        "value": "1,200+",
+        "label": "Completed Transactions"
+      }
+    },
+    "servicesSection": {
+      "title": "Our Services",
+      "description": "Comprehensive real estate solutions tailored to your needs"
+    },
+    "services": {
+      "saleConsultancy": {
+        "title": "Property Sales Consultancy",
+        "description": "We provide comprehensive consultancy to help you find your dream property in North Cyprus. We are by your side at every stage, from needs analysis to title deed transfer.",
+        "features": {
+          "f1": "Personalized property search and filtering",
+          "f2": "On-site property viewing organization",
+          "f3": "Price negotiation and bargaining support",
+          "f4": "Title deed research and legal verification",
+          "f5": "Sales contract preparation",
+          "f6": "Title deed transfer process tracking"
+        }
+      },
+      "rentalServices": {
+        "title": "Rental Property Services",
+        "description": "We provide professional support to both property owners and tenants in residential and commercial rental processes.",
+        "features": {
+          "f1": "Tenant sourcing and pre-screening",
+          "f2": "Lease agreement preparation",
+          "f3": "Deposit and payment tracking",
+          "f4": "Periodic property inspections",
+          "f5": "Tenant-landlord mediation",
+          "f6": "Eviction process management"
+        }
+      },
+      "investmentConsultancy": {
+        "title": "Investment Consultancy",
+        "description": "We analyze high-return opportunities in the North Cyprus real estate market and develop your investment strategy together.",
+        "features": {
+          "f1": "Market analysis and regional comparison",
+          "f2": "Return on investment (ROI) calculation",
+          "f3": "Off-plan project evaluation",
+          "f4": "Portfolio diversification recommendations",
+          "f5": "Rental income projections",
+          "f6": "Resale strategy planning"
+        }
+      },
+      "propertyValuation": {
+        "title": "Property Valuation",
+        "description": "We determine the true market value of your property with professional valuation reports, providing a solid foundation for your buying and selling decisions.",
+        "features": {
+          "f1": "Comparative market analysis",
+          "f2": "Regional value trend report",
+          "f3": "Physical condition assessment",
+          "f4": "Income approach analysis (investment properties)",
+          "f5": "Official valuation report preparation",
+          "f6": "Bank and loan application support"
+        }
+      },
+      "projectMarketing": {
+        "title": "Project Marketing",
+        "description": "We offer tailored marketing solutions for developers and project owners, connecting your projects with the right buyer audience.",
+        "features": {
+          "f1": "Project promotion strategy development",
+          "f2": "Professional photography and videography",
+          "f3": "Digital marketing and social media management",
+          "f4": "Access to international investor network",
+          "f5": "Exhibition and event organization",
+          "f6": "Sales office setup and management"
+        }
+      },
+      "legalSupport": {
+        "title": "Legal Support Coordination",
+        "description": "We work in coordination with our expert lawyer network for legal procedures in real estate transactions, protecting your rights throughout the process.",
+        "features": {
+          "f1": "Independent lawyer referral",
+          "f2": "Title deed type research and verification",
+          "f3": "Contract review and revision",
+          "f4": "Council of Ministers permit application tracking",
+          "f5": "Inheritance and succession procedures",
+          "f6": "Zoning and building permit checks"
+        }
+      },
+      "renovationGuidance": {
+        "title": "Renovation and Interior Design Guidance",
+        "description": "We collaborate with trusted renovation and design firms to increase your property's value or personalize your living space.",
+        "features": {
+          "f1": "Interior design consultancy referral",
+          "f2": "Trusted contractor and craftsman references",
+          "f3": "Renovation cost estimates",
+          "f4": "Material selection and procurement support",
+          "f5": "Project monitoring and quality control",
+          "f6": "Furniture and appliance sourcing guidance"
+        }
+      },
+      "relocationGuidance": {
+        "title": "Living and Relocation Guidance",
+        "description": "We offer comprehensive relocation guidance for those considering moving to North Cyprus, ensuring a smooth transition to your new life.",
+        "features": {
+          "f1": "Area and neighborhood orientation",
+          "f2": "School and healthcare facility information",
+          "f3": "Residence permit application guidance",
+          "f4": "Electricity, water, internet subscription support",
+          "f5": "Bank account opening guidance",
+          "f6": "Daily life tips and orientation"
+        }
+      }
+    },
+    "process": {
+      "title": "How We Work",
+      "subtitle": "Become a property owner in 4 steps",
+      "steps": {
+        "step1": {
+          "number": "01",
+          "title": "Needs Analysis",
+          "description": "We evaluate your budget, location, property type and expectations in detail."
+        },
+        "step2": {
+          "number": "02",
+          "title": "Property Selection",
+          "description": "We filter properties matching your criteria and organize on-site viewings."
+        },
+        "step3": {
+          "number": "03",
+          "title": "Negotiation and Contract",
+          "description": "We handle price negotiation and prepare the contract with lawyer review."
+        },
+        "step4": {
+          "number": "04",
+          "title": "Title Deed and Handover",
+          "description": "We follow the title deed transfer process and deliver your property seamlessly."
+        }
+      }
+    },
+    "whyUs": {
+      "title": "Why",
+      "titleHighlight": "Nexos Real Estate?",
+      "description": "With over 10 years of experience in the North Cyprus real estate sector, we provide our clients with reliable, transparent and results-driven service. We transform every property transaction into a personalized experience.",
+      "imageAlt": "Nexos Real Estate office",
+      "features": {
+        "reliable": {
+          "title": "Reliable and Transparent",
+          "description": "We ensure open communication and legal assurance in all transactions."
+        },
+        "personalized": {
+          "title": "Personalized Service",
+          "description": "We provide custom needs analysis and solutions for every client."
+        },
+        "valuation": {
+          "title": "Accurate Valuation",
+          "description": "We perform realistic property valuations based on market data."
+        },
+        "localExpertise": {
+          "title": "Local Expertise",
+          "description": "You work with the team that knows Iskele and its surroundings best."
+        }
+      }
+    },
+    "cta": {
+      "title": "Let's Find Your Dream Property Together",
+      "description": "Get in touch for a free consultation. Our expert team is ready to answer all your questions.",
+      "ctaContact": "Contact Us",
+      "ctaFaq": "Frequently Asked Questions"
+    }
+  }
+}

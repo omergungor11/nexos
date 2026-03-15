@@ -5,10 +5,12 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/providers";
 import { getLocale } from "next-intl/server";
+import { localeDirection } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin", "latin-ext", "cyrillic"],
   display: "swap",
 });
 
@@ -53,7 +55,7 @@ export default async function RootLayout({
   const locale = await getLocale();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} dir={localeDirection[locale as Locale] ?? "ltr"} suppressHydrationWarning>
       <body className={`${inter.variable} ${inter.className} antialiased`}>
         <Providers>
           {children}

@@ -5,7 +5,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;
 
   // Validate that the incoming locale is valid
-  if (!locale || !routing.locales.includes(locale as "tr" | "en")) {
+  if (!locale || !routing.locales.includes(locale as (typeof routing.locales)[number])) {
     locale = routing.defaultLocale;
   }
 
@@ -14,6 +14,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
     messages: {
       ...(await import(`../messages/${locale}/common.json`)).default,
       ...(await import(`../messages/${locale}/faq.json`)).default,
+      ...(await import(`../messages/${locale}/about.json`)).default,
+      ...(await import(`../messages/${locale}/services-page.json`)).default,
+      ...(await import(`../messages/${locale}/sss.json`)).default,
     },
   };
 });

@@ -1,0 +1,181 @@
+{
+  "aboutPage": {
+    "meta": {
+      "title": "Über uns",
+      "description": "Nexos Immobilien — Nordzyperns vertrauenswürdige Immobilienberatung. Unsere Mission, Vision, Werte und Geschichte."
+    },
+    "hero": {
+      "subtitle": "Nordzyperns vertrauenswürdiger Immobilienberater",
+      "titleLine1": "Erreichen Sie Ihre Traumimmobilie",
+      "titleLine2": "mit Vertrauen",
+      "description": "Bei Nexos Immobilien begleiten wir Sie bei jedem Schritt des Kaufs, Verkaufs und der Vermietung von Immobilien in Nordzypern. Mit unserem professionellen Team, transparentem Ansatz und fundierter Ortskenntnis finden wir die richtige Investition für Sie."
+    },
+    "stats": {
+      "happyClients": "Zufriedene Kunden",
+      "portfolio": "Immobilienportfolio",
+      "experience": "Jahre Erfahrung",
+      "consultants": "Fachberater"
+    },
+    "whoWeAre": {
+      "title": "Wer wir sind",
+      "paragraph1": "Nexos Immobilien ist eines der führenden Immobilienberatungsunternehmen in Nordzypern. Unser 2016 in Iskele gegründetes Unternehmen ist heute über ein breites Servicenetzwerk in Iskele, Kyrenia, Nikosia, Famagusta und Güzelyurt tätig.",
+      "paragraph2": "Wir bieten umfassende Dienstleistungen in allen Bereichen der Immobilienbranche — von der Kauf- und Mietberatung über die Verwaltung von Investmentportfolios bis hin zur Grundbuchabwicklung und Mietverwaltung. Dass 80 % unserer Kunden durch Empfehlungen zu uns kommen, ist der stärkste Beweis für unseren vertrauens- und qualitätsorientierten Ansatz.",
+      "paragraph3": "Wir betreuen Kunden aus der Türkei, Großbritannien, Deutschland, Russland und vielen weiteren Ländern auf Türkisch und Englisch. Wir entwickeln maßgeschneiderte Lösungen für jeden Kunden und pflegen in jeder Phase des Kaufprozesses eine transparente, ehrliche Kommunikation."
+    },
+    "infoCards": {
+      "consultants": {
+        "value": "15+",
+        "label": "Fachberater"
+      },
+      "referralRate": {
+        "value": "80%",
+        "label": "Empfehlungsrate"
+      },
+      "portfolio": {
+        "value": "1.200+",
+        "label": "Immobilienportfolio"
+      },
+      "regions": {
+        "value": "5 Regionen",
+        "label": "Inselweit"
+      }
+    },
+    "mission": {
+      "title": "Unsere Mission",
+      "description": "Die Prozesse des Kaufs, Verkaufs und der Vermietung von Immobilien in Nordzypern transparent, zuverlässig und professionell zu gestalten und unseren Kunden bei den richtigen Investitionsentscheidungen zu helfen. Durch maßgeschneiderte Lösungen für jeden Kunden verwandeln wir den Immobilienerwerb in ein stressfreies und angenehmes Erlebnis."
+    },
+    "vision": {
+      "title": "Unsere Vision",
+      "description": "Die bekannteste und vertrauenswürdigste Immobilienberatungsmarke Nordzyperns auf internationaler Ebene zu werden. Durch den Einsatz von Technologie und innovativen Ansätzen wollen wir die Branche anführen, der Kundenzufriedenheit keine Grenzen setzen und nachhaltiges Wachstum verfolgen."
+    },
+    "values": {
+      "title": "Unsere Werte",
+      "description": "Bei Nexos Immobilien leiten diese Werte jede unserer Entscheidungen und jede Kundenbeziehung, die wir aufbauen.",
+      "trustTransparency": {
+        "title": "Vertrauen & Transparenz",
+        "description": "Wir sorgen für vollständige Transparenz bei jeder Transaktion. Keine versteckten Kosten, überraschende Provisionen oder irreführende Informationen. Wir bieten unseren Kunden in jeder Phase eine ehrliche und offene Kommunikation."
+      },
+      "customerFocus": {
+        "title": "Kundenorientierung",
+        "description": "Die Bedürfnisse, Budgets und Wünsche unserer Kunden zu verstehen, hat für uns oberste Priorität. Wir arbeiten lösungsorientiert, nicht verkaufsorientiert. Jeder Kunde ist uns wichtig."
+      },
+      "professionalism": {
+        "title": "Professionalität",
+        "description": "Wir sind ein Team, das stets auf dem neuesten Wissensstand der Branche bleibt und sich kontinuierlich weiterentwickelt. Wir erbringen Dienstleistungen nach internationalen Standards und achten sorgfältig auf jedes Detail."
+      },
+      "longTermRelationship": {
+        "title": "Langfristige Beziehungen",
+        "description": "Wir bauen lebenslange Beziehungen auf, keine einmaligen Verkäufe. Mit unserem After-Sales-Support, unserer Mietverwaltung und unseren Beratungsleistungen sind wir stets an Ihrer Seite."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "Wir nutzen Technologie und innovative Marketingmethoden, um die größtmögliche Zielgruppe für Ihre Immobilie zu erreichen. Wir setzen uns durch digitales Marketing, virtuelle Rundgänge und Datenanalyse von der Konkurrenz ab."
+      },
+      "teamSpirit": {
+        "title": "Teamgeist",
+        "description": "Unsere Teammitglieder aus verschiedenen Fachbereichen arbeiten zusammen, um unseren Kunden den umfassendsten Service zu bieten. Jeder Berater ergänzt die anderen."
+      }
+    },
+    "timeline": {
+      "title": "Unsere Geschichte",
+      "description": "Der Wachstumsweg von Nexos Immobilien von 2016 bis heute.",
+      "2016": {
+        "title": "Gründung",
+        "description": "Nexos Immobilien wurde mit einem kleinen Büro in Iskele gegründet. In unserem ersten Jahr halfen wir mehr als 50 Familien, ihr Traumhaus zu finden."
+      },
+      "2018": {
+        "title": "Wachstum",
+        "description": "Wir erweiterten unser Team und begannen auch in Kyrenia und Nikosia tätig zu werden. Unser Portfolio wuchs auf über 300 Immobilien."
+      },
+      "2020": {
+        "title": "Digitale Transformation",
+        "description": "Während der Pandemie stärkten wir unsere digitale Infrastruktur. Wir führten virtuelle Rundgänge, Online-Beratung und digitale Vertragsprozesse ein."
+      },
+      "2022": {
+        "title": "Internationale Expansion",
+        "description": "Wir bauten unsere mehrsprachige Service-Infrastruktur für britische, deutsche und russische Kunden auf. Wir begannen an internationalen Immobilienmessen teilzunehmen."
+      },
+      "2024": {
+        "title": "Marktführerschaft",
+        "description": "Wir wurden zur bevorzugten Immobilienberatung in der Region Iskele. Über 1.000 zufriedene Kunden und ein Team von mehr als 15 Fachberatern."
+      }
+    },
+    "services": {
+      "title": "Was wir tun",
+      "description": "Wir bieten umfassende professionelle Dienstleistungen in allen Bereichen der Immobilienbranche. Was auch immer Sie benötigen, unser Expertenteam ist für Sie da.",
+      "items": {
+        "salesRental": "Kauf- und Mietimmobilienberatung",
+        "valuation": "Professionelle Immobilienbewertung",
+        "investment": "Investmentportfolio-Beratung",
+        "titleDeed": "Grundbuchübertragung und rechtliche Abwicklung",
+        "rentalManagement": "Mietverwaltung (Mietersuche, Inkasso, Instandhaltung)",
+        "furnishing": "Schlüsselfertige Möblierung und Inneneinrichtung",
+        "residencePermit": "Aufenthaltserlaubnis-Beratung",
+        "transfer": "Flughafentransfer und Immobilienbesichtigungen",
+        "airbnb": "Kurzzeitvermietung (Airbnb) Management",
+        "afterSales": "Umfassender After-Sales-Support"
+      },
+      "viewAllButton": "Alle Dienstleistungen ansehen",
+      "cards": {
+        "salesRental": {
+          "title": "Kauf- & Mietberatung",
+          "description": "Immobilienportfolio für jedes Budget"
+        },
+        "legalProcess": {
+          "title": "Grundbuch & Rechtliche Abwicklung",
+          "description": "Sicherer und transparenter Transaktionsprozess"
+        },
+        "investmentAdvisory": {
+          "title": "Investmentportfolio-Beratung",
+          "description": "Rentable Investitionsmöglichkeiten"
+        },
+        "rentalManagement": {
+          "title": "Mietverwaltung",
+          "description": "Ihre Immobilie ist bei uns in guten Händen"
+        }
+      }
+    },
+    "whyNexos": {
+      "title": "Warum Nexos Immobilien?",
+      "description": "Die Gründe, warum unsere Kunden uns wählen.",
+      "statsLabels": {
+        "happyClients": "Zufriedene Kunden",
+        "yearsExperience": "Jahre Erfahrung",
+        "support": "Betreuung"
+      },
+      "features": {
+        "regionalExpertise": {
+          "title": "Regionale Expertise",
+          "description": "Wir kennen Iskele, Kyrenia, Nikosia und ganz Nordzypern in- und auswendig. Wir kennen das Potenzial jedes Viertels sowie die Stärken und Schwächen jedes Projekts."
+        },
+        "transparentPricing": {
+          "title": "Transparente Preisgestaltung",
+          "description": "Keine versteckten Kosten. Wir teilen alle Ausgaben, Steuern und Provisionen bereits beim ersten Gespräch offen mit."
+        },
+        "legalAssurance": {
+          "title": "Rechtliche Sicherheit",
+          "description": "Unsere Partneranwälte unterstützen Sie umfassend bei Grundbuchrecherchen, Vertragsprüfungen und allen rechtlichen Prozessen."
+        },
+        "afterSalesSupport": {
+          "title": "After-Sales-Betreuung",
+          "description": "Wir bleiben auch nach dem Kauf an Ihrer Seite. Unterstützung bei Möblierung, Renovierung, Mietverwaltung und Aufenthaltserlaubnis-Verfahren."
+        },
+        "widePortfolio": {
+          "title": "Umfangreiches Portfolio",
+          "description": "Mit über 1.200 aktiven Inseraten bieten wir Immobilienoptionen für jedes Budget und jeden Bedarf."
+        },
+        "digitalExperience": {
+          "title": "Digitales Erlebnis",
+          "description": "Suchen Sie Immobilien auf unserer Website, unternehmen Sie virtuelle Rundgänge, vereinbaren Sie Online-Termine und verfolgen Sie den gesamten Prozess digital."
+        }
+      }
+    },
+    "cta": {
+      "title": "Lassen Sie uns gemeinsam Ihre Traumimmobilie finden",
+      "description": "Ob Sie in Nordzypern investieren, leben oder ein Ferienhaus kaufen möchten — kontaktieren Sie noch heute unser Expertenteam für eine kostenlose Beratung.",
+      "consultButton": "Kostenlose Beratung",
+      "whatsappButton": "Nachricht über WhatsApp",
+      "teamButton": "Unser Team kennenlernen"
+    }
+  }
+}

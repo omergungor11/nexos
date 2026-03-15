@@ -1,0 +1,181 @@
+{
+  "aboutPage": {
+    "meta": {
+      "title": "Hakkımızda",
+      "description": "Nexos Emlak — Kuzey Kıbrıs'ın güvenilir gayrimenkul danışmanlık şirketi. Misyonumuz, vizyonumuz, değerlerimiz ve hikayemiz."
+    },
+    "hero": {
+      "subtitle": "Kuzey Kıbrıs'ın Güvenilir Emlak Danışmanı",
+      "titleLine1": "Hayalinizdeki Mülke",
+      "titleLine2": "Güvenle Ulaşın",
+      "description": "Nexos Emlak olarak, Kuzey Kıbrıs'ta gayrimenkul alım-satım ve kiralama süreçlerinde yanınızdayız. Profesyonel kadromuz, şeffaf yaklaşımımız ve bölge bilgimizle sizin için en doğru yatırımı buluyoruz."
+    },
+    "stats": {
+      "happyClients": "Mutlu Müşteri",
+      "portfolio": "İlan Portföyü",
+      "experience": "Yıllık Deneyim",
+      "consultants": "Uzman Danışman"
+    },
+    "whoWeAre": {
+      "title": "Biz Kimiz?",
+      "paragraph1": "Nexos Emlak, Kuzey Kıbrıs'ın önde gelen gayrimenkul danışmanlık şirketidir. 2016 yılında İskele'de kurulan firmamız, bugün İskele, Girne, Lefkoşa, Gazimağusa ve Güzelyurt'u kapsayan geniş bir hizmet ağına sahiptir.",
+      "paragraph2": "Satılık ve kiralık mülk danışmanlığından yatırım portföyü yönetimine, tapu işlemlerinden kiralama yönetimine kadar gayrimenkulün her alanında uçtan uca hizmet sunuyoruz. Müşterilerimizin %80'inin referans yoluyla bize ulaşması, güven ve kalite odaklı yaklaşımımızın en somut kanıtıdır.",
+      "paragraph3": "Türk, İngiliz, Alman, Rus ve birçok farklı milletten müşterilerimize Türkçe ve İngilizce dillerinde profesyonel hizmet veriyoruz. Her müşterimiz için kişiye özel çözümler üretir, alım sürecinin her aşamasında şeffaf ve dürüst iletişim kurarız."
+    },
+    "infoCards": {
+      "consultants": {
+        "value": "15+",
+        "label": "Uzman Danışman"
+      },
+      "referralRate": {
+        "value": "%80",
+        "label": "Referans Oranı"
+      },
+      "portfolio": {
+        "value": "1.200+",
+        "label": "İlan Portföyü"
+      },
+      "regions": {
+        "value": "5 Bölge",
+        "label": "Ada Geneli"
+      }
+    },
+    "mission": {
+      "title": "Misyonumuz",
+      "description": "Kuzey Kıbrıs'ta gayrimenkul alım-satım ve kiralama süreçlerini şeffaf, güvenilir ve profesyonel bir şekilde yöneterek müşterilerimizin doğru yatırım kararları vermesini sağlamak. Her müşterimize kişiye özel çözümler sunarak, mülk edinme sürecini stressiz ve keyifli bir deneyime dönüştürmek."
+    },
+    "vision": {
+      "title": "Vizyonumuz",
+      "description": "Kuzey Kıbrıs'ın uluslararası arenada en çok tanınan ve güvenilen gayrimenkul danışmanlık markası olmak. Teknolojiyi ve yenilikçi yaklaşımları benimseyerek sektöre yön veren, müşteri memnuniyetinde sınır tanımayan, sürdürülebilir büyümeyi hedefleyen bir kurum olmak."
+    },
+    "values": {
+      "title": "Değerlerimiz",
+      "description": "Nexos Emlak olarak her kararımızda ve her müşteri ilişkimizde bu değerlerle hareket ediyoruz.",
+      "trustTransparency": {
+        "title": "Güven & Şeffaflık",
+        "description": "Her işlemde tam şeffaflık sağlarız. Gizli maliyet, sürpriz komisyon veya yanıltıcı bilgi vermeyiz. Müşterilerimize her aşamada dürüst ve açık iletişim sunarız."
+      },
+      "customerFocus": {
+        "title": "Müşteri Odaklılık",
+        "description": "Müşterilerimizin ihtiyaçlarını, bütçesini ve hayallerini anlamak önceliğimizdir. Satış odaklı değil, çözüm odaklı çalışırız. Her müşterimiz bizim için özeldir."
+      },
+      "professionalism": {
+        "title": "Profesyonellik",
+        "description": "Sektördeki en güncel bilgilere sahip, sürekli kendini geliştiren bir ekibiz. Uluslararası standartlarda hizmet sunar, her detayı titizlikle takip ederiz."
+      },
+      "longTermRelationship": {
+        "title": "Uzun Vadeli İlişki",
+        "description": "Tek seferlik satış değil, ömür boyu sürecek bir ilişki kurarız. Satış sonrası destek, kiralama yönetimi ve danışmanlık hizmetlerimizle her zaman yanınızdayız."
+      },
+      "innovation": {
+        "title": "Yenilikçilik",
+        "description": "Teknolojiyi ve yenilikçi pazarlama yöntemlerini kullanarak mülklerinizi en geniş kitleye ulaştırırız. Dijital pazarlama, sanal turlar ve veri analitiğiyle fark yaratırız."
+      },
+      "teamSpirit": {
+        "title": "Takım Ruhu",
+        "description": "Farklı uzmanlık alanlarından gelen ekip üyelerimiz, birlikte çalışarak müşterilerimize en kapsamlı hizmeti sunar. Her danışmanımız birbirini tamamlar."
+      }
+    },
+    "timeline": {
+      "title": "Hikayemiz",
+      "description": "2016'dan bugüne Nexos Emlak'ın büyüme yolculuğu.",
+      "2016": {
+        "title": "Kuruluş",
+        "description": "Nexos Emlak, İskele'de küçük bir ofisle kuruldu. İlk yılda 50'den fazla aileye hayallerindeki evi bulmalarında yardımcı olduk."
+      },
+      "2018": {
+        "title": "Büyüme",
+        "description": "Ekibimizi genişlettik, Girne ve Lefkoşa'da da hizmet vermeye başladık. Portföyümüz 300+ mülke ulaştı."
+      },
+      "2020": {
+        "title": "Dijital Dönüşüm",
+        "description": "Pandemi sürecinde dijital altyapımızı güçlendirdik. Sanal turlar, online danışmanlık ve dijital sözleşme süreçlerini hayata geçirdik."
+      },
+      "2022": {
+        "title": "Uluslararası Açılım",
+        "description": "İngiliz, Alman ve Rus müşterilere yönelik çok dilli hizmet altyapımızı kurduk. Uluslararası emlak fuarlarına katılmaya başladık."
+      },
+      "2024": {
+        "title": "Liderlik",
+        "description": "İskele bölgesinde en çok tercih edilen emlak danışmanlık şirketi konumuna ulaştık. 1.000+ mutlu müşteri ve 15+ kişilik uzman kadro."
+      }
+    },
+    "services": {
+      "title": "Neler Yapıyoruz?",
+      "description": "Gayrimenkulün her alanında uçtan uca profesyonel hizmet sunuyoruz. İhtiyacınız ne olursa olsun, uzman ekibimiz yanınızda.",
+      "items": {
+        "salesRental": "Satılık ve kiralık mülk danışmanlığı",
+        "valuation": "Profesyonel mülk değerleme",
+        "investment": "Yatırım portföy danışmanlığı",
+        "titleDeed": "Tapu devir ve hukuki süreç yönetimi",
+        "rentalManagement": "Kiralama yönetimi (kiracı bulma, tahsilat, bakım)",
+        "furnishing": "Anahtar teslim mobilya ve dekorasyon",
+        "residencePermit": "Oturma izni danışmanlığı",
+        "transfer": "Havalimanı transfer ve mülk turları",
+        "airbnb": "Kısa dönem kiralama (Airbnb) yönetimi",
+        "afterSales": "Satış sonrası tam destek"
+      },
+      "viewAllButton": "Tüm Hizmetlerimiz",
+      "cards": {
+        "salesRental": {
+          "title": "Satılık & Kiralık Danışmanlık",
+          "description": "Her bütçeye uygun mülk portföyü"
+        },
+        "legalProcess": {
+          "title": "Tapu & Hukuki Süreç Yönetimi",
+          "description": "Güvenli ve şeffaf işlem süreci"
+        },
+        "investmentAdvisory": {
+          "title": "Yatırım Portföy Danışmanlığı",
+          "description": "Karlı yatırım fırsatları"
+        },
+        "rentalManagement": {
+          "title": "Kiralama Yönetimi",
+          "description": "Mülkünüz bizimle güvende"
+        }
+      }
+    },
+    "whyNexos": {
+      "title": "Neden Nexos Emlak?",
+      "description": "Müşterilerimizin bizi tercih etme sebepleri.",
+      "statsLabels": {
+        "happyClients": "Mutlu Müşteri",
+        "yearsExperience": "Yıl Deneyim",
+        "support": "Destek"
+      },
+      "features": {
+        "regionalExpertise": {
+          "title": "Bölge Uzmanlığı",
+          "description": "İskele, Girne, Lefkoşa ve tüm Kuzey Kıbrıs'ı karış karış biliyoruz. Her mahallenin potansiyelini, her projenin artı-eksisini biliyoruz."
+        },
+        "transparentPricing": {
+          "title": "Şeffaf Fiyatlandırma",
+          "description": "Gizli maliyet yok. Tüm masrafları, vergileri ve komisyonları ilk görüşmede açıkça paylaşıyoruz."
+        },
+        "legalAssurance": {
+          "title": "Hukuki Güvence",
+          "description": "Anlaşmalı avukatlarımız tapu araştırması, sözleşme incelemesi ve tüm yasal süreçlerde tam destek sağlar."
+        },
+        "afterSalesSupport": {
+          "title": "Satış Sonrası Destek",
+          "description": "Mülkü satın aldıktan sonra da yanınızdayız. Mobilya, tadilat, kiralama yönetimi ve oturma izni süreçlerinde destek."
+        },
+        "widePortfolio": {
+          "title": "Geniş Portföy",
+          "description": "1.200+ aktif ilan ile her bütçeye ve ihtiyaca uygun mülk seçenekleri sunuyoruz."
+        },
+        "digitalExperience": {
+          "title": "Dijital Deneyim",
+          "description": "Web sitemizden mülk arayabilir, sanal tur yapabilir, online randevu alabilir ve tüm süreci dijital olarak takip edebilirsiniz."
+        }
+      }
+    },
+    "cta": {
+      "title": "Hayalinizdeki Mülkü Birlikte Bulalım",
+      "description": "Kuzey Kıbrıs'ta yatırım yapmak, yaşamak veya tatil evi almak istiyorsanız, uzman ekibimizle ücretsiz danışmanlık için hemen iletişime geçin.",
+      "consultButton": "Ücretsiz Danışmanlık",
+      "whatsappButton": "WhatsApp ile Yazın",
+      "teamButton": "Ekibimizi Tanıyın"
+    }
+  }
+}
