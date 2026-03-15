@@ -37,7 +37,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
   const t = useTranslations();
   const coverImage =
     property.cover_image || getPlaceholderImage(property.id);
-  const location = [property.district?.name, property.city.name]
+  const location = [property.district?.name, property.city?.name]
     .filter(Boolean)
     .join(", ");
   const listingNumber = Math.abs(
