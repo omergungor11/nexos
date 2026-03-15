@@ -289,6 +289,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                       className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-gray-50"
                     >
                       {cover && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                           src={cover}
                           alt=""

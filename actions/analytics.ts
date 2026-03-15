@@ -314,7 +314,7 @@ export async function getAgentPerformance(): Promise<AgentPerformance[]> {
     const { count: requestCount } = await supabase
       .from("contact_requests")
       .select("*", { count: "exact", head: true })
-      .eq("property_id", agent.id);
+      .eq("assigned_agent_id", agent.id);
 
     const requests = requestCount ?? 0;
     const conversionRate = totalViews > 0 ? (requests / totalViews) * 100 : 0;

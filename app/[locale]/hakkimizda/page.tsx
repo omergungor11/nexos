@@ -12,7 +12,6 @@ import {
   Home,
   Handshake,
   MapPin,
-  Phone,
   CheckCircle2,
 } from "lucide-react";
 

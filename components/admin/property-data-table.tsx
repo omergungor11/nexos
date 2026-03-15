@@ -15,7 +15,6 @@ import {
   EyeOffIcon,
   StarIcon,
   CopyIcon,
-  CheckSquareIcon,
   XIcon,
   UserPlusIcon,
 } from "lucide-react";

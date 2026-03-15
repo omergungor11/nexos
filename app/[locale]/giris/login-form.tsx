@@ -52,8 +52,6 @@ export function LoginForm() {
 
     // Admin kullanıcıları admin paneline, diğerlerini anasayfaya yönlendir
     const userMeta = data.user?.user_metadata;
-    console.log("[LOGIN DEBUG] user_metadata:", JSON.stringify(userMeta));
-    console.log("[LOGIN DEBUG] user id:", data.user?.id);
     const isAdmin = userMeta?.role === "admin";
     if (isAdmin) {
       window.location.href = "/admin";

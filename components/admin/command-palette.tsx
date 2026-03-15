@@ -98,9 +98,10 @@ export function CommandPalette() {
     }
   }, [open]);
 
-  useEffect(() => {
+  function handleQueryChange(value: string) {
+    setQuery(value);
     setSelectedIndex(0);
-  }, [query]);
+  }
 
   function handleInputKeyDown(e: React.KeyboardEvent) {
     if (e.key === "ArrowDown") {
@@ -132,7 +133,7 @@ export function CommandPalette() {
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => handleQueryChange(e.target.value)}
               onKeyDown={handleInputKeyDown}
               placeholder="Sayfa veya işlem ara..."
               className="flex-1 bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground"

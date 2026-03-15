@@ -88,7 +88,7 @@ const SPEC_ROWS: SpecRow[] = [
   {
     label: "Konum",
     render: (p) =>
-      [p.district?.name, p.city.name].filter(Boolean).join(", ") || "—",
+      [p.district?.name, p.city?.name].filter(Boolean).join(", ") || "—",
   },
 ];
 

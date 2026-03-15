@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { Textarea } from "@/components/ui/textarea";
-import { updateContactStatus, updateContactAssignment, type ContactStatus } from "@/actions/contacts";
+import { updateContactStatus, updateContactAssignment } from "@/actions/contacts";
 import type { ContactRequestRow, AgentOption } from "@/app/admin/talepler/page";
 
 // ---------------------------------------------------------------------------

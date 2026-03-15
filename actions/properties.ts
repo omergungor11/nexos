@@ -409,6 +409,7 @@ export async function duplicateProperty(
   const slug = await generateUniqueSlug(supabase, newTitle);
 
   // Build a new property with same details but inactive and new slug
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: _id, slug: _slug, title: _title, created_at: _ca, updated_at: _ua, views_count: _vc, is_active: _ia, ...rest } = source;
 
   const { data: newProperty, error: insertError } = await supabase

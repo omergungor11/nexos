@@ -13,7 +13,8 @@ interface PrintButtonProps {
   className?: string;
 }
 
-export function PrintButton({ propertySlug: _propertySlug, className }: PrintButtonProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function PrintButton({ propertySlug, className }: PrintButtonProps) {
   const handlePrint = () => {
     window.print();
   };

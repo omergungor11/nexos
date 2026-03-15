@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -133,13 +133,6 @@ export function BlogForm({ mode, post }: BlogFormProps) {
     Partial<Record<keyof FormState, string>>
   >({});
 
-  // Auto-generate slug from title when not manually edited
-  useEffect(() => {
-    if (!slugManuallyEdited && form.title) {
-      setForm((prev) => ({ ...prev, slug: slugify(form.title) }));
-    }
-  }, [form.title, slugManuallyEdited]);
-
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
@@ -149,7 +142,14 @@ export function BlogForm({ mode, post }: BlogFormProps) {
       setSlugManuallyEdited(true);
     }
 
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [name]: value };
+      // Auto-generate slug from title when not manually edited
+      if (name === "title" && !slugManuallyEdited) {
+        next.slug = slugify(value);
+      }
+      return next;
+    });
 
     if (errors[name as keyof FormState]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useSyncExternalStore } from "react";
 
 export interface DashboardPreferences {
   showKpis: boolean;
@@ -22,21 +22,24 @@ const DEFAULT_PREFERENCES: DashboardPreferences = {
 
 const STORAGE_KEY = "nexos-dashboard-prefs";
 
-export function useDashboardPreferences() {
-  const [preferences, setPreferences] = useState<DashboardPreferences>(DEFAULT_PREFERENCES);
-  const [loaded, setLoaded] = useState(false);
+function readStoredPreferences(): DashboardPreferences {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) return { ...DEFAULT_PREFERENCES, ...JSON.parse(stored) };
+  } catch {
+    // ignore
+  }
+  return DEFAULT_PREFERENCES;
+}
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setPreferences({ ...DEFAULT_PREFERENCES, ...JSON.parse(stored) });
-      }
-    } catch {
-      // ignore
-    }
-    setLoaded(true);
-  }, []);
+const subscribe = () => () => {};
+
+export function useDashboardPreferences() {
+  const isClient = useSyncExternalStore(subscribe, () => true, () => false);
+  const [preferences, setPreferences] = useState<DashboardPreferences>(() =>
+    typeof window !== "undefined" ? readStoredPreferences() : DEFAULT_PREFERENCES
+  );
+  const loaded = isClient;
 
   const updatePreferences = useCallback((updates: Partial<DashboardPreferences>) => {
     setPreferences((prev) => {

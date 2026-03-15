@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bell } from "lucide-react";
@@ -28,17 +28,16 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  const fetchNotifications = useCallback(async () => {
-    const result = await getUnreadNotifications();
-    if (result.data) {
-      setCount(result.data.count);
-      setItems(result.data.items);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications, pathname]);
+    let cancelled = false;
+    getUnreadNotifications().then((result) => {
+      if (!cancelled && result.data) {
+        setCount(result.data.count);
+        setItems(result.data.items);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [pathname]);
 
   return (
     <div className="relative">

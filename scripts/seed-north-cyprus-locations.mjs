@@ -286,7 +286,7 @@ async function main() {
       is_active: true,
     }));
 
-    const { error: distError, count } = await supabase
+    const { error: distError } = await supabase
       .from("districts")
       .upsert(rows, { onConflict: "city_id,slug", count: "exact" });
 

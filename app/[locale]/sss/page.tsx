@@ -6,7 +6,6 @@ import {
   Scale,
   Banknote,
   Globe,
-  FileText,
   ShieldCheck,
   Building2,
   HelpCircle,

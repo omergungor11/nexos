@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Phone, Mail, MessageCircle, ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property/property-card";
 import { getAgentBySlug } from "@/lib/queries/content";

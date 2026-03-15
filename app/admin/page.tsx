@@ -150,7 +150,7 @@ export default async function AdminDashboardPage() {
     totalViewsRes,
     thisMonthPropertiesRes,
     activeAgentsRes,
-    totalContactsRes,
+    , // totalContactsRes — reserved slot
 
     // Trend — this week
     propertiesThisWeekRes,
@@ -259,8 +259,6 @@ export default async function AdminDashboardPage() {
   );
   const thisMonthProperties = thisMonthPropertiesRes.count ?? 0;
   const activeAgents = activeAgentsRes.count ?? 0;
-  const totalContacts = totalContactsRes.count ?? 0;
-
   // Conversion rate: new contact requests / total views * 100 (capped at 100)
   const conversionRate =
     totalViews > 0

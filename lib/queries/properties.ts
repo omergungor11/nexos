@@ -84,8 +84,11 @@ export async function getProperties(filters: PropertyFilters) {
       .map((r) => {
         if (r === "studio" || r === "1+0")
           return "and(rooms.eq.1,living_rooms.eq.0)";
+        if (r.endsWith("+") && !r.includes("+", 0))
+          return `rooms.gte.${r.replace("+", "")}`;
+        if (r === "6+") return "rooms.gte.6";
         const parts = r.split("+");
-        if (parts.length === 2)
+        if (parts.length === 2 && parts[0] && parts[1])
           return `and(rooms.eq.${parts[0]},living_rooms.eq.${parts[1]})`;
         return null;
       })
@@ -93,9 +96,9 @@ export async function getProperties(filters: PropertyFilters) {
     if (conditions.length) query = query.or(conditions.join(","));
   }
 
-  // Floor range
-  if (filters.kat_min) query = query.gte("floor", filters.kat_min);
-  if (filters.kat_max) query = query.lte("floor", filters.kat_max);
+  // Floor range (use != null to allow 0)
+  if (filters.kat_min != null) query = query.gte("floor", filters.kat_min);
+  if (filters.kat_max != null) query = query.lte("floor", filters.kat_max);
 
   // Building age
   if (filters.bina_yasi_max) {

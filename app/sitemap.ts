@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { locales, defaultLocale } from "@/i18n/config";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 

@@ -3,7 +3,6 @@
 import { DownloadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PROPERTY_TYPE_LABELS, TRANSACTION_TYPE_LABELS, PROPERTY_STATUS_LABELS } from "@/lib/constants";
-import { formatPrice } from "@/lib/format";
 import type { AdminPropertyRow } from "./property-data-table";
 
 function formatDate(dateString: string): string {

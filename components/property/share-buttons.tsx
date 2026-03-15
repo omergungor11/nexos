@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Link2, Check } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -92,11 +92,11 @@ export function ShareButtons({ url, title, className }: ShareButtonsProps) {
     }
   };
 
-  const [canNativeShare, setCanNativeShare] = useState(false);
-
-  useEffect(() => {
-    setCanNativeShare(Boolean(navigator.share));
-  }, []);
+  const canNativeShare = useSyncExternalStore(
+    () => () => {},
+    () => Boolean(navigator.share),
+    () => false
+  );
 
   return (
     <TooltipProvider>

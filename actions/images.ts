@@ -3,7 +3,6 @@
 import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { TablesInsert, TablesUpdate } from "@/types/supabase";
-import type { PropertyImage } from "@/types/property";
 
 // ---------------------------------------------------------------------------
 // Constants

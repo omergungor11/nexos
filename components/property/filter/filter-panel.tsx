@@ -126,19 +126,23 @@ export function FilterPanel({ cities = [] }: FilterPanelProps) {
 
   // Load districts when city changes
   useEffect(() => {
-    if (!currentCity) {
-      setDistricts([]);
-      return;
-    }
-    const city = cities.find((c) => c.slug === currentCity);
-    if (!city) return;
+    let cancelled = false;
 
-    setLoadingDistricts(true);
+    if (!currentCity) {
+      queueMicrotask(() => { if (!cancelled) setDistricts([]); });
+      return () => { cancelled = true; };
+    }
+
+    const city = cities.find((c) => c.slug === currentCity);
+    if (!city) return () => { cancelled = true; };
+
+    queueMicrotask(() => { if (!cancelled) setLoadingDistricts(true); });
     fetch(`/api/locations/districts?cityId=${city.id}`)
       .then((r) => r.json())
-      .then((json) => setDistricts(json.data ?? []))
-      .catch(() => setDistricts([]))
-      .finally(() => setLoadingDistricts(false));
+      .then((json) => { if (!cancelled) setDistricts(json.data ?? []); })
+      .catch(() => { if (!cancelled) setDistricts([]); })
+      .finally(() => { if (!cancelled) setLoadingDistricts(false); });
+    return () => { cancelled = true; };
   }, [currentCity, cities]);
 
   const updateParam = useCallback(

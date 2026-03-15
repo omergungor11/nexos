@@ -167,6 +167,14 @@ function DesktopDropdown({
     timeoutRef.current = setTimeout(() => setIsOpen(false), 150);
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Escape") setIsOpen(false);
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setIsOpen(!isOpen);
+    }
+  }
+
   return (
     <div
       ref={ref}
@@ -175,8 +183,11 @@ function DesktopDropdown({
       onMouseLeave={handleLeave}
     >
       <button
+        aria-expanded={isOpen}
+        aria-haspopup="true"
         className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={handleKeyDown}
       >
         {t(item.tKey)}
         <ChevronDown
@@ -188,11 +199,12 @@ function DesktopDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] animate-in fade-in slide-in-from-top-1 rounded-xl border bg-background/95 p-1.5 shadow-lg backdrop-blur">
+        <div role="menu" className="absolute left-0 top-full z-50 mt-1 min-w-[180px] animate-in fade-in slide-in-from-top-1 rounded-xl border bg-background/95 p-1.5 shadow-lg backdrop-blur">
           {item.children!.map((child) => (
             <Link
               key={child.tKey}
               href={child.href as never}
+              role="menuitem"
               onClick={() => setIsOpen(false)}
               className="block rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
@@ -221,6 +233,8 @@ function MobileDropdown({
   return (
     <div>
       <button
+        aria-expanded={expanded}
+        aria-haspopup="true"
         className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         onClick={() => setExpanded(!expanded)}
       >
