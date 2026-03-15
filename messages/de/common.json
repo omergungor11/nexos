@@ -120,6 +120,7 @@
     "commercial": "Gewerbe"
   },
   "propertyTypes": {
+    "land": "Grundstück",
     "villa": "Villa",
     "apartment": "Wohnung",
     "twin_villa": "Doppelhaushälfte",
@@ -209,7 +210,23 @@
     "filters": "Filter",
     "min": "Min",
     "max": "Max",
-    "detailed": "Erweitert"
+    "detailed": "Erweiterte Suche",
+    "city": "Stadt",
+    "district": "Bezirk",
+    "selectCity": "Stadt auswählen",
+    "selectDistrict": "Bezirk auswählen",
+    "floorRange": "Stockwerkbereich",
+    "buildingAge": "Gebäudealter",
+    "maxAge": "Maximal {year} Jahre",
+    "anyAge": "Egal",
+    "amenities": "Ausstattung",
+    "parking": "Parkplatz",
+    "furnished": "Möbliert",
+    "elevator": "Aufzug",
+    "pool": "Pool",
+    "garden": "Garten",
+    "security": "24/7 Sicherheit",
+    "balcony": "Balkon"
   },
   "heatingType": {
     "none": "Keine",

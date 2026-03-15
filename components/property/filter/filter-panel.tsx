@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -22,9 +22,35 @@ import {
   ROOM_OPTIONS,
   PRICE_RANGE,
   AREA_RANGE,
+  FLOOR_RANGE,
+  BUILDING_AGE_OPTIONS,
 } from "@/lib/constants";
 import type { PropertyCategory } from "@/lib/constants";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface CityOption {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+interface DistrictOption {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+interface FilterPanelProps {
+  cities?: CityOption[];
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 const HEATING_TYPE_TKEYS: Record<string, string> = {
   none: "heatingType.none",
@@ -43,11 +69,44 @@ function formatPrice(value: number): string {
   return value.toString();
 }
 
-export function FilterPanel() {
+// ---------------------------------------------------------------------------
+// Amenity toggle button
+// ---------------------------------------------------------------------------
+
+function AmenityToggle({
+  label,
+  paramKey,
+  isActive,
+  onClick,
+}: {
+  label: string;
+  paramKey: string;
+  isActive: boolean;
+  onClick: (key: string) => void;
+}) {
+  return (
+    <Button
+      variant={isActive ? "default" : "outline"}
+      size="sm"
+      className="h-8 px-2.5 text-xs"
+      onClick={() => onClick(paramKey)}
+    >
+      {label}
+    </Button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main component
+// ---------------------------------------------------------------------------
+
+export function FilterPanel({ cities = [] }: FilterPanelProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations();
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [districts, setDistricts] = useState<DistrictOption[]>([]);
+  const [loadingDistricts, setLoadingDistricts] = useState(false);
 
   // Determine selected category from current subtype param
   const currentTip = searchParams.get("tip") ?? "";
@@ -60,6 +119,27 @@ export function FilterPanel() {
     }
     return "";
   }, [currentTip]);
+
+  // Location state
+  const currentCity = searchParams.get("sehir") ?? "";
+  const currentDistrict = searchParams.get("ilce") ?? "";
+
+  // Load districts when city changes
+  useEffect(() => {
+    if (!currentCity) {
+      setDistricts([]);
+      return;
+    }
+    const city = cities.find((c) => c.slug === currentCity);
+    if (!city) return;
+
+    setLoadingDistricts(true);
+    fetch(`/api/locations/districts?cityId=${city.id}`)
+      .then((r) => r.json())
+      .then((json) => setDistricts(json.data ?? []))
+      .catch(() => setDistricts([]))
+      .finally(() => setLoadingDistricts(false));
+  }, [currentCity, cities]);
 
   const updateParam = useCallback(
     (key: string, value: string) => {
@@ -95,6 +175,14 @@ export function FilterPanel() {
     router.push("/emlak");
   }, [router]);
 
+  const toggleBoolParam = useCallback(
+    (key: string) => {
+      const current = searchParams.get(key);
+      updateParam(key, current ? "" : "1");
+    },
+    [searchParams, updateParam]
+  );
+
   const hasFilters = searchParams.toString().length > 0;
 
   // Slider values
@@ -102,6 +190,17 @@ export function FilterPanel() {
   const priceMax = Number(searchParams.get("fiyat_max") || PRICE_RANGE.max);
   const areaMin = Number(searchParams.get("m2_min") || AREA_RANGE.min);
   const areaMax = Number(searchParams.get("m2_max") || AREA_RANGE.max);
+
+  // Amenity definitions
+  const amenities = [
+    { key: "otopark", label: t("filter.parking") },
+    { key: "esyali", label: t("filter.furnished") },
+    { key: "asansor", label: t("filter.elevator") },
+    { key: "havuz", label: t("filter.pool") },
+    { key: "bahce", label: t("filter.garden") },
+    { key: "guvenlik", label: t("filter.security") },
+    { key: "balkon", label: t("filter.balcony") },
+  ];
 
   return (
     <div className="space-y-5">
@@ -148,10 +247,8 @@ export function FilterPanel() {
                 className="flex-1"
                 onClick={() => {
                   if (isActive) {
-                    // Deselect category and clear subtype
                     updateParam("tip", "");
                   } else {
-                    // Select first subtype of category
                     updateParam("tip", CATEGORY_SUBTYPES[cat][0]);
                   }
                 }}
@@ -185,6 +282,72 @@ export function FilterPanel() {
       </div>
 
       <Separator />
+
+      {/* City / District */}
+      {cities.length > 0 && (
+        <>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">
+              {t("filter.city")}
+            </label>
+            <Select
+              value={currentCity}
+              onValueChange={(v) => {
+                updateMultipleParams({
+                  sehir: v ?? "",
+                  ilce: "",
+                });
+              }}
+            >
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder={t("filter.selectCity")}>
+                  {currentCity
+                    ? (cities.find((c) => c.slug === currentCity)?.name ?? currentCity)
+                    : undefined}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {cities.map((city) => (
+                  <SelectItem key={city.id} value={city.slug}>
+                    {city.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {currentCity && (
+              <Select
+                value={currentDistrict}
+                onValueChange={(v) => updateParam("ilce", v ?? "")}
+                disabled={loadingDistricts || districts.length === 0}
+              >
+                <SelectTrigger className="h-9">
+                  <SelectValue
+                    placeholder={
+                      loadingDistricts
+                        ? "Yükleniyor..."
+                        : t("filter.selectDistrict")
+                    }
+                  >
+                    {currentDistrict
+                      ? (districts.find((d) => d.slug === currentDistrict)?.name ?? currentDistrict)
+                      : undefined}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {districts.map((d) => (
+                    <SelectItem key={d.id} value={d.slug}>
+                      {d.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+
+          <Separator />
+        </>
+      )}
 
       {/* Price Range Slider */}
       <div>
@@ -299,7 +462,7 @@ export function FilterPanel() {
               value={searchParams.get("isitma") ?? ""}
               onValueChange={(v) => updateParam("isitma", v ?? "")}
             >
-              <SelectTrigger>
+              <SelectTrigger className="h-9">
                 <SelectValue placeholder={t("filter.all")} />
               </SelectTrigger>
               <SelectContent>
@@ -310,6 +473,93 @@ export function FilterPanel() {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <Separator />
+
+          {/* Floor Range */}
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <label className="text-sm font-medium">
+                {t("filter.floorRange")}
+              </label>
+              <span className="text-xs text-muted-foreground">
+                {searchParams.get("kat_min") ?? FLOOR_RANGE.min} – {searchParams.get("kat_max") ?? FLOOR_RANGE.max}
+              </span>
+            </div>
+            <Slider
+              min={FLOOR_RANGE.min}
+              max={FLOOR_RANGE.max}
+              step={FLOOR_RANGE.step}
+              value={[
+                Number(searchParams.get("kat_min") || FLOOR_RANGE.min),
+                Number(searchParams.get("kat_max") || FLOOR_RANGE.max),
+              ]}
+              onValueCommitted={(value) => {
+                const values = Array.isArray(value) ? value : [value];
+                updateMultipleParams({
+                  kat_min:
+                    values[0] > FLOOR_RANGE.min ? values[0].toString() : "",
+                  kat_max:
+                    (values[1] ?? FLOOR_RANGE.max) < FLOOR_RANGE.max
+                      ? (values[1] ?? FLOOR_RANGE.max).toString()
+                      : "",
+                });
+              }}
+            />
+          </div>
+
+          <Separator />
+
+          {/* Building Age */}
+          <div>
+            <label className="mb-1.5 block text-sm font-medium">
+              {t("filter.buildingAge")}
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              <Button
+                variant={!searchParams.get("bina_yasi") ? "default" : "outline"}
+                size="sm"
+                className="h-8 px-2.5 text-xs"
+                onClick={() => updateParam("bina_yasi", "")}
+              >
+                {t("filter.anyAge")}
+              </Button>
+              {BUILDING_AGE_OPTIONS.map((age) => {
+                const isActive = searchParams.get("bina_yasi") === String(age);
+                return (
+                  <Button
+                    key={age}
+                    variant={isActive ? "default" : "outline"}
+                    size="sm"
+                    className="h-8 px-2.5 text-xs"
+                    onClick={() => updateParam("bina_yasi", String(age))}
+                  >
+                    {age}+
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Amenities */}
+          <div>
+            <label className="mb-1.5 block text-sm font-medium">
+              {t("filter.amenities")}
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              {amenities.map((a) => (
+                <AmenityToggle
+                  key={a.key}
+                  label={a.label}
+                  paramKey={a.key}
+                  isActive={!!searchParams.get(a.key)}
+                  onClick={toggleBoolParam}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )}

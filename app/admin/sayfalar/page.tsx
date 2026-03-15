@@ -41,8 +41,8 @@ export default async function AdminSayfalarPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Sayfalar</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-foreground">Sayfalar</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           {rows.length} sayfa — statik içerik yönetimi
         </p>
       </div>
@@ -84,7 +84,7 @@ export default async function AdminSayfalarPage() {
                       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                         row.is_published
                           ? "bg-green-100 text-green-700"
-                          : "bg-slate-100 text-slate-600"
+                          : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {row.is_published ? "Yayında" : "Taslak"}

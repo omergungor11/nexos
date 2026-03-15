@@ -21,8 +21,9 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-import { updateContactStatus, type ContactStatus } from "@/actions/contacts";
-import type { ContactRequestRow } from "@/app/admin/talepler/page";
+import { Textarea } from "@/components/ui/textarea";
+import { updateContactStatus, updateContactAssignment, type ContactStatus } from "@/actions/contacts";
+import type { ContactRequestRow, AgentOption } from "@/app/admin/talepler/page";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -102,7 +103,7 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-        STATUS_STYLES[status] ?? "bg-slate-100 text-slate-600"
+        STATUS_STYLES[status] ?? "bg-muted text-muted-foreground"
       }`}
     >
       {STATUS_LABELS[status] ?? status}
@@ -119,13 +120,18 @@ function DetailDialog({
   open,
   onClose,
   onStatusChange,
+  onAssignmentChange,
+  agents,
 }: {
   row: ContactRequestRow;
   open: boolean;
   onClose: () => void;
   onStatusChange: (id: string, status: string) => void;
+  onAssignmentChange: (id: string, agentId: string | null, notes: string | null) => void;
+  agents: AgentOption[];
 }) {
   const [, startTransition] = useTransition();
+  const [notes, setNotes] = useState(row.admin_notes ?? "");
 
   function handleStatusChange(newStatus: string | null) {
     if (!newStatus) return;
@@ -136,6 +142,31 @@ function DetailDialog({
       } else {
         onStatusChange(row.id, newStatus);
         toast.success("Durum güncellendi.");
+      }
+    });
+  }
+
+  function handleAgentChange(agentId: string | null) {
+    const realAgentId = agentId === "__none__" ? null : agentId;
+    startTransition(async () => {
+      const result = await updateContactAssignment(row.id, realAgentId, null);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        onAssignmentChange(row.id, realAgentId, null);
+        toast.success("Danışman atandı.");
+      }
+    });
+  }
+
+  function handleSaveNotes() {
+    startTransition(async () => {
+      const result = await updateContactAssignment(row.id, undefined as unknown as string | null, notes);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        onAssignmentChange(row.id, undefined as unknown as string | null, notes);
+        toast.success("Notlar kaydedildi.");
       }
     });
   }
@@ -235,6 +266,52 @@ function DetailDialog({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Danışman Atama */}
+          {agents.length > 0 && (
+            <div>
+              <p className="mb-1.5 text-xs font-medium uppercase text-muted-foreground">
+                Sorumlu Danışman
+              </p>
+              <Select
+                value={row.assigned_agent_id ?? "__none__"}
+                onValueChange={handleAgentChange}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Danışman seç" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">Atanmamış</SelectItem>
+                  {agents.map((a) => (
+                    <SelectItem key={a.id} value={a.id}>
+                      {a.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Admin Notları */}
+          <div>
+            <p className="mb-1.5 text-xs font-medium uppercase text-muted-foreground">
+              Admin Notları
+            </p>
+            <Textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              placeholder="Bu talep hakkında not ekleyin..."
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={handleSaveNotes}
+            >
+              Notu Kaydet
+            </Button>
+          </div>
         </div>
 
         <div className="flex justify-end pt-2">
@@ -253,27 +330,54 @@ function DetailDialog({
 
 export function ContactRequestsTable({
   initialData,
+  agents = [],
 }: {
   initialData: ContactRequestRow[];
+  agents?: AgentOption[];
 }) {
   const [rows, setRows] = useState<ContactRequestRow[]>(initialData);
   const [activeTab, setActiveTab] = useState("all");
+  const [agentFilter, setAgentFilter] = useState<string>("all");
   const [selectedRow, setSelectedRow] = useState<ContactRequestRow | null>(
     null
   );
 
   const filtered = useMemo(() => {
-    if (activeTab === "all") return rows;
-    return rows.filter((r) => r.status === activeTab);
-  }, [rows, activeTab]);
+    let result = rows;
+    if (activeTab !== "all") {
+      result = result.filter((r) => r.status === activeTab);
+    }
+    if (agentFilter !== "all") {
+      if (agentFilter === "__unassigned__") {
+        result = result.filter((r) => !r.assigned_agent_id);
+      } else {
+        result = result.filter((r) => r.assigned_agent_id === agentFilter);
+      }
+    }
+    return result;
+  }, [rows, activeTab, agentFilter]);
 
   function handleStatusChange(id: string, status: string) {
     setRows((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status } : r))
     );
-    // Update selected row if it's the one being changed
     setSelectedRow((prev) =>
       prev?.id === id ? { ...prev, status } : prev
+    );
+  }
+
+  function handleAssignmentChange(id: string, agentId: string | null, notes: string | null) {
+    setRows((prev) =>
+      prev.map((r) => {
+        if (r.id !== id) return r;
+        const updates: Partial<ContactRequestRow> = {};
+        if (agentId !== undefined) {
+          updates.assigned_agent_id = agentId;
+          updates.assigned_agent = agentId ? agents.find((a) => a.id === agentId) ?? null : null;
+        }
+        if (notes !== undefined) updates.admin_notes = notes;
+        return { ...r, ...updates };
+      })
     );
   }
 
@@ -316,6 +420,21 @@ export function ContactRequestsTable({
           })}
         </div>
 
+        {agents.length > 0 && (
+          <Select value={agentFilter} onValueChange={(v) => setAgentFilter(v ?? "all")}>
+            <SelectTrigger className="h-8 w-44">
+              <SelectValue placeholder="Danışman" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tüm Danışmanlar</SelectItem>
+              <SelectItem value="__unassigned__">Atanmamış</SelectItem>
+              {agents.map((a) => (
+                <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+
         <Button
           variant="outline"
           size="sm"
@@ -335,6 +454,7 @@ export function ContactRequestsTable({
               <th className={thClass}>Telefon</th>
               <th className={thClass}>E-posta</th>
               <th className={thClass}>İlan</th>
+              <th className={thClass}>Danışman</th>
               <th className={thClass}>Durum</th>
               <th className={thClass}>Tarih</th>
             </tr>
@@ -343,7 +463,7 @@ export function ContactRequestsTable({
             {filtered.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-3 py-8 text-center text-muted-foreground"
                 >
                   Bu kategoride talep bulunmuyor.
@@ -397,6 +517,9 @@ export function ContactRequestsTable({
                       <span className="text-muted-foreground">Genel talep</span>
                     )}
                   </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
+                    {row.assigned_agent?.name ?? <span className="text-slate-300">—</span>}
+                  </td>
                   <td className="px-3 py-2">
                     <StatusBadge status={row.status} />
                   </td>
@@ -417,6 +540,8 @@ export function ContactRequestsTable({
           open={selectedRow !== null}
           onClose={() => setSelectedRow(null)}
           onStatusChange={handleStatusChange}
+          onAssignmentChange={handleAssignmentChange}
+          agents={agents}
         />
       )}
     </div>

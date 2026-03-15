@@ -22,7 +22,7 @@ export function LoginForm() {
     setError(null);
     setLoading(true);
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -50,8 +50,17 @@ export function LoginForm() {
       return;
     }
 
-    router.push("/");
-    router.refresh();
+    // Admin kullanıcıları admin paneline, diğerlerini anasayfaya yönlendir
+    const userMeta = data.user?.user_metadata;
+    console.log("[LOGIN DEBUG] user_metadata:", JSON.stringify(userMeta));
+    console.log("[LOGIN DEBUG] user id:", data.user?.id);
+    const isAdmin = userMeta?.role === "admin";
+    if (isAdmin) {
+      window.location.href = "/admin";
+    } else {
+      router.push("/");
+      router.refresh();
+    }
   }
 
   return (

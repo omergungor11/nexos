@@ -118,7 +118,9 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
     </svg>
   );
 
-  const propertyTypeEntries = Object.entries(PROPERTY_TYPE_TKEYS);
+  const propertyTypeEntries = Object.entries(PROPERTY_TYPE_TKEYS).filter(
+    ([key]) => key !== "land" // exclude legacy "land" — use specific land subtypes instead
+  );
 
   return (
     <div className="w-full max-w-4xl px-2 sm:px-0">

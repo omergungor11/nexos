@@ -9,6 +9,7 @@ import { PropertyGrid } from "@/components/property/listing/property-grid";
 import { SortBar } from "@/components/property/listing/sort-bar";
 import { Pagination } from "@/components/property/listing/pagination";
 import { getProperties } from "@/lib/queries/properties";
+import { getCities } from "@/lib/queries/locations";
 import type { PropertyFilters, PropertyListItem } from "@/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -33,7 +34,10 @@ export default async function EmlakPage({ params, searchParams }: Props) {
   const t = await getTranslations({ locale });
   const sp = await searchParams;
   const filters = parseFilters(sp);
-  const { data, count } = await getProperties(filters);
+  const [{ data, count }, cities] = await Promise.all([
+    getProperties(filters),
+    getCities(),
+  ]);
 
   const properties = (data ?? []).map(mapListItem);
   const totalCount = count ?? 0;
@@ -56,12 +60,12 @@ export default async function EmlakPage({ params, searchParams }: Props) {
       <div className="flex gap-6">
         {/* Desktop Filter Sidebar */}
         <aside className="hidden w-64 shrink-0 lg:block">
-          <div className="sticky top-20 rounded-lg border p-4">
+          <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto rounded-lg border p-4">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               {t("listing.filters")}
             </h2>
             <Suspense>
-              <FilterPanel />
+              <FilterPanel cities={cities} />
             </Suspense>
           </div>
         </aside>
@@ -82,7 +86,7 @@ export default async function EmlakPage({ params, searchParams }: Props) {
                     {t("listing.filters")}
                   </h2>
                   <Suspense>
-                    <FilterPanel />
+                    <FilterPanel cities={cities} />
                   </Suspense>
                 </div>
               </SheetContent>
@@ -120,6 +124,8 @@ function parseFilters(
     return v ? Number(v) : undefined;
   };
 
+  const bool = (key: string) => str(key) === "1" ? true : undefined;
+
   return {
     islem: str("islem") as PropertyFilters["islem"],
     tip: str("tip")?.split(",") as PropertyFilters["tip"],
@@ -133,8 +139,15 @@ function parseFilters(
     oda: str("oda")?.split(","),
     kat_min: num("kat_min"),
     kat_max: num("kat_max"),
-    bina_yasi_max: num("bina_yasi_max"),
+    bina_yasi_max: num("bina_yasi"),
     isitma: str("isitma") as PropertyFilters["isitma"],
+    otopark: bool("otopark"),
+    esyali: bool("esyali"),
+    asansor: bool("asansor"),
+    havuz: bool("havuz"),
+    bahce: bool("bahce"),
+    guvenlik: bool("guvenlik"),
+    balkon: bool("balkon"),
     siralama: str("siralama") as PropertyFilters["siralama"],
     sayfa: num("sayfa"),
   };

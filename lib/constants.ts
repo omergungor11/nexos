@@ -132,8 +132,8 @@ export const PROPERTY_TYPE_TKEYS: Record<string, string> = {
   warehouse: "propertyTypes.warehouse",
   business_transfer: "propertyTypes.business_transfer",
   office: "propertyTypes.office",
-  // Legacy
-  land: "propertyTypes.residential_land",
+  // Legacy (DB enum still uses "land" for generic land type)
+  land: "propertyTypes.land",
 };
 
 export const CATEGORY_TKEYS: Record<PropertyCategory, string> = {
@@ -235,3 +235,5 @@ export const SORT_OPTIONS = [
 // Price/Area range presets for sliders
 export const PRICE_RANGE = { min: 0, max: 5_000_000, step: 10_000 };
 export const AREA_RANGE = { min: 0, max: 1000, step: 10 };
+export const FLOOR_RANGE = { min: -1, max: 30, step: 1 };
+export const BUILDING_AGE_OPTIONS = [1, 3, 5, 10, 15, 20, 30] as const;

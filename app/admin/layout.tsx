@@ -30,21 +30,30 @@ export default async function AdminRootLayout({
     redirect("/giris");
   }
 
-  // Check admin role via user metadata or profiles table
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, full_name")
-    .eq("id", user.id)
-    .single();
+  // Check admin role — try profiles table first, fallback to user_metadata
+  let profileRole: string | null = null;
+  let profileName: string | null = null;
 
-  const role = profile?.role ?? user.user_metadata?.role;
+  try {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, full_name")
+      .eq("id", user.id)
+      .single();
+    profileRole = profile?.role ?? null;
+    profileName = profile?.full_name ?? null;
+  } catch {
+    // profiles table may not exist — that's OK
+  }
+
+  const role = profileRole ?? user.user_metadata?.role;
 
   if (role !== "admin") {
     redirect("/giris");
   }
 
   const adminName =
-    profile?.full_name ??
+    profileName ??
     user.user_metadata?.full_name ??
     user.email?.split("@")[0] ??
     "Admin";

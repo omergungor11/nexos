@@ -120,6 +120,7 @@
     "commercial": "Ticari"
   },
   "propertyTypes": {
+    "land": "Arsa",
     "villa": "Villa",
     "apartment": "Daire",
     "twin_villa": "İkiz Villa",
@@ -209,7 +210,23 @@
     "filters": "Filtreler",
     "min": "Min",
     "max": "Max",
-    "detailed": "Detaylı"
+    "detailed": "Detaylı Arama",
+    "city": "Şehir",
+    "district": "İlçe",
+    "selectCity": "Şehir seçiniz",
+    "selectDistrict": "İlçe seçiniz",
+    "floorRange": "Kat Aralığı",
+    "buildingAge": "Bina Yaşı",
+    "maxAge": "En fazla {year} yıl",
+    "anyAge": "Farketmez",
+    "amenities": "Olanaklar",
+    "parking": "Otopark",
+    "furnished": "Eşyalı",
+    "elevator": "Asansör",
+    "pool": "Havuz",
+    "garden": "Bahçe",
+    "security": "7/24 Güvenlik",
+    "balcony": "Balkon"
   },
   "heatingType": {
     "none": "Yok",

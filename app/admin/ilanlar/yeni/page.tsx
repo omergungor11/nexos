@@ -52,8 +52,8 @@ export default async function AdminPropertyNewPage() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Yeni İlan Oluştur</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-foreground">Yeni İlan Oluştur</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Formu doldurun ve oluştur butonuna tıklayın.
         </p>
       </div>

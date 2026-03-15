@@ -37,8 +37,8 @@ export default async function AdminBlogPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Blog Yazıları</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-foreground">Blog Yazıları</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {rows.length} yazı — {rows.filter((r) => r.is_published).length}{" "}
             yayında
           </p>

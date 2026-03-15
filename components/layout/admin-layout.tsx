@@ -17,11 +17,18 @@ import {
   Menu,
   X,
   ChevronRight,
+  BarChart3,
+  Activity,
+  UserCog,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "@/components/admin/notification-bell";
+import { ThemeSwitcher } from "@/components/shared/theme-switcher";
+import { CommandPalette } from "@/components/admin/command-palette";
+import { useAdminShortcuts } from "@/hooks/use-admin-shortcuts";
 
 const NAV_ITEMS = [
   {
@@ -67,6 +74,24 @@ const NAV_ITEMS = [
     exact: false,
   },
   {
+    href: "/admin/analiz",
+    label: "Analiz",
+    icon: BarChart3,
+    exact: false,
+  },
+  {
+    href: "/admin/aktivite",
+    label: "Aktivite",
+    icon: Activity,
+    exact: false,
+  },
+  {
+    href: "/admin/kullanicilar",
+    label: "Kullanıcılar",
+    icon: UserCog,
+    exact: false,
+  },
+  {
     href: "/admin/ayarlar",
     label: "Ayarlar",
     icon: Settings,
@@ -89,6 +114,7 @@ export function AdminLayout({
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [loggingOut, setLoggingOut] = React.useState(false);
+  useAdminShortcuts();
 
   const isActive = (href: string, exact: boolean) => {
     if (exact) return pathname === href;
@@ -212,6 +238,9 @@ export function AdminLayout({
 
   return (
     <div className="flex h-screen overflow-hidden">
+      {/* Command Palette */}
+      <CommandPalette />
+
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -235,7 +264,7 @@ export function AdminLayout({
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top header */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b bg-white px-4 lg:px-6">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b bg-background px-4 lg:px-6">
           <div className="flex items-center gap-3">
             {/* Hamburger — mobile only */}
             <Button
@@ -249,24 +278,26 @@ export function AdminLayout({
             </Button>
 
             {/* Breadcrumb */}
-            <div className="flex items-center gap-1.5 text-sm text-slate-500">
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <span>Yönetim</span>
               <ChevronRight className="size-3.5" />
-              <span className="font-medium text-slate-900">
+              <span className="font-medium text-foreground">
                 {getCurrentPageLabel()}
               </span>
             </div>
           </div>
 
-          {/* Right side: avatar + logout shortcut on desktop */}
+          {/* Right side: notifications + avatar + logout shortcut on desktop */}
           <div className="flex items-center gap-3">
+            <ThemeSwitcher />
+            <NotificationBell />
             <div className="hidden items-center gap-2 lg:flex">
               <Avatar size="sm">
                 <AvatarFallback className="bg-blue-600 text-white text-xs">
                   {getInitials(adminName)}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-foreground">
                 {adminName}
               </span>
             </div>
@@ -277,7 +308,7 @@ export function AdminLayout({
               disabled={loggingOut}
               title="Çıkış Yap"
               aria-label="Çıkış Yap"
-              className="text-slate-500 hover:text-slate-900"
+              className="text-muted-foreground hover:text-foreground"
             >
               <LogOut className="size-4" />
             </Button>
@@ -285,7 +316,7 @@ export function AdminLayout({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
+        <main className="flex-1 overflow-y-auto bg-muted/50 p-4 lg:p-6">
           {children}
         </main>
       </div>

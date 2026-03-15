@@ -192,7 +192,7 @@ export function PageForm({ page }: { page: PageData }) {
 
       {/* SEO divider */}
       <div className="border-t pt-2">
-        <p className="text-sm font-semibold text-slate-700">SEO Ayarları</p>
+        <p className="text-sm font-semibold text-foreground">SEO Ayarları</p>
       </div>
 
       {/* SEO title */}

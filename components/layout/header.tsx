@@ -10,6 +10,7 @@ import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -56,6 +57,7 @@ export function Header() {
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-3 md:flex">
+          <ThemeSwitcher />
           <LanguageSwitcher />
           <a
             href="tel:+905551234567"
@@ -72,12 +74,12 @@ export function Header() {
         {/* Mobile Menu */}
         <div ref={menuRef} className="relative md:hidden">
           <div className="flex items-center gap-1">
+            <ThemeSwitcher />
             <LanguageSwitcher />
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setOpen(!open)}
-              render={<span />}
             >
               {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               <span className="sr-only">{t("nav.menu")}</span>

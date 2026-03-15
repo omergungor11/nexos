@@ -34,6 +34,68 @@ function sortImages(images: PropertyImage[]): PropertyImage[] {
   return [...images].sort((a, b) => a.sort_order - b.sort_order);
 }
 
+const MAX_DIMENSION = 1600;
+
+function getQuality(fileSize: number): number {
+  // Adaptive quality: larger files get more compression
+  if (fileSize > 5 * 1024 * 1024) return 0.7;
+  if (fileSize > 2 * 1024 * 1024) return 0.75;
+  if (fileSize > 1 * 1024 * 1024) return 0.8;
+  return 0.82;
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+async function compressImage(file: File): Promise<{ file: File; originalSize: number; compressedSize: number }> {
+  const originalSize = file.size;
+  const bitmap = await createImageBitmap(file);
+  const { width, height } = bitmap;
+
+  let targetWidth = width;
+  let targetHeight = height;
+
+  if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+    const ratio = Math.min(MAX_DIMENSION / width, MAX_DIMENSION / height);
+    targetWidth = Math.round(width * ratio);
+    targetHeight = Math.round(height * ratio);
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    bitmap.close();
+    return { file, originalSize, compressedSize: originalSize };
+  }
+
+  ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
+  bitmap.close();
+
+  const quality = getQuality(originalSize);
+
+  return new Promise((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob || blob.size >= originalSize) {
+          resolve({ file, originalSize, compressedSize: originalSize });
+          return;
+        }
+        const baseName = file.name.replace(/\.[^.]+$/, "");
+        const compressed = new File([blob], `${baseName}.webp`, { type: "image/webp" });
+        resolve({ file: compressed, originalSize, compressedSize: compressed.size });
+      },
+      "image/webp",
+      quality
+    );
+  });
+}
+
 // ---------------------------------------------------------------------------
 // ImageCard sub-component
 // ---------------------------------------------------------------------------
@@ -245,8 +307,9 @@ export function ImageManager({ propertyId, initialImages }: ImageManagerProps) {
 
       startUpload(async () => {
         for (const file of fileArray) {
+          const { file: compressed, originalSize, compressedSize } = await compressImage(file);
           const formData = new FormData();
-          formData.append("file", file);
+          formData.append("file", compressed);
           formData.append("propertyId", propertyId);
           formData.append("isCover", images.length === 0 ? "true" : "false");
 
@@ -280,7 +343,10 @@ export function ImageManager({ propertyId, initialImages }: ImageManagerProps) {
               return sortImages(updated);
             });
 
-            toast.success(`"${file.name}" yüklendi.`);
+            const saved = originalSize > compressedSize
+              ? ` (${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)})`
+              : "";
+            toast.success(`"${file.name}" yüklendi.${saved}`);
           }
         }
       });

@@ -2,6 +2,7 @@
 
 import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { logAdminAction } from "@/lib/admin-logger";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -77,5 +78,6 @@ export async function updateSettings(
   }
 
   revalidateTag("settings", {});
+  void logAdminAction({ action: "update_settings", entityType: "settings", metadata: { keys: Object.keys(settings) } });
   return { data: { updated: entries.length } };
 }

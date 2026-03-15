@@ -2,6 +2,7 @@
 
 import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { logAdminAction } from "@/lib/admin-logger";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -134,5 +135,38 @@ export async function updateContactStatus(
   }
 
   revalidateTag("contacts", {});
+  void logAdminAction({ action: "update_contact_status", entityType: "contact_request", entityId: id, metadata: { status } });
   return { data: { id, status } };
+}
+
+// ---------------------------------------------------------------------------
+// updateContactAssignment
+// ---------------------------------------------------------------------------
+
+export async function updateContactAssignment(
+  id: string,
+  agentId: string | null,
+  notes: string | null
+): Promise<ActionResult<{ id: string }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const updatePayload: Record<string, unknown> = {};
+  if (agentId !== undefined) updatePayload.assigned_agent_id = agentId;
+  if (notes !== undefined) updatePayload.admin_notes = notes;
+
+  const { error } = await supabase
+    .from("contact_requests")
+    .update(updatePayload)
+    .eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("contacts", {});
+  void logAdminAction({ action: "assign_agent", entityType: "contact_request", entityId: id, metadata: { agent_id: agentId } });
+  return { data: { id } };
 }

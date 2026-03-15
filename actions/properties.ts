@@ -4,6 +4,7 @@ import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { TablesInsert, TablesUpdate } from "@/types/supabase";
 import type { Property } from "@/types/property";
+import { logAdminAction } from "@/lib/admin-logger";
 
 // ---------------------------------------------------------------------------
 // Input types
@@ -215,6 +216,7 @@ export async function createProperty(
   }
 
   revalidateTag("properties", {});
+  void logAdminAction({ action: "create", entityType: "property", entityId: property.id });
   return { data: property as Property };
 }
 
@@ -296,6 +298,7 @@ export async function updateProperty(
   }
 
   revalidateTag("properties", {});
+  void logAdminAction({ action: "update", entityType: "property", entityId: id });
   return { data: property as Property };
 }
 
@@ -321,6 +324,7 @@ export async function deleteProperty(
   }
 
   revalidateTag("properties", {});
+  void logAdminAction({ action: "delete", entityType: "property", entityId: id });
   return { data: { id } };
 }
 
@@ -347,6 +351,7 @@ export async function togglePropertyStatus(
   }
 
   revalidateTag("properties", {});
+  void logAdminAction({ action: "toggle_status", entityType: "property", entityId: id, metadata: { is_active: isActive } });
   return { data: { id, is_active: isActive } };
 }
 
@@ -373,5 +378,56 @@ export async function togglePropertyFeatured(
   }
 
   revalidateTag("properties", {});
+  void logAdminAction({ action: "toggle_featured", entityType: "property", entityId: id, metadata: { is_featured: isFeatured } });
   return { data: { id, is_featured: isFeatured } };
+}
+
+// ---------------------------------------------------------------------------
+// duplicateProperty
+// ---------------------------------------------------------------------------
+
+export async function duplicateProperty(
+  sourceId: string
+): Promise<ActionResult<Property>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  // Fetch the source property
+  const { data: source, error: fetchError } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("id", sourceId)
+    .single();
+
+  if (fetchError || !source) {
+    return { error: fetchError?.message ?? "İlan bulunamadı" };
+  }
+
+  const newTitle = `Kopya — ${source.title}`;
+  const slug = await generateUniqueSlug(supabase, newTitle);
+
+  // Build a new property with same details but inactive and new slug
+  const { id: _id, slug: _slug, title: _title, created_at: _ca, updated_at: _ua, views_count: _vc, is_active: _ia, ...rest } = source;
+
+  const { data: newProperty, error: insertError } = await supabase
+    .from("properties")
+    .insert({
+      ...rest,
+      title: newTitle,
+      slug,
+      is_active: false,
+      views_count: 0,
+    })
+    .select()
+    .single();
+
+  if (insertError) {
+    return { error: insertError.message };
+  }
+
+  revalidateTag("properties", {});
+  void logAdminAction({ action: "duplicate", entityType: "property", entityId: newProperty.id, metadata: { source_id: sourceId } });
+  return { data: newProperty as Property };
 }

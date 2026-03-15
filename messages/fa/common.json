@@ -120,6 +120,7 @@
     "commercial": "تجاری"
   },
   "propertyTypes": {
+    "land": "زمین",
     "villa": "ویلا",
     "apartment": "آپارتمان",
     "twin_villa": "ویلای دوقلو",
@@ -209,7 +210,23 @@
     "filters": "فیلترها",
     "min": "حداقل",
     "max": "حداکثر",
-    "detailed": "پیشرفته"
+    "detailed": "جستجوی پیشرفته",
+    "city": "شهر",
+    "district": "منطقه",
+    "selectCity": "شهر را انتخاب کنید",
+    "selectDistrict": "منطقه را انتخاب کنید",
+    "floorRange": "محدوده طبقه",
+    "buildingAge": "سن ساختمان",
+    "maxAge": "حداکثر {year} سال",
+    "anyAge": "فرقی نمی‌کند",
+    "amenities": "امکانات",
+    "parking": "پارکینگ",
+    "furnished": "مبله",
+    "elevator": "آسانسور",
+    "pool": "استخر",
+    "garden": "باغ",
+    "security": "نگهبانی ۲۴/۷",
+    "balcony": "بالکن"
   },
   "heatingType": {
     "none": "بدون سیستم گرمایش",

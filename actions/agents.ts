@@ -4,6 +4,7 @@ import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { TablesInsert, TablesUpdate } from "@/types/supabase";
 import type { Agent } from "@/types/property";
+import { logAdminAction } from "@/lib/admin-logger";
 
 // ---------------------------------------------------------------------------
 // Input types
@@ -155,6 +156,7 @@ export async function createAgent(
   }
 
   revalidateTag("agents", {});
+  void logAdminAction({ action: "create", entityType: "agent", entityId: agent.id });
   return { data: agent as Agent };
 }
 
@@ -196,6 +198,7 @@ export async function updateAgent(
   }
 
   revalidateTag("agents", {});
+  void logAdminAction({ action: "update", entityType: "agent", entityId: id });
   return { data: agent as Agent };
 }
 
@@ -218,6 +221,7 @@ export async function deleteAgent(
   }
 
   revalidateTag("agents", {});
+  void logAdminAction({ action: "delete", entityType: "agent", entityId: id });
   return { data: { id } };
 }
 
@@ -244,5 +248,6 @@ export async function toggleAgentStatus(
   }
 
   revalidateTag("agents", {});
+  void logAdminAction({ action: "toggle_status", entityType: "agent", entityId: id, metadata: { is_active: isActive } });
   return { data: { id, is_active: isActive } };
 }

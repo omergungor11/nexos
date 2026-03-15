@@ -14,19 +14,26 @@ export const metadata = {
 export default async function AdminIlanlarPage() {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("properties")
-    .select(
+  const [{ data, error }, { data: agentsData }] = await Promise.all([
+    supabase
+      .from("properties")
+      .select(
+        `
+        id, slug, title, price, currency, type, transaction_type, status,
+        is_active, is_featured, views_count, created_at,
+        city:cities(name),
+        district:districts(name),
+        images:property_images(url, is_cover),
+        agent:agents(id, name)
       `
-      id, slug, title, price, currency, type, transaction_type, status,
-      is_active, is_featured, views_count, created_at,
-      city:cities(name),
-      district:districts(name),
-      images:property_images(url, is_cover),
-      agent:agents(id, name)
-    `
-    )
-    .order("created_at", { ascending: false });
+      )
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("agents")
+      .select("id, name")
+      .eq("is_active", true)
+      .order("name"),
+  ]);
 
   if (error) {
     return (
@@ -37,6 +44,7 @@ export default async function AdminIlanlarPage() {
   }
 
   const properties = (data ?? []) as unknown as AdminPropertyRow[];
+  const agents = (agentsData ?? []) as Array<{ id: string; name: string }>;
 
   return (
     <div className="p-6 space-y-6">
@@ -58,7 +66,7 @@ export default async function AdminIlanlarPage() {
       </div>
 
       {/* Data table */}
-      <PropertyDataTable initialData={properties} />
+      <PropertyDataTable initialData={properties} agents={agents} />
     </div>
   );
 }

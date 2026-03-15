@@ -120,6 +120,7 @@
     "commercial": "Коммерческая"
   },
   "propertyTypes": {
+    "land": "Земельный участок",
     "villa": "Вилла",
     "apartment": "Квартира",
     "twin_villa": "Дуплекс",
@@ -209,7 +210,23 @@
     "filters": "Фильтры",
     "min": "Мин",
     "max": "Макс",
-    "detailed": "Расширенный"
+    "detailed": "Расширенный поиск",
+    "city": "Город",
+    "district": "Район",
+    "selectCity": "Выберите город",
+    "selectDistrict": "Выберите район",
+    "floorRange": "Диапазон этажей",
+    "buildingAge": "Возраст здания",
+    "maxAge": "Не более {year} лет",
+    "anyAge": "Любой",
+    "amenities": "Удобства",
+    "parking": "Парковка",
+    "furnished": "С мебелью",
+    "elevator": "Лифт",
+    "pool": "Бассейн",
+    "garden": "Сад",
+    "security": "Охрана 24/7",
+    "balcony": "Балкон"
   },
   "heatingType": {
     "none": "Без отопления",

@@ -2,6 +2,7 @@
 
 import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { logAdminAction } from "@/lib/admin-logger";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -175,6 +176,7 @@ export async function createBlogPost(
   }
 
   revalidateTag("blog", {});
+  void logAdminAction({ action: "create", entityType: "blog_post", entityId: post.id });
   return { data: post as BlogPostRow };
 }
 
@@ -238,6 +240,7 @@ export async function updateBlogPost(
   }
 
   revalidateTag("blog", {});
+  void logAdminAction({ action: "update", entityType: "blog_post", entityId: id });
   return { data: post as BlogPostRow };
 }
 
@@ -260,6 +263,7 @@ export async function deleteBlogPost(
   }
 
   revalidateTag("blog", {});
+  void logAdminAction({ action: "delete", entityType: "blog_post", entityId: id });
   return { data: { id } };
 }
 
@@ -300,5 +304,6 @@ export async function toggleBlogPublished(
   }
 
   revalidateTag("blog", {});
+  void logAdminAction({ action: "toggle_published", entityType: "blog_post", entityId: id, metadata: { is_published: isPublished } });
   return { data: { id, is_published: isPublished } };
 }

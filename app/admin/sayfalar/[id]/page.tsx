@@ -43,10 +43,10 @@ export default async function AdminSayfaEditPage({ params }: Props) {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-2xl font-bold text-foreground">
           Sayfa Düzenle
         </h1>
-        <p className="mt-1 text-sm text-slate-500">{page.title}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{page.title}</p>
       </div>
 
       {/* Form */}

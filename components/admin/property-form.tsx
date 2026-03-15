@@ -28,6 +28,13 @@ import {
   type PropertyCreateInput,
 } from "@/actions/properties";
 
+import {
+  LAND_TYPES,
+  RESIDENTIAL_TYPES,
+  COMMERCIAL_TYPES,
+  type PropertyCategory,
+} from "@/lib/constants";
+
 import type {
   TransactionType,
   PropertyType,
@@ -103,6 +110,7 @@ interface FormState {
   title: string;
   description: string;
   transaction_type: TransactionType;
+  category: PropertyCategory;
   property_type: PropertyType;
   status: PropertyStatus;
   price: string;
@@ -202,6 +210,49 @@ const CURRENCY_LABELS: Record<Currency, string> = {
   EUR: "Euro (€)",
 };
 
+const CATEGORY_LABELS: Record<PropertyCategory, string> = {
+  residential: "Konut",
+  land: "Arsa",
+  commercial: "Ticari",
+};
+
+const CATEGORY_SUBTYPES: Record<PropertyCategory, { types: readonly string[]; labels: Record<string, string> }> = {
+  residential: {
+    types: RESIDENTIAL_TYPES,
+    labels: Object.fromEntries(
+      RESIDENTIAL_TYPES.map((t) => [t, PROPERTY_TYPE_LABELS[t] ?? t])
+    ),
+  },
+  land: {
+    types: LAND_TYPES,
+    labels: Object.fromEntries(
+      LAND_TYPES.map((t) => [t, PROPERTY_TYPE_LABELS[t] ?? t])
+    ),
+  },
+  commercial: {
+    types: COMMERCIAL_TYPES,
+    labels: Object.fromEntries(
+      COMMERCIAL_TYPES.map((t) => [t, PROPERTY_TYPE_LABELS[t] ?? t])
+    ),
+  },
+};
+
+function detectCategory(type: string): PropertyCategory {
+  if ((LAND_TYPES as readonly string[]).includes(type)) return "land";
+  if ((COMMERCIAL_TYPES as readonly string[]).includes(type)) return "commercial";
+  return "residential";
+}
+
+function isLandType(type: string): boolean {
+  return (LAND_TYPES as readonly string[]).includes(type);
+}
+
+function formatPriceDisplay(val: string): string {
+  const num = val.replace(/\D/g, "");
+  if (!num) return "";
+  return Number(num).toLocaleString("tr-TR");
+}
+
 const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
   interior: "İç Mekan",
   exterior: "Dış Mekan",
@@ -289,6 +340,7 @@ function buildInitialState(
     description: initialData?.description ?? "",
     transaction_type:
       (initialData?.transaction_type as TransactionType) ?? "sale",
+    category: initialData?.type ? detectCategory(initialData.type) : "residential",
     property_type: (initialData?.type as PropertyType) ?? "apartment",
     status: (initialData?.status as PropertyStatus) ?? "available",
     price: initialData?.price != null ? String(initialData.price) : "",
@@ -670,7 +722,7 @@ export function PropertyForm({
             />
           </Field>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="İşlem Türü" htmlFor="transaction_type" required>
               <Select
                 value={form.transaction_type}
@@ -679,7 +731,9 @@ export function PropertyForm({
                 }
               >
                 <SelectTrigger id="transaction_type" className="w-full">
-                  <SelectValue placeholder="Seçiniz" />
+                  <SelectValue placeholder="Seçiniz">
+                    {TRANSACTION_TYPE_LABELS[form.transaction_type] ?? form.transaction_type}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {(
@@ -696,6 +750,32 @@ export function PropertyForm({
               </Select>
             </Field>
 
+            <Field label="Kategori" htmlFor="category" required>
+              <Select
+                value={form.category}
+                onValueChange={(v) => {
+                  const cat = v as PropertyCategory;
+                  const firstType = CATEGORY_SUBTYPES[cat].types[0] as PropertyType;
+                  setForm((prev) => ({ ...prev, category: cat, property_type: firstType }));
+                }}
+              >
+                <SelectTrigger id="category" className="w-full">
+                  <SelectValue placeholder="Seçiniz">
+                    {CATEGORY_LABELS[form.category] ?? form.category}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {(Object.entries(CATEGORY_LABELS) as [PropertyCategory, string][]).map(
+                    ([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
+            </Field>
+
             <Field label="Emlak Türü" htmlFor="property_type" required>
               <Select
                 value={form.property_type}
@@ -704,17 +784,14 @@ export function PropertyForm({
                 }
               >
                 <SelectTrigger id="property_type" className="w-full">
-                  <SelectValue placeholder="Seçiniz" />
+                  <SelectValue placeholder="Seçiniz">
+                    {CATEGORY_SUBTYPES[form.category].labels[form.property_type] ?? form.property_type}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {(
-                    Object.entries(PROPERTY_TYPE_LABELS) as [
-                      PropertyType,
-                      string,
-                    ][]
-                  ).map(([value, label]) => (
+                  {CATEGORY_SUBTYPES[form.category].types.map((value) => (
                     <SelectItem key={value} value={value}>
-                      {label}
+                      {CATEGORY_SUBTYPES[form.category].labels[value] ?? value}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -727,7 +804,9 @@ export function PropertyForm({
                 onValueChange={(v) => handleSelectChange("status", v)}
               >
                 <SelectTrigger id="status" className="w-full">
-                  <SelectValue placeholder="Seçiniz" />
+                  <SelectValue placeholder="Seçiniz">
+                    {PROPERTY_STATUS_LABELS[form.status] ?? form.status}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {(
@@ -758,7 +837,11 @@ export function PropertyForm({
                 }
               >
                 <SelectTrigger id="agent_id" className="w-full sm:w-80">
-                  <SelectValue placeholder="Danışman seçiniz (opsiyonel)" />
+                  <SelectValue placeholder="Danışman seçiniz (opsiyonel)">
+                    {form.agent_id && form.agent_id !== "__none__"
+                      ? (agents.find((a) => a.id === form.agent_id)?.name ?? form.agent_id)
+                      : form.agent_id === "__none__" ? "Danışman yok" : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__none__">Danışman yok</SelectItem>
@@ -784,6 +867,7 @@ export function PropertyForm({
               htmlFor="price"
               required
               error={errors.price}
+              hint={form.price ? formatPriceDisplay(form.price) : undefined}
             >
               <Input
                 id="price"
@@ -804,7 +888,9 @@ export function PropertyForm({
                 onValueChange={(v) => handleSelectChange("currency", v)}
               >
                 <SelectTrigger id="currency" className="w-full">
-                  <SelectValue />
+                  <SelectValue>
+                    {CURRENCY_LABELS[form.currency as Currency] ?? form.currency}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {(
@@ -819,7 +905,7 @@ export function PropertyForm({
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-2">
             <Field label="Net Alan (m²)" htmlFor="area_sqm">
               <Input
                 id="area_sqm"
@@ -845,110 +931,119 @@ export function PropertyForm({
                 placeholder="0"
               />
             </Field>
-
-            <Field label="Oda Sayısı" htmlFor="rooms">
-              <Input
-                id="rooms"
-                name="rooms"
-                type="number"
-                min="0"
-                step="1"
-                value={form.rooms}
-                onChange={handleChange}
-                placeholder="0"
-              />
-            </Field>
-
-            <Field label="Salon Sayısı" htmlFor="living_rooms">
-              <Input
-                id="living_rooms"
-                name="living_rooms"
-                type="number"
-                min="0"
-                step="1"
-                value={form.living_rooms}
-                onChange={handleChange}
-                placeholder="0"
-              />
-            </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
-            <Field label="Banyo Sayısı" htmlFor="bathrooms">
-              <Input
-                id="bathrooms"
-                name="bathrooms"
-                type="number"
-                min="0"
-                step="1"
-                value={form.bathrooms}
-                onChange={handleChange}
-                placeholder="0"
-              />
-            </Field>
+          {/* Room/floor/heating fields — hidden for land types */}
+          {!isLandType(form.property_type) && (
+            <>
+              <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+                <Field label="Oda Sayısı" htmlFor="rooms">
+                  <Input
+                    id="rooms"
+                    name="rooms"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={form.rooms}
+                    onChange={handleChange}
+                    placeholder="0"
+                  />
+                </Field>
 
-            <Field label="Bulunduğu Kat" htmlFor="floor">
-              <Input
-                id="floor"
-                name="floor"
-                type="number"
-                step="1"
-                value={form.floor}
-                onChange={handleChange}
-                placeholder="0"
-              />
-            </Field>
+                <Field label="Salon Sayısı" htmlFor="living_rooms">
+                  <Input
+                    id="living_rooms"
+                    name="living_rooms"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={form.living_rooms}
+                    onChange={handleChange}
+                    placeholder="0"
+                  />
+                </Field>
 
-            <Field label="Toplam Kat" htmlFor="total_floors">
-              <Input
-                id="total_floors"
-                name="total_floors"
-                type="number"
-                min="0"
-                step="1"
-                value={form.total_floors}
-                onChange={handleChange}
-                placeholder="0"
-              />
-            </Field>
+                <Field label="Banyo Sayısı" htmlFor="bathrooms">
+                  <Input
+                    id="bathrooms"
+                    name="bathrooms"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={form.bathrooms}
+                    onChange={handleChange}
+                    placeholder="0"
+                  />
+                </Field>
 
-            <Field label="Yapım Yılı" htmlFor="year_built">
-              <Input
-                id="year_built"
-                name="year_built"
-                type="number"
-                min="1900"
-                max={new Date().getFullYear() + 5}
-                step="1"
-                value={form.year_built}
-                onChange={handleChange}
-                placeholder="2024"
-              />
-            </Field>
-          </div>
+                <Field label="Yapım Yılı" htmlFor="year_built">
+                  <Input
+                    id="year_built"
+                    name="year_built"
+                    type="number"
+                    min="1900"
+                    max={new Date().getFullYear() + 5}
+                    step="1"
+                    value={form.year_built}
+                    onChange={handleChange}
+                    placeholder="2024"
+                  />
+                </Field>
+              </div>
 
-          <Field label="Isıtma Türü" htmlFor="heating_type">
-            <Select
-              value={form.heating_type}
-              onValueChange={(v) => handleSelectChange("heating_type", v)}
-            >
-              <SelectTrigger id="heating_type" className="w-full sm:w-64">
-                <SelectValue placeholder="Seçiniz" />
-              </SelectTrigger>
-              <SelectContent>
-                {(
-                  Object.entries(HEATING_TYPE_LABELS) as [
-                    HeatingType,
-                    string,
-                  ][]
-                ).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+              <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+                <Field label="Bulunduğu Kat" htmlFor="floor">
+                  <Input
+                    id="floor"
+                    name="floor"
+                    type="number"
+                    step="1"
+                    value={form.floor}
+                    onChange={handleChange}
+                    placeholder="0"
+                  />
+                </Field>
+
+                <Field label="Toplam Kat" htmlFor="total_floors">
+                  <Input
+                    id="total_floors"
+                    name="total_floors"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={form.total_floors}
+                    onChange={handleChange}
+                    placeholder="0"
+                  />
+                </Field>
+
+                <Field label="Isıtma Türü" htmlFor="heating_type">
+                  <Select
+                    value={form.heating_type}
+                    onValueChange={(v) => handleSelectChange("heating_type", v)}
+                  >
+                    <SelectTrigger id="heating_type" className="w-full">
+                      <SelectValue placeholder="Seçiniz">
+                        {form.heating_type ? (HEATING_TYPE_LABELS[form.heating_type as HeatingType] ?? form.heating_type) : undefined}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(
+                        Object.entries(HEATING_TYPE_LABELS) as [
+                          HeatingType,
+                          string,
+                        ][]
+                      ).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
+            </>
+          )}
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}
@@ -971,7 +1066,9 @@ export function PropertyForm({
                   className="w-full"
                   aria-invalid={!!errors.city_id}
                 >
-                  <SelectValue placeholder="Şehir seçiniz" />
+                  <SelectValue placeholder="Şehir seçiniz">
+                    {form.city_id ? (cities.find((c) => String(c.id) === form.city_id)?.name ?? form.city_id) : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {cities.map((city) => (
@@ -998,7 +1095,9 @@ export function PropertyForm({
                           ? "Önce şehir seçin"
                           : "İlçe seçiniz"
                     }
-                  />
+                  >
+                    {form.district_id ? (districts.find((d) => String(d.id) === form.district_id)?.name ?? form.district_id) : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {districts.map((d) => (
@@ -1029,7 +1128,9 @@ export function PropertyForm({
                           ? "Önce ilçe seçin"
                           : "Mahalle seçiniz"
                     }
-                  />
+                  >
+                    {form.neighborhood_id ? (neighborhoods.find((n) => String(n.id) === form.neighborhood_id)?.name ?? form.neighborhood_id) : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {neighborhoods.map((n) => (
@@ -1166,7 +1267,7 @@ export function PropertyForm({
             Object.entries(featuresByCategory).map(
               ([category, features]) => (
                 <div key={category} className="space-y-3">
-                  <h3 className="text-sm font-semibold text-slate-700">
+                  <h3 className="text-sm font-semibold text-foreground">
                     {FEATURE_CATEGORY_LABELS[
                       category as FeatureCategory
                     ] ?? category}

@@ -9,6 +9,7 @@ import { getFeaturesByCategory, getPropertyFeatures } from "@/lib/queries/featur
 import { getAgents } from "@/lib/queries/content";
 import { PropertyForm } from "@/components/admin/property-form";
 import { ImageManager } from "@/components/admin/image-manager";
+import { PropertyAnalytics } from "@/components/admin/property-analytics";
 import type { PropertyImage } from "@/types/property";
 
 export const metadata: Metadata = {
@@ -157,8 +158,8 @@ export default async function AdminPropertyEditPage({ params }: Props) {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">İlan Düzenle</h1>
-        <p className="mt-1 text-sm text-slate-500">{property.title}</p>
+        <h1 className="text-2xl font-bold text-foreground">İlan Düzenle</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{property.title}</p>
       </div>
 
       {/* Property form */}
@@ -173,12 +174,17 @@ export default async function AdminPropertyEditPage({ params }: Props) {
       {/* Image manager */}
       <div className="border-t pt-8">
         <div className="mb-4">
-          <h2 className="text-lg font-semibold text-slate-900">Görseller</h2>
-          <p className="mt-0.5 text-sm text-slate-500">
+          <h2 className="text-lg font-semibold text-foreground">Görseller</h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">
             JPEG, PNG veya WebP formatında, maksimum 5 MB.
           </p>
         </div>
         <ImageManager propertyId={id} initialImages={images} />
+      </div>
+
+      {/* Property Analytics */}
+      <div className="border-t pt-8">
+        <PropertyAnalytics propertyId={id} />
       </div>
     </div>
   );

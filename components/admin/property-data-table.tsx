@@ -3,6 +3,7 @@
 import { useState, useTransition, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   ChevronUpIcon,
@@ -13,6 +14,10 @@ import {
   EyeIcon,
   EyeOffIcon,
   StarIcon,
+  CopyIcon,
+  CheckSquareIcon,
+  XIcon,
+  UserPlusIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -40,13 +45,22 @@ import {
   togglePropertyStatus,
   togglePropertyFeatured,
   deleteProperty,
+  duplicateProperty,
 } from "@/actions/properties";
+import {
+  bulkToggleActive,
+  bulkDelete,
+  bulkAssignAgent,
+  bulkToggleFeatured,
+} from "@/actions/properties-bulk";
 import {
   PROPERTY_TYPE_LABELS,
   TRANSACTION_TYPE_LABELS,
   PROPERTY_STATUS_LABELS,
 } from "@/lib/constants";
 import { formatPrice } from "@/lib/format";
+import { PropertyExportButtons } from "./property-export";
+import { PropertyImportDialog } from "./property-import-dialog";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -211,8 +225,10 @@ function DeleteDialog({
 
 export function PropertyDataTable({
   initialData,
+  agents = [],
 }: {
   initialData: AdminPropertyRow[];
+  agents?: Agent[];
 }) {
   const [rows, setRows] = useState<AdminPropertyRow[]>(initialData);
   const [search, setSearch] = useState("");
@@ -223,6 +239,8 @@ export function PropertyDataTable({
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkPending, setBulkPending] = useState(false);
 
   // Filtering
   const filtered = useMemo(() => {
@@ -326,6 +344,113 @@ export function PropertyDataTable({
     setRows((prev) => prev.filter((r) => r.id !== id));
   }
 
+  const router = useRouter();
+
+  // Selection helpers
+  const allPageIds = paginated.map((r) => r.id);
+  const allSelected = allPageIds.length > 0 && allPageIds.every((id) => selectedIds.has(id));
+  const someSelected = allPageIds.some((id) => selectedIds.has(id));
+
+  function toggleSelectAll() {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allSelected) {
+        allPageIds.forEach((id) => next.delete(id));
+      } else {
+        allPageIds.forEach((id) => next.add(id));
+      }
+      return next;
+    });
+  }
+
+  function toggleSelect(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function clearSelection() {
+    setSelectedIds(new Set());
+  }
+
+  // Bulk action handlers
+  async function handleBulkActive(isActive: boolean) {
+    setBulkPending(true);
+    const ids = Array.from(selectedIds);
+    const result = await bulkToggleActive(ids, isActive);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setRows((prev) => prev.map((r) => (selectedIds.has(r.id) ? { ...r, is_active: isActive } : r)));
+      toast.success(`${ids.length} ilan ${isActive ? "yayına alındı" : "yayından kaldırıldı"}.`);
+      clearSelection();
+    }
+    setBulkPending(false);
+  }
+
+  async function handleBulkDelete() {
+    setBulkPending(true);
+    const ids = Array.from(selectedIds);
+    const result = await bulkDelete(ids);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setRows((prev) => prev.filter((r) => !selectedIds.has(r.id)));
+      toast.success(`${ids.length} ilan silindi.`);
+      clearSelection();
+    }
+    setBulkPending(false);
+  }
+
+  async function handleBulkFeatured(isFeatured: boolean) {
+    setBulkPending(true);
+    const ids = Array.from(selectedIds);
+    const result = await bulkToggleFeatured(ids, isFeatured);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setRows((prev) => prev.map((r) => (selectedIds.has(r.id) ? { ...r, is_featured: isFeatured } : r)));
+      toast.success(`${ids.length} ilan ${isFeatured ? "öne çıkarıldı" : "öne çıkarma kaldırıldı"}.`);
+      clearSelection();
+    }
+    setBulkPending(false);
+  }
+
+  async function handleBulkAssignAgent(agentId: string | null) {
+    setBulkPending(true);
+    const ids = Array.from(selectedIds);
+    const result = await bulkAssignAgent(ids, agentId);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setRows((prev) =>
+        prev.map((r) => {
+          if (!selectedIds.has(r.id)) return r;
+          const agent = agents.find((a) => a.id === agentId) ?? null;
+          return { ...r, agent };
+        })
+      );
+      toast.success(`${ids.length} ilana danışman atandı.`);
+      clearSelection();
+    }
+    setBulkPending(false);
+  }
+
+  async function handleDuplicate(id: string) {
+    startTransition(async () => {
+      const result = await duplicateProperty(id);
+      if (result.error) {
+        toast.error(result.error);
+      } else if (result.data) {
+        toast.success("İlan kopyalandı.");
+        router.push(`/admin/ilanlar/${result.data.id}/duzenle`);
+      }
+    });
+  }
+
   const thClass =
     "px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground whitespace-nowrap";
   const thSortClass = `${thClass} cursor-pointer select-none hover:text-foreground`;
@@ -360,18 +485,42 @@ export function PropertyDataTable({
         </Select>
 
         <Select value={typeFilter} onValueChange={handleFilterChange(setTypeFilter)}>
-          <SelectTrigger className="h-8 w-40">
+          <SelectTrigger className="h-8 w-48">
             <SelectValue placeholder="Tip" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tüm Tipler</SelectItem>
+            {/* Konut */}
+            <SelectItem value="__konut_header" disabled className="text-xs font-semibold text-muted-foreground uppercase pt-2">Konut</SelectItem>
             <SelectItem value="apartment">Daire</SelectItem>
             <SelectItem value="villa">Villa</SelectItem>
+            <SelectItem value="twin_villa">İkiz Villa</SelectItem>
+            <SelectItem value="penthouse">Penthouse</SelectItem>
+            <SelectItem value="residence">Residence</SelectItem>
+            <SelectItem value="bungalow">Bungalow</SelectItem>
             <SelectItem value="detached">Müstakil Ev</SelectItem>
+            <SelectItem value="building">Komple Bina</SelectItem>
+            <SelectItem value="timeshare">Devremülk</SelectItem>
+            <SelectItem value="derelict">Metruk Bina</SelectItem>
+            <SelectItem value="unfinished">Yarım İnşaat</SelectItem>
+            {/* Arsa */}
+            <SelectItem value="__arsa_header" disabled className="text-xs font-semibold text-muted-foreground uppercase pt-2">Arsa</SelectItem>
             <SelectItem value="land">Arsa</SelectItem>
-            <SelectItem value="office">Ofis</SelectItem>
+            <SelectItem value="residential_land">Konut İmarlı Arsa</SelectItem>
+            <SelectItem value="mixed_land">Konut+Ticari İmarlı</SelectItem>
+            <SelectItem value="commercial_land">Ticari İmarlı Arsa</SelectItem>
+            <SelectItem value="industrial_land">Sanayi İmarlı Arsa</SelectItem>
+            <SelectItem value="tourism_land">Turizm İmarlı Arsa</SelectItem>
+            <SelectItem value="field">Tarla</SelectItem>
+            <SelectItem value="olive_grove">Zeytinlik</SelectItem>
+            {/* Ticari */}
+            <SelectItem value="__ticari_header" disabled className="text-xs font-semibold text-muted-foreground uppercase pt-2">Ticari</SelectItem>
             <SelectItem value="shop">Dükkan</SelectItem>
+            <SelectItem value="hotel">Hotel</SelectItem>
+            <SelectItem value="workplace">İş Yeri</SelectItem>
             <SelectItem value="warehouse">Depo</SelectItem>
+            <SelectItem value="business_transfer">Devren Satılık</SelectItem>
+            <SelectItem value="office">Ofis</SelectItem>
           </SelectContent>
         </Select>
 
@@ -386,16 +535,70 @@ export function PropertyDataTable({
           </SelectContent>
         </Select>
 
-        <span className="ml-auto self-center text-sm text-muted-foreground">
-          {filtered.length} ilan
-        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <PropertyExportButtons rows={filtered} />
+          <PropertyImportDialog />
+          <span className="self-center text-sm text-muted-foreground">
+            {filtered.length} ilan
+          </span>
+        </div>
       </div>
+
+      {/* Bulk Actions Toolbar */}
+      {selectedIds.size > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
+          <span className="text-sm font-medium text-blue-700">
+            {selectedIds.size} ilan seçili
+          </span>
+          <div className="flex flex-wrap items-center gap-1.5 ml-2">
+            <Button variant="outline" size="sm" disabled={bulkPending} onClick={() => handleBulkActive(true)}>
+              <EyeIcon className="size-3.5" /> Yayına Al
+            </Button>
+            <Button variant="outline" size="sm" disabled={bulkPending} onClick={() => handleBulkActive(false)}>
+              <EyeOffIcon className="size-3.5" /> Yayından Kaldır
+            </Button>
+            <Button variant="outline" size="sm" disabled={bulkPending} onClick={() => handleBulkFeatured(true)}>
+              <StarIcon className="size-3.5" /> Öne Çıkar
+            </Button>
+            {agents.length > 0 && (
+              <Select onValueChange={(v: string | null) => { if (v) handleBulkAssignAgent(v === "__none__" ? null : v); }}>
+                <SelectTrigger className="h-8 w-44">
+                  <UserPlusIcon className="size-3.5 mr-1" />
+                  <SelectValue placeholder="Danışman Ata" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">Danışman Kaldır</SelectItem>
+                  {agents.map((a) => (
+                    <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            <Button variant="destructive" size="sm" disabled={bulkPending} onClick={handleBulkDelete}>
+              <Trash2Icon className="size-3.5" /> Sil
+            </Button>
+          </div>
+          <Button variant="ghost" size="icon-sm" className="ml-auto" onClick={clearSelection}>
+            <XIcon className="size-4" />
+          </Button>
+        </div>
+      )}
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border">
         <table className="min-w-full divide-y divide-border text-sm">
           <thead className="bg-muted/40">
             <tr>
+              <th className={thClass}>
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={(el) => { if (el) el.indeterminate = someSelected && !allSelected; }}
+                  onChange={toggleSelectAll}
+                  className="size-4 rounded accent-primary"
+                  aria-label="Tümünü seç"
+                />
+              </th>
               <th className={thClass}>Görsel</th>
               <th
                 className={thSortClass}
@@ -443,7 +646,7 @@ export function PropertyDataTable({
             {paginated.length === 0 ? (
               <tr>
                 <td
-                  colSpan={11}
+                  colSpan={12}
                   className="px-3 py-8 text-center text-muted-foreground"
                 >
                   İlan bulunamadı.
@@ -454,7 +657,17 @@ export function PropertyDataTable({
                 const coverImage = row.images.find((img) => img.is_cover) ?? row.images[0];
 
                 return (
-                  <tr key={row.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={row.id} className={`hover:bg-muted/30 transition-colors ${selectedIds.has(row.id) ? "bg-blue-50/50" : ""}`}>
+                    {/* Checkbox */}
+                    <td className="px-3 py-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(row.id)}
+                        onChange={() => toggleSelect(row.id)}
+                        className="size-4 rounded accent-primary"
+                        aria-label={`${row.title} seç`}
+                      />
+                    </td>
                     {/* Image */}
                     <td className="px-3 py-2">
                       <div className="size-12 overflow-hidden rounded-md bg-muted flex-shrink-0">
@@ -565,6 +778,15 @@ export function PropertyDataTable({
                             <PencilIcon className="size-4" />
                           </Button>
                         </Link>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label="Kopyala"
+                          title="İlanı Kopyala"
+                          onClick={() => handleDuplicate(row.id)}
+                        >
+                          <CopyIcon className="size-4 text-muted-foreground" />
+                        </Button>
                         <DeleteDialog
                           propertyId={row.id}
                           propertyTitle={row.title}

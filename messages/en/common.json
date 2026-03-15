@@ -120,6 +120,7 @@
     "commercial": "Commercial"
   },
   "propertyTypes": {
+    "land": "Land",
     "villa": "Villa",
     "apartment": "Apartment",
     "twin_villa": "Twin Villa",
@@ -209,7 +210,23 @@
     "filters": "Filters",
     "min": "Min",
     "max": "Max",
-    "detailed": "Advanced"
+    "detailed": "Advanced Search",
+    "city": "City",
+    "district": "District",
+    "selectCity": "Select city",
+    "selectDistrict": "Select district",
+    "floorRange": "Floor Range",
+    "buildingAge": "Building Age",
+    "maxAge": "Max {year} years",
+    "anyAge": "Any",
+    "amenities": "Amenities",
+    "parking": "Parking",
+    "furnished": "Furnished",
+    "elevator": "Elevator",
+    "pool": "Pool",
+    "garden": "Garden",
+    "security": "24/7 Security",
+    "balcony": "Balcony"
   },
   "heatingType": {
     "none": "None",

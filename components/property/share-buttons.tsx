@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link2, Check } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -92,8 +92,11 @@ export function ShareButtons({ url, title, className }: ShareButtonsProps) {
     }
   };
 
-  const canNativeShare =
-    typeof navigator !== "undefined" && Boolean(navigator.share);
+  const [canNativeShare, setCanNativeShare] = useState(false);
+
+  useEffect(() => {
+    setCanNativeShare(Boolean(navigator.share));
+  }, []);
 
   return (
     <TooltipProvider>

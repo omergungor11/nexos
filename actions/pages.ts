@@ -76,7 +76,7 @@ export async function updatePage(
   }
 
   const { data: page, error } = await supabase
-    .from("cms_pages")
+    .from("pages")
     .update({
       title: data.title,
       slug: data.slug,

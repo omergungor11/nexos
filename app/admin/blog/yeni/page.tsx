@@ -22,8 +22,8 @@ export default function AdminBlogNewPage() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Yeni Blog Yazısı</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-foreground">Yeni Blog Yazısı</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Yeni bir blog yazısı oluşturun.
         </p>
       </div>
