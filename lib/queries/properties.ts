@@ -32,10 +32,12 @@ export async function getProperties(filters: PropertyFilters) {
 
   // Transaction type
   if (filters.islem) {
-    query = query.eq(
-      "transaction_type",
-      filters.islem === "satilik" ? "sale" : "rent"
-    );
+    const txMap: Record<string, string> = {
+      satilik: "sale",
+      kiralik: "rent",
+      gunluk: "daily_rental",
+    };
+    query = query.eq("transaction_type", txMap[filters.islem] ?? filters.islem);
   }
 
   // Property type

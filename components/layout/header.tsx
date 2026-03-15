@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { NAV_LINKS } from "@/lib/constants";
+import type { NavItem } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
@@ -44,15 +45,19 @@ export function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.tKey}
-              href={link.href as never}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {t(link.tKey)}
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) =>
+            link.children ? (
+              <DesktopDropdown key={link.tKey} item={link} t={t} />
+            ) : (
+              <Link
+                key={link.tKey}
+                href={link.href as never}
+                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {t(link.tKey)}
+              </Link>
+            )
+          )}
         </nav>
 
         {/* Desktop CTA */}
@@ -96,16 +101,25 @@ export function Header() {
               {/* Floating card */}
               <div className="absolute right-0 top-full z-50 mt-2 w-64 animate-in fade-in slide-in-from-top-2 rounded-2xl border bg-background/95 p-3 shadow-xl backdrop-blur">
                 <nav className="flex flex-col gap-0.5">
-                  {NAV_LINKS.map((link) => (
-                    <Link
-                      key={link.tKey}
-                      href={link.href as never}
-                      onClick={() => setOpen(false)}
-                      className="rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                    >
-                      {t(link.tKey)}
-                    </Link>
-                  ))}
+                  {NAV_LINKS.map((link) =>
+                    link.children ? (
+                      <MobileDropdown
+                        key={link.tKey}
+                        item={link}
+                        t={t}
+                        onClose={() => setOpen(false)}
+                      />
+                    ) : (
+                      <Link
+                        key={link.tKey}
+                        href={link.href as never}
+                        onClick={() => setOpen(false)}
+                        className="rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                      >
+                        {t(link.tKey)}
+                      </Link>
+                    )
+                  )}
                   <HrSeparator className="my-2" />
                   <a
                     href="tel:+905551234567"
@@ -128,6 +142,111 @@ export function Header() {
         </div>
       </div>
     </header>
+  );
+}
+
+/* ─── Desktop Dropdown ──────────────────────────────────────────────────── */
+
+function DesktopDropdown({
+  item,
+  t,
+}: {
+  item: NavItem;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  function handleEnter() {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  }
+
+  function handleLeave() {
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 150);
+  }
+
+  return (
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+    >
+      <button
+        className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {t(item.tKey)}
+        <ChevronDown
+          className={cn(
+            "h-3.5 w-3.5 transition-transform",
+            isOpen && "rotate-180"
+          )}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] animate-in fade-in slide-in-from-top-1 rounded-xl border bg-background/95 p-1.5 shadow-lg backdrop-blur">
+          {item.children!.map((child) => (
+            <Link
+              key={child.tKey}
+              href={child.href as never}
+              onClick={() => setIsOpen(false)}
+              className="block rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              {t(child.tKey)}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Mobile Dropdown (accordion style) ─────────────────────────────────── */
+
+function MobileDropdown({
+  item,
+  t,
+  onClose,
+}: {
+  item: NavItem;
+  t: ReturnType<typeof useTranslations>;
+  onClose: () => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div>
+      <button
+        className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        onClick={() => setExpanded(!expanded)}
+      >
+        {t(item.tKey)}
+        <ChevronDown
+          className={cn(
+            "h-3.5 w-3.5 transition-transform",
+            expanded && "rotate-180"
+          )}
+        />
+      </button>
+      {expanded && (
+        <div className="ml-3 flex flex-col gap-0.5 border-l pl-2">
+          {item.children!.map((child) => (
+            <Link
+              key={child.tKey}
+              href={child.href as never}
+              onClick={onClose}
+              className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              {t(child.tKey)}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -2,6 +2,10 @@
   "nav": {
     "forSale": "فروش",
     "forRent": "اجاره",
+    "listings": "آگهی‌ها",
+    "featured": "ویترین",
+    "corporate": "شرکتی",
+    "dailyRental": "اجاره روزانه",
     "map": "نقشه",
     "services": "خدمات",
     "guide": "راهنما",
@@ -31,7 +35,8 @@
     "noResults": "نتیجه‌ای برای \"{query}\" یافت نشد",
     "viewAll": "مشاهده همه نتایج",
     "searchAll": "جستجوی تمام آگهی‌ها",
-    "searching": "در حال جستجو..."
+    "searching": "در حال جستجو...",
+    "dailyRental": "اجاره روزانه"
   },
   "stats": {
     "activeListings": "آگهی‌های فعال",
@@ -41,7 +46,10 @@
   },
   "featured": {
     "title": "املاک ویژه",
-    "description": "فرصت‌های برجسته املاک و مستغلات"
+    "description": "فرصت‌های برجسته املاک و مستغلات",
+    "pageTitle": "املاک ویژه",
+    "pageDescription": "فرصت‌های برجسته و منتخب املاک و مستغلات را کشف کنید.",
+    "noResults": "در حال حاضر هیچ ملک ویژه‌ای موجود نیست."
   },
   "services": {
     "title": "خدمات ما",
@@ -112,7 +120,8 @@
     "shop": "مغازه",
     "warehouse": "انبار",
     "sale": "فروشی",
-    "rent": "اجاره‌ای"
+    "rent": "اجاره‌ای",
+    "dailyRental": "اجاره روزانه"
   },
   "propertyCategories": {
     "residential": "مسکونی",
@@ -265,6 +274,7 @@
     "allListings": "تمام آگهی‌های ملکی",
     "saleListings": "املاک فروشی",
     "rentListings": "املاک اجاره‌ای",
+    "dailyRentalListings": "اجاره روزانه املاک",
     "filters": "فیلترها",
     "found": "{count} آگهی یافت شد",
     "sortBy": "مرتب‌سازی بر اساس"

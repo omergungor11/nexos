@@ -2,6 +2,10 @@
   "nav": {
     "forSale": "For Sale",
     "forRent": "For Rent",
+    "listings": "Listings",
+    "featured": "Featured",
+    "corporate": "Corporate",
+    "dailyRental": "Daily Rental",
     "map": "Map",
     "services": "Services",
     "guide": "Guide",
@@ -31,7 +35,8 @@
     "noResults": "No results found for \"{query}\"",
     "viewAll": "View all results",
     "searchAll": "Search all listings",
-    "searching": "Searching..."
+    "searching": "Searching...",
+    "dailyRental": "Daily Rental"
   },
   "stats": {
     "activeListings": "Active Listings",
@@ -41,7 +46,10 @@
   },
   "featured": {
     "title": "Featured Properties",
-    "description": "Highlighted real estate opportunities"
+    "description": "Highlighted real estate opportunities",
+    "pageTitle": "Featured Properties",
+    "pageDescription": "Discover our handpicked and featured real estate opportunities.",
+    "noResults": "No featured properties available at the moment."
   },
   "services": {
     "title": "Our Services",
@@ -112,7 +120,8 @@
     "shop": "Shop",
     "warehouse": "Warehouse",
     "sale": "For Sale",
-    "rent": "For Rent"
+    "rent": "For Rent",
+    "dailyRental": "Daily Rental"
   },
   "propertyCategories": {
     "residential": "Residential",
@@ -265,6 +274,7 @@
     "allListings": "All Property Listings",
     "saleListings": "Properties for Sale",
     "rentListings": "Properties for Rent",
+    "dailyRentalListings": "Daily Rental Properties",
     "filters": "Filters",
     "found": "{count} listings found",
     "sortBy": "Sort by"

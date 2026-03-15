@@ -37,6 +37,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
     { value: "", label: t("search.all") },
     { value: "satilik", label: t("search.forSale") },
     { value: "kiralik", label: t("search.forRent") },
+    { value: "gunluk", label: t("search.dailyRental") },
   ];
 
   const [activeTab, setActiveTab] = useState("");

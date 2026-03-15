@@ -55,7 +55,7 @@ export const PROPERTY_TYPES = [
   ...COMMERCIAL_TYPES,
 ] as const;
 
-export const TRANSACTION_TYPES = ["sale", "rent"] as const;
+export const TRANSACTION_TYPES = ["sale", "rent", "daily_rental"] as const;
 
 export const PROPERTY_STATUSES = [
   "available",
@@ -145,6 +145,7 @@ export const CATEGORY_TKEYS: Record<PropertyCategory, string> = {
 export const TRANSACTION_TYPE_TKEYS: Record<string, string> = {
   sale: "property.sale",
   rent: "property.rent",
+  daily_rental: "property.dailyRental",
 };
 
 export const SORT_TKEYS: Record<string, string> = {
@@ -158,16 +159,34 @@ export const SORT_TKEYS: Record<string, string> = {
 };
 
 // Nav links with translation keys
-export const NAV_LINKS = [
-  { href: "/emlak?islem=satilik" as const, tKey: "nav.forSale" },
-  { href: "/emlak?islem=kiralik" as const, tKey: "nav.forRent" },
-  { href: "/harita" as const, tKey: "nav.map" },
-  { href: "/hizmetlerimiz" as const, tKey: "nav.services" },
-  { href: "/blog" as const, tKey: "nav.guide" },
-  { href: "/ekibimiz" as const, tKey: "nav.team" },
-  { href: "/hakkimizda" as const, tKey: "nav.about" },
-  { href: "/sss" as const, tKey: "nav.faq" },
-  { href: "/iletisim" as const, tKey: "nav.contact" },
+export type NavItem = {
+  tKey: string;
+  href?: string;
+  children?: { href: string; tKey: string }[];
+};
+
+export const NAV_LINKS: NavItem[] = [
+  {
+    tKey: "nav.listings",
+    children: [
+      { href: "/emlak?islem=satilik", tKey: "nav.forSale" },
+      { href: "/emlak?islem=kiralik", tKey: "nav.forRent" },
+      { href: "/emlak?islem=gunluk", tKey: "nav.dailyRental" },
+    ],
+  },
+  { href: "/vitrin", tKey: "nav.featured" },
+  { href: "/harita", tKey: "nav.map" },
+  {
+    tKey: "nav.corporate",
+    children: [
+      { href: "/hakkimizda", tKey: "nav.about" },
+      { href: "/ekibimiz", tKey: "nav.team" },
+      { href: "/hizmetlerimiz", tKey: "nav.services" },
+    ],
+  },
+  { href: "/blog", tKey: "nav.guide" },
+  { href: "/sss", tKey: "nav.faq" },
+  { href: "/iletisim", tKey: "nav.contact" },
 ];
 
 // Legacy label accessors for components that don't have translation context (e.g. admin)
@@ -202,6 +221,7 @@ export const PROPERTY_TYPE_LABELS: Record<string, string> = {
 export const TRANSACTION_TYPE_LABELS: Record<string, string> = {
   sale: "Satılık",
   rent: "Kiralık",
+  daily_rental: "Günlük Kiralık",
 };
 
 export const PROPERTY_STATUS_LABELS: Record<string, string> = {

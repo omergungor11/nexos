@@ -2,6 +2,10 @@
   "nav": {
     "forSale": "Kaufen",
     "forRent": "Mieten",
+    "listings": "Immobilien",
+    "featured": "Highlights",
+    "corporate": "Unternehmen",
+    "dailyRental": "Tagesmiete",
     "map": "Karte",
     "services": "Dienstleistungen",
     "guide": "Ratgeber",
@@ -31,7 +35,8 @@
     "noResults": "Keine Ergebnisse für \"{query}\" gefunden",
     "viewAll": "Alle Ergebnisse anzeigen",
     "searchAll": "Alle Inserate durchsuchen",
-    "searching": "Suche läuft..."
+    "searching": "Suche läuft...",
+    "dailyRental": "Tagesmiete"
   },
   "stats": {
     "activeListings": "Aktive Inserate",
@@ -41,7 +46,10 @@
   },
   "featured": {
     "title": "Ausgewählte Immobilien",
-    "description": "Hervorgehobene Immobilienangebote"
+    "description": "Hervorgehobene Immobilienangebote",
+    "pageTitle": "Ausgewählte Immobilien",
+    "pageDescription": "Entdecken Sie unsere handverlesenen und hervorgehobenen Immobilienangebote.",
+    "noResults": "Derzeit sind keine ausgewählten Immobilien verfügbar."
   },
   "services": {
     "title": "Unsere Dienstleistungen",
@@ -112,7 +120,8 @@
     "shop": "Geschäft",
     "warehouse": "Lager",
     "sale": "Zum Verkauf",
-    "rent": "Zur Miete"
+    "rent": "Zur Miete",
+    "dailyRental": "Tagesmiete"
   },
   "propertyCategories": {
     "residential": "Wohnimmobilien",
@@ -265,6 +274,7 @@
     "allListings": "Alle Immobilieninserate",
     "saleListings": "Immobilien zum Verkauf",
     "rentListings": "Immobilien zur Miete",
+    "dailyRentalListings": "Tagesmiete Immobilien",
     "filters": "Filter",
     "found": "{count} Inserate gefunden",
     "sortBy": "Sortieren nach"

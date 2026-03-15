@@ -204,12 +204,13 @@ export function FilterPanel({ cities = [] }: FilterPanelProps) {
 
   return (
     <div className="space-y-5">
-      {/* Transaction Type - 3 Buttons (Tümü, Satılık, Kiralık) */}
-      <div className="flex gap-1.5">
+      {/* Transaction Type Buttons */}
+      <div className="flex flex-wrap gap-1.5">
         {[
           { value: "", tKey: "filter.all" },
           { value: "satilik", tKey: "property.sale" },
           { value: "kiralik", tKey: "property.rent" },
+          { value: "gunluk", tKey: "property.dailyRental" },
         ].map((opt) => {
           const isActive =
             opt.value === ""

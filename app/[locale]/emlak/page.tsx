@@ -49,6 +49,8 @@ export default async function EmlakPage({ params, searchParams }: Props) {
     pageTitle = t("listing.saleListings");
   } else if (filters.islem === "kiralik") {
     pageTitle = t("listing.rentListings");
+  } else if (filters.islem === "gunluk") {
+    pageTitle = t("listing.dailyRentalListings");
   } else {
     pageTitle = t("listing.allListings");
   }

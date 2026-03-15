@@ -2,6 +2,10 @@
   "nav": {
     "forSale": "Satılık",
     "forRent": "Kiralık",
+    "listings": "İlanlar",
+    "featured": "Vitrin",
+    "corporate": "Kurumsal",
+    "dailyRental": "Günlük Kiralık",
     "map": "Harita",
     "services": "Hizmetlerimiz",
     "guide": "Rehber",
@@ -31,7 +35,8 @@
     "noResults": "\"{query}\" için sonuç bulunamadı",
     "viewAll": "Tüm sonuçları gör",
     "searchAll": "Tüm ilanlarda ara",
-    "searching": "Aranıyor..."
+    "searching": "Aranıyor...",
+    "dailyRental": "Günlük Kiralık"
   },
   "stats": {
     "activeListings": "Aktif İlan",
@@ -41,7 +46,10 @@
   },
   "featured": {
     "title": "Vitrin İlanlar",
-    "description": "Öne çıkan gayrimenkul fırsatları"
+    "description": "Öne çıkan gayrimenkul fırsatları",
+    "pageTitle": "Vitrin İlanlar",
+    "pageDescription": "Öne çıkan ve seçili gayrimenkul fırsatlarını keşfedin.",
+    "noResults": "Henüz vitrin ilanı bulunmamaktadır."
   },
   "services": {
     "title": "Hizmetlerimiz",
@@ -112,7 +120,8 @@
     "shop": "Dükkan",
     "warehouse": "Depo",
     "sale": "Satılık",
-    "rent": "Kiralık"
+    "rent": "Kiralık",
+    "dailyRental": "Günlük Kiralık"
   },
   "propertyCategories": {
     "residential": "Konut",
@@ -265,6 +274,7 @@
     "allListings": "Tüm Emlak İlanları",
     "saleListings": "Satılık Emlak İlanları",
     "rentListings": "Kiralık Emlak İlanları",
+    "dailyRentalListings": "Günlük Kiralık Emlak İlanları",
     "filters": "Filtreler",
     "found": "{count} ilan bulundu",
     "sortBy": "Sırala"
