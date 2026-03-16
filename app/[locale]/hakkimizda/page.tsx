@@ -440,7 +440,7 @@ export default async function HakkimizdaPage({ params }: Props) {
               {t("cta.consultButton")}
             </Link>
             <a
-              href="https://wa.me/905551234567"
+              href="https://wa.me/905428806456"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex h-11 items-center rounded-lg border border-white/20 px-8 text-sm font-medium text-white transition-colors hover:bg-white/10"

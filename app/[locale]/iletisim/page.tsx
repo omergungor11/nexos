@@ -24,13 +24,14 @@ const contactJsonLd: Record<string, unknown> = {
     "Nexos Emlak — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "İskele Merkez",
-    addressLocality: "İskele",
+    streetAddress: "Yeniboğaziçi Gazimagusa-Karpaz Anayolu, Piri Reis. Sok. No. 1",
+    addressLocality: "Yeniboğaziçi, Gazimagusa",
     addressRegion: "Kuzey Kıbrıs",
+    postalCode: "5876",
     addressCountry: "CY",
   },
-  telephone: "+905551234567",
-  email: "info@nexos.com.tr",
+  telephone: "+905428806456",
+  email: "nexosinvestmentcy@gmail.com",
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
@@ -74,10 +75,10 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
               <div>
                 <p className="text-sm font-medium">{t("phone")}</p>
                 <a
-                  href="tel:+905551234567"
+                  href="tel:+905428806456"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  0555 123 45 67
+                  +90 542 880 64 56
                 </a>
               </div>
             </CardContent>
@@ -91,10 +92,10 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
               <div>
                 <p className="text-sm font-medium">{t("email")}</p>
                 <a
-                  href="mailto:info@nexos.com.tr"
+                  href="mailto:nexosinvestmentcy@gmail.com"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  info@nexos.com.tr
+                  nexosinvestmentcy@gmail.com
                 </a>
               </div>
             </CardContent>

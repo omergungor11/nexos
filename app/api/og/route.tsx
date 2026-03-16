@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
             fontSize: "16px",
           }}
         >
-          <span>nexos.com.tr</span>
+          <span>nexosinvestment.com</span>
         </div>
       </div>
     ),

@@ -63,13 +63,14 @@ const localBusinessJsonLd: Record<string, unknown> = {
     "Nexos Emlak — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "İskele Merkez",
-    addressLocality: "İskele",
+    streetAddress: "Yeniboğaziçi Gazimagusa-Karpaz Anayolu, Piri Reis. Sok. No. 1",
+    addressLocality: "Yeniboğaziçi, Gazimagusa",
     addressRegion: "Kuzey Kıbrıs",
+    postalCode: "5876",
     addressCountry: "CY",
   },
-  telephone: "+905551234567",
-  email: "info@nexos.com.tr",
+  telephone: "+905428806456",
+  email: "nexosinvestmentcy@gmail.com",
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",

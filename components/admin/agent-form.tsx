@@ -186,7 +186,7 @@ export function AgentForm({ mode, agent }: AgentFormProps) {
           type="email"
           value={form.email}
           onChange={handleChange}
-          placeholder="ahmet@nexos.com.tr"
+          placeholder="ahmet@nexosinvestment.com"
           aria-invalid={!!errors.email}
         />
         {errors.email && (
@@ -202,7 +202,7 @@ export function AgentForm({ mode, agent }: AgentFormProps) {
           type="url"
           value={form.photo_url}
           onChange={handleChange}
-          placeholder="https://cdn.nexos.com.tr/photos/ahmet.jpg"
+          placeholder="https://cdn.nexosinvestment.com/photos/ahmet.jpg"
           aria-invalid={!!errors.photo_url}
         />
         {errors.photo_url && (
