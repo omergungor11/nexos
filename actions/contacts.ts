@@ -170,3 +170,29 @@ export async function updateContactAssignment(
   void logAdminAction({ action: "assign_agent", entityType: "contact_request", entityId: id, metadata: { agent_id: agentId } });
   return { data: { id } };
 }
+
+// ---------------------------------------------------------------------------
+// deleteContactRequest
+// ---------------------------------------------------------------------------
+
+export async function deleteContactRequest(
+  id: string
+): Promise<ActionResult<{ id: string }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const { error } = await supabase
+    .from("contact_requests")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("contacts", {});
+  void logAdminAction({ action: "delete", entityType: "contact_request", entityId: id });
+  return { data: { id } };
+}

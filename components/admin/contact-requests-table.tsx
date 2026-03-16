@@ -3,7 +3,7 @@
 import { useState, useTransition, useMemo } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { DownloadIcon } from "lucide-react";
+import { DownloadIcon, Trash2Icon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { Textarea } from "@/components/ui/textarea";
-import { updateContactStatus, updateContactAssignment } from "@/actions/contacts";
+import { updateContactStatus, updateContactAssignment, deleteContactRequest } from "@/actions/contacts";
 import type { ContactRequestRow, AgentOption } from "@/app/admin/talepler/page";
 
 // ---------------------------------------------------------------------------
@@ -121,6 +121,7 @@ function DetailDialog({
   onClose,
   onStatusChange,
   onAssignmentChange,
+  onDelete,
   agents,
 }: {
   row: ContactRequestRow;
@@ -128,6 +129,7 @@ function DetailDialog({
   onClose: () => void;
   onStatusChange: (id: string, status: string) => void;
   onAssignmentChange: (id: string, agentId: string | null, notes: string | null) => void;
+  onDelete: (id: string) => void;
   agents: AgentOption[];
 }) {
   const [, startTransition] = useTransition();
@@ -320,7 +322,20 @@ function DetailDialog({
           </div>
         </div>
 
-        <div className="flex justify-end pt-2">
+        <div className="flex items-center justify-between pt-2">
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => {
+              if (confirm("Bu talep silinecek. Emin misiniz?")) {
+                onDelete(row.id);
+                onClose();
+              }
+            }}
+          >
+            <Trash2Icon className="size-3.5" />
+            Talebi Sil
+          </Button>
           <DialogClose render={<Button variant="outline" />}>
             Kapat
           </DialogClose>
@@ -342,6 +357,7 @@ export function ContactRequestsTable({
   agents?: AgentOption[];
 }) {
   const [rows, setRows] = useState<ContactRequestRow[]>(initialData);
+  const [, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("all");
   const [agentFilter, setAgentFilter] = useState<string>("all");
   const [selectedRow, setSelectedRow] = useState<ContactRequestRow | null>(
@@ -362,6 +378,19 @@ export function ContactRequestsTable({
     }
     return result;
   }, [rows, activeTab, agentFilter]);
+
+  function handleDelete(id: string) {
+    startTransition(async () => {
+      const result = await deleteContactRequest(id);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setRows((prev) => prev.filter((r) => r.id !== id));
+        setSelectedRow(null);
+        toast.success("Talep silindi.");
+      }
+    });
+  }
 
   function handleStatusChange(id: string, status: string) {
     setRows((prev) =>
@@ -547,6 +576,7 @@ export function ContactRequestsTable({
           onClose={() => setSelectedRow(null)}
           onStatusChange={handleStatusChange}
           onAssignmentChange={handleAssignmentChange}
+          onDelete={handleDelete}
           agents={agents}
         />
       )}
