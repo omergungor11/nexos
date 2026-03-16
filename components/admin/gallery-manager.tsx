@@ -13,6 +13,7 @@ import {
   ImageIcon,
   Calendar,
   ExternalLink,
+  Search,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -145,13 +146,15 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
   const [images, setImages] = useState(initialImages);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [propertyFilter, setPropertyFilter] = useState("all");
-  const [recentFilter, setRecentFilter] = useState("all");
+  const [recentFilter, setRecentFilter] = useState("10");
+  const [search, setSearch] = useState("");
   const [detailImage, setDetailImage] = useState<GalleryImage | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [visibleCount, setVisibleCount] = useState(60);
 
   // Get unique property IDs ordered by most recent image
   const recentPropertyIds = useMemo(() => {
-    const seen = new Map<string, string>(); // propertyId -> latest created_at
+    const seen = new Map<string, string>();
     for (const img of images) {
       const existing = seen.get(img.property_id);
       if (!existing || img.created_at > existing) {
@@ -166,6 +169,16 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
   const filtered = useMemo(() => {
     let result = images;
 
+    // Search filter — matches property title
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (img) =>
+          img.property_title.toLowerCase().includes(q) ||
+          img.alt_text?.toLowerCase().includes(q)
+      );
+    }
+
     // Property filter
     if (propertyFilter !== "all") {
       result = result.filter((img) => img.property_id === propertyFilter);
@@ -179,7 +192,7 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
     }
 
     return result;
-  }, [images, propertyFilter, recentFilter, recentPropertyIds]);
+  }, [images, propertyFilter, recentFilter, search, recentPropertyIds]);
 
   // Group images by property
   const grouped = useMemo(() => {
@@ -238,42 +251,71 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
     return properties.filter((p) => ids.has(p.id));
   }, [images, properties]);
 
+  // Reset visible count when filters change
+  const filteredGroupCount = grouped.length;
+
   return (
     <div className="space-y-4">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Filter className="size-4 text-muted-foreground" />
-          <Select value={propertyFilter} onValueChange={(v) => setPropertyFilter(v ?? "all")}>
-            <SelectTrigger className="h-8 w-64">
-              <SelectValue placeholder="Tüm İlanlar" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tüm İlanlar ({images.length} görsel)</SelectItem>
-              {propertyOptions.map((p) => {
-                const count = images.filter((img) => img.property_id === p.id).length;
-                return (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.title} ({count})
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-
-          <Select value={recentFilter} onValueChange={(v) => setRecentFilter(v ?? "all")}>
-            <SelectTrigger className="h-8 w-40">
-              <SelectValue placeholder="Tümü" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tüm İlanlar</SelectItem>
-              <SelectItem value="5">Son 5 İlan</SelectItem>
-              <SelectItem value="10">Son 10 İlan</SelectItem>
-              <SelectItem value="20">Son 20 İlan</SelectItem>
-              <SelectItem value="50">Son 50 İlan</SelectItem>
-            </SelectContent>
-          </Select>
+      {/* Toolbar Row 1: Search + Filters */}
+      <div className="flex flex-wrap items-center gap-3">
+        {/* Search */}
+        <div className="relative flex-1 sm:max-w-xs">
+          <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setVisibleCount(60); }}
+            placeholder="İlan adı ile ara..."
+            className="flex h-8 w-full rounded-md border border-input bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          />
         </div>
+
+        {/* Property dropdown */}
+        <Select value={propertyFilter} onValueChange={(v) => { setPropertyFilter(v ?? "all"); setVisibleCount(60); }}>
+          <SelectTrigger className="h-8 w-56">
+            <SelectValue placeholder="Tüm İlanlar">
+              {propertyFilter === "all"
+                ? `Tüm İlanlar (${images.length})`
+                : propertyOptions.find((p) => p.id === propertyFilter)?.title ?? "Seçiniz"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tüm İlanlar ({images.length} görsel)</SelectItem>
+            {propertyOptions.map((p) => {
+              const count = images.filter((img) => img.property_id === p.id).length;
+              return (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.title} ({count})
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
+
+        {/* Recent filter */}
+        <Select value={recentFilter} onValueChange={(v) => { setRecentFilter(v ?? "all"); setVisibleCount(60); }}>
+          <SelectTrigger className="h-8 w-36">
+            <SelectValue>
+              {recentFilter === "all" ? "Tümü" : `Son ${recentFilter} İlan`}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tümü</SelectItem>
+            <SelectItem value="5">Son 5 İlan</SelectItem>
+            <SelectItem value="10">Son 10 İlan</SelectItem>
+            <SelectItem value="20">Son 20 İlan</SelectItem>
+            <SelectItem value="50">Son 50 İlan</SelectItem>
+            <SelectItem value="100">Son 100 İlan</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Toolbar Row 2: Selection + Info */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">
+          {filtered.length} görsel — {filteredGroupCount} ilan
+          {search && ` ("${search}" araması)`}
+        </p>
 
         <div className="flex items-center gap-2">
           <Button
@@ -308,12 +350,12 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
           <ImageIcon className="size-10 text-muted-foreground/40" />
           <p className="mt-3 font-medium text-muted-foreground">
-            Henüz görsel yüklenmemiş
+            {search ? `"${search}" ile eşleşen görsel bulunamadı` : "Henüz görsel yüklenmemiş"}
           </p>
         </div>
       ) : (
         <div className="space-y-8">
-          {grouped.map((group) => (
+          {grouped.slice(0, visibleCount).map((group) => (
             <div key={group.propertyId}>
               {/* Property header */}
               <div className="mb-3 flex items-center justify-between">
@@ -397,6 +439,18 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Load more */}
+      {grouped.length > visibleCount && (
+        <div className="text-center">
+          <Button
+            variant="outline"
+            onClick={() => setVisibleCount((v) => v + 30)}
+          >
+            Daha Fazla Göster ({grouped.length - visibleCount} ilan kaldı)
+          </Button>
         </div>
       )}
 
