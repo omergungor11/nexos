@@ -56,7 +56,13 @@ export type HeatingType =
   | "coal"
   | "air_condition";
 
-export type Currency = "TRY" | "USD" | "EUR";
+export type Currency = "TRY" | "USD" | "EUR" | "GBP";
+
+export type PoolType = "none" | "private" | "shared";
+
+export type ParkingType = "none" | "open" | "closed" | "both";
+
+export type TitleDeedType = "esdeger" | "tahsis" | "turk" | "gazi" | "yabanci" | "other";
 
 export type FeatureCategory =
   | "interior"
@@ -79,6 +85,8 @@ export interface City {
   name: string;
   slug: string;
   plate_code: number | null;
+  lat: number | null;
+  lng: number | null;
   is_active: boolean;
   created_at: string;
 }
@@ -88,6 +96,8 @@ export interface District {
   city_id: number;
   name: string;
   slug: string;
+  lat: number | null;
+  lng: number | null;
   is_active: boolean;
   created_at: string;
 }
@@ -155,12 +165,16 @@ export interface Property {
   year_built: number | null;
   heating_type: HeatingType;
   parking: boolean | null;
+  parking_type: ParkingType | null;
   furnished: boolean | null;
   balcony_count: number;
   elevator: boolean | null;
   pool: boolean | null;
+  pool_type: PoolType | null;
   garden: boolean | null;
   security_24_7: boolean | null;
+  land_area_sqm: number | null;
+  title_deed_type: TitleDeedType | null;
   lat: number | null;
   lng: number | null;
   address: string | null;

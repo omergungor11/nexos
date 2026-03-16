@@ -79,6 +79,29 @@ export const CURRENCY_SYMBOLS: Record<string, string> = {
   TRY: "₺",
   USD: "$",
   EUR: "€",
+  GBP: "£",
+};
+
+export const POOL_TYPE_LABELS: Record<string, string> = {
+  none: "Yok",
+  private: "Özel Havuz",
+  shared: "Ortak Havuz",
+};
+
+export const PARKING_TYPE_LABELS: Record<string, string> = {
+  none: "Yok",
+  open: "Açık Otopark",
+  closed: "Kapalı Otopark",
+  both: "Açık + Kapalı Otopark",
+};
+
+export const TITLE_DEED_LABELS: Record<string, string> = {
+  esdeger: "Eşdeğer Koçan",
+  tahsis: "Tahsis Koçan",
+  turk: "Türk Koçanı",
+  gazi: "Gazi Koçanı",
+  yabanci: "Yabancı Koçanı",
+  other: "Diğer",
 };
 
 export const ROOM_OPTIONS = [

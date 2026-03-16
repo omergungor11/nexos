@@ -11,8 +11,8 @@ const PROPERTY_LIST_SELECT = `
 
 const PROPERTY_DETAIL_SELECT = `
   *,
-  city:cities(id, name, slug),
-  district:districts(id, name, slug),
+  city:cities(id, name, slug, lat, lng),
+  district:districts(id, name, slug, lat, lng),
   neighborhood:neighborhoods(id, name, slug),
   agent:agents(id, name, title, slug, phone, email, photo_url),
   images:property_images(id, url, alt_text, sort_order, is_cover),

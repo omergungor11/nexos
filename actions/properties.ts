@@ -14,7 +14,7 @@ export type PropertyCreateInput = {
   title: string;
   description?: string;
   price: number;
-  currency?: "TRY" | "USD" | "EUR";
+  currency?: "TRY" | "USD" | "EUR" | "GBP";
   type: string;
   transaction_type: string;
   area_sqm?: number;
@@ -31,8 +31,12 @@ export type PropertyCreateInput = {
   balcony_count?: number;
   elevator?: boolean;
   pool?: boolean;
+  pool_type?: string;
   garden?: boolean;
   security_24_7?: boolean;
+  land_area_sqm?: number;
+  title_deed_type?: string | null;
+  parking_type?: string;
   lat?: number;
   lng?: number;
   address?: string;
@@ -192,8 +196,12 @@ export async function createProperty(
     balcony_count: data.balcony_count ?? 0,
     elevator: data.elevator ?? null,
     pool: data.pool ?? null,
+    pool_type: data.pool_type ?? "none",
     garden: data.garden ?? null,
     security_24_7: data.security_24_7 ?? null,
+    land_area_sqm: data.land_area_sqm ?? null,
+    title_deed_type: data.title_deed_type ?? null,
+    parking_type: data.parking_type ?? "none",
     lat: data.lat ?? null,
     lng: data.lng ?? null,
     address: data.address ?? null,
@@ -270,9 +278,13 @@ export async function updateProperty(
     payload.balcony_count = data.balcony_count;
   if (data.elevator !== undefined) payload.elevator = data.elevator;
   if (data.pool !== undefined) payload.pool = data.pool;
+  if (data.pool_type !== undefined) payload.pool_type = data.pool_type;
   if (data.garden !== undefined) payload.garden = data.garden;
   if (data.security_24_7 !== undefined)
     payload.security_24_7 = data.security_24_7;
+  if (data.land_area_sqm !== undefined) payload.land_area_sqm = data.land_area_sqm;
+  if (data.title_deed_type !== undefined) payload.title_deed_type = data.title_deed_type;
+  if (data.parking_type !== undefined) payload.parking_type = data.parking_type;
   if (data.lat !== undefined) payload.lat = data.lat;
   if (data.lng !== undefined) payload.lng = data.lng;
   if (data.address !== undefined) payload.address = data.address;

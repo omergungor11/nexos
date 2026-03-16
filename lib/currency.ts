@@ -2,6 +2,7 @@ const EXCHANGE_RATES: Record<string, number> = {
   TRY: 1,
   USD: parseFloat(process.env.EXCHANGE_RATE_USD ?? "0.028"),
   EUR: parseFloat(process.env.EXCHANGE_RATE_EUR ?? "0.026"),
+  GBP: parseFloat(process.env.EXCHANGE_RATE_GBP ?? "0.022"),
 };
 
 /**
@@ -19,6 +20,7 @@ const CURRENCY_CODE_MAP: Record<string, string> = {
   TRY: "TRY",
   USD: "USD",
   EUR: "EUR",
+  GBP: "GBP",
 };
 
 /**

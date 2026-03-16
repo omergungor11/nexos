@@ -37,7 +37,7 @@ export type HeatingTypeEnum =
   | "coal"
   | "air_condition";
 
-export type CurrencyEnum = "TRY" | "USD" | "EUR";
+export type CurrencyEnum = "TRY" | "USD" | "EUR" | "GBP";
 
 export type FeatureCategoryEnum =
   | "interior"
@@ -64,6 +64,8 @@ export type Database = {
           name: string;
           slug: string;
           plate_code: number | null;
+          lat: number | null;
+          lng: number | null;
           is_active: boolean;
           created_at: string;
         };
@@ -72,6 +74,8 @@ export type Database = {
           name: string;
           slug: string;
           plate_code?: number | null;
+          lat?: number | null;
+          lng?: number | null;
           is_active?: boolean;
           created_at?: string;
         };
@@ -80,6 +84,8 @@ export type Database = {
           name?: string;
           slug?: string;
           plate_code?: number | null;
+          lat?: number | null;
+          lng?: number | null;
           is_active?: boolean;
           created_at?: string;
         };
@@ -94,6 +100,8 @@ export type Database = {
           city_id: number;
           name: string;
           slug: string;
+          lat: number | null;
+          lng: number | null;
           is_active: boolean;
           created_at: string;
         };
@@ -102,6 +110,8 @@ export type Database = {
           city_id: number;
           name: string;
           slug: string;
+          lat?: number | null;
+          lng?: number | null;
           is_active?: boolean;
           created_at?: string;
         };
@@ -110,6 +120,8 @@ export type Database = {
           city_id?: number;
           name?: string;
           slug?: string;
+          lat?: number | null;
+          lng?: number | null;
           is_active?: boolean;
           created_at?: string;
         };
@@ -247,12 +259,16 @@ export type Database = {
           year_built: number | null;
           heating_type: HeatingTypeEnum;
           parking: boolean | null;
+          parking_type: string | null;
           furnished: boolean | null;
           balcony_count: number;
           elevator: boolean | null;
           pool: boolean | null;
+          pool_type: string | null;
           garden: boolean | null;
           security_24_7: boolean | null;
+          land_area_sqm: number | null;
+          title_deed_type: string | null;
           lat: number | null;
           lng: number | null;
           address: string | null;
@@ -288,12 +304,16 @@ export type Database = {
           year_built?: number | null;
           heating_type?: HeatingTypeEnum;
           parking?: boolean | null;
+          parking_type?: string | null;
           furnished?: boolean | null;
           balcony_count?: number;
           elevator?: boolean | null;
           pool?: boolean | null;
+          pool_type?: string | null;
           garden?: boolean | null;
           security_24_7?: boolean | null;
+          land_area_sqm?: number | null;
+          title_deed_type?: string | null;
           lat?: number | null;
           lng?: number | null;
           address?: string | null;
@@ -329,12 +349,16 @@ export type Database = {
           year_built?: number | null;
           heating_type?: HeatingTypeEnum;
           parking?: boolean | null;
+          parking_type?: string | null;
           furnished?: boolean | null;
           balcony_count?: number;
           elevator?: boolean | null;
           pool?: boolean | null;
+          pool_type?: string | null;
           garden?: boolean | null;
           security_24_7?: boolean | null;
+          land_area_sqm?: number | null;
+          title_deed_type?: string | null;
           lat?: number | null;
           lng?: number | null;
           address?: string | null;

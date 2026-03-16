@@ -330,6 +330,10 @@ export default async function PropertyDetailPage({ params }: Props) {
               lng={property.lng}
               title={property.title}
               address={property.address}
+              cityLat={property.city?.lat}
+              cityLng={property.city?.lng}
+              districtLat={property.district?.lat}
+              districtLng={property.district?.lng}
             />
           </div>
 
