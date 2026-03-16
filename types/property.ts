@@ -11,7 +11,7 @@
 // means TypeScript treats them as the same type (structural compatibility).
 // ---------------------------------------------------------------------------
 
-export type TransactionType = "sale" | "rent";
+export type TransactionType = "sale" | "rent" | "daily_rental";
 
 export type PropertyType =
   // Konut (Residential)

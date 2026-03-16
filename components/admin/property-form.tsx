@@ -165,6 +165,7 @@ type FormErrors = Partial<Record<keyof FormState, string>>;
 const TRANSACTION_TYPE_LABELS: Record<TransactionType, string> = {
   sale: "Satılık",
   rent: "Kiralık",
+  daily_rental: "Günlük Kiralık",
 };
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
