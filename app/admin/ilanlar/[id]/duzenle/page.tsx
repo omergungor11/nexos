@@ -166,8 +166,12 @@ export default async function AdminPropertyEditPage({ params }: Props) {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-foreground">İlan Düzenle</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{property.title}</p>
+        <h1 className="text-2xl font-bold text-foreground">
+          {property.title === "Taslak İlan" ? "Yeni İlan Oluştur" : "İlan Düzenle"}
+        </h1>
+        {property.title !== "Taslak İlan" && (
+          <p className="mt-1 text-sm text-muted-foreground">{property.title}</p>
+        )}
       </div>
 
       {/* Property form */}

@@ -914,21 +914,13 @@ export function PropertyForm({
         {/* ----------------------------------------------------------------- */}
         <TabsContent value="medya" className="mt-6 space-y-6">
           {/* Image Manager — only available when editing (needs propertyId) */}
-          {mediaSlot ? (
+          {mediaSlot && (
             <div>
               <h3 className="mb-1 text-sm font-semibold">Görseller</h3>
               <p className="mb-4 text-sm text-muted-foreground">
                 JPEG, PNG veya WebP formatında, maksimum 5 MB.
               </p>
               {mediaSlot}
-            </div>
-          ) : (
-            <div className="rounded-lg border border-dashed p-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                Görseller eklemek için önce ilanı kaydedin.
-                <br />
-                Kaydettikten sonra düzenleme sayfasından görsel yükleyebilirsiniz.
-              </p>
             </div>
           )}
 

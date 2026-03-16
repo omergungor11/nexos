@@ -157,6 +157,48 @@ async function requireAdmin(): Promise<AdminCheckResult> {
 }
 
 // ---------------------------------------------------------------------------
+// createDraftProperty
+// ---------------------------------------------------------------------------
+
+/**
+ * Creates a minimal draft property so that images can be uploaded immediately.
+ * Returns the new property's ID for redirect to the edit page.
+ */
+export async function createDraftProperty(
+  cityId: number
+): Promise<ActionResult<{ id: string }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const slug = await generateUniqueSlug(supabase, "taslak-ilan");
+
+  const payload: TablesInsert<"properties"> = {
+    title: "Taslak İlan",
+    slug,
+    price: 0,
+    city_id: cityId,
+    type: "apartment" as TablesInsert<"properties">["type"],
+    transaction_type: "sale" as TablesInsert<"properties">["transaction_type"],
+    is_active: false,
+    status: "available" as TablesInsert<"properties">["status"],
+  };
+
+  const { data: property, error } = await supabase
+    .from("properties")
+    .insert(payload)
+    .select("id")
+    .single();
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { data: { id: property.id } };
+}
+
+// ---------------------------------------------------------------------------
 // createProperty
 // ---------------------------------------------------------------------------
 

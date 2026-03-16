@@ -1,72 +1,30 @@
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
 
+import { createDraftProperty } from "@/actions/properties";
 import { getCities } from "@/lib/queries/locations";
-import { getFeaturesByCategory } from "@/lib/queries/features";
-import { getAgents } from "@/lib/queries/content";
-import { PropertyForm } from "@/components/admin/property-form";
 
 export const metadata: Metadata = {
   title: "Yeni İlan Oluştur — Admin",
 };
 
 export default async function AdminPropertyNewPage() {
-  const [cities, featuresByCategory, agentsResult] = await Promise.all([
-    getCities(),
-    getFeaturesByCategory(),
-    getAgents(),
-  ]);
+  // Get the first active city as a default
+  const cities = await getCities();
+  const defaultCityId = cities[0]?.id ?? 1;
 
-  // Normalise featuresByCategory to the shape PropertyForm expects
-  const normalisedFeatures: Record<
-    string,
-    Array<{ id: number; name: string; icon: string | null }>
-  > = {};
+  // Create a draft property and redirect to its edit page
+  const result = await createDraftProperty(defaultCityId);
 
-  for (const [cat, features] of Object.entries(featuresByCategory)) {
-    normalisedFeatures[cat] = features.map((f) => ({
-      id: f.id,
-      name: f.name,
-      icon: f.icon,
-    }));
-  }
-
-  const cityOptions = cities.map((c) => ({
-    id: c.id,
-    name: c.name,
-    slug: c.slug,
-  }));
-
-  return (
-    <div className="space-y-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-3">
-        <Link
-          href="/admin/ilanlar"
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ChevronLeft className="size-4" />
-          İlanlar
-        </Link>
-      </div>
-
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Yeni İlan Oluştur</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Formu doldurun ve oluştur butonuna tıklayın.
+  if (result.error || !result.data) {
+    return (
+      <div className="flex min-h-[300px] items-center justify-center">
+        <p className="text-sm text-destructive">
+          Taslak ilan oluşturulamadı: {result.error ?? "Bilinmeyen hata"}
         </p>
       </div>
+    );
+  }
 
-      <PropertyForm
-        cities={cityOptions}
-        featuresByCategory={normalisedFeatures}
-        agents={(agentsResult.data ?? []).map((a) => ({
-          id: a.id,
-          name: a.name,
-          title: a.title,
-        }))}
-      />
-    </div>
-  );
+  redirect(`/admin/ilanlar/${result.data.id}/duzenle`);
 }
