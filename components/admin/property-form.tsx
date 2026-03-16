@@ -467,6 +467,7 @@ export function PropertyForm({
 }: PropertyFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState("temel");
   const isEditMode = !!propertyId;
 
   const [form, setForm] = useState<FormState>(() =>
@@ -639,7 +640,48 @@ export function PropertyForm({
     }
 
     setErrors(next);
+
+    // Auto-switch to the first tab with errors
+    if (Object.keys(next).length > 0) {
+      const firstErrorField = Object.keys(next)[0] as keyof FormState;
+      const tab = FIELD_TAB_MAP[firstErrorField];
+      if (tab) {
+        setActiveTab(tab);
+      }
+    }
+
     return Object.keys(next).length === 0;
+  }
+
+  // Map form fields to their tab for error highlighting
+  const FIELD_TAB_MAP: Partial<Record<keyof FormState, string>> = {
+    title: "temel",
+    description: "temel",
+    transaction_type: "temel",
+    category: "temel",
+    property_type: "temel",
+    status: "temel",
+    agent_id: "temel",
+    price: "fiyat",
+    currency: "fiyat",
+    area_sqm: "fiyat",
+    gross_area_sqm: "fiyat",
+    rooms: "fiyat",
+    city_id: "konum",
+    district_id: "konum",
+    neighborhood_id: "konum",
+    address: "konum",
+    lat: "konum",
+    lng: "konum",
+    seo_title: "seo",
+    seo_description: "seo",
+  };
+
+  // Compute which tabs have errors
+  const tabsWithErrors = new Set<string>();
+  for (const field of Object.keys(errors) as (keyof FormState)[]) {
+    const tab = FIELD_TAB_MAP[field];
+    if (tab) tabsWithErrors.add(tab);
   }
 
   // ---------------------------------------------------------------------------
@@ -738,15 +780,28 @@ export function PropertyForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <Tabs defaultValue="temel">
+      <Tabs value={activeTab} onValueChange={(v) => v && setActiveTab(v)}>
         <TabsList className="h-auto flex-wrap gap-1">
-          <TabsTrigger value="temel">Temel Bilgiler</TabsTrigger>
-          <TabsTrigger value="medya">Medya</TabsTrigger>
-          <TabsTrigger value="fiyat">Fiyat & Özellikler</TabsTrigger>
-          <TabsTrigger value="konum">Konum</TabsTrigger>
-          <TabsTrigger value="one-cikan">Öne Çıkan</TabsTrigger>
-          <TabsTrigger value="detay">Detay Özellikleri</TabsTrigger>
-          <TabsTrigger value="seo">SEO</TabsTrigger>
+          {[
+            { value: "temel", label: "Temel Bilgiler" },
+            { value: "medya", label: "Medya" },
+            { value: "fiyat", label: "Fiyat & Özellikler" },
+            { value: "konum", label: "Konum" },
+            { value: "one-cikan", label: "Öne Çıkan" },
+            { value: "detay", label: "Detay Özellikleri" },
+            { value: "seo", label: "SEO" },
+          ].map((tab) => (
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              className={tabsWithErrors.has(tab.value) ? "text-destructive data-[state=active]:text-destructive" : ""}
+            >
+              {tab.label}
+              {tabsWithErrors.has(tab.value) && (
+                <span className="ml-1 text-destructive">*</span>
+              )}
+            </TabsTrigger>
+          ))}
           {analyticsSlot && <TabsTrigger value="analiz">Analiz</TabsTrigger>}
         </TabsList>
 
