@@ -45,6 +45,7 @@ export type PropertyCreateInput = {
   neighborhood_id?: number;
   agent_id?: string | null;
   is_featured?: boolean;
+  is_active?: boolean;
   seo_title?: string;
   seo_description?: string;
   video_url?: string;
@@ -340,6 +341,7 @@ export async function updateProperty(
     payload.neighborhood_id = data.neighborhood_id;
   if (data.agent_id !== undefined) payload.agent_id = data.agent_id ?? null;
   if (data.is_featured !== undefined) payload.is_featured = data.is_featured;
+  if (data.is_active !== undefined) payload.is_active = data.is_active;
   if (data.seo_title !== undefined) payload.seo_title = data.seo_title;
   if (data.seo_description !== undefined)
     payload.seo_description = data.seo_description;

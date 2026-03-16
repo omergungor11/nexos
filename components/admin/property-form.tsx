@@ -293,7 +293,6 @@ const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
   exterior: "Dış Mekan",
   building: "Bina",
   neighborhood: "Çevre",
-  accessibility: "Erişilebilirlik",
 };
 
 // ---------------------------------------------------------------------------
@@ -712,11 +711,11 @@ export function PropertyForm({
 
     startTransition(async () => {
       if (isEditMode && propertyId) {
-        const result = await updateProperty(propertyId, payload);
+        const result = await updateProperty(propertyId, { ...payload, is_active: true });
         if (result.error) {
           toast.error(result.error);
         } else {
-          toast.success("İlan güncellendi.");
+          toast.success("İlan kaydedildi.");
           router.push("/admin/ilanlar");
         }
       } else {

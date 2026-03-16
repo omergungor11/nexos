@@ -68,8 +68,7 @@ export type FeatureCategory =
   | "interior"
   | "exterior"
   | "building"
-  | "neighborhood"
-  | "accessibility";
+  | "neighborhood";
 
 export type ContactStatus = "new" | "in_progress" | "resolved" | "spam";
 

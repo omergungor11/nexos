@@ -43,8 +43,7 @@ export type FeatureCategoryEnum =
   | "interior"
   | "exterior"
   | "building"
-  | "neighborhood"
-  | "accessibility";
+  | "neighborhood";
 
 export type ContactStatusEnum = "new" | "in_progress" | "resolved" | "spam";
 
