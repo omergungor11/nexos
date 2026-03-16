@@ -47,3 +47,8 @@ claude-start-template/
 # Zone.Identifier files (WSL artifacts)
 *:Zone.Identifier
 *:Zone.Identifier:Zone.Identifier
+
+# Documents / proposals
+*.docx
+*.xlsx
+*.pptx
