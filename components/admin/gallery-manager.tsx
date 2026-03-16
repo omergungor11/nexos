@@ -145,13 +145,41 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
   const [images, setImages] = useState(initialImages);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [propertyFilter, setPropertyFilter] = useState("all");
+  const [recentFilter, setRecentFilter] = useState("all");
   const [detailImage, setDetailImage] = useState<GalleryImage | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  // Get unique property IDs ordered by most recent image
+  const recentPropertyIds = useMemo(() => {
+    const seen = new Map<string, string>(); // propertyId -> latest created_at
+    for (const img of images) {
+      const existing = seen.get(img.property_id);
+      if (!existing || img.created_at > existing) {
+        seen.set(img.property_id, img.created_at);
+      }
+    }
+    return Array.from(seen.entries())
+      .sort((a, b) => b[1].localeCompare(a[1]))
+      .map(([id]) => id);
+  }, [images]);
+
   const filtered = useMemo(() => {
-    if (propertyFilter === "all") return images;
-    return images.filter((img) => img.property_id === propertyFilter);
-  }, [images, propertyFilter]);
+    let result = images;
+
+    // Property filter
+    if (propertyFilter !== "all") {
+      result = result.filter((img) => img.property_id === propertyFilter);
+    }
+
+    // Recent N properties filter
+    if (recentFilter !== "all") {
+      const n = parseInt(recentFilter, 10);
+      const allowedIds = new Set(recentPropertyIds.slice(0, n));
+      result = result.filter((img) => allowedIds.has(img.property_id));
+    }
+
+    return result;
+  }, [images, propertyFilter, recentFilter, recentPropertyIds]);
 
   // Group images by property
   const grouped = useMemo(() => {
@@ -230,6 +258,19 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
                   </SelectItem>
                 );
               })}
+            </SelectContent>
+          </Select>
+
+          <Select value={recentFilter} onValueChange={(v) => setRecentFilter(v ?? "all")}>
+            <SelectTrigger className="h-8 w-40">
+              <SelectValue placeholder="Tümü" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tüm İlanlar</SelectItem>
+              <SelectItem value="5">Son 5 İlan</SelectItem>
+              <SelectItem value="10">Son 10 İlan</SelectItem>
+              <SelectItem value="20">Son 20 İlan</SelectItem>
+              <SelectItem value="50">Son 50 İlan</SelectItem>
             </SelectContent>
           </Select>
         </div>
