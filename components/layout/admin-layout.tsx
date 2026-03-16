@@ -19,6 +19,7 @@ import {
   BarChart3,
   Activity,
   UserCog,
+  ImageIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -46,6 +47,12 @@ const NAV_ITEMS = [
     href: "/admin/danismanlar",
     label: "Danışmanlar",
     icon: Users,
+    exact: false,
+  },
+  {
+    href: "/admin/galeri",
+    label: "Galeri",
+    icon: ImageIcon,
     exact: false,
   },
   {
