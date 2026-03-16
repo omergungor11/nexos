@@ -182,12 +182,8 @@ export default async function AdminPropertyEditPage({ params }: Props) {
         initialData={initialData}
         propertyId={id}
         mediaSlot={<ImageManager propertyId={id} initialImages={images} />}
+        analyticsSlot={<PropertyAnalytics propertyId={id} />}
       />
-
-      {/* Property Analytics */}
-      <div className="border-t pt-8">
-        <PropertyAnalytics propertyId={id} />
-      </div>
     </div>
   );
 }

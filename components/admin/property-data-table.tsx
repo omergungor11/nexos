@@ -17,6 +17,7 @@ import {
   CopyIcon,
   XIcon,
   UserPlusIcon,
+  BarChart3Icon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -775,6 +776,11 @@ export function PropertyDataTable({
                         <Link href={`/admin/ilanlar/${row.id}/duzenle`}>
                           <Button variant="ghost" size="icon-sm" aria-label="Düzenle">
                             <PencilIcon className="size-4" />
+                          </Button>
+                        </Link>
+                        <Link href={`/admin/ilanlar/${row.id}/duzenle?tab=analiz`}>
+                          <Button variant="ghost" size="icon-sm" aria-label="Analiz" title="İlan Analizi">
+                            <BarChart3Icon className="size-4 text-primary" />
                           </Button>
                         </Link>
                         <Button

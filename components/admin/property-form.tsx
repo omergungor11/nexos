@@ -70,6 +70,7 @@ export interface PropertyFormProps {
   initialData?: Partial<InitialPropertyData>;
   propertyId?: string;
   mediaSlot?: React.ReactNode;
+  analyticsSlot?: React.ReactNode;
 }
 
 interface InitialPropertyData {
@@ -462,6 +463,7 @@ export function PropertyForm({
   initialData,
   propertyId,
   mediaSlot,
+  analyticsSlot,
 }: PropertyFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -745,6 +747,7 @@ export function PropertyForm({
           <TabsTrigger value="one-cikan">Öne Çıkan</TabsTrigger>
           <TabsTrigger value="detay">Detay Özellikleri</TabsTrigger>
           <TabsTrigger value="seo">SEO</TabsTrigger>
+          {analyticsSlot && <TabsTrigger value="analiz">Analiz</TabsTrigger>}
         </TabsList>
 
         {/* ----------------------------------------------------------------- */}
@@ -1519,6 +1522,15 @@ export function PropertyForm({
             </label>
           </div>
         </TabsContent>
+
+        {/* ----------------------------------------------------------------- */}
+        {/* Tab 7: Analiz (only in edit mode)                                  */}
+        {/* ----------------------------------------------------------------- */}
+        {analyticsSlot && (
+          <TabsContent value="analiz" className="mt-6">
+            {analyticsSlot}
+          </TabsContent>
+        )}
       </Tabs>
 
       {/* ------------------------------------------------------------------- */}
