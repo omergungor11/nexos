@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/providers";
+import { ServiceWorkerRegister } from "@/components/shared/sw-register";
 import { getLocale } from "next-intl/server";
 import { localeDirection } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
@@ -60,6 +61,7 @@ export default async function RootLayout({
         <Providers>
           {children}
         </Providers>
+        <ServiceWorkerRegister />
         <Analytics />
         <SpeedInsights />
       </body>

@@ -34,14 +34,14 @@ function sortImages(images: PropertyImage[]): PropertyImage[] {
   return [...images].sort((a, b) => a.sort_order - b.sort_order);
 }
 
-const MAX_DIMENSION = 1600;
+const MAX_DIMENSION = 1920;
 
 function getQuality(fileSize: number): number {
   // Adaptive quality: larger files get more compression
-  if (fileSize > 5 * 1024 * 1024) return 0.7;
-  if (fileSize > 2 * 1024 * 1024) return 0.75;
-  if (fileSize > 1 * 1024 * 1024) return 0.8;
-  return 0.82;
+  if (fileSize > 5 * 1024 * 1024) return 0.65;
+  if (fileSize > 3 * 1024 * 1024) return 0.7;
+  if (fileSize > 1 * 1024 * 1024) return 0.75;
+  return 0.8;
 }
 
 function formatFileSize(bytes: number): string {

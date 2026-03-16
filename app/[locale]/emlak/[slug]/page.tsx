@@ -42,7 +42,7 @@ import { PrintButton } from "@/components/property/print-button";
 import { PropertyQrCode } from "@/components/property/property-qr-code";
 import { NearbyPlaces } from "@/components/property/nearby-places";
 import { VideoTour } from "@/components/property/video-tour";
-import { PriceHistory } from "@/components/property/price-history";
+import { PropertyTimeline } from "@/components/property/property-timeline";
 import { PropertyContactForm } from "@/components/property/property-contact-form";
 import type { PropertyListItem } from "@/types";
 
@@ -338,17 +338,15 @@ export default async function PropertyDetailPage({ params }: Props) {
             />
           </div>
 
-          {/* 10. Price History */}
-          <PriceHistory
+          {/* 10. Property Timeline */}
+          <PropertyTimeline
             history={priceHistory}
             currentPrice={property.price}
             currency={property.currency}
+            viewsCount={property.views_count ?? 0}
+            isFeatured={property.is_featured ?? false}
+            createdAt={property.created_at}
           />
-
-          {/* Date */}
-          <p className="text-sm text-muted-foreground">
-            İlan Tarihi: {formatDate(property.created_at)}
-          </p>
         </div>
 
         {/* Sidebar */}
