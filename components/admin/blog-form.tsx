@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   createBlogPost,
@@ -18,6 +25,9 @@ import {
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
+
+type CategoryOption = { id: number; name: string };
+type TagOption = { id: number; name: string };
 
 type ExistingPost = {
   id: string;
@@ -30,11 +40,16 @@ type ExistingPost = {
   seo_title: string | null;
   seo_description: string | null;
   is_published: boolean;
+  category_id?: number | null;
+  tag_ids?: number[];
 };
 
-type BlogFormProps =
-  | { mode: "create"; post?: never }
-  | { mode: "edit"; post: ExistingPost };
+type BlogFormProps = {
+  mode: "create" | "edit";
+  post?: ExistingPost;
+  categories?: CategoryOption[];
+  tags?: TagOption[];
+};
 
 type FormState = {
   title: string;
@@ -46,6 +61,7 @@ type FormState = {
   seo_title: string;
   seo_description: string;
   is_published: boolean;
+  category_id: string;
 };
 
 // ---------------------------------------------------------------------------
@@ -110,11 +126,14 @@ function Field({
 // Main form
 // ---------------------------------------------------------------------------
 
-export function BlogForm({ mode, post }: BlogFormProps) {
+export function BlogForm({ mode, post, categories = [], tags = [] }: BlogFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(
     mode === "edit"
+  );
+  const [selectedTags, setSelectedTags] = useState<Set<number>>(
+    new Set(post?.tag_ids ?? [])
   );
 
   const [form, setForm] = useState<FormState>({
@@ -127,6 +146,7 @@ export function BlogForm({ mode, post }: BlogFormProps) {
     seo_title: post?.seo_title ?? "",
     seo_description: post?.seo_description ?? "",
     is_published: post?.is_published ?? false,
+    category_id: post?.category_id ? String(post.category_id) : "",
   });
 
   const [errors, setErrors] = useState<
@@ -191,6 +211,8 @@ export function BlogForm({ mode, post }: BlogFormProps) {
       seo_title: form.seo_title.trim() || undefined,
       seo_description: form.seo_description.trim() || undefined,
       is_published: form.is_published,
+      category_id: form.category_id ? Number(form.category_id) : null,
+      tag_ids: Array.from(selectedTags),
     };
   }
 
@@ -211,7 +233,7 @@ export function BlogForm({ mode, post }: BlogFormProps) {
           router.push("/admin/blog");
         }
       } else {
-        const result = await updateBlogPost(post.id, payload);
+        const result = await updateBlogPost(post!.id, payload);
         if (result.error) {
           toast.error(result.error);
         } else {
@@ -302,6 +324,66 @@ export function BlogForm({ mode, post }: BlogFormProps) {
           placeholder="Yazar adı"
         />
       </Field>
+
+      {/* Category */}
+      {categories.length > 0 && (
+        <Field label="Kategori" htmlFor="category_id">
+          <Select
+            value={form.category_id || "__none__"}
+            onValueChange={(v) =>
+              setForm((prev) => ({ ...prev, category_id: v === "__none__" ? "" : (v ?? "") }))
+            }
+          >
+            <SelectTrigger className="w-full sm:w-64">
+              <SelectValue placeholder="Kategori seçiniz">
+                {form.category_id
+                  ? categories.find((c) => String(c.id) === form.category_id)?.name ?? "Seçiniz"
+                  : undefined}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">Kategorisiz</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat.id} value={String(cat.id)}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+      )}
+
+      {/* Tags */}
+      {tags.length > 0 && (
+        <Field label="Etiketler" htmlFor="tags" hint="Birden fazla etiket seçebilirsiniz">
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => {
+              const isActive = selectedTags.has(tag.id);
+              return (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedTags((prev) => {
+                      const next = new Set(prev);
+                      if (next.has(tag.id)) next.delete(tag.id);
+                      else next.add(tag.id);
+                      return next;
+                    });
+                  }}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-input bg-background text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {tag.name}
+                </button>
+              );
+            })}
+          </div>
+        </Field>
+      )}
 
       {/* Cover image */}
       <Field

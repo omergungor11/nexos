@@ -110,6 +110,8 @@ export type BlogPostInput = {
   seo_title?: string;
   seo_description?: string;
   is_published?: boolean;
+  category_id?: number | null;
+  tag_ids?: number[];
 };
 
 // ---------------------------------------------------------------------------
@@ -167,12 +169,20 @@ export async function createBlogPost(
       seo_description: data.seo_description ?? null,
       is_published: data.is_published ?? false,
       published_at: data.is_published ? new Date().toISOString() : null,
+      category_id: data.category_id ?? null,
     })
     .select()
     .single();
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Save tags
+  if (data.tag_ids && data.tag_ids.length > 0) {
+    await supabase.from("blog_post_tags").insert(
+      data.tag_ids.map((tag_id) => ({ blog_post_id: post.id, tag_id }))
+    );
   }
 
   revalidateTag("blog", {});
@@ -212,6 +222,7 @@ export async function updateBlogPost(
   if (data.seo_title !== undefined) payload.seo_title = data.seo_title;
   if (data.seo_description !== undefined)
     payload.seo_description = data.seo_description;
+  if (data.category_id !== undefined) payload.category_id = data.category_id;
   if (data.is_published !== undefined) {
     payload.is_published = data.is_published;
     if (data.is_published) {
@@ -237,6 +248,16 @@ export async function updateBlogPost(
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Sync tags if provided
+  if (data.tag_ids !== undefined) {
+    await supabase.from("blog_post_tags").delete().eq("blog_post_id", id);
+    if (data.tag_ids.length > 0) {
+      await supabase.from("blog_post_tags").insert(
+        data.tag_ids.map((tag_id) => ({ blog_post_id: id, tag_id }))
+      );
+    }
   }
 
   revalidateTag("blog", {});

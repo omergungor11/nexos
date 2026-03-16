@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { getBlogPosts } from "@/lib/queries/content";
+import { getBlogPosts, getBlogCategories } from "@/lib/queries/content";
 import { formatRelativeDate } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -22,16 +22,58 @@ export default async function BlogPage({ params, searchParams }: Props) {
   setRequestLocale(locale);
   const sp = await searchParams;
   const page = Number(sp.sayfa) || 1;
-  const { data: posts } = await getBlogPosts(page);
+  const categorySlug = typeof sp.kategori === "string" ? sp.kategori : undefined;
+
+  const [{ data: posts }, categories] = await Promise.all([
+    getBlogPosts(page, 12, categorySlug),
+    getBlogCategories(),
+  ]);
+
+  const activeCategory = categories.find((c) => c.slug === categorySlug);
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="mb-12 text-center">
+      <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold">Rehber</h1>
         <p className="mt-2 text-muted-foreground">
           Kuzey Kıbrıs gayrimenkul dünyasından rehberler ve yatırım ipuçları
         </p>
       </div>
+
+      {/* Category filter */}
+      {categories.length > 0 && (
+        <div className="mb-8 flex flex-wrap justify-center gap-2">
+          <Link
+            href="/blog"
+            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+              !categorySlug
+                ? "border-primary bg-primary text-white"
+                : "border-input hover:bg-muted"
+            }`}
+          >
+            Tümü
+          </Link>
+          {categories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={`/blog?kategori=${cat.slug}` as never}
+              className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                categorySlug === cat.slug
+                  ? "border-primary bg-primary text-white"
+                  : "border-input hover:bg-muted"
+              }`}
+            >
+              {cat.name}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {activeCategory && (
+        <p className="mb-6 text-center text-sm text-muted-foreground">
+          &ldquo;{activeCategory.name}&rdquo; kategorisindeki yazılar
+        </p>
+      )}
 
       {posts && posts.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -72,7 +114,9 @@ export default async function BlogPage({ params, searchParams }: Props) {
         </div>
       ) : (
         <div className="py-16 text-center text-muted-foreground">
-          Henüz rehber yazısı yayınlanmamış.
+          {categorySlug
+            ? "Bu kategoride henüz yazı yayınlanmamış."
+            : "Henüz rehber yazısı yayınlanmamış."}
         </div>
       )}
     </div>
