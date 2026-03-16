@@ -21,10 +21,6 @@ type RawContactRow = {
     | { title: string; slug: string }[]
     | { title: string; slug: string }
     | null;
-  assigned_agent:
-    | { id: string; name: string }[]
-    | { id: string; name: string }
-    | null;
 };
 
 export type ContactRequestRow = {
@@ -50,11 +46,11 @@ export type AgentOption = {
 export default async function AdminTaleplerPage() {
   const supabase = await createClient();
 
-  const [{ data: raw }, { data: agentsRaw }] = await Promise.all([
+  const [contactResult, agentsResult] = await Promise.all([
     supabase
       .from("contact_requests")
       .select(
-        "id, name, phone, email, message, status, created_at, property_id, assigned_agent_id, admin_notes, property:properties(title, slug), assigned_agent:agents!contact_requests_assigned_agent_id_fkey(id, name)"
+        "id, name, phone, email, message, status, created_at, property_id, assigned_agent_id, admin_notes, property:properties(title, slug)"
       )
       .order("created_at", { ascending: false }),
     supabase
@@ -64,6 +60,18 @@ export default async function AdminTaleplerPage() {
       .order("name"),
   ]);
 
+  if (contactResult.error) {
+    console.error("[talepler] Query error:", contactResult.error.message);
+  }
+
+  const raw = contactResult.data;
+  const agentsRaw = agentsResult.data;
+
+  const agents: AgentOption[] = (agentsRaw ?? []).map((a) => ({
+    id: a.id,
+    name: a.name,
+  }));
+
   // Normalize nested joins
   const rows: ContactRequestRow[] = ((raw ?? []) as RawContactRow[]).map(
     (item) => {
@@ -72,10 +80,9 @@ export default async function AdminTaleplerPage() {
         ? (rawProperty[0] as { title: string; slug: string } | undefined) ?? null
         : (rawProperty as { title: string; slug: string } | null);
 
-      const rawAgent = item.assigned_agent;
-      const normalizedAgent = Array.isArray(rawAgent)
-        ? (rawAgent[0] as { id: string; name: string } | undefined) ?? null
-        : (rawAgent as { id: string; name: string } | null);
+      const normalizedAgent = item.assigned_agent_id
+        ? (agents.find((a) => a.id === item.assigned_agent_id) ?? null)
+        : null;
 
       return {
         id: item.id,
@@ -93,11 +100,6 @@ export default async function AdminTaleplerPage() {
       };
     }
   );
-
-  const agents: AgentOption[] = (agentsRaw ?? []).map((a) => ({
-    id: a.id,
-    name: a.name,
-  }));
 
   return (
     <div className="space-y-6">
