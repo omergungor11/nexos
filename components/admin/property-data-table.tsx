@@ -526,12 +526,15 @@ export function PropertyDataTable({
 
         <Select value={transactionFilter} onValueChange={handleFilterChange(setTransactionFilter)}>
           <SelectTrigger className="h-8 w-40">
-            <SelectValue placeholder="İşlem" />
+            <SelectValue placeholder="İşlem">
+              {transactionFilter === "all" ? "Tüm İşlemler" : transactionFilter === "sale" ? "Satılık" : transactionFilter === "rent" ? "Kiralık" : "Günlük Kiralık"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Satılık & Kiralık</SelectItem>
+            <SelectItem value="all">Tüm İşlemler</SelectItem>
             <SelectItem value="sale">Satılık</SelectItem>
             <SelectItem value="rent">Kiralık</SelectItem>
+            <SelectItem value="daily_rental">Günlük Kiralık</SelectItem>
           </SelectContent>
         </Select>
 
@@ -708,7 +711,7 @@ export function PropertyDataTable({
 
                     {/* Transaction */}
                     <td className="px-3 py-2 whitespace-nowrap">
-                      <Badge variant={row.transaction_type === "sale" ? "default" : "secondary"}>
+                      <Badge variant={row.transaction_type === "sale" ? "default" : row.transaction_type === "daily_rental" ? "outline" : "secondary"}>
                         {TRANSACTION_TYPE_LABELS[row.transaction_type] ?? row.transaction_type}
                       </Badge>
                     </td>
