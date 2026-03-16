@@ -6,23 +6,6 @@ export const metadata: Metadata = {
   title: "İletişim Talepleri",
 };
 
-type RawContactRow = {
-  id: string;
-  name: string;
-  phone: string | null;
-  email: string | null;
-  message: string | null;
-  status: string;
-  created_at: string;
-  property_id: string | null;
-  assigned_agent_id: string | null;
-  admin_notes: string | null;
-  property:
-    | { title: string; slug: string }[]
-    | { title: string; slug: string }
-    | null;
-};
-
 export type ContactRequestRow = {
   id: string;
   name: string;
@@ -46,75 +29,58 @@ export type AgentOption = {
 export default async function AdminTaleplerPage() {
   const supabase = await createClient();
 
-  const [contactResult, agentsResult] = await Promise.all([
+  // Simple queries without FK joins to avoid RLS/FK issues
+  const [contactResult, agentsResult, propertiesResult] = await Promise.all([
     supabase
       .from("contact_requests")
-      .select(
-        "id, name, phone, email, message, status, created_at, property_id, assigned_agent_id, admin_notes, property:properties(title, slug)"
-      )
+      .select("id, name, phone, email, message, status, created_at, property_id, assigned_agent_id, admin_notes")
       .order("created_at", { ascending: false }),
     supabase
       .from("agents")
       .select("id, name")
       .eq("is_active", true)
       .order("name"),
+    supabase
+      .from("properties")
+      .select("id, title, slug"),
   ]);
 
-  // If the joined query fails, try a simple query without joins
-  let raw = contactResult.data;
   if (contactResult.error) {
-    console.error("[talepler] Join query error:", contactResult.error.message);
-    // Fallback: simple query without property join
-    const fallback = await supabase
-      .from("contact_requests")
-      .select("id, name, phone, email, message, status, created_at, property_id, assigned_agent_id, admin_notes")
-      .order("created_at", { ascending: false });
-    if (fallback.error) {
-      console.error("[talepler] Fallback query error:", fallback.error.message);
-    }
-    raw = fallback.data as unknown as typeof raw;
+    console.error("[talepler] Query error:", contactResult.error.message);
   }
-  const agentsRaw = agentsResult.data;
 
-  const agents: AgentOption[] = (agentsRaw ?? []).map((a) => ({
+  const rawContacts = contactResult.data ?? [];
+  const agents: AgentOption[] = (agentsResult.data ?? []).map((a) => ({
     id: a.id,
     name: a.name,
   }));
 
-  // Normalize nested joins
-  const rows: ContactRequestRow[] = ((raw ?? []) as RawContactRow[]).map(
-    (item) => {
-      const rawProperty = item.property ?? null;
-      const normalizedProperty = rawProperty == null
-        ? null
-        : Array.isArray(rawProperty)
-          ? (rawProperty[0] as { title: string; slug: string } | undefined) ?? null
-          : (rawProperty as { title: string; slug: string } | null);
-
-      const normalizedAgent = item.assigned_agent_id
-        ? (agents.find((a) => a.id === item.assigned_agent_id) ?? null)
-        : null;
-
-      return {
-        id: item.id,
-        name: item.name,
-        phone: item.phone,
-        email: item.email,
-        message: item.message,
-        status: item.status,
-        created_at: item.created_at,
-        property_id: item.property_id,
-        assigned_agent_id: item.assigned_agent_id,
-        admin_notes: item.admin_notes,
-        property: normalizedProperty,
-        assigned_agent: normalizedAgent,
-      };
-    }
+  // Build lookup maps
+  const propertyMap = new Map(
+    (propertiesResult.data ?? []).map((p) => [p.id, { title: p.title, slug: p.slug }])
   );
+  const agentMap = new Map(
+    agents.map((a) => [a.id, { id: a.id, name: a.name }])
+  );
+
+  // Build rows
+  const rows: ContactRequestRow[] = rawContacts.map((item) => ({
+    id: item.id,
+    name: item.name,
+    phone: item.phone,
+    email: item.email,
+    message: item.message,
+    status: item.status,
+    created_at: item.created_at,
+    property_id: item.property_id,
+    assigned_agent_id: item.assigned_agent_id,
+    admin_notes: item.admin_notes,
+    property: item.property_id ? propertyMap.get(item.property_id) ?? null : null,
+    assigned_agent: item.assigned_agent_id ? agentMap.get(item.assigned_agent_id) ?? null : null,
+  }));
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground">
           İletişim Talepleri
@@ -125,7 +91,6 @@ export default async function AdminTaleplerPage() {
         </p>
       </div>
 
-      {/* Table with filters */}
       <ContactRequestsTable initialData={rows} agents={agents} />
     </div>
   );
