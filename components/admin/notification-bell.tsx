@@ -63,13 +63,13 @@ export function NotificationBell() {
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-lg border bg-white shadow-lg">
-            <div className="border-b px-4 py-3">
-              <p className="text-sm font-semibold text-foreground">
+          <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-lg border bg-background shadow-lg">
+            <div className="border-b bg-amber-50 px-4 py-3 dark:bg-amber-950/30">
+              <p className="text-sm font-bold text-amber-600 dark:text-amber-400">
                 Bildirimler
               </p>
               {count > 0 && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-amber-600/70 dark:text-amber-400/70">
                   {count} yeni talep
                 </p>
               )}

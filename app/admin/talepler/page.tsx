@@ -60,11 +60,20 @@ export default async function AdminTaleplerPage() {
       .order("name"),
   ]);
 
+  // If the joined query fails, try a simple query without joins
+  let raw = contactResult.data;
   if (contactResult.error) {
-    console.error("[talepler] Query error:", contactResult.error.message);
+    console.error("[talepler] Join query error:", contactResult.error.message);
+    // Fallback: simple query without property join
+    const fallback = await supabase
+      .from("contact_requests")
+      .select("id, name, phone, email, message, status, created_at, property_id, assigned_agent_id, admin_notes")
+      .order("created_at", { ascending: false });
+    if (fallback.error) {
+      console.error("[talepler] Fallback query error:", fallback.error.message);
+    }
+    raw = fallback.data as unknown as typeof raw;
   }
-
-  const raw = contactResult.data;
   const agentsRaw = agentsResult.data;
 
   const agents: AgentOption[] = (agentsRaw ?? []).map((a) => ({
@@ -75,10 +84,12 @@ export default async function AdminTaleplerPage() {
   // Normalize nested joins
   const rows: ContactRequestRow[] = ((raw ?? []) as RawContactRow[]).map(
     (item) => {
-      const rawProperty = item.property;
-      const normalizedProperty = Array.isArray(rawProperty)
-        ? (rawProperty[0] as { title: string; slug: string } | undefined) ?? null
-        : (rawProperty as { title: string; slug: string } | null);
+      const rawProperty = item.property ?? null;
+      const normalizedProperty = rawProperty == null
+        ? null
+        : Array.isArray(rawProperty)
+          ? (rawProperty[0] as { title: string; slug: string } | undefined) ?? null
+          : (rawProperty as { title: string; slug: string } | null);
 
       const normalizedAgent = item.assigned_agent_id
         ? (agents.find((a) => a.id === item.assigned_agent_id) ?? null)
