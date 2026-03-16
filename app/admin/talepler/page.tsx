@@ -29,6 +29,15 @@ export type AgentOption = {
 export default async function AdminTaleplerPage() {
   const supabase = await createClient();
 
+  // Debug: check auth state
+  const { data: { user } } = await supabase.auth.getUser();
+  const debugInfo = {
+    hasUser: !!user,
+    role: user?.user_metadata?.role ?? "none",
+    email: user?.email ?? "no-auth",
+  };
+  console.log("[talepler] Auth debug:", debugInfo);
+
   // Simple queries without FK joins to avoid RLS/FK issues
   const [contactResult, agentsResult, propertiesResult] = await Promise.all([
     supabase
@@ -46,8 +55,9 @@ export default async function AdminTaleplerPage() {
   ]);
 
   if (contactResult.error) {
-    console.error("[talepler] Query error:", contactResult.error.message);
+    console.error("[talepler] Query error:", contactResult.error.message, contactResult.error);
   }
+  console.log("[talepler] Query result count:", contactResult.data?.length ?? 0, "error:", contactResult.error?.message ?? "none");
 
   const rawContacts = contactResult.data ?? [];
   const agents: AgentOption[] = (agentsResult.data ?? []).map((a) => ({
@@ -88,6 +98,10 @@ export default async function AdminTaleplerPage() {
         <p className="mt-1 text-sm text-muted-foreground">
           {rows.length} talep —{" "}
           {rows.filter((r) => r.status === "new").length} yeni
+        </p>
+        {/* Temporary debug info */}
+        <p className="mt-1 text-xs text-orange-500">
+          Debug: user={debugInfo.email} role={debugInfo.role} rawCount={rawContacts.length} error={contactResult.error?.message ?? "none"}
         </p>
       </div>
 
