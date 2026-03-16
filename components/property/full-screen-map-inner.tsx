@@ -69,8 +69,9 @@ function createClusterIcon(cluster: MarkerClusterLike): L.DivIcon {
 // ---------------------------------------------------------------------------
 // Turkey bounding box — used to fit-bounds when there are no properties.
 // ---------------------------------------------------------------------------
-const TURKEY_CENTER: [number, number] = [39.0, 35.0];
-const TURKEY_DEFAULT_ZOOM = 6;
+// North Cyprus center — the primary operating region
+const DEFAULT_CENTER: [number, number] = [35.24, 33.66];
+const DEFAULT_ZOOM = 10;
 
 interface FullScreenMapInnerProps {
   properties: MapProperty[];
@@ -89,8 +90,8 @@ export default function FullScreenMapInner({
       )}
 
       <MapContainer
-        center={TURKEY_CENTER}
-        zoom={TURKEY_DEFAULT_ZOOM}
+        center={DEFAULT_CENTER}
+        zoom={DEFAULT_ZOOM}
         scrollWheelZoom
         style={{ height: "100%", width: "100%" }}
         className="z-0"

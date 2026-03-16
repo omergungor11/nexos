@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 async function getMapProperties(): Promise<MapProperty[]> {
   const supabase = await createClient();
 
+  // Fetch all active properties — include city/district coords for fallback
   const { data, error } = await supabase
     .from("properties")
     .select(
@@ -25,51 +26,56 @@ async function getMapProperties(): Promise<MapProperty[]> {
       type, transaction_type,
       rooms, living_rooms, area_sqm,
       lat, lng,
+      city:cities(lat, lng),
+      district:districts(lat, lng),
       images:property_images(url, is_cover)
     `
     )
     .eq("is_active", true)
-    .not("lat", "is", null)
-    .not("lng", "is", null)
     .order("created_at", { ascending: false });
 
   if (error) {
-    // Log on the server; return empty list so the page renders gracefully.
     console.error("[harita] Failed to fetch map properties:", error.message);
     return [];
   }
 
   if (!data) return [];
 
-  return data.map((row) => {
-    // `lat` and `lng` are guaranteed non-null due to the `.not()` filters above,
-    // but TypeScript still sees them as `number | null` from the generated types.
-    const lat = row.lat as number;
-    const lng = row.lng as number;
+  return data
+    .map((row) => {
+      const city = row.city as unknown as { lat: number | null; lng: number | null } | null;
+      const district = row.district as unknown as { lat: number | null; lng: number | null } | null;
 
-    // Resolve the cover image URL from the joined property_images array.
-    const images = (
-      row.images as { url: string; is_cover: boolean }[] | null
-    ) ?? [];
-    const cover =
-      images.find((img) => img.is_cover)?.url ?? images[0]?.url ?? null;
+      // Use property coords, fallback to district, then city
+      const lat = row.lat ?? district?.lat ?? city?.lat;
+      const lng = row.lng ?? district?.lng ?? city?.lng;
 
-    return {
-      id: row.id,
-      slug: row.slug,
-      title: row.title,
-      price: row.price,
-      currency: row.currency,
-      type: row.type,
-      transaction_type: row.transaction_type,
-      rooms: row.rooms,
-      living_rooms: row.living_rooms,
-      area_sqm: row.area_sqm,
-      lat,
-      lng,
-      cover_image: cover,
-    } satisfies MapProperty;
-  });
+      // Skip properties with no coordinates at all
+      if (lat == null || lng == null) return null;
+
+      const images = (
+        row.images as { url: string; is_cover: boolean }[] | null
+      ) ?? [];
+      const cover =
+        images.find((img) => img.is_cover)?.url ?? images[0]?.url ?? null;
+
+      return {
+        id: row.id,
+        slug: row.slug,
+        title: row.title,
+        price: row.price,
+        currency: row.currency,
+        type: row.type,
+        transaction_type: row.transaction_type,
+        rooms: row.rooms,
+        living_rooms: row.living_rooms,
+        area_sqm: row.area_sqm,
+        lat,
+        lng,
+        cover_image: cover,
+      } satisfies MapProperty;
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null) as MapProperty[];
 }
 
 export default async function HaritaPage({ params }: { params: Promise<{ locale: string }> }) {

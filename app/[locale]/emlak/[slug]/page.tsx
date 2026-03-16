@@ -43,6 +43,7 @@ import { PropertyQrCode } from "@/components/property/property-qr-code";
 import { NearbyPlaces } from "@/components/property/nearby-places";
 import { VideoTour } from "@/components/property/video-tour";
 import { PriceHistory } from "@/components/property/price-history";
+import { PropertyContactForm } from "@/components/property/property-contact-form";
 import type { PropertyListItem } from "@/types";
 
 interface Props {
@@ -395,7 +396,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                 )}
                 {agentWhatsApp && (
                   <a
-                    href={`https://wa.me/${agentWhatsApp}?text=${encodeURIComponent(`Merhaba, "${property.title}" ilanı hakkında bilgi almak istiyorum.`)}`}
+                    href={`https://wa.me/${agentWhatsApp}?text=${encodeURIComponent(`Merhaba, "${property.title}" ilanı hakkında bilgi almak istiyorum.\n\n${propertyUrl}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] text-sm font-medium text-white transition-colors hover:bg-[#20bd5a]"
@@ -423,27 +424,11 @@ export default async function PropertyDetailPage({ params }: Props) {
               <CardTitle className="text-base">Bilgi Al</CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="space-y-3">
-                <input
-                  type="text"
-                  placeholder="Ad Soyad"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
-                />
-                <input
-                  type="tel"
-                  placeholder="Telefon"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
-                />
-                <textarea
-                  placeholder="Mesajınız"
-                  rows={3}
-                  className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
-                  defaultValue={`Merhaba, "${property.title}" ilanı hakkında bilgi almak istiyorum.`}
-                />
-                <Button type="submit" className="w-full">
-                  Mesaj Gönder
-                </Button>
-              </form>
+              <PropertyContactForm
+                propertyId={property.id}
+                propertyTitle={property.title}
+                propertyUrl={propertyUrl}
+              />
             </CardContent>
           </Card>
 
