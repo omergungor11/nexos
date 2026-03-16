@@ -10,7 +10,6 @@ import {
   Users,
   BookOpen,
   MessageSquare,
-  FileText,
   Settings,
   MapPin,
   LogOut,
@@ -18,7 +17,6 @@ import {
   ChevronRight,
   BarChart3,
   Activity,
-  UserCog,
   ImageIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -68,12 +66,6 @@ const NAV_ITEMS = [
     exact: false,
   },
   {
-    href: "/admin/sayfalar",
-    label: "Sayfalar",
-    icon: FileText,
-    exact: false,
-  },
-  {
     href: "/admin/konumlar",
     label: "Konumlar",
     icon: MapPin,
@@ -89,12 +81,6 @@ const NAV_ITEMS = [
     href: "/admin/aktivite",
     label: "Aktivite",
     icon: Activity,
-    exact: false,
-  },
-  {
-    href: "/admin/kullanicilar",
-    label: "Kullanıcılar",
-    icon: UserCog,
     exact: false,
   },
   {
