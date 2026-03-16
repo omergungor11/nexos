@@ -256,7 +256,9 @@ function DetailDialog({
             </p>
             <Select value={row.status} onValueChange={handleStatusChange}>
               <SelectTrigger className="w-48">
-                <SelectValue />
+                <SelectValue>
+                  {STATUS_LABELS[row.status] ?? row.status}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="new">Yeni</SelectItem>
@@ -278,7 +280,11 @@ function DetailDialog({
                 onValueChange={handleAgentChange}
               >
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Danışman seç" />
+                  <SelectValue placeholder="Danışman seç">
+                    {row.assigned_agent_id && row.assigned_agent_id !== "__none__"
+                      ? (agents.find((a) => a.id === row.assigned_agent_id)?.name ?? "Danışman seç")
+                      : "Atanmamış"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__none__">Atanmamış</SelectItem>
