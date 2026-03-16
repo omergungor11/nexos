@@ -1,6 +1,66 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-03-16
+
+### Yapılanlar
+- **Firma bilgileri güncellendi**: Telefon (+90 542 880 64 56), e-posta, adres, domain tüm sayfalarda
+- **GBP para birimi** eklendi (DB enum, types, form, currency converter)
+- **Havuz** (Özel/Ortak), **Otopark** (Açık/Kapalı/Her İkisi) seçenekleri
+- **Koçan durumu** arsa ilanları için (Eşdeğer, Tahsis, Türk, Gazi, Yabancı)
+- **Arazi alanı** villa türleri için
+- **Harita fallback**: lat/lng yoksa şehir/ilçe merkezi gösteriliyor
+- **Medya tab'ı**: İlan formuna Görseller + Video + 360° tab eklendi
+- **Taslak ilan akışı**: Yeni ilan → otomatik draft → düzenleme sayfasına yönlendir (görseller hemen yüklenebilir)
+- **İlan detay formu**: Çalışan contact form (property_id + ilan linki dahil)
+- **WhatsApp mesajına ilan linki** eklendi
+- **Harita sayfası**: Kuzey Kıbrıs merkez (35.24, 33.66), şehir fallback ile tüm ilanlar görünür
+- **Admin force-dynamic**: Tüm admin sayfaları her istekte taze veri
+- **Talepler sayfası düzeltildi**: FK join kaldırıldı, ayrı query'ler + Map ile join
+- **Talep silme** özelliği eklendi
+- **Admin galeri sayfası**: İlan bazlı gruplama, arama, filtre, toplu silme, detay popup
+- **Aktivite sayfası yenilendi**: İstatistik kartları, timeline, detay popup, gelişmiş filtreler
+- **Blog kategorileri ve etiketleri**: DB tabloları, admin form, public filtre
+- **Landing page builder**: Admin CRUD + public /kampanya/[slug] sayfası (sonra sidebar'dan kaldırıldı)
+- **PWA**: manifest.ts, service worker, offline page
+- **İlan geçmişi timeline**: Fiyat değişimleri %, görüntülenme, oluşturulma tarihi
+- **Tab validasyon**: Hatalı sekmeler kırmızı + * işareti, otomatik sekme geçişi
+- **Günlük kiralık**: TransactionType + admin filtre eklendi
+- **Select placeholder**: Varsayılan "Seçiniz" (Türkçe) tüm dropdown'larda
+- **Plaka alanı** konum yönetiminden kaldırıldı
+- **Erişilebilirlik** feature kategorisi kaldırıldı
+- **Sayfalar ve Kullanıcılar** admin sidebar'dan kaldırıldı
+- **Analiz** tab olarak form içine taşındı, ilan listesinde analiz butonu
+
+### Çalıştırılması gereken migration'lar (Supabase Dashboard SQL Editor)
+- ✅ 010: GBP, pool_type, parking_type, title_deed_type, land_area_sqm, city/district lat/lng
+- ✅ 011: admin_activity_log + property_views RLS
+- ✅ 012: contact_requests DELETE policy
+- ✅ 013: blog_categories, blog_tags, blog_post_tags
+- ✅ 014: landing_pages
+- ✅ 006 (geç çalıştırıldı): assigned_agent_id, admin_notes
+- ✅ 007 (geç çalıştırıldı): admin_activity_log, property_views tabloları
+- ✅ Storage RLS: property-images bucket policies
+- ✅ contact_requests SELECT policy: authenticated kullanıcılar okuyabilir
+
+### Yarım Kalanlar
+- **NEXT_PUBLIC_SITE_URL** Vercel env variable'ı ayarlanmalı (localhost gösteriyor)
+- Blog etiket yönetimi admin UI'ı yok (DB'den eklenebilir)
+
+### Sıradakiler
+- Vercel'de NEXT_PUBLIC_SITE_URL=https://nexos-sand.vercel.app ayarla
+- Blog etiket CRUD admin sayfası
+- Canlı test: ilan ekleme → görsel yükleme → form → talep → harita akışı
+- E-posta bildirimi (Resend entegrasyonu)
+- WhatsApp Business API entegrasyonu
+
+### Dikkat Edilecekler
+- Supabase FK join'leri RLS ile çakışabiliyor — ayrı query + Map pattern kullan
+- `is_admin()` fonksiyonu `auth.jwt() -> user_metadata ->> role = 'admin'` kontrol ediyor
+- Taslak ilanlar `is_active=false` — kaydet'te `is_active=true` yapılıyor
+- Select component (base-ui): `onValueChange` `string | null` döner, `v ?? "default"` pattern kullan
+- Migration'lar manuel çalıştırılmalı (Supabase Dashboard SQL Editor)
+
 ## 2026-03-12
 
 ### Yapılanlar

@@ -24,9 +24,16 @@
 - RLS ile güvenlik: public read, admin write, user-scoped favorites
 - Server Components varsayılan, client sadece interaktif bileşenler
 
+## Important Patterns (Updated 2026-03-16)
+- Supabase FK join'leri RLS ile çakışabiliyor → ayrı query + Map pattern kullan (talepler sayfası örneği)
+- Admin sayfalar `force-dynamic` (layout.tsx'de) — her zaman taze veri
+- Taslak ilan akışı: yeni ilan → draft (is_active=false) → düzenleme sayfası → kaydet (is_active=true)
+- Select component (base-ui): `onValueChange` `string | null` döner, `v ?? "default"` pattern
+- Migration'lar manuel: Supabase Dashboard SQL Editor'de çalıştırılmalı
+
 ## Known Issues / Gotchas
 - revalidateTag Next.js 16'da 2 argüman istiyor: `revalidateTag("tag", {})`
 - Supabase local dev henüz kurulmadı — remote DB kullanılıyor
-- Playwright chromium WSL2'de system deps eksik olabilir
-- 002_saved_searches.sql migration'ı Supabase Dashboard'da çalıştırılmalı
-- Vercel deployment: Root Directory BOŞ olmalı (proje git root'ta). Eski app/ yapısı kaldırıldı (2026-03-11)
+- NEXT_PUBLIC_SITE_URL Vercel'de ayarlanmalı (şu an localhost gösteriyor)
+- Vercel deployment: Root Directory BOŞ olmalı (proje git root'ta)
+- `is_admin()` fonksiyonu `auth.jwt() -> user_metadata ->> 'role' = 'admin'` kontrol eder
