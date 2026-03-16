@@ -173,7 +173,6 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [addingNew, setAddingNew] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newPlate, setNewPlate] = useState("");
   const [, startTransition] = useTransition();
 
   function handleEdit(id: number, newName: string) {
@@ -211,10 +210,8 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
     if (!newName.trim()) return;
 
     startTransition(async () => {
-      const plateCode = newPlate ? parseInt(newPlate, 10) : undefined;
       const result = await createCity({
         name: newName.trim(),
-        plate_code: plateCode,
       });
 
       if (result.error) {
@@ -224,7 +221,7 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
           id: result.data.id,
           name: result.data.name,
           slug: result.data.slug,
-          plate_code: plateCode ?? null,
+          plate_code: null,
         };
         setCities((prev) =>
           [...prev, newCity].sort((a, b) =>
@@ -233,7 +230,6 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
         );
         toast.success("İl eklendi.");
         setNewName("");
-        setNewPlate("");
         setAddingNew(false);
       }
     });
@@ -256,7 +252,6 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
           <thead className="bg-muted/40">
             <tr>
               <th className={thClass}>İl Adı</th>
-              <th className={thClass}>Plaka</th>
               <th className={thClass}>Slug</th>
               <th className={thClass}>İşlemler</th>
             </tr>
@@ -265,29 +260,18 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
             {/* New row */}
             {addingNew && (
               <tr>
-                <td className="px-3 py-2" colSpan={2}>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      placeholder="İl adı"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      className="h-7 w-40 text-sm"
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleAdd();
-                        if (e.key === "Escape") setAddingNew(false);
-                      }}
-                    />
-                    <Input
-                      placeholder="Plaka (opsiyonel)"
-                      value={newPlate}
-                      onChange={(e) => setNewPlate(e.target.value)}
-                      className="h-7 w-28 text-sm"
-                      type="number"
-                      min={1}
-                      max={81}
-                    />
-                  </div>
+                <td className="px-3 py-2">
+                  <Input
+                    placeholder="İl adı"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    className="h-7 w-40 text-sm"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAdd();
+                      if (e.key === "Escape") setAddingNew(false);
+                    }}
+                  />
                 </td>
                 <td className="px-3 py-2 text-muted-foreground text-xs">
                   otomatik
@@ -307,8 +291,7 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
                       onClick={() => {
                         setAddingNew(false);
                         setNewName("");
-                        setNewPlate("");
-                      }}
+                                      }}
                     >
                       <XIcon className="size-4 text-muted-foreground" />
                     </Button>
@@ -320,7 +303,7 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
             {cities.length === 0 && !addingNew ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={3}
                   className="px-3 py-6 text-center text-muted-foreground"
                 >
                   Henüz il eklenmemiş.
@@ -339,9 +322,6 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
                     ) : (
                       <span className="font-medium">{city.name}</span>
                     )}
-                  </td>
-                  <td className="px-3 py-2 text-muted-foreground">
-                    {city.plate_code ?? "—"}
                   </td>
                   <td className="px-3 py-2 font-mono text-xs text-muted-foreground">
                     {city.slug}
@@ -564,7 +544,7 @@ function DistrictsTab({
             {filtered.length === 0 && !addingNew ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={3}
                   className="px-3 py-6 text-center text-muted-foreground"
                 >
                   Bu ile ait ilçe bulunamadı.
@@ -859,7 +839,7 @@ function NeighborhoodsTab({
             {filtered.length === 0 && !addingNew ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={3}
                   className="px-3 py-6 text-center text-muted-foreground"
                 >
                   Bu filtreye ait mahalle bulunamadı.
