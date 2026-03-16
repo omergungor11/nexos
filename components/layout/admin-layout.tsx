@@ -18,7 +18,6 @@ import {
   BarChart3,
   Activity,
   ImageIcon,
-  Megaphone,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -70,12 +69,6 @@ const NAV_ITEMS = [
     href: "/admin/konumlar",
     label: "Konumlar",
     icon: MapPin,
-    exact: false,
-  },
-  {
-    href: "/admin/kampanyalar",
-    label: "Kampanyalar",
-    icon: Megaphone,
     exact: false,
   },
   {
