@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminLayout } from "@/components/layout/admin-layout";
 
+// All admin pages must be dynamic — they show live data from Supabase
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: {
     default: "Yönetim Paneli",
