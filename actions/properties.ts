@@ -47,6 +47,8 @@ export type PropertyCreateInput = {
   is_featured?: boolean;
   seo_title?: string;
   seo_description?: string;
+  video_url?: string;
+  virtual_tour_url?: string;
 };
 
 export type PropertyUpdateInput = Partial<PropertyCreateInput>;
@@ -211,6 +213,8 @@ export async function createProperty(
     is_featured: data.is_featured ?? false,
     seo_title: data.seo_title ?? null,
     seo_description: data.seo_description ?? null,
+    video_url: data.video_url ?? null,
+    virtual_tour_url: data.virtual_tour_url ?? null,
   };
 
   const { data: property, error } = await supabase
@@ -297,6 +301,9 @@ export async function updateProperty(
   if (data.seo_title !== undefined) payload.seo_title = data.seo_title;
   if (data.seo_description !== undefined)
     payload.seo_description = data.seo_description;
+  if (data.video_url !== undefined) payload.video_url = data.video_url;
+  if (data.virtual_tour_url !== undefined)
+    payload.virtual_tour_url = data.virtual_tour_url;
 
   const { data: property, error } = await supabase
     .from("properties")

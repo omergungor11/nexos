@@ -38,6 +38,8 @@ export default async function AdminPropertyEditPage({ params }: Props) {
           lat, lng, address,
           city_id, district_id, neighborhood_id,
           is_featured, seo_title, seo_description, agent_id,
+          video_url, virtual_tour_url,
+          pool_type, parking_type, land_area_sqm, title_deed_type,
           images:property_images(id, url, alt_text, sort_order, is_cover, created_at, property_id)
         `
         )
@@ -135,6 +137,12 @@ export default async function AdminPropertyEditPage({ params }: Props) {
     seo_title: property.seo_title,
     seo_description: property.seo_description,
     agent_id: property.agent_id ?? null,
+    video_url: property.video_url ?? null,
+    virtual_tour_url: property.virtual_tour_url ?? null,
+    pool_type: property.pool_type ?? null,
+    parking_type: property.parking_type ?? null,
+    land_area_sqm: property.land_area_sqm ?? null,
+    title_deed_type: property.title_deed_type ?? null,
     feature_ids: featureIds,
   };
 
@@ -169,18 +177,8 @@ export default async function AdminPropertyEditPage({ params }: Props) {
         agents={agentOptions}
         initialData={initialData}
         propertyId={id}
+        mediaSlot={<ImageManager propertyId={id} initialImages={images} />}
       />
-
-      {/* Image manager */}
-      <div className="border-t pt-8">
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-foreground">Görseller</h2>
-          <p className="mt-0.5 text-sm text-muted-foreground">
-            JPEG, PNG veya WebP formatında, maksimum 5 MB.
-          </p>
-        </div>
-        <ImageManager propertyId={id} initialImages={images} />
-      </div>
 
       {/* Property Analytics */}
       <div className="border-t pt-8">

@@ -281,6 +281,8 @@ export type Database = {
           views_count: number;
           seo_title: string | null;
           seo_description: string | null;
+          video_url: string | null;
+          virtual_tour_url: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -326,6 +328,8 @@ export type Database = {
           views_count?: number;
           seo_title?: string | null;
           seo_description?: string | null;
+          video_url?: string | null;
+          virtual_tour_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -371,6 +375,8 @@ export type Database = {
           views_count?: number;
           seo_title?: string | null;
           seo_description?: string | null;
+          video_url?: string | null;
+          virtual_tour_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };

@@ -69,6 +69,7 @@ export interface PropertyFormProps {
   agents?: AgentOption[];
   initialData?: Partial<InitialPropertyData>;
   propertyId?: string;
+  mediaSlot?: React.ReactNode;
 }
 
 interface InitialPropertyData {
@@ -106,6 +107,8 @@ interface InitialPropertyData {
   seo_title: string | null;
   seo_description: string | null;
   agent_id: string | null;
+  video_url?: string | null;
+  virtual_tour_url?: string | null;
   feature_ids?: number[];
 }
 
@@ -148,6 +151,8 @@ interface FormState {
   seo_title: string;
   seo_description: string;
   agent_id: string;
+  video_url: string;
+  virtual_tour_url: string;
 }
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
@@ -430,6 +435,8 @@ function buildInitialState(
     seo_title: initialData?.seo_title ?? "",
     seo_description: initialData?.seo_description ?? "",
     agent_id: initialData?.agent_id ?? "__none__",
+    video_url: initialData?.video_url ?? "",
+    virtual_tour_url: initialData?.virtual_tour_url ?? "",
   };
 }
 
@@ -455,6 +462,7 @@ export function PropertyForm({
   agents = [],
   initialData,
   propertyId,
+  mediaSlot,
 }: PropertyFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -687,6 +695,8 @@ export function PropertyForm({
       seo_title: form.seo_title.trim() || undefined,
       seo_description: form.seo_description.trim() || undefined,
       agent_id: form.agent_id !== "__none__" ? form.agent_id : null,
+      video_url: form.video_url.trim() || undefined,
+      virtual_tour_url: form.virtual_tour_url.trim() || undefined,
     };
   }
 
@@ -730,6 +740,7 @@ export function PropertyForm({
       <Tabs defaultValue="temel">
         <TabsList className="h-auto flex-wrap gap-1">
           <TabsTrigger value="temel">Temel Bilgiler</TabsTrigger>
+          <TabsTrigger value="medya">Medya</TabsTrigger>
           <TabsTrigger value="fiyat">Fiyat & Özellikler</TabsTrigger>
           <TabsTrigger value="konum">Konum</TabsTrigger>
           <TabsTrigger value="one-cikan">Öne Çıkan</TabsTrigger>
@@ -896,6 +907,62 @@ export function PropertyForm({
               </Select>
             </Field>
           )}
+        </TabsContent>
+
+        {/* ----------------------------------------------------------------- */}
+        {/* Tab: Medya (Görseller, Video, 360°)                               */}
+        {/* ----------------------------------------------------------------- */}
+        <TabsContent value="medya" className="mt-6 space-y-6">
+          {/* Image Manager — only available when editing (needs propertyId) */}
+          {mediaSlot ? (
+            <div>
+              <h3 className="mb-1 text-sm font-semibold">Görseller</h3>
+              <p className="mb-4 text-sm text-muted-foreground">
+                JPEG, PNG veya WebP formatında, maksimum 5 MB.
+              </p>
+              {mediaSlot}
+            </div>
+          ) : (
+            <div className="rounded-lg border border-dashed p-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                Görseller eklemek için önce ilanı kaydedin.
+                <br />
+                Kaydettikten sonra düzenleme sayfasından görsel yükleyebilirsiniz.
+              </p>
+            </div>
+          )}
+
+          {/* Video URL */}
+          <Field
+            label="Video URL"
+            htmlFor="video_url"
+            hint="YouTube veya Vimeo video linki"
+          >
+            <Input
+              id="video_url"
+              name="video_url"
+              type="url"
+              value={form.video_url}
+              onChange={handleChange}
+              placeholder="https://www.youtube.com/watch?v=..."
+            />
+          </Field>
+
+          {/* 360° Virtual Tour URL */}
+          <Field
+            label="360° Sanal Tur URL"
+            htmlFor="virtual_tour_url"
+            hint="Matterport, Kuula veya benzeri sanal tur linki"
+          >
+            <Input
+              id="virtual_tour_url"
+              name="virtual_tour_url"
+              type="url"
+              value={form.virtual_tour_url}
+              onChange={handleChange}
+              placeholder="https://my.matterport.com/show/?m=..."
+            />
+          </Field>
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}
