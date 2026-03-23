@@ -14,6 +14,8 @@ import {
   Calendar,
   ExternalLink,
   Search,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -151,6 +153,7 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
   const [detailImage, setDetailImage] = useState<GalleryImage | null>(null);
   const [isPending, startTransition] = useTransition();
   const [visibleCount, setVisibleCount] = useState(60);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   // Get unique property IDs ordered by most recent image
   const recentPropertyIds = useMemo(() => {
@@ -251,6 +254,23 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
     return properties.filter((p) => ids.has(p.id));
   }, [images, properties]);
 
+  function toggleGroup(propertyId: string) {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(propertyId)) next.delete(propertyId);
+      else next.add(propertyId);
+      return next;
+    });
+  }
+
+  function expandAll() {
+    setExpandedGroups(new Set(grouped.map((g) => g.propertyId)));
+  }
+
+  function collapseAll() {
+    setExpandedGroups(new Set());
+  }
+
   // Reset visible count when filters change
   const filteredGroupCount = grouped.length;
 
@@ -321,6 +341,13 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
           <Button
             variant="outline"
             size="sm"
+            onClick={expandedGroups.size === grouped.length ? collapseAll : expandAll}
+          >
+            {expandedGroups.size === grouped.length ? "Tümünü Daralt" : "Tümünü Genişlet"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={selectAll}
           >
             {selectedIds.size === filtered.length && filtered.length > 0 ? (
@@ -355,11 +382,22 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
         </div>
       ) : (
         <div className="space-y-8">
-          {grouped.slice(0, visibleCount).map((group) => (
-            <div key={group.propertyId}>
-              {/* Property header */}
-              <div className="mb-3 flex items-center justify-between">
+          {grouped.slice(0, visibleCount).map((group) => {
+            const isExpanded = expandedGroups.has(group.propertyId);
+            return (
+            <div key={group.propertyId} className="rounded-lg border">
+              {/* Property header — clickable */}
+              <button
+                type="button"
+                className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50 transition-colors"
+                onClick={() => toggleGroup(group.propertyId)}
+              >
                 <div className="flex items-center gap-2">
+                  {isExpanded ? (
+                    <ChevronDown className="size-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronRight className="size-4 text-muted-foreground" />
+                  )}
                   <h3 className="text-sm font-semibold">{group.title}</h3>
                   <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                     {group.images.length} görsel
@@ -368,13 +406,16 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
                 <Link
                   href={`/admin/ilanlar/${group.propertyId}/duzenle`}
                   className="flex items-center gap-1 text-xs text-primary hover:underline"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <ExternalLink className="size-3" />
                   İlanı Düzenle
                 </Link>
-              </div>
+              </button>
 
-              {/* Image grid */}
+              {/* Image grid — collapsible */}
+              {isExpanded && (
+              <div className="px-4 pb-4">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                 {group.images.map((img) => {
                   const isSelected = selectedIds.has(img.id);
@@ -437,8 +478,11 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
                   );
                 })}
               </div>
+              </div>
+              )}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

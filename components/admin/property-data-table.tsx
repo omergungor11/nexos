@@ -471,7 +471,9 @@ export function PropertyDataTable({
 
         <Select value={statusFilter} onValueChange={handleFilterChange(setStatusFilter)}>
           <SelectTrigger className="h-8 w-40">
-            <SelectValue placeholder="Durum" />
+            <SelectValue placeholder="Durum">
+              {statusFilter === "all" ? "Tüm Durumlar" : statusFilter === "active" ? "Yayında" : statusFilter === "inactive" ? "Yayında Değil" : statusFilter === "available" ? "Müsait" : statusFilter === "sold" ? "Satıldı" : statusFilter === "rented" ? "Kiralandı" : "Rezerve"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tüm Durumlar</SelectItem>
@@ -486,7 +488,9 @@ export function PropertyDataTable({
 
         <Select value={typeFilter} onValueChange={handleFilterChange(setTypeFilter)}>
           <SelectTrigger className="h-8 w-48">
-            <SelectValue placeholder="Tip" />
+            <SelectValue placeholder="Tip">
+              {typeFilter === "all" ? "Tüm Tipler" : PROPERTY_TYPE_LABELS[typeFilter as keyof typeof PROPERTY_TYPE_LABELS] ?? typeFilter}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tüm Tipler</SelectItem>

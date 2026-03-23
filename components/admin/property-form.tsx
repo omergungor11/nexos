@@ -380,7 +380,7 @@ function buildInitialState(
     property_type: (initialData?.type as PropertyType) ?? "apartment",
     status: (initialData?.status as PropertyStatus) ?? "available",
     price: initialData?.price != null ? String(initialData.price) : "",
-    currency: (initialData?.currency as Currency) ?? "TRY",
+    currency: (initialData?.currency as Currency) ?? "GBP",
     area_sqm:
       initialData?.area_sqm != null ? String(initialData.area_sqm) : "",
     gross_area_sqm:
@@ -1471,7 +1471,7 @@ export function PropertyForm({
               >
                 <SelectTrigger id="title_deed_type" className="w-full sm:w-64">
                   <SelectValue placeholder="Seçiniz (opsiyonel)">
-                    {form.title_deed_type ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType] : undefined}
+                    {form.title_deed_type ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType] : "Belirtilmemiş"}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -1496,8 +1496,9 @@ export function PropertyForm({
               Henüz özellik tanımlanmamış.
             </p>
           ) : (
-            Object.entries(featuresByCategory).map(
-              ([category, features]) => (
+            Object.entries(featuresByCategory)
+              .filter(([category]) => category !== "accessibility")
+              .map(([category, features]) => (
                 <div key={category} className="space-y-3">
                   <h3 className="text-sm font-semibold text-foreground">
                     {FEATURE_CATEGORY_LABELS[
