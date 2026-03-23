@@ -9,14 +9,31 @@ import {
   Star,
   CheckSquare,
   Square,
-  Filter,
   ImageIcon,
   Calendar,
   ExternalLink,
   Search,
   ChevronDown,
   ChevronRight,
+  GripVertical,
 } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,8 +50,8 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import { deletePropertyImage } from "@/actions/images";
-import type { GalleryImage } from "@/app/admin/galeri/page";
+import { deletePropertyImage, reorderPropertyImages } from "@/actions/images";
+import type { GalleryImage, GalleryCity, GalleryDistrict } from "@/app/admin/galeri/page";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -50,10 +67,109 @@ function formatDate(dateString: string): string {
   }).format(new Date(dateString));
 }
 
-function formatFileSize(url: string): string {
-  // We can't know the actual file size from URL alone
-  // This is shown as placeholder — real size would need HEAD request
-  return "—";
+// ---------------------------------------------------------------------------
+// Sortable Image Card
+// ---------------------------------------------------------------------------
+
+function SortableImageCard({
+  img,
+  isSelected,
+  onToggleSelect,
+  onShowDetail,
+}: {
+  img: GalleryImage;
+  isSelected: boolean;
+  onToggleSelect: () => void;
+  onShowDetail: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: img.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : undefined,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`group relative overflow-hidden rounded-lg border transition-all ${
+        isSelected
+          ? "ring-2 ring-primary border-primary"
+          : "hover:border-foreground/20"
+      }`}
+    >
+      {/* Drag handle */}
+      <button
+        className="absolute left-1.5 bottom-1.5 z-10 cursor-grab rounded bg-black/50 p-0.5 text-white opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="size-3.5" />
+      </button>
+
+      {/* Selection checkbox */}
+      <button
+        className="absolute left-1.5 top-1.5 z-10 rounded bg-black/50 p-0.5 text-white transition-opacity group-hover:opacity-100"
+        style={{ opacity: isSelected ? 1 : undefined }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleSelect();
+        }}
+      >
+        {isSelected ? (
+          <CheckSquare className="size-4" />
+        ) : (
+          <Square className="size-4 opacity-60 group-hover:opacity-100" />
+        )}
+      </button>
+
+      {/* Cover badge */}
+      {img.is_cover && (
+        <div className="absolute right-1.5 top-1.5 z-10 rounded bg-amber-500 p-0.5">
+          <Star className="size-3 text-white" fill="white" />
+        </div>
+      )}
+
+      {/* Sort order badge */}
+      <div className="absolute right-1.5 bottom-1.5 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+        {img.sort_order + 1}
+      </div>
+
+      {/* Image */}
+      <button
+        className="block w-full"
+        onClick={onShowDetail}
+      >
+        <div className="relative aspect-square bg-muted">
+          <Image
+            src={img.url}
+            alt={img.alt_text || ""}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+          />
+        </div>
+      </button>
+
+      {/* Info */}
+      <div className="px-2 py-1.5">
+        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+          <Calendar className="size-2.5" />
+          {formatDate(img.created_at).split(",")[0]}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -136,24 +252,101 @@ function ImageDetailDialog({
 }
 
 // ---------------------------------------------------------------------------
+// Sortable Image Grid (per property group)
+// ---------------------------------------------------------------------------
+
+function SortableImageGrid({
+  propertyId,
+  images: groupImages,
+  selectedIds,
+  onToggleSelect,
+  onShowDetail,
+  onReorder,
+}: {
+  propertyId: string;
+  images: GalleryImage[];
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+  onShowDetail: (img: GalleryImage) => void;
+  onReorder: (propertyId: string, newImages: GalleryImage[]) => void;
+}) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const imageIds = useMemo(() => groupImages.map((img) => img.id), [groupImages]);
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = groupImages.findIndex((img) => img.id === active.id);
+    const newIndex = groupImages.findIndex((img) => img.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(groupImages, oldIndex, newIndex).map((img, i) => ({
+      ...img,
+      sort_order: i,
+    }));
+
+    onReorder(propertyId, reordered);
+  }
+
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={imageIds} strategy={rectSortingStrategy}>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {groupImages.map((img) => (
+            <SortableImageCard
+              key={img.id}
+              img={img}
+              isSelected={selectedIds.has(img.id)}
+              onToggleSelect={() => onToggleSelect(img.id)}
+              onShowDetail={() => onShowDetail(img)}
+            />
+          ))}
+        </div>
+      </SortableContext>
+    </DndContext>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
 interface GalleryManagerProps {
   initialImages: GalleryImage[];
   properties: { id: string; title: string }[];
+  cities: GalleryCity[];
+  districts: GalleryDistrict[];
 }
 
-export function GalleryManager({ initialImages, properties }: GalleryManagerProps) {
+export function GalleryManager({ initialImages, properties, cities, districts }: GalleryManagerProps) {
   const [images, setImages] = useState(initialImages);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [propertyFilter, setPropertyFilter] = useState("all");
   const [recentFilter, setRecentFilter] = useState("10");
+  const [cityFilter, setCityFilter] = useState("all");
+  const [districtFilter, setDistrictFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [detailImage, setDetailImage] = useState<GalleryImage | null>(null);
   const [isPending, startTransition] = useTransition();
   const [visibleCount, setVisibleCount] = useState(60);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+  // Districts filtered by selected city
+  const filteredDistricts = useMemo(() => {
+    if (cityFilter === "all") return [];
+    return districts.filter((d) => d.city_id === Number(cityFilter));
+  }, [districts, cityFilter]);
+
+  // Cities that actually have images
+  const citiesWithImages = useMemo(() => {
+    const cityIds = new Set(images.map((img) => img.city_id).filter(Boolean));
+    return cities.filter((c) => cityIds.has(c.id));
+  }, [images, cities]);
 
   // Get unique property IDs ordered by most recent image
   const recentPropertyIds = useMemo(() => {
@@ -172,7 +365,7 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
   const filtered = useMemo(() => {
     let result = images;
 
-    // Search filter — matches property title
+    // Search filter
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
@@ -180,6 +373,16 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
           img.property_title.toLowerCase().includes(q) ||
           img.alt_text?.toLowerCase().includes(q)
       );
+    }
+
+    // City filter
+    if (cityFilter !== "all") {
+      result = result.filter((img) => img.city_id === Number(cityFilter));
+    }
+
+    // District filter
+    if (districtFilter !== "all") {
+      result = result.filter((img) => img.district_id === Number(districtFilter));
     }
 
     // Property filter
@@ -195,9 +398,9 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
     }
 
     return result;
-  }, [images, propertyFilter, recentFilter, search, recentPropertyIds]);
+  }, [images, propertyFilter, recentFilter, cityFilter, districtFilter, search, recentPropertyIds]);
 
-  // Group images by property
+  // Group images by property — sort images within group by sort_order
   const grouped = useMemo(() => {
     const map = new Map<string, GalleryImage[]>();
     for (const img of filtered) {
@@ -209,7 +412,7 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
       propertyId,
       title: imgs[0].property_title,
       slug: imgs[0].property_slug,
-      images: imgs,
+      images: imgs.sort((a, b) => a.sort_order - b.sort_order),
     }));
   }, [filtered]);
 
@@ -248,7 +451,30 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
     });
   }
 
-  // Property options for filter — only show those with images
+  function handleReorder(propertyId: string, newImages: GalleryImage[]) {
+    // Optimistic update
+    setImages((prev) => {
+      const otherImages = prev.filter((img) => img.property_id !== propertyId);
+      return [...otherImages, ...newImages];
+    });
+
+    // Persist to DB
+    startTransition(async () => {
+      const result = await reorderPropertyImages(
+        propertyId,
+        newImages.map((img) => img.id)
+      );
+      if (result.error) {
+        toast.error(`Sıralama kaydedilemedi: ${result.error}`);
+        // Revert on error
+        setImages(initialImages);
+      } else {
+        toast.success("Görsel sırası güncellendi.");
+      }
+    });
+  }
+
+  // Property options for filter
   const propertyOptions = useMemo(() => {
     const ids = new Set(images.map((img) => img.property_id));
     return properties.filter((p) => ids.has(p.id));
@@ -271,7 +497,6 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
     setExpandedGroups(new Set());
   }
 
-  // Reset visible count when filters change
   const filteredGroupCount = grouped.length;
 
   return (
@@ -289,6 +514,56 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
             className="flex h-8 w-full rounded-md border border-input bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           />
         </div>
+
+        {/* City filter */}
+        <Select
+          value={cityFilter}
+          onValueChange={(v) => {
+            setCityFilter(v ?? "all");
+            setDistrictFilter("all");
+            setVisibleCount(60);
+          }}
+        >
+          <SelectTrigger className="h-8 w-44">
+            <SelectValue>
+              {cityFilter === "all"
+                ? "Tüm İller"
+                : citiesWithImages.find((c) => c.id === Number(cityFilter))?.name ?? "Seçiniz"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tüm İller</SelectItem>
+            {citiesWithImages.map((c) => (
+              <SelectItem key={c.id} value={String(c.id)}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* District filter — only shown when a city is selected */}
+        {cityFilter !== "all" && filteredDistricts.length > 0 && (
+          <Select
+            value={districtFilter}
+            onValueChange={(v) => { setDistrictFilter(v ?? "all"); setVisibleCount(60); }}
+          >
+            <SelectTrigger className="h-8 w-44">
+              <SelectValue>
+                {districtFilter === "all"
+                  ? "Tüm İlçeler"
+                  : filteredDistricts.find((d) => d.id === Number(districtFilter))?.name ?? "Seçiniz"}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tüm İlçeler</SelectItem>
+              {filteredDistricts.map((d) => (
+                <SelectItem key={d.id} value={String(d.id)}>
+                  {d.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         {/* Property dropdown */}
         <Select value={propertyFilter} onValueChange={(v) => { setPropertyFilter(v ?? "all"); setVisibleCount(60); }}>
@@ -381,106 +656,55 @@ export function GalleryManager({ initialImages, properties }: GalleryManagerProp
           </p>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-4">
           {grouped.slice(0, visibleCount).map((group) => {
             const isExpanded = expandedGroups.has(group.propertyId);
             return (
-            <div key={group.propertyId} className="rounded-lg border">
-              {/* Property header — clickable */}
-              <button
-                type="button"
-                className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50 transition-colors"
-                onClick={() => toggleGroup(group.propertyId)}
-              >
-                <div className="flex items-center gap-2">
-                  {isExpanded ? (
-                    <ChevronDown className="size-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronRight className="size-4 text-muted-foreground" />
-                  )}
-                  <h3 className="text-sm font-semibold">{group.title}</h3>
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                    {group.images.length} görsel
-                  </span>
-                </div>
-                <Link
-                  href={`/admin/ilanlar/${group.propertyId}/duzenle`}
-                  className="flex items-center gap-1 text-xs text-primary hover:underline"
-                  onClick={(e) => e.stopPropagation()}
+              <div key={group.propertyId} className="rounded-lg border">
+                {/* Property header — clickable */}
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50 transition-colors"
+                  onClick={() => toggleGroup(group.propertyId)}
                 >
-                  <ExternalLink className="size-3" />
-                  İlanı Düzenle
-                </Link>
-              </button>
+                  <div className="flex items-center gap-2">
+                    {isExpanded ? (
+                      <ChevronDown className="size-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronRight className="size-4 text-muted-foreground" />
+                    )}
+                    <h3 className="text-sm font-semibold">{group.title}</h3>
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                      {group.images.length} görsel
+                    </span>
+                  </div>
+                  <Link
+                    href={`/admin/ilanlar/${group.propertyId}/duzenle`}
+                    className="flex items-center gap-1 text-xs text-primary hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ExternalLink className="size-3" />
+                    İlanı Düzenle
+                  </Link>
+                </button>
 
-              {/* Image grid — collapsible */}
-              {isExpanded && (
-              <div className="px-4 pb-4">
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {group.images.map((img) => {
-                  const isSelected = selectedIds.has(img.id);
-                  return (
-                    <div
-                      key={img.id}
-                      className={`group relative overflow-hidden rounded-lg border transition-all ${
-                        isSelected
-                          ? "ring-2 ring-primary border-primary"
-                          : "hover:border-foreground/20"
-                      }`}
-                    >
-                      {/* Selection checkbox */}
-                      <button
-                        className="absolute left-1.5 top-1.5 z-10 rounded bg-black/50 p-0.5 text-white transition-opacity group-hover:opacity-100"
-                        style={{ opacity: isSelected ? 1 : undefined }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleSelect(img.id);
-                        }}
-                      >
-                        {isSelected ? (
-                          <CheckSquare className="size-4" />
-                        ) : (
-                          <Square className="size-4 opacity-60 group-hover:opacity-100" />
-                        )}
-                      </button>
-
-                      {/* Cover badge */}
-                      {img.is_cover && (
-                        <div className="absolute right-1.5 top-1.5 z-10 rounded bg-amber-500 p-0.5">
-                          <Star className="size-3 text-white" fill="white" />
-                        </div>
-                      )}
-
-                      {/* Image */}
-                      <button
-                        className="block w-full"
-                        onClick={() => setDetailImage(img)}
-                      >
-                        <div className="relative aspect-square bg-muted">
-                          <Image
-                            src={img.url}
-                            alt={img.alt_text || ""}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                          />
-                        </div>
-                      </button>
-
-                      {/* Info */}
-                      <div className="px-2 py-1.5">
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                          <Calendar className="size-2.5" />
-                          {formatDate(img.created_at).split(",")[0]}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {/* Image grid — collapsible + sortable */}
+                {isExpanded && (
+                  <div className="px-4 pb-4">
+                    <p className="mb-2 text-xs text-muted-foreground">
+                      Sıralamak için görselleri sürükleyip bırakın
+                    </p>
+                    <SortableImageGrid
+                      propertyId={group.propertyId}
+                      images={group.images}
+                      selectedIds={selectedIds}
+                      onToggleSelect={toggleSelect}
+                      onShowDetail={setDetailImage}
+                      onReorder={handleReorder}
+                    />
+                  </div>
+                )}
               </div>
-              </div>
-              )}
-            </div>
             );
           })}
         </div>

@@ -20,6 +20,8 @@ type RawProperty = {
   id: string;
   title: string;
   slug: string;
+  city_id: number | null;
+  district_id: number | null;
 };
 
 export type GalleryImage = {
@@ -32,26 +34,41 @@ export type GalleryImage = {
   property_id: string;
   property_title: string;
   property_slug: string;
+  city_id: number | null;
+  district_id: number | null;
 };
+
+export type GalleryCity = { id: number; name: string };
+export type GalleryDistrict = { id: number; name: string; city_id: number };
 
 export default async function AdminGaleriPage() {
   const supabase = await createClient();
 
-  const [imagesResult, propertiesResult] = await Promise.all([
+  const [imagesResult, propertiesResult, citiesResult, districtsResult] = await Promise.all([
     supabase
       .from("property_images")
       .select("id, url, alt_text, sort_order, is_cover, created_at, property_id")
       .order("created_at", { ascending: false }),
     supabase
       .from("properties")
-      .select("id, title, slug"),
+      .select("id, title, slug, city_id, district_id"),
+    supabase
+      .from("cities")
+      .select("id, name")
+      .order("name"),
+    supabase
+      .from("districts")
+      .select("id, name, city_id")
+      .order("name"),
   ]);
 
   const rawImages = (imagesResult.data ?? []) as RawImage[];
   const properties = (propertiesResult.data ?? []) as RawProperty[];
+  const cities = (citiesResult.data ?? []) as GalleryCity[];
+  const districts = (districtsResult.data ?? []) as GalleryDistrict[];
 
   const propertyMap = new Map(
-    properties.map((p) => [p.id, { title: p.title, slug: p.slug }])
+    properties.map((p) => [p.id, { title: p.title, slug: p.slug, city_id: p.city_id, district_id: p.district_id }])
   );
 
   const images: GalleryImage[] = rawImages.map((img) => {
@@ -60,6 +77,8 @@ export default async function AdminGaleriPage() {
       ...img,
       property_title: prop?.title ?? "Bilinmeyen İlan",
       property_slug: prop?.slug ?? "",
+      city_id: prop?.city_id ?? null,
+      district_id: prop?.district_id ?? null,
     };
   });
 
@@ -81,6 +100,8 @@ export default async function AdminGaleriPage() {
       <GalleryManager
         initialImages={images}
         properties={properties.map((p) => ({ id: p.id, title: p.title }))}
+        cities={cities}
+        districts={districts}
       />
     </div>
   );
