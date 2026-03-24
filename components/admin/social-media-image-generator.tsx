@@ -372,7 +372,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       const actualLogoH = Math.min(logoH, headerBlockH);
       const logoW = actualLogoH * logoAspect;
       const logoX = W - PAD - logoW;
-      const logoY = contentStartY + (headerBlockH - actualLogoH) / 2;
+      const logoY = contentStartY;
       ctx.drawImage(logoImg, logoX, logoY, logoW, actualLogoH);
     } catch {
       ctx.fillStyle = T.accent;
