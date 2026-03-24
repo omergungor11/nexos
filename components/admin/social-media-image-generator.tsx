@@ -281,18 +281,18 @@ async function drawCoverImg(ctx: CanvasRenderingContext2D, src: string, x: numbe
 }
 
 // Draw logo
-async function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, accent: string, align: "left" | "right" = "left") {
+async function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, accent: string, align: "left" | "right" | "center" = "left") {
   try {
     const logoImg = await loadImg("/logo-trans.png");
     const logoW = h * (logoImg.width / logoImg.height);
-    const lx = align === "right" ? x - logoW : x;
+    const lx = align === "right" ? x - logoW : align === "center" ? x - logoW / 2 : x;
     ctx.drawImage(logoImg, lx, y, logoW, h);
   } catch {
     ctx.fillStyle = accent;
     ctx.font = `bold ${Math.round(h * 0.5)}px ${FONT}`;
     ctx.textBaseline = "middle";
-    ctx.textAlign = align === "right" ? "right" : "left";
-    ctx.fillText("NEXOS", align === "right" ? x : x, y + h / 2);
+    ctx.textAlign = align === "left" ? "left" : align === "right" ? "right" : "center";
+    ctx.fillText("NEXOS", x, y + h / 2);
     ctx.textAlign = "start";
   }
 }
@@ -608,7 +608,7 @@ async function renderGallery(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   const sY = 135 + 30;
 
   // Logo centered
-  await drawLogo(ctx, W / 2, sY, 120, T.accent, "right");
+  await drawLogo(ctx, W / 2, sY, 120, T.accent, "center");
 
   // Centered badge
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
@@ -749,9 +749,9 @@ async function renderDiagonal(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
 async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
   // Band heights
   const band1H = 160; // Header (logo + badge)
-  const band2H = 400; // Main image
-  const thumbH = 120; // Thumbnail row
-  const band3H = 420; // Content
+  const band2H = 360; // Main image
+  const thumbH = 180; // Thumbnail row
+  const band3H = 400; // Content
   const band4H = H - band1H - band2H - thumbH - band3H; // Footer
 
   // Band 1: Header
@@ -773,24 +773,23 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   } else {
     ctx.fillStyle = T.cardBg; ctx.fillRect(0, imgY, W, band2H);
   }
+  // Gold side borders on main image
   ctx.fillStyle = T.accent;
   ctx.fillRect(0, imgY, 4, band2H);
   ctx.fillRect(W - 4, imgY, 4, band2H);
 
-  // Gold line
-  ctx.fillRect(0, imgY + band2H - 3, W, 3);
-
-  // Thumbnail row (3 images)
+  // Thumbnail row (3 images, no gold line between main and thumbs)
   const thumbY = imgY + band2H;
   ctx.fillStyle = T.bg; ctx.fillRect(0, thumbY, W, thumbH);
-  const thumbGap = 8;
+  const thumbGap = 10;
   const thumbW = (W - PAD * 2 - thumbGap * 2) / 3;
+  const thumbInnerH = thumbH - 20;
   const extras = property.extra_images ?? [];
   for (let i = 0; i < 3; i++) {
     const tx = PAD + i * (thumbW + thumbGap);
     const ty = thumbY + 10;
-    if (extras[i]) await drawCoverImg(ctx, extras[i], tx, ty, thumbW, thumbH - 20, 12, T.cardBg);
-    else { ctx.fillStyle = T.cardBg; rr(ctx, tx, ty, thumbW, thumbH - 20, 12); ctx.fill(); }
+    if (extras[i]) await drawCoverImg(ctx, extras[i], tx, ty, thumbW, thumbInnerH, 14, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, tx, ty, thumbW, thumbInnerH, 14); ctx.fill(); }
   }
 
   // Gold line
