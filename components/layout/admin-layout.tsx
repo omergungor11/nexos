@@ -176,15 +176,15 @@ export function AdminLayout({
             className="size-8 rounded"
           />
           {!isCollapsed && (
-            <span className="text-lg font-semibold text-white">
+            <span className="text-lg font-semibold text-sidebar-foreground">
               Nexos{" "}
-              <span className="text-sm font-normal text-slate-400">Admin</span>
+              <span className="text-sm font-normal text-sidebar-foreground/50">Admin</span>
             </span>
           )}
         </Link>
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex rounded-md p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="hidden lg:flex rounded-md p-1.5 text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-colors"
           title={isCollapsed ? "Menüyü genişlet" : "Menüyü daralt"}
         >
           {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
@@ -207,8 +207,8 @@ export function AdminLayout({
                     "group flex items-center rounded-lg text-sm font-medium transition-colors",
                     isCollapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2.5",
                     active
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                   )}
                 >
                   <Icon
@@ -216,13 +216,13 @@ export function AdminLayout({
                       "shrink-0",
                       isCollapsed ? "size-5" : "size-4",
                       active
-                        ? "text-white"
-                        : "text-slate-400 group-hover:text-white"
+                        ? "text-sidebar-accent-foreground"
+                        : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground"
                     )}
                   />
                   {!isCollapsed && item.label}
                   {!isCollapsed && active && (
-                    <ChevronRight className="ml-auto size-3.5 text-blue-300" />
+                    <ChevronRight className="ml-auto size-3.5 text-sidebar-accent-foreground/60" />
                   )}
                 </Link>
               </li>
@@ -236,15 +236,15 @@ export function AdminLayout({
         {!isCollapsed && (
           <div className="flex items-center gap-3">
             <Avatar size="sm">
-              <AvatarFallback className="bg-blue-600 text-white text-xs">
+              <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground text-xs">
                 {getInitials(adminName)}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-white">
+              <p className="truncate text-sm font-medium text-sidebar-foreground">
                 {adminName}
               </p>
-              <p className="truncate text-xs text-slate-400">{adminEmail}</p>
+              <p className="truncate text-xs text-sidebar-foreground/50">{adminEmail}</p>
             </div>
           </div>
         )}
@@ -253,7 +253,7 @@ export function AdminLayout({
           disabled={loggingOut}
           title={isCollapsed ? "Çıkış Yap" : undefined}
           className={cn(
-            "flex w-full items-center rounded-lg text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-white disabled:pointer-events-none disabled:opacity-50",
+            "flex w-full items-center rounded-lg text-sm text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent/50 hover:text-sidebar-foreground disabled:pointer-events-none disabled:opacity-50",
             isCollapsed ? "justify-center p-2.5 mt-0" : "gap-2 px-3 py-2 mt-3"
           )}
         >
@@ -322,7 +322,7 @@ export function AdminLayout({
             <NotificationBell />
             <div className="hidden items-center gap-2 lg:flex">
               <Avatar size="sm">
-                <AvatarFallback className="bg-blue-600 text-white text-xs">
+                <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground text-xs">
                   {getInitials(adminName)}
                 </AvatarFallback>
               </Avatar>
