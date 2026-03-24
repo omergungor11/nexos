@@ -323,21 +323,11 @@ async function drawCoverImg(ctx: CanvasRenderingContext2D, src: string, x: numbe
 }
 
 // Draw logo
-async function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, accent: string, align: "left" | "right" = "left", blur = false) {
+async function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, accent: string, align: "left" | "right" = "left") {
   try {
     const logoImg = await loadImg("/logo-trans.png");
     const logoW = h * (logoImg.width / logoImg.height);
     const lx = align === "right" ? x - logoW : x;
-    if (blur) {
-      const blurPad = 20;
-      ctx.save();
-      ctx.filter = "blur(20px)";
-      ctx.fillStyle = "rgba(0,0,0,0.5)";
-      rr(ctx, lx - blurPad, y - blurPad, logoW + blurPad * 2, h + blurPad * 2, 20);
-      ctx.fill();
-      ctx.filter = "none";
-      ctx.restore();
-    }
     ctx.drawImage(logoImg, lx, y, logoW, h);
   } catch {
     ctx.fillStyle = accent;
@@ -465,6 +455,9 @@ async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate,
     ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
   }
 
+  // Overall 30% dark overlay for logo/text visibility
+  ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fillRect(0, 0, W, H);
+
   // Dark overlay gradient from bottom
   const grad = ctx.createLinearGradient(0, H * 0.3, 0, H);
   grad.addColorStop(0, "rgba(0,0,0,0)");
@@ -473,7 +466,7 @@ async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate,
   ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
 
   // Top: logo + badge
-  await drawLogo(ctx, PAD, PAD + 40, 140, T.accent, "left", true);
+  await drawLogo(ctx, PAD, PAD + 40, 140, T.accent, "left");
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `bold 24px ${FONT}`;
   const tw = ctx.measureText(txLabel).width;
@@ -587,6 +580,8 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   const imgH = 700;
   if (property.cover_image) {
     await drawCoverImg(ctx, property.cover_image, 0, 0, W, imgH, 0, T.cardBg);
+    // 30% overlay for logo visibility
+    ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fillRect(0, 0, W, imgH);
     // Bottom gradient
     const grad = ctx.createLinearGradient(0, imgH - 200, 0, imgH);
     grad.addColorStop(0, T.gradientOverlay[0]); grad.addColorStop(1, T.gradientOverlay[1]);
@@ -594,7 +589,7 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   }
 
   // Logo on image (top left)
-  await drawLogo(ctx, PAD, PAD, 110, T.accent, "left", true);
+  await drawLogo(ctx, PAD, PAD, 110, T.accent, "left");
 
   // Badge on image (top right)
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
@@ -872,8 +867,8 @@ async function renderDiagonal(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
     ctx.closePath();
     ctx.clip();
     await drawCoverImg(ctx, property.cover_image, 0, 0, W, H * 0.75, 0, T.cardBg);
-    // Darken overlay
-    ctx.fillStyle = T.gradientOverlay[1]; ctx.fillRect(0, 0, W, H * 0.75);
+    // 30% overlay for visibility
+    ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fillRect(0, 0, W, H * 0.75);
     ctx.restore();
   }
 
@@ -882,7 +877,7 @@ async function renderDiagonal(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   ctx.beginPath(); ctx.moveTo(W, H * 0.45); ctx.lineTo(0, H * 0.75); ctx.stroke();
 
   // Logo top-left with blur backdrop
-  await drawLogo(ctx, PAD, PAD + 20, 120, T.accent, "left", true);
+  await drawLogo(ctx, PAD, PAD + 20, 120, T.accent, "left");
 
   // Price on image area
   ctx.fillStyle = T.textSecondary; ctx.font = `bold 64px ${FONT}`; ctx.textBaseline = "top";
