@@ -741,8 +741,8 @@ async function renderDiagonal(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
 async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
   // Band heights
   const band1H = 160; // Header (logo + badge)
-  const band2H = 360; // Main image
-  const thumbH = 180; // Thumbnail row
+  const band2H = 480; // Main image (taller)
+  const thumbH = 160; // Thumbnail row (overlaps main image)
   const band3H = 400; // Content
   const band4H = H - band1H - band2H - thumbH - band3H; // Footer
 
@@ -770,25 +770,28 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   ctx.fillRect(0, imgY, 4, band2H);
   ctx.fillRect(W - 4, imgY, 4, band2H);
 
-  // Thumbnail row (3 images, no gold line between main and thumbs)
-  const thumbY = imgY + band2H;
-  ctx.fillStyle = T.bg; ctx.fillRect(0, thumbY, W, thumbH);
+  // Thumbnail row (3 images, overlapping bottom of main image)
   const thumbGap = 10;
   const thumbW = (W - PAD * 2 - thumbGap * 2) / 3;
   const thumbInnerH = thumbH - 20;
+  const thumbY = imgY + band2H - thumbH / 2; // overlap main image
   const extras = property.extra_images ?? [];
   for (let i = 0; i < 3; i++) {
     const tx = PAD + i * (thumbW + thumbGap);
-    const ty = thumbY + 10;
-    if (extras[i]) await drawCoverImg(ctx, extras[i], tx, ty, thumbW, thumbInnerH, 14, T.cardBg);
-    else { ctx.fillStyle = T.cardBg; rr(ctx, tx, ty, thumbW, thumbInnerH, 14); ctx.fill(); }
+    // Border frame for depth
+    ctx.fillStyle = T.bg;
+    rr(ctx, tx - 3, thumbY - 3, thumbW + 6, thumbInnerH + 6, 16);
+    ctx.fill();
+    if (extras[i]) await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbInnerH, 14, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, tx, thumbY, thumbW, thumbInnerH, 14); ctx.fill(); }
   }
 
-  // Gold line
-  ctx.fillStyle = T.accent; ctx.fillRect(0, thumbY + thumbH - 3, W, 3);
+  // Gold line below thumbnails
+  const thumbBottom = thumbY + thumbInnerH + 10;
+  ctx.fillStyle = T.accent; ctx.fillRect(0, thumbBottom, W, 3);
 
-  // Band 3: Content (pushed down)
-  const contentY = thumbY + thumbH;
+  // Band 3: Content
+  const contentY = thumbBottom + 3;
   ctx.fillStyle = T.cardBg; ctx.fillRect(0, contentY, W, band3H);
 
   // Price (pushed down more)
