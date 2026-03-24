@@ -1087,7 +1087,7 @@ async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   ctx.textAlign = "start";
 
   // Logo centered below details
-  await drawLogo(ctx, W / 2, detailY2 + 46, 80, T.accent, "center");
+  await drawLogo(ctx, W / 2, detailY2 + 46, 110, T.accent, "center");
 
   // Footer with accent line
   const footerY = H - 90;
