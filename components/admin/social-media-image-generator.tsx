@@ -45,7 +45,7 @@ const W = 1080;
 const H = 1350;
 const PAD = 80;
 const R = 24;
-const NEXOS_GOLD = "#E5A800";
+const NEXOS_GOLD = "#ffca3e";
 const FONT = "Montserrat, system-ui, sans-serif";
 
 const CURRENCY_SYMBOLS: Record<string, string> = { TRY: "₺", USD: "$", EUR: "€", GBP: "£" };
@@ -86,7 +86,7 @@ const TEMPLATES: DesignTemplate[] = [
   {
     id: "classic-white", name: "Klasik Beyaz", layout: "classic",
     bg: "#ffffff", cardBg: "#f1f5f9", accent: NEXOS_GOLD,
-    textPrimary: "#0f172a", textSecondary: "#b8860b", textMuted: "#64748b",
+    textPrimary: "#0f172a", textSecondary: "#ffca3e", textMuted: "#64748b",
     gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
   },
   // Full image overlay
@@ -137,8 +137,8 @@ const TEMPLATES: DesignTemplate[] = [
   },
   {
     id: "magazine-white", name: "Dergi Beyaz", layout: "magazine",
-    bg: "#fafaf9", cardBg: "#e7e5e4", accent: "#b8860b",
-    textPrimary: "#1c1917", textSecondary: "#b8860b", textMuted: "#78716c",
+    bg: "#fafaf9", cardBg: "#e7e5e4", accent: "#ffca3e",
+    textPrimary: "#1c1917", textSecondary: "#ffca3e", textMuted: "#78716c",
     gradientOverlay: ["rgba(250,250,249,0)", "rgba(250,250,249,0.85)"],
   },
   // Gallery
@@ -196,8 +196,8 @@ const TEMPLATES: DesignTemplate[] = [
   },
   {
     id: "ribbon-white", name: "Şerit Beyaz", layout: "ribbon",
-    bg: "#ffffff", cardBg: "#f1f5f9", accent: "#b8860b",
-    textPrimary: "#0f172a", textSecondary: "#b8860b", textMuted: "#64748b",
+    bg: "#ffffff", cardBg: "#f1f5f9", accent: "#ffca3e",
+    textPrimary: "#0f172a", textSecondary: "#ffca3e", textMuted: "#64748b",
     gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
   },
 ];
