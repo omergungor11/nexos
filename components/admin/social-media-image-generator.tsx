@@ -472,8 +472,8 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
 
   // Top: main image + 3 thumbnails below
-  const mainImgH = 540;
-  const thumbH = 160; const thumbGap = 10;
+  const mainImgH = 500;
+  const thumbH = 220; const thumbGap = 10;
   const imgH = mainImgH + thumbGap + thumbH;
 
   if (property.cover_image) {
