@@ -298,7 +298,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     ctx.fillStyle = T.bg;
     ctx.fillRect(0, 0, W, H);
 
-    const logoH = 70;
+    const logoH = 90;
     const imgH = 560;
     const txBadgeH = 50;
     const contentStartY = PAD + 130;
