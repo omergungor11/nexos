@@ -30,6 +30,11 @@ export async function getProperties(filters: PropertyFilters) {
     .select(PROPERTY_LIST_SELECT, { count: "exact" })
     .eq("is_active", true);
 
+  // Text search
+  if (filters.q) {
+    query = query.or(`title.ilike.%${filters.q}%,description.ilike.%${filters.q}%,address.ilike.%${filters.q}%`);
+  }
+
   // Transaction type
   if (filters.islem) {
     const txMap: Record<string, string> = {

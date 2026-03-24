@@ -1,6 +1,7 @@
 import type { PropertyType, HeatingType } from "./property";
 
 export interface PropertyFilters {
+  q?: string;
   islem?: "satilik" | "kiralik" | "gunluk";
   tip?: PropertyType[];
   sehir?: string;

@@ -8,6 +8,7 @@ import { FilterPanel } from "@/components/property/filter/filter-panel";
 import { PropertyGrid } from "@/components/property/listing/property-grid";
 import { SortBar } from "@/components/property/listing/sort-bar";
 import { Pagination } from "@/components/property/listing/pagination";
+import { SearchBar } from "@/components/property/listing/search-bar";
 import { getProperties } from "@/lib/queries/properties";
 import { getCities } from "@/lib/queries/locations";
 import type { PropertyFilters, PropertyListItem } from "@/types";
@@ -57,7 +58,14 @@ export default async function EmlakPage({ params, searchParams }: Props) {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h1 className="mb-6 text-2xl font-bold">{pageTitle}</h1>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold">{pageTitle}</h1>
+        <div className="w-full sm:max-w-md">
+          <Suspense>
+            <SearchBar />
+          </Suspense>
+        </div>
+      </div>
 
       <div className="flex gap-6">
         {/* Desktop Filter Sidebar */}
@@ -129,6 +137,7 @@ function parseFilters(
   const bool = (key: string) => str(key) === "1" ? true : undefined;
 
   return {
+    q: str("q"),
     islem: str("islem") as PropertyFilters["islem"],
     tip: str("tip")?.split(",") as PropertyFilters["tip"],
     sehir: str("sehir"),
