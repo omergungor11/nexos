@@ -779,6 +779,9 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   ctx.fillRect(0, imgY, 4, band2H);
   ctx.fillRect(W - 4, imgY, 4, band2H);
 
+  // Thumbnail area bg (below main image)
+  ctx.fillStyle = T.bg; ctx.fillRect(0, imgY + band2H, W, thumbH);
+
   // Thumbnail row (3 images, overlapping bottom of main image)
   const thumbGap = 10;
   const thumbW = (W - PAD * 2 - thumbGap * 2) / 3;
