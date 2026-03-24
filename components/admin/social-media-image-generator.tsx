@@ -299,13 +299,12 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     ctx.fillStyle = T.bg;
     ctx.fillRect(0, 0, W, H);
 
-    // Safe zone: center 1080px of 1350px height → top 135px, bottom 135px
-    // All important content stays within 135–1215 range
+    // Safe zone: center 1080px of 1350px → top 135px, bottom 1215px
     const SAFE_TOP = 135;
     const logoH = 80;
-    const imgH = 480;
-    const txBadgeH = 46;
-    const contentStartY = SAFE_TOP + 10;
+    const imgH = 530;
+    const txBadgeH = 50;
+    const contentStartY = SAFE_TOP + 6;
 
     // -- Logo --
     try {
@@ -321,9 +320,9 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     }
 
     // -- Transaction type badge --
-    const badgeY = contentStartY + logoH + 20;
+    const badgeY = contentStartY + logoH + 16;
     const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
-    ctx.font = `bold 26px ${FONT}`;
+    ctx.font = `bold 24px ${FONT}`;
     const badgeTextW = ctx.measureText(txLabel).width;
     const badgeW = badgeTextW + 36;
 
@@ -335,19 +334,20 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     ctx.textBaseline = "middle";
     ctx.fillText(txLabel, PAD + 18, badgeY + txBadgeH / 2);
 
-    // -- Price beside badge --
+    // -- Price on its own line (hero element) --
     const priceText = customPrice || fmtPrice(property.price, property.currency);
+    const priceY = badgeY + txBadgeH + 14;
     ctx.fillStyle = T.textSecondary;
-    ctx.font = `bold 48px ${FONT}`;
-    ctx.textBaseline = "middle";
-    ctx.fillText(priceText, PAD + badgeW + 24, badgeY + txBadgeH / 2);
+    ctx.font = `bold 56px ${FONT}`;
+    ctx.textBaseline = "top";
+    ctx.fillText(priceText, PAD, priceY);
 
     // -- Title --
-    const titleY = badgeY + txBadgeH + 24;
+    const titleY = priceY + 68;
     const titleBoxW = W - PAD * 2;
 
     ctx.fillStyle = T.textPrimary;
-    ctx.font = `bold 44px ${FONT}`;
+    ctx.font = `bold 42px ${FONT}`;
     ctx.textBaseline = "top";
 
     const titleText = customTitle || property.title;
@@ -371,14 +371,14 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       lines[1] = lines[1].slice(0, -3) + "...";
     }
 
-    const lineHeight = 56;
+    const lineHeight = 54;
     for (let i = 0; i < lines.length; i++) {
       ctx.fillText(lines[i], PAD, titleY + i * lineHeight);
     }
     const titleEndY = titleY + lines.length * lineHeight;
 
     // -- Images section --
-    const imgY = titleEndY + 24;
+    const imgY = titleEndY + 20;
     const totalImgW = W - PAD * 2;
     const gap = 12;
     const hasExtras = property.extra_images && property.extra_images.length > 0;
@@ -457,12 +457,12 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     if (roomStr) items.push({ icon: "bed", text: `${roomStr} Oda` });
     if (property.area_sqm) items.push({ icon: "ruler", text: `${property.area_sqm} m²` });
 
-    const iconSize = 36;
-    const iconCircleR = 28;
-    const itemRowH = 60;
+    const iconSize = 44;
+    const iconCircleR = 36;
+    const itemRowH = 72;
 
     // 2x2 grid layout for items
-    ctx.font = `600 30px ${FONT}`;
+    ctx.font = `600 32px ${FONT}`;
     ctx.textBaseline = "middle";
 
     const colW = detailW / 2;
@@ -491,7 +491,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     const descText = customDesc || "";
     if (descText) {
       ctx.fillStyle = T.textMuted;
-      ctx.font = `500 28px ${FONT}`;
+      ctx.font = `600 34px ${FONT}`;
       ctx.textBaseline = "top";
 
       // Word wrap description
@@ -514,14 +514,14 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       }
 
       for (let i = 0; i < descLines.length; i++) {
-        ctx.fillText(descLines[i], PAD, descY + i * 36);
+        ctx.fillText(descLines[i], PAD, descY + i * 44);
       }
     }
 
     // -- Bottom branding (below safe zone — may be cropped on Facebook, visible on Instagram) --
-    const brandY = H - PAD;
+    const brandY = H - 60;
     ctx.fillStyle = T.accent;
-    ctx.fillRect(PAD, brandY - 50, 50, 4);
+    ctx.fillRect(PAD, brandY - 40, 50, 4);
 
     ctx.fillStyle = T.textMuted;
     ctx.font = `600 24px ${FONT}`;
