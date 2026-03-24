@@ -429,12 +429,15 @@ async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate,
 
   // Top: logo + badge (same Y line)
   const topY = PAD + 40;
-  await drawLogo(ctx, PAD, topY, 140, T.accent, "left");
+  const logoH = 140;
+  const badgeH = 50;
+  await drawLogo(ctx, PAD, topY, logoH, T.accent, "left");
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `bold 24px ${FONT}`;
   const tw = ctx.measureText(txLabel).width;
-  ctx.fillStyle = T.accent; rr(ctx, W - PAD - tw - 36, topY, tw + 36, 50, 10); ctx.fill();
-  ctx.fillStyle = "#000"; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - tw - 18, topY + 25);
+  const badgeY = topY + (logoH - badgeH) / 2;
+  ctx.fillStyle = T.accent; rr(ctx, W - PAD - tw - 36, badgeY, tw + 36, badgeH, 10); ctx.fill();
+  ctx.fillStyle = "#000"; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - tw - 18, badgeY + badgeH / 2);
 
   // Bottom content
   const bottomY = H - 420;
