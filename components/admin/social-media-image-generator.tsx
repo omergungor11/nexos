@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { Download, ImageIcon, Palette } from "lucide-react";
+import { SocialMediaPreview } from "@/components/admin/social-media-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -653,6 +654,9 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
           style={{ maxWidth: 480, aspectRatio: "1080/1350" }}
         />
       </div>
+
+      {/* Platform previews */}
+      <SocialMediaPreview canvasRef={canvasRef} generated={generated} />
     </div>
   );
 }
