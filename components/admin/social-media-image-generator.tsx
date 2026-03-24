@@ -750,7 +750,7 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   // Band heights
   const band1H = 160; // Header (logo + badge)
   const band2H = 480; // Main image (taller)
-  const thumbH = 160; // Thumbnail row (overlaps main image)
+  const thumbH = 210; // Thumbnail row (overlaps main image)
   const band3H = 400; // Content
   const band4H = H - band1H - band2H - thumbH - band3H; // Footer
 
