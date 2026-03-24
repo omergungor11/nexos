@@ -161,8 +161,8 @@ export function AdminLayout({
 
   const SidebarContent = ({ isCollapsed = false }: { isCollapsed?: boolean }) => (
     <div className="flex h-full flex-col">
-      {/* Logo */}
-      <div className={cn("flex h-16 items-center border-b border-slate-700", isCollapsed ? "justify-center px-2" : "px-6")}>
+      {/* Logo + collapse toggle */}
+      <div className={cn("flex h-16 items-center border-b border-sidebar-border", isCollapsed ? "justify-center px-2" : "justify-between px-4")}>
         <Link
           href="/admin"
           className="flex items-center gap-2"
@@ -182,16 +182,12 @@ export function AdminLayout({
             </span>
           )}
         </Link>
-      </div>
-
-      {/* Collapse toggle — desktop only */}
-      <div className={cn("hidden lg:flex border-b border-slate-700", isCollapsed ? "justify-center p-2" : "justify-end px-3 py-2")}>
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="rounded-md p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="hidden lg:flex rounded-md p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
           title={isCollapsed ? "Menüyü genişlet" : "Menüyü daralt"}
         >
-          {isCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
+          {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
         </button>
       </div>
 
@@ -236,7 +232,7 @@ export function AdminLayout({
       </nav>
 
       {/* User info + logout */}
-      <div className={cn("border-t border-slate-700", isCollapsed ? "p-2" : "p-4")}>
+      <div className={cn("border-t border-sidebar-border", isCollapsed ? "p-2" : "p-4")}>
         {!isCollapsed && (
           <div className="flex items-center gap-3">
             <Avatar size="sm">
@@ -285,7 +281,7 @@ export function AdminLayout({
       {/* Sidebar — desktop always visible, mobile slides in */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-30 bg-slate-900 transition-all duration-200 ease-in-out lg:relative lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-30 bg-sidebar transition-all duration-200 ease-in-out lg:relative lg:translate-x-0",
           collapsed ? "lg:w-[72px]" : "lg:w-64",
           sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"
         )}
