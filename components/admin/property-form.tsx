@@ -1444,92 +1444,97 @@ export function PropertyForm({
             şekilde gösterilir.
           </p>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            <CheckboxField
-              id="furnished"
-              label="Eşyalı"
-              checked={form.furnished}
-              onChange={(c) => handleBooleanChange("furnished", c)}
-            />
-            <CheckboxField
-              id="elevator"
-              label="Asansör"
-              checked={form.elevator}
-              onChange={(c) => handleBooleanChange("elevator", c)}
-            />
-            <CheckboxField
-              id="garden"
-              label="Bahçe"
-              checked={form.garden}
-              onChange={(c) => handleBooleanChange("garden", c)}
-            />
-            <CheckboxField
-              id="security_24_7"
-              label="7/24 Güvenlik"
-              checked={form.security_24_7}
-              onChange={(c) => handleBooleanChange("security_24_7", c)}
-            />
-          </div>
+          {/* Bina özellikleri — arsalar için gizle */}
+          {!isLandType(form.property_type) && (
+            <>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                <CheckboxField
+                  id="furnished"
+                  label="Eşyalı"
+                  checked={form.furnished}
+                  onChange={(c) => handleBooleanChange("furnished", c)}
+                />
+                <CheckboxField
+                  id="elevator"
+                  label="Asansör"
+                  checked={form.elevator}
+                  onChange={(c) => handleBooleanChange("elevator", c)}
+                />
+                <CheckboxField
+                  id="garden"
+                  label="Bahçe"
+                  checked={form.garden}
+                  onChange={(c) => handleBooleanChange("garden", c)}
+                />
+                <CheckboxField
+                  id="security_24_7"
+                  label="7/24 Güvenlik"
+                  checked={form.security_24_7}
+                  onChange={(c) => handleBooleanChange("security_24_7", c)}
+                />
+              </div>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <Field label="Havuz" htmlFor="pool_type">
-              <Select
-                value={form.pool_type}
-                onValueChange={(v) => {
-                  const pt = v as PoolType;
-                  setForm((prev) => ({ ...prev, pool_type: pt, pool: pt !== "none" }));
-                }}
-              >
-                <SelectTrigger id="pool_type" className="w-full">
-                  <SelectValue>{POOL_TYPE_OPTIONS[form.pool_type]}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.entries(POOL_TYPE_OPTIONS) as [PoolType, string][]).map(
-                    ([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
-            </Field>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                <Field label="Havuz" htmlFor="pool_type">
+                  <Select
+                    value={form.pool_type}
+                    onValueChange={(v) => {
+                      const pt = v as PoolType;
+                      setForm((prev) => ({ ...prev, pool_type: pt, pool: pt !== "none" }));
+                    }}
+                  >
+                    <SelectTrigger id="pool_type" className="w-full">
+                      <SelectValue>{POOL_TYPE_OPTIONS[form.pool_type]}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.entries(POOL_TYPE_OPTIONS) as [PoolType, string][]).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                </Field>
 
-            <Field label="Otopark" htmlFor="parking_type">
-              <Select
-                value={form.parking_type}
-                onValueChange={(v) => {
-                  const pt = v as ParkingType;
-                  setForm((prev) => ({ ...prev, parking_type: pt, parking: pt !== "none" }));
-                }}
-              >
-                <SelectTrigger id="parking_type" className="w-full">
-                  <SelectValue>{PARKING_TYPE_OPTIONS[form.parking_type]}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.entries(PARKING_TYPE_OPTIONS) as [ParkingType, string][]).map(
-                    ([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
-            </Field>
+                <Field label="Otopark" htmlFor="parking_type">
+                  <Select
+                    value={form.parking_type}
+                    onValueChange={(v) => {
+                      const pt = v as ParkingType;
+                      setForm((prev) => ({ ...prev, parking_type: pt, parking: pt !== "none" }));
+                    }}
+                  >
+                    <SelectTrigger id="parking_type" className="w-full">
+                      <SelectValue>{PARKING_TYPE_OPTIONS[form.parking_type]}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.entries(PARKING_TYPE_OPTIONS) as [ParkingType, string][]).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                </Field>
 
-            <Field
-              label="Balkon Sayısı"
-              htmlFor="balcony_count"
-              hint="0 girin balkon yoksa"
-            >
-              <Input
-                id="balcony_count"
-                name="balcony_count"
-                type="number"
-                min="0"
-                step="1"
-                value={form.balcony_count}
-                onChange={handleChange}
+                <Field
+                  label="Balkon Sayısı"
+                  htmlFor="balcony_count"
+                  hint="0 girin balkon yoksa"
+                >
+                  <Input
+                    id="balcony_count"
+                    name="balcony_count"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={form.balcony_count}
+                    onChange={handleChange}
               />
             </Field>
           </div>
+            </>
+          )}
 
           {/* Villa/Residential — Arazi Alanı */}
           {(form.property_type === "villa" || form.property_type === "twin_villa" || form.property_type === "detached" || form.property_type === "bungalow") && (
@@ -1626,7 +1631,11 @@ export function PropertyForm({
         {/* Tab 5: Detay Özellikleri                                          */}
         {/* ----------------------------------------------------------------- */}
         <TabsContent value="detay" className="mt-6 space-y-6">
-          {Object.entries(featuresByCategory).length === 0 ? (
+          {isLandType(form.property_type) ? (
+            <p className="text-sm text-muted-foreground">
+              Arsa türü ilanlar için detay özellikleri &quot;Öne Çıkan&quot; sekmesindeki altyapı bölümünden yönetilir.
+            </p>
+          ) : Object.entries(featuresByCategory).length === 0 ? (
             <p className="text-sm text-muted-foreground">
               Henüz özellik tanımlanmamış.
             </p>
