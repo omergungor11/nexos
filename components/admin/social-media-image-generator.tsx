@@ -369,7 +369,7 @@ async function renderClassic(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   const titleEndY = titleY + lines.length * 54;
 
   // Logo (right aligned with header)
-  await drawLogo(ctx, W - PAD, startY, 180, T.accent, "right");
+  await drawLogo(ctx, W - PAD, startY, 120, T.accent, "right");
 
   // Images
   const imgY = titleEndY + 20; const imgH = 530; const totalW = W - PAD * 2; const gap = 12;
