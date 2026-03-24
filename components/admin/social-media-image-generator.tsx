@@ -1039,14 +1039,11 @@ async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
     ctx.fillStyle = grad; ctx.fillRect(0, topH - 250, W, 250);
   }
 
-  // Logo centered
-  await drawLogo(ctx, W / 2, 50, 90, T.accent, "center");
-
-  // Title centered large with text shadow
+  // Title centered large with text shadow (no logo here — moved to bottom)
   ctx.fillStyle = "#ffffff"; ctx.font = `bold 50px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
   ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 10;
   const lines = wrapText(ctx, title, W - PAD * 2, 3);
-  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, 160 + i * 62);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, 100 + i * 62);
   ctx.restore(); ctx.textAlign = "start";
 
   // 2 rounded images — same height, overlapping bottom of main image
@@ -1088,6 +1085,9 @@ async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   ctx.fillStyle = T.textMuted; ctx.font = `500 26px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
   ctx.fillText(posterItems.join("  ·  "), W / 2, detailY2);
   ctx.textAlign = "start";
+
+  // Logo centered below details
+  await drawLogo(ctx, W / 2, detailY2 + 46, 80, T.accent, "center");
 
   // Footer with accent line
   const footerY = H - 90;
