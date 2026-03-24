@@ -465,7 +465,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
 
     const iconSize = 44;
     const iconCircleR = 36;
-    const itemRowH = 72;
+    const itemRowH = 84;
 
     // 2x2 grid layout for items
     ctx.font = `600 32px ${FONT}`;
