@@ -506,15 +506,16 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
     else { ctx.fillStyle = T.cardBg; rr(ctx, tx, thumbY, thumbW, thumbH, 14); ctx.fill(); }
   }
 
-  // Logo on image (top left)
-  await drawLogo(ctx, PAD, PAD, 110, T.accent, "left");
-
   // Badge on image (top right)
+  const badgeH = 50;
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `bold 24px ${FONT}`;
   const tw = ctx.measureText(txLabel).width;
-  ctx.fillStyle = T.accent; rr(ctx, W - PAD - tw - 36, PAD, tw + 36, 50, 10); ctx.fill();
-  ctx.fillStyle = T.bg; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - tw - 18, PAD + 25);
+  ctx.fillStyle = T.accent; rr(ctx, W - PAD - tw - 36, PAD, tw + 36, badgeH, 10); ctx.fill();
+  ctx.fillStyle = T.bg; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - tw - 18, PAD + badgeH / 2);
+
+  // Logo on image (top left, same Y as badge)
+  await drawLogo(ctx, PAD, PAD, 110, T.accent, "left");
 
   // Content card below image
   const cardY = imgH - 40;
