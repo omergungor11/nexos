@@ -427,9 +427,13 @@ async function renderClassic(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   }
 
   if (hasExtras) {
-    const sideX = PAD + mainW + gap; const sideW = totalW - mainW - gap; const sideH = (imgH - gap) / 2;
-    if (property.extra_images[0]) await drawCoverImg(ctx, property.extra_images[0], sideX, imgY, sideW, sideH, 16, T.cardBg);
-    if (property.extra_images[1]) await drawCoverImg(ctx, property.extra_images[1], sideX, imgY + sideH + gap, sideW, sideH, 16, T.cardBg);
+    const sideX = PAD + mainW + gap; const sideW = totalW - mainW - gap;
+    const extraCount = Math.min(property.extra_images.length, 3);
+    const sideH = (imgH - gap * (extraCount - 1)) / extraCount;
+    for (let i = 0; i < extraCount; i++) {
+      const iy = imgY + i * (sideH + gap);
+      await drawCoverImg(ctx, property.extra_images[i], sideX, iy, sideW, sideH, 14, T.cardBg);
+    }
   }
 
   // Details
@@ -576,16 +580,27 @@ async function renderSplit(ctx: CanvasRenderingContext2D, T: DesignTemplate, pro
 async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
   ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
 
-  // Top: full width image
-  const imgH = 700;
+  // Top: main image + 3 thumbnails below
+  const mainImgH = 580;
+  const thumbH = 110; const thumbGap = 10;
+  const imgH = mainImgH + thumbGap + thumbH;
+
   if (property.cover_image) {
-    await drawCoverImg(ctx, property.cover_image, 0, 0, W, imgH, 0, T.cardBg);
-    // 30% overlay for logo visibility
-    ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fillRect(0, 0, W, imgH);
-    // Bottom gradient
-    const grad = ctx.createLinearGradient(0, imgH - 200, 0, imgH);
+    await drawCoverImg(ctx, property.cover_image, 0, 0, W, mainImgH, 0, T.cardBg);
+    ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fillRect(0, 0, W, mainImgH);
+    const grad = ctx.createLinearGradient(0, mainImgH - 200, 0, mainImgH);
     grad.addColorStop(0, T.gradientOverlay[0]); grad.addColorStop(1, T.gradientOverlay[1]);
-    ctx.fillStyle = grad; ctx.fillRect(0, imgH - 200, W, 200);
+    ctx.fillStyle = grad; ctx.fillRect(0, mainImgH - 200, W, 200);
+  }
+
+  // 3 thumbnails below main image
+  const thumbW = (W - PAD * 2 - thumbGap * 2) / 3;
+  const thumbY = mainImgH + thumbGap;
+  const extras = property.extra_images ?? [];
+  for (let i = 0; i < 3; i++) {
+    const tx = PAD + i * (thumbW + thumbGap);
+    if (extras[i]) await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbH, 12, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, tx, thumbY, thumbW, thumbH, 12); ctx.fill(); }
   }
 
   // Logo on image (top left)
@@ -663,20 +678,22 @@ async function renderMagazine(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   // Accent line
   ctx.fillStyle = T.accent; ctx.fillRect(PAD, titleEnd + 10, 80, 4);
 
-  // Asymmetric image grid: 2/3 left tall + 1/3 right two stacked
-  const imgY = titleEnd + 30; const imgH = 520;
-  const leftW = Math.round((W - PAD * 2 - 12) * 0.66);
-  const rightW = W - PAD * 2 - 12 - leftW;
-  const rightH = (imgH - 12) / 2;
+  // Asymmetric image grid: 2/3 left tall + 1/3 right three stacked
+  const imgY = titleEnd + 30; const imgH = 520; const gap = 10;
+  const leftW = Math.round((W - PAD * 2 - gap) * 0.64);
+  const rightW = W - PAD * 2 - gap - leftW;
+  const rightH = (imgH - gap * 2) / 3;
 
   if (property.cover_image) await drawCoverImg(ctx, property.cover_image, PAD, imgY, leftW, imgH, R, T.cardBg);
   else { ctx.fillStyle = T.cardBg; rr(ctx, PAD, imgY, leftW, imgH, R); ctx.fill(); }
 
-  const rx = PAD + leftW + 12;
-  if (property.extra_images?.[0]) await drawCoverImg(ctx, property.extra_images[0], rx, imgY, rightW, rightH, 16, T.cardBg);
-  else { ctx.fillStyle = T.cardBg; rr(ctx, rx, imgY, rightW, rightH, 16); ctx.fill(); }
-  if (property.extra_images?.[1]) await drawCoverImg(ctx, property.extra_images[1], rx, imgY + rightH + 12, rightW, rightH, 16, T.cardBg);
-  else { ctx.fillStyle = T.cardBg; rr(ctx, rx, imgY + rightH + 12, rightW, rightH, 16); ctx.fill(); }
+  const rx = PAD + leftW + gap;
+  for (let i = 0; i < 3; i++) {
+    const iy = imgY + i * (rightH + gap);
+    const src = property.extra_images?.[i];
+    if (src) await drawCoverImg(ctx, src, rx, iy, rightW, rightH, 14, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, rx, iy, rightW, rightH, 14); ctx.fill(); }
+  }
 
   // Details row at bottom
   const detailY = imgY + imgH + 24;
@@ -717,19 +734,22 @@ async function renderGallery(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   ctx.textAlign = "start";
   const titleEnd = sY + 250 + lines.length * 50;
 
-  // 3 images in a row
-  const imgY = titleEnd + 24; const imgH = 380; const gap = 12;
-  const imgW = (W - PAD * 2 - gap * 2) / 3;
+  // 2x2 image grid (4 images)
+  const imgY = titleEnd + 24; const gap = 10;
+  const cellW = (W - PAD * 2 - gap) / 2;
+  const cellH = 185;
   const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
 
-  for (let i = 0; i < 3; i++) {
-    const ix = PAD + i * (imgW + gap);
-    if (allImgs[i]) await drawCoverImg(ctx, allImgs[i], ix, imgY, imgW, imgH, 16, T.cardBg);
-    else { ctx.fillStyle = T.cardBg; rr(ctx, ix, imgY, imgW, imgH, 16); ctx.fill(); }
+  for (let i = 0; i < 4; i++) {
+    const col = i % 2; const row = Math.floor(i / 2);
+    const ix = PAD + col * (cellW + gap);
+    const iy = imgY + row * (cellH + gap);
+    if (allImgs[i]) await drawCoverImg(ctx, allImgs[i], ix, iy, cellW, cellH, 16, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, ix, iy, cellW, cellH, 16); ctx.fill(); }
   }
 
   // Details
-  const detailY = imgY + imgH + 24;
+  const detailY = imgY + 2 * (cellH + gap) + 14;
   drawDetails(ctx, property, PAD, detailY, W - PAD * 2, T);
 
   if (desc) {

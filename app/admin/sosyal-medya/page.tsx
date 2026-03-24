@@ -56,7 +56,7 @@ export default async function SosyalMedyaPage() {
       city_name: row.city?.name ?? "",
       district_name: row.district?.name ?? null,
       cover_image: sortedImages[0]?.url ?? null,
-      extra_images: sortedImages.slice(1, 3).map((i) => i.url),
+      extra_images: sortedImages.slice(1, 5).map((i) => i.url),
     };
   });
 
