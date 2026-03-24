@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/shared/json-ld";
+import { FeatureIcon } from "@/components/shared/feature-icon";
 import {
   MapPin,
   Maximize2,
@@ -305,7 +306,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                       key={i}
                       className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm"
                     >
-                      <span className="text-primary">✓</span>
+                      <FeatureIcon name={f.icon} className="size-4 text-primary" />
                       {f.name}
                     </div>
                   )

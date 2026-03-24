@@ -40,6 +40,15 @@ import {
   Droplets,
   Route,
   FileCheck,
+  Info,
+  Image,
+  Tag,
+  Sparkles,
+  List,
+  BarChart3,
+  Armchair,
+  ShieldCheck,
+  TreePine,
   type LucideIcon,
 } from "lucide-react";
 
@@ -423,11 +432,13 @@ function CheckboxField({
   label,
   checked,
   onChange,
+  icon: Icon,
 }: {
   id: string;
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  icon?: LucideIcon;
 }) {
   return (
     <label
@@ -441,6 +452,7 @@ function CheckboxField({
         onChange={(e) => onChange(e.target.checked)}
         className="size-4 rounded accent-primary"
       />
+      {Icon && <Icon className="size-3.5 text-muted-foreground" />}
       {label}
     </label>
   );
@@ -881,27 +893,31 @@ export function PropertyForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       <Tabs value={activeTab} onValueChange={(v) => v && setActiveTab(v)}>
         <TabsList className="h-auto flex-wrap gap-1">
-          {[
-            { value: "temel", label: "Temel Bilgiler" },
-            { value: "medya", label: "Medya" },
-            { value: "fiyat", label: "Fiyat & Özellikler" },
-            { value: "konum", label: "Konum" },
-            { value: "one-cikan", label: "Öne Çıkan" },
-            { value: "detay", label: "Detay Özellikleri" },
-            { value: "seo", label: "SEO" },
-          ].map((tab) => (
+          {([
+            { value: "temel", label: "Temel Bilgiler", icon: Info },
+            { value: "medya", label: "Medya", icon: Image },
+            { value: "fiyat", label: "Fiyat & Özellikler", icon: Banknote },
+            { value: "konum", label: "Konum", icon: MapPin },
+            { value: "one-cikan", label: "Öne Çıkan", icon: Sparkles },
+            { value: "detay", label: "Detay Özellikleri", icon: List },
+            { value: "seo", label: "SEO", icon: Search },
+          ] as const).map((tab) => {
+            const TabIcon = tab.icon;
+            return (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className={tabsWithErrors.has(tab.value) ? "text-destructive data-[state=active]:text-destructive" : ""}
+              className={`gap-1.5 ${tabsWithErrors.has(tab.value) ? "text-destructive data-[state=active]:text-destructive" : ""}`}
             >
+              <TabIcon className="size-3.5" />
               {tab.label}
               {tabsWithErrors.has(tab.value) && (
                 <span className="ml-1 text-destructive">*</span>
               )}
             </TabsTrigger>
-          ))}
-          {analyticsSlot && <TabsTrigger value="analiz">Analiz</TabsTrigger>}
+            );
+          })}
+          {analyticsSlot && <TabsTrigger value="analiz" className="gap-1.5"><BarChart3 className="size-3.5" />Analiz</TabsTrigger>}
         </TabsList>
 
         {/* ----------------------------------------------------------------- */}
@@ -1525,24 +1541,28 @@ export function PropertyForm({
                   label="Eşyalı"
                   checked={form.furnished}
                   onChange={(c) => handleBooleanChange("furnished", c)}
+                  icon={Armchair}
                 />
                 <CheckboxField
                   id="elevator"
                   label="Asansör"
                   checked={form.elevator}
                   onChange={(c) => handleBooleanChange("elevator", c)}
+                  icon={Layers}
                 />
                 <CheckboxField
                   id="garden"
                   label="Bahçe"
                   checked={form.garden}
                   onChange={(c) => handleBooleanChange("garden", c)}
+                  icon={TreePine}
                 />
                 <CheckboxField
                   id="security_24_7"
                   label="7/24 Güvenlik"
                   checked={form.security_24_7}
                   onChange={(c) => handleBooleanChange("security_24_7", c)}
+                  icon={ShieldCheck}
                 />
               </div>
 
@@ -1659,18 +1679,21 @@ export function PropertyForm({
                   label="Yol"
                   checked={form.has_road_access}
                   onChange={(c) => handleBooleanChange("has_road_access", c)}
+                  icon={Route}
                 />
                 <CheckboxField
                   id="has_electricity"
                   label="Elektrik"
                   checked={form.has_electricity}
                   onChange={(c) => handleBooleanChange("has_electricity", c)}
+                  icon={Zap}
                 />
                 <CheckboxField
                   id="has_water"
                   label="Su"
                   checked={form.has_water}
                   onChange={(c) => handleBooleanChange("has_water", c)}
+                  icon={Droplets}
                 />
               </div>
 
