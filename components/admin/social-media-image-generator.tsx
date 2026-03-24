@@ -42,7 +42,7 @@ interface SocialMediaImageGeneratorProps {
 
 const W = 1080;
 const H = 1350;
-const PAD = 48;
+const PAD = 80;
 const R = 24;
 const NEXOS_GOLD = "#E5A800";
 const FONT = "Montserrat, system-ui, sans-serif";
@@ -298,10 +298,13 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     ctx.fillStyle = T.bg;
     ctx.fillRect(0, 0, W, H);
 
-    const logoH = 90;
-    const imgH = 560;
-    const txBadgeH = 50;
-    const contentStartY = PAD + 130;
+    // Safe zone: center 1080px of 1350px height → top 135px, bottom 135px
+    // All important content stays within 135–1215 range
+    const SAFE_TOP = 135;
+    const logoH = 80;
+    const imgH = 480;
+    const txBadgeH = 46;
+    const contentStartY = SAFE_TOP + 10;
 
     // -- Logo --
     try {
@@ -514,14 +517,16 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       }
     }
 
-    // -- Bottom branding --
+    // -- Bottom branding (below safe zone — may be cropped on Facebook, visible on Instagram) --
     const brandY = H - PAD;
     ctx.fillStyle = T.accent;
-    ctx.fillRect(PAD, brandY - 40, 50, 4);
+    ctx.fillRect(PAD, brandY - 50, 50, 4);
 
     ctx.fillStyle = T.textMuted;
     ctx.font = `600 24px ${FONT}`;
     ctx.textBaseline = "bottom";
+    ctx.fillText("+90 542 880 64 56", PAD, brandY);
+
     ctx.textAlign = "right";
     ctx.fillText("nexosinvestment.com", W - PAD, brandY);
     ctx.textAlign = "start";
@@ -566,7 +571,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Instagram Görseli (1080×1350)</h3>
+        <h3 className="text-sm font-semibold">Sosyal Medya Görseli (1080×1350)</h3>
         <div className="flex items-center gap-2">
           {generated && (
             <Button size="sm" onClick={handleDownload}>
