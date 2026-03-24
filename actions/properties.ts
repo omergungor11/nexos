@@ -50,6 +50,14 @@ export type PropertyCreateInput = {
   seo_description?: string;
   video_url?: string;
   virtual_tour_url?: string;
+  // Land-specific
+  has_road_access?: boolean;
+  has_electricity?: boolean;
+  has_water?: boolean;
+  zoning_status?: string | null;
+  // Rental-specific
+  min_rental_period?: string | null;
+  rental_payment_interval?: string | null;
 };
 
 export type PropertyUpdateInput = Partial<PropertyCreateInput>;
@@ -246,6 +254,12 @@ export async function createProperty(
     security_24_7: data.security_24_7 ?? null,
     land_area_sqm: data.land_area_sqm ?? null,
     title_deed_type: data.title_deed_type ?? null,
+    has_road_access: data.has_road_access ?? null,
+    has_electricity: data.has_electricity ?? null,
+    has_water: data.has_water ?? null,
+    zoning_status: data.zoning_status ?? null,
+    min_rental_period: data.min_rental_period ?? null,
+    rental_payment_interval: data.rental_payment_interval ?? null,
     parking_type: data.parking_type ?? "none",
     lat: data.lat ?? null,
     lng: data.lng ?? null,
@@ -331,6 +345,12 @@ export async function updateProperty(
     payload.security_24_7 = data.security_24_7;
   if (data.land_area_sqm !== undefined) payload.land_area_sqm = data.land_area_sqm;
   if (data.title_deed_type !== undefined) payload.title_deed_type = data.title_deed_type;
+  if (data.has_road_access !== undefined) payload.has_road_access = data.has_road_access;
+  if (data.has_electricity !== undefined) payload.has_electricity = data.has_electricity;
+  if (data.has_water !== undefined) payload.has_water = data.has_water;
+  if (data.zoning_status !== undefined) payload.zoning_status = data.zoning_status;
+  if (data.min_rental_period !== undefined) payload.min_rental_period = data.min_rental_period;
+  if (data.rental_payment_interval !== undefined) payload.rental_payment_interval = data.rental_payment_interval;
   if (data.parking_type !== undefined) payload.parking_type = data.parking_type;
   if (data.lat !== undefined) payload.lat = data.lat;
   if (data.lng !== undefined) payload.lng = data.lng;

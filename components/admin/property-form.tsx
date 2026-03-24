@@ -45,6 +45,8 @@ import type {
   PoolType,
   ParkingType,
   TitleDeedType,
+  ZoningStatus,
+  RentalPaymentInterval,
 } from "@/types/property";
 
 // ---------------------------------------------------------------------------
@@ -154,6 +156,14 @@ interface FormState {
   agent_id: string;
   video_url: string;
   virtual_tour_url: string;
+  // Land-specific
+  has_road_access: boolean;
+  has_electricity: boolean;
+  has_water: boolean;
+  zoning_status: ZoningStatus | "";
+  // Rental-specific
+  min_rental_period: string;
+  rental_payment_interval: RentalPaymentInterval | "";
 }
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
@@ -245,6 +255,24 @@ const TITLE_DEED_OPTIONS: Record<TitleDeedType, string> = {
   gazi: "Gazi Koçanı",
   yabanci: "Yabancı Koçanı",
   other: "Diğer",
+};
+
+const ZONING_STATUS_OPTIONS: Record<ZoningStatus, string> = {
+  none: "İmar Yok",
+  residential: "Konut",
+  commercial: "Ticari",
+  mixed: "Karma",
+  industrial: "Sanayi",
+  tourism: "Turizm",
+  agricultural: "Tarım",
+};
+
+const RENTAL_PAYMENT_INTERVAL_OPTIONS: Record<RentalPaymentInterval, string> = {
+  daily: "Günlük",
+  monthly: "Aylık",
+  "3months": "3 Aylık",
+  "6months": "6 Aylık",
+  yearly: "Yıllık",
 };
 
 const CATEGORY_LABELS: Record<PropertyCategory, string> = {
@@ -438,6 +466,14 @@ function buildInitialState(
     agent_id: initialData?.agent_id ?? "__none__",
     video_url: initialData?.video_url ?? "",
     virtual_tour_url: initialData?.virtual_tour_url ?? "",
+    // Land-specific
+    has_road_access: (initialData as Record<string, unknown>)?.has_road_access as boolean ?? false,
+    has_electricity: (initialData as Record<string, unknown>)?.has_electricity as boolean ?? false,
+    has_water: (initialData as Record<string, unknown>)?.has_water as boolean ?? false,
+    zoning_status: ((initialData as Record<string, unknown>)?.zoning_status as ZoningStatus) ?? "",
+    // Rental-specific
+    min_rental_period: ((initialData as Record<string, unknown>)?.min_rental_period as string) ?? "",
+    rental_payment_interval: ((initialData as Record<string, unknown>)?.rental_payment_interval as RentalPaymentInterval) ?? "",
   };
 }
 
@@ -741,6 +777,14 @@ export function PropertyForm({
       agent_id: form.agent_id !== "__none__" ? form.agent_id : null,
       video_url: form.video_url.trim() || undefined,
       virtual_tour_url: form.virtual_tour_url.trim() || undefined,
+      // Land-specific
+      has_road_access: form.has_road_access || undefined,
+      has_electricity: form.has_electricity || undefined,
+      has_water: form.has_water || undefined,
+      zoning_status: form.zoning_status || null,
+      // Rental-specific
+      min_rental_period: form.min_rental_period.trim() || null,
+      rental_payment_interval: form.rental_payment_interval || null,
     };
   }
 
@@ -1062,6 +1106,50 @@ export function PropertyForm({
               </Select>
             </Field>
           </div>
+
+          {/* Rental-specific fields */}
+          {(form.transaction_type === "rent" || form.transaction_type === "daily_rental") && (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <Field
+                label="Minimum Kiralama Süresi"
+                htmlFor="min_rental_period"
+                hint="Örn: 6 ay, 30 gün, 1 yıl"
+              >
+                <Input
+                  id="min_rental_period"
+                  name="min_rental_period"
+                  value={form.min_rental_period}
+                  onChange={handleChange}
+                  placeholder="Örn: 6 ay"
+                />
+              </Field>
+
+              <Field label="Kira Ödeme Aralığı" htmlFor="rental_payment_interval">
+                <Select
+                  value={form.rental_payment_interval || "__none__"}
+                  onValueChange={(v) =>
+                    setForm((prev) => ({ ...prev, rental_payment_interval: v === "__none__" ? "" : v as RentalPaymentInterval }))
+                  }
+                >
+                  <SelectTrigger id="rental_payment_interval" className="w-full">
+                    <SelectValue placeholder="Seçiniz">
+                      {form.rental_payment_interval
+                        ? RENTAL_PAYMENT_INTERVAL_OPTIONS[form.rental_payment_interval as RentalPaymentInterval]
+                        : "Belirtilmemiş"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                    {(Object.entries(RENTAL_PAYMENT_INTERVAL_OPTIONS) as [RentalPaymentInterval, string][]).map(
+                      ([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-2">
             <Field label="Net Alan (m²)" htmlFor="area_sqm">
@@ -1460,30 +1548,77 @@ export function PropertyForm({
             </Field>
           )}
 
-          {/* Arsa — Koçan Durumu */}
+          {/* Arsa — Koçan Durumu + Altyapı */}
           {isLandType(form.property_type) && (
-            <Field label="Koçan Durumu" htmlFor="title_deed_type" hint="Kıbrıs'a özel tapu/koçan türü">
-              <Select
-                value={form.title_deed_type || "__none__"}
-                onValueChange={(v) =>
-                  setForm((prev) => ({ ...prev, title_deed_type: v === "__none__" ? "" : v as TitleDeedType }))
-                }
-              >
-                <SelectTrigger id="title_deed_type" className="w-full sm:w-64">
-                  <SelectValue placeholder="Seçiniz (opsiyonel)">
-                    {form.title_deed_type ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType] : "Belirtilmemiş"}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__none__">Belirtilmemiş</SelectItem>
-                  {(Object.entries(TITLE_DEED_OPTIONS) as [TitleDeedType, string][]).map(
-                    ([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
-            </Field>
+            <>
+              <Field label="Koçan Durumu" htmlFor="title_deed_type" hint="Kıbrıs'a özel tapu/koçan türü">
+                <Select
+                  value={form.title_deed_type || "__none__"}
+                  onValueChange={(v) =>
+                    setForm((prev) => ({ ...prev, title_deed_type: v === "__none__" ? "" : v as TitleDeedType }))
+                  }
+                >
+                  <SelectTrigger id="title_deed_type" className="w-full sm:w-64">
+                    <SelectValue placeholder="Seçiniz (opsiyonel)">
+                      {form.title_deed_type ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType] : "Belirtilmemiş"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                    {(Object.entries(TITLE_DEED_OPTIONS) as [TitleDeedType, string][]).map(
+                      ([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+              </Field>
+
+              <h4 className="text-sm font-semibold pt-2">Arsa Altyapı Özellikleri</h4>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <CheckboxField
+                  id="has_road_access"
+                  label="Yol"
+                  checked={form.has_road_access}
+                  onChange={(c) => handleBooleanChange("has_road_access", c)}
+                />
+                <CheckboxField
+                  id="has_electricity"
+                  label="Elektrik"
+                  checked={form.has_electricity}
+                  onChange={(c) => handleBooleanChange("has_electricity", c)}
+                />
+                <CheckboxField
+                  id="has_water"
+                  label="Su"
+                  checked={form.has_water}
+                  onChange={(c) => handleBooleanChange("has_water", c)}
+                />
+              </div>
+
+              <Field label="İmar Durumu" htmlFor="zoning_status">
+                <Select
+                  value={form.zoning_status || "__none__"}
+                  onValueChange={(v) =>
+                    setForm((prev) => ({ ...prev, zoning_status: v === "__none__" ? "" : v as ZoningStatus }))
+                  }
+                >
+                  <SelectTrigger id="zoning_status" className="w-full sm:w-64">
+                    <SelectValue placeholder="Seçiniz (opsiyonel)">
+                      {form.zoning_status ? ZONING_STATUS_OPTIONS[form.zoning_status as ZoningStatus] : "Belirtilmemiş"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                    {(Object.entries(ZONING_STATUS_OPTIONS) as [ZoningStatus, string][]).map(
+                      ([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </>
           )}
         </TabsContent>
 

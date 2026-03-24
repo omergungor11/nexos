@@ -64,6 +64,10 @@ export type ParkingType = "none" | "open" | "closed" | "both";
 
 export type TitleDeedType = "esdeger" | "tahsis" | "turk" | "gazi" | "yabanci" | "other";
 
+export type ZoningStatus = "none" | "residential" | "commercial" | "mixed" | "industrial" | "tourism" | "agricultural";
+
+export type RentalPaymentInterval = "daily" | "monthly" | "3months" | "6months" | "yearly";
+
 export type FeatureCategory =
   | "interior"
   | "exterior"

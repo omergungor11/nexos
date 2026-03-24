@@ -268,6 +268,12 @@ export type Database = {
           security_24_7: boolean | null;
           land_area_sqm: number | null;
           title_deed_type: string | null;
+          has_road_access: boolean | null;
+          has_electricity: boolean | null;
+          has_water: boolean | null;
+          zoning_status: string | null;
+          min_rental_period: string | null;
+          rental_payment_interval: string | null;
           lat: number | null;
           lng: number | null;
           address: string | null;
@@ -315,6 +321,12 @@ export type Database = {
           security_24_7?: boolean | null;
           land_area_sqm?: number | null;
           title_deed_type?: string | null;
+          has_road_access?: boolean | null;
+          has_electricity?: boolean | null;
+          has_water?: boolean | null;
+          zoning_status?: string | null;
+          min_rental_period?: string | null;
+          rental_payment_interval?: string | null;
           lat?: number | null;
           lng?: number | null;
           address?: string | null;
@@ -362,6 +374,12 @@ export type Database = {
           security_24_7?: boolean | null;
           land_area_sqm?: number | null;
           title_deed_type?: string | null;
+          has_road_access?: boolean | null;
+          has_electricity?: boolean | null;
+          has_water?: boolean | null;
+          zoning_status?: string | null;
+          min_rental_period?: string | null;
+          rental_payment_interval?: string | null;
           lat?: number | null;
           lng?: number | null;
           address?: string | null;
