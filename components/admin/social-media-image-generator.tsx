@@ -920,7 +920,7 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
 
   // Logo centered top
-  await drawLogo(ctx, W / 2, 50, 90, T.accent, "center");
+  await drawLogo(ctx, W / 2, 80, 120, T.accent, "center");
 
   // Title large centered
   ctx.fillStyle = "#ffffff"; ctx.font = `bold 54px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
