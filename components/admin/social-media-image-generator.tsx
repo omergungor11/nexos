@@ -245,11 +245,21 @@ async function drawCoverImg(ctx: CanvasRenderingContext2D, src: string, x: numbe
 }
 
 // Draw logo
-async function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, accent: string, align: "left" | "right" = "left") {
+async function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, accent: string, align: "left" | "right" = "left", blur = false) {
   try {
     const logoImg = await loadImg("/logo-trans.png");
     const logoW = h * (logoImg.width / logoImg.height);
     const lx = align === "right" ? x - logoW : x;
+    if (blur) {
+      const blurPad = 20;
+      ctx.save();
+      ctx.filter = "blur(20px)";
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      rr(ctx, lx - blurPad, y - blurPad, logoW + blurPad * 2, h + blurPad * 2, 20);
+      ctx.fill();
+      ctx.filter = "none";
+      ctx.restore();
+    }
     ctx.drawImage(logoImg, lx, y, logoW, h);
   } catch {
     ctx.fillStyle = accent;
@@ -385,7 +395,7 @@ async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate,
   ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
 
   // Top: logo + badge
-  await drawLogo(ctx, PAD, PAD + 40, 100, T.accent, "left");
+  await drawLogo(ctx, PAD, PAD + 40, 100, T.accent, "left", true);
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `bold 24px ${FONT}`;
   const tw = ctx.measureText(txLabel).width;
@@ -506,7 +516,7 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   }
 
   // Logo on image (top left)
-  await drawLogo(ctx, PAD, PAD, 70, T.accent, "left");
+  await drawLogo(ctx, PAD, PAD, 70, T.accent, "left", true);
 
   // Badge on image (top right)
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
