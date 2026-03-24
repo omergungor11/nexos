@@ -328,7 +328,7 @@ function drawDetails(ctx: CanvasRenderingContext2D, property: PropertyForImage, 
     const ix = x + col * colW; const iy = y + row * rowH;
     ctx.fillStyle = T.accent + "30"; ctx.beginPath();
     ctx.arc(ix + circleR, iy + rowH / 2, circleR, 0, Math.PI * 2); ctx.fill();
-    drawIcon(ctx, items[i].icon, ix + circleR - iconSize / 2, iy + (rowH - iconSize) / 2, iconSize, T.textPrimary);
+    drawIcon(ctx, items[i].icon, ix + circleR - iconSize / 2, iy + (rowH - iconSize) / 2, iconSize, T.accent);
     ctx.fillStyle = T.textPrimary; ctx.fillText(items[i].text, ix + circleR * 2 + 16, iy + rowH / 2);
   }
   return Math.ceil(items.length / 2) * rowH;
@@ -732,7 +732,7 @@ async function renderDiagonal(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   for (const item of items) {
     ctx.fillStyle = T.accent + "30"; ctx.beginPath();
     ctx.arc(contentX + 24, dy + 24, 24, 0, Math.PI * 2); ctx.fill();
-    drawIcon(ctx, item.icon, contentX + 8, dy + 8, 32, T.textPrimary);
+    drawIcon(ctx, item.icon, contentX + 8, dy + 8, 32, T.accent);
     ctx.fillStyle = T.textPrimary; ctx.fillText(item.text, contentX + 60, dy + 24);
     dy += 60;
   }
@@ -832,7 +832,7 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
     const cx = PAD + i * colW + colW / 2;
     ctx.fillStyle = T.accent + "25"; ctx.beginPath();
     ctx.arc(cx, detailY + 28, 28, 0, Math.PI * 2); ctx.fill();
-    drawIcon(ctx, items[i].icon, cx - 18, detailY + 10, 36, T.textPrimary);
+    drawIcon(ctx, items[i].icon, cx - 18, detailY + 10, 36, T.accent);
     ctx.fillStyle = T.textMuted; ctx.font = `500 20px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "top";
     ctx.fillText(items[i].label, cx, detailY + 64);
     ctx.fillStyle = T.textPrimary; ctx.font = `600 26px ${FONT}`;
