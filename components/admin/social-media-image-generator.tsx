@@ -490,12 +490,17 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   const extras = property.extra_images ?? [];
   for (let i = 0; i < 3; i++) {
     const tx = PAD + i * (thumbW + thumbGap);
-    // White/dark border effect
-    ctx.fillStyle = T.bg;
-    rr(ctx, tx - 3, thumbY - 3, thumbW + 6, thumbH + 6, 14);
+    // Shadow
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur = 16;
+    ctx.shadowOffsetY = 4;
+    ctx.fillStyle = T.cardBg;
+    rr(ctx, tx, thumbY, thumbW, thumbH, 14);
     ctx.fill();
-    if (extras[i]) await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbH, 12, T.cardBg);
-    else { ctx.fillStyle = T.cardBg; rr(ctx, tx, thumbY, thumbW, thumbH, 12); ctx.fill(); }
+    ctx.restore();
+    if (extras[i]) await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbH, 14, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, tx, thumbY, thumbW, thumbH, 14); ctx.fill(); }
   }
 
   // Logo on image (top left)
@@ -778,10 +783,15 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   const extras = property.extra_images ?? [];
   for (let i = 0; i < 3; i++) {
     const tx = PAD + i * (thumbW + thumbGap);
-    // Border frame for depth
-    ctx.fillStyle = T.bg;
-    rr(ctx, tx - 3, thumbY - 3, thumbW + 6, thumbInnerH + 6, 16);
+    // Shadow
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur = 16;
+    ctx.shadowOffsetY = 4;
+    ctx.fillStyle = T.cardBg;
+    rr(ctx, tx, thumbY, thumbW, thumbInnerH, 14);
     ctx.fill();
+    ctx.restore();
     if (extras[i]) await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbInnerH, 14, T.cardBg);
     else { ctx.fillStyle = T.cardBg; rr(ctx, tx, thumbY, thumbW, thumbInnerH, 14); ctx.fill(); }
   }
