@@ -1049,35 +1049,44 @@ async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, 160 + i * 62);
   ctx.restore(); ctx.textAlign = "start";
 
-  // 2 rounded images — overlapping image bottom, tilted sizes
+  // 2 rounded images — same height, overlapping bottom of main image
   const imgY = topH - 60; const gap = 20;
   const imgW = (W - PAD * 2 - gap) / 2;
-  const imgH1 = 300; const imgH2 = 280;
+  const imgH = 300;
   const extras = property.extra_images ?? [];
 
   for (let i = 0; i < 2; i++) {
     const ix = PAD + i * (imgW + gap);
-    const ih = i === 0 ? imgH1 : imgH2;
-    const iy = i === 0 ? imgY : imgY + 20;
     ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.35)"; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
-    ctx.fillStyle = T.cardBg; rr(ctx, ix, iy, imgW, ih, 22); ctx.fill(); ctx.restore();
-    // Accent border
-    ctx.strokeStyle = T.accent; ctx.lineWidth = 2; rr(ctx, ix, iy, imgW, ih, 22); ctx.stroke();
-    if (extras[i]) await drawCoverImg(ctx, extras[i], ix, iy, imgW, ih, 22, T.cardBg);
-    else { ctx.fillStyle = T.cardBg; rr(ctx, ix, iy, imgW, ih, 22); ctx.fill(); }
+    ctx.fillStyle = T.cardBg; rr(ctx, ix, imgY, imgW, imgH, 22); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = T.accent; ctx.lineWidth = 2; rr(ctx, ix, imgY, imgW, imgH, 22); ctx.stroke();
+    if (extras[i]) await drawCoverImg(ctx, extras[i], ix, imgY, imgW, imgH, 22, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, ix, imgY, imgW, imgH, 22); ctx.fill(); }
   }
 
-  // Price badge centered, floating between images and footer
-  const badgeY = imgY + imgH1 + 20;
+  // Price badge centered
+  const badgeY = imgY + imgH + 20;
   ctx.font = `bold 54px ${FONT}`;
   const pw = ctx.measureText(price).width;
   const bw = pw + 70; const bh = 80; const bx = (W - bw) / 2;
 
   ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 16;
   ctx.fillStyle = T.accent; rr(ctx, bx, badgeY, bw, bh, 16); ctx.fill(); ctx.restore();
-  // Price text
   ctx.fillStyle = T.bg; ctx.font = `bold 54px ${FONT}`; ctx.textBaseline = "middle"; ctx.textAlign = "center";
   ctx.fillText(price, W / 2, badgeY + bh / 2);
+  ctx.textAlign = "start";
+
+  // Detail items centered below price badge (gray text)
+  const detailY2 = badgeY + bh + 20;
+  const posterItems: string[] = [];
+  if (property.city_name) posterItems.push(property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name);
+  posterItems.push(TYPE_LABELS[property.type] ?? property.type);
+  const rs2 = fmtRooms(property.rooms, property.living_rooms);
+  if (rs2) posterItems.push(`${rs2} Oda`);
+  if (property.area_sqm) posterItems.push(`${property.area_sqm} m²`);
+
+  ctx.fillStyle = T.textMuted; ctx.font = `500 26px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+  ctx.fillText(posterItems.join("  ·  "), W / 2, detailY2);
   ctx.textAlign = "start";
 
   // Footer with accent line
@@ -1108,7 +1117,7 @@ async function renderCatalog(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   const rightW = W - rightX - 40;
 
   // Left column
-  let ly = 80;
+  let ly = 112; // ~2rem padding-top
 
   // Logo
   await drawLogo(ctx, PAD, ly, 90, T.accent, "left");
