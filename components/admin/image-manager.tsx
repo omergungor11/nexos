@@ -1,15 +1,33 @@
 "use client";
 
-import { useState, useRef, useTransition, useCallback, useId } from "react";
+import { useState, useRef, useTransition, useCallback, useId, useMemo } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { StarIcon, Trash2Icon, UploadIcon, LoaderCircleIcon } from "lucide-react";
+import { StarIcon, Trash2Icon, UploadIcon, LoaderCircleIcon, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { Button } from "@/components/ui/button";
 import {
   uploadPropertyImage,
   deletePropertyImage,
   setCoverImage,
+  reorderPropertyImages,
 } from "@/actions/images";
 import type { PropertyImage } from "@/types/property";
 
@@ -37,7 +55,6 @@ function sortImages(images: PropertyImage[]): PropertyImage[] {
 const MAX_DIMENSION = 1920;
 
 function getQuality(fileSize: number): number {
-  // Adaptive quality: larger files get more compression
   if (fileSize > 5 * 1024 * 1024) return 0.65;
   if (fileSize > 3 * 1024 * 1024) return 0.7;
   if (fileSize > 1 * 1024 * 1024) return 0.75;
@@ -97,10 +114,10 @@ async function compressImage(file: File): Promise<{ file: File; originalSize: nu
 }
 
 // ---------------------------------------------------------------------------
-// ImageCard sub-component
+// Sortable ImageCard sub-component
 // ---------------------------------------------------------------------------
 
-function ImageCard({
+function SortableImageCard({
   image,
   onDelete,
   onSetCover,
@@ -113,8 +130,38 @@ function ImageCard({
   isDeleting: boolean;
   isSettingCover: boolean;
 }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: image.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : undefined,
+  };
+
   return (
-    <div className="group relative overflow-hidden rounded-lg border bg-muted">
+    <div ref={setNodeRef} style={style} className="group relative overflow-hidden rounded-lg border bg-muted">
+      {/* Drag handle */}
+      <button
+        className="absolute right-2 top-2 z-20 cursor-grab rounded bg-black/50 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="size-4" />
+      </button>
+
+      {/* Sort order badge */}
+      <div className="absolute left-2 bottom-12 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white">
+        {image.sort_order + 1}
+      </div>
+
       {/* Thumbnail */}
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         <Image
@@ -212,7 +259,6 @@ function UploadZone({
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
       onFilesSelected(e.target.files);
-      // Reset input so the same file can be re-uploaded after deletion
       e.target.value = "";
     }
   }
@@ -282,10 +328,54 @@ export function ImageManager({ propertyId, initialImages }: ImageManagerProps) {
     sortImages(initialImages)
   );
   const [uploadPending, startUpload] = useTransition();
+  const [reorderPending, startReorder] = useTransition();
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [coveringIds, setCoveringIds] = useState<Set<string>>(new Set());
 
   const uploadInputId = useId();
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const imageIds = useMemo(() => images.map((img) => img.id), [images]);
+
+  // ---------------------------------------------------------------------------
+  // Drag end — reorder
+  // ---------------------------------------------------------------------------
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = images.findIndex((img) => img.id === active.id);
+    const newIndex = images.findIndex((img) => img.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(images, oldIndex, newIndex).map((img, i) => ({
+      ...img,
+      sort_order: i,
+    }));
+
+    // Optimistic update
+    setImages(reordered);
+
+    // Persist
+    startReorder(async () => {
+      const result = await reorderPropertyImages(
+        propertyId,
+        reordered.map((img) => img.id)
+      );
+      if (result.error) {
+        toast.error(`Sıralama kaydedilemedi: ${result.error}`);
+        setImages(sortImages(initialImages));
+      } else {
+        toast.success("Görsel sırası güncellendi.");
+      }
+    });
+  }
 
   // ---------------------------------------------------------------------------
   // Upload handler
@@ -295,7 +385,6 @@ export function ImageManager({ propertyId, initialImages }: ImageManagerProps) {
     (files: FileList) => {
       const fileArray = Array.from(files);
 
-      // Client-side validation
       for (const file of fileArray) {
         if (file.size > MAX_FILE_SIZE_BYTES) {
           toast.error(
@@ -318,8 +407,6 @@ export function ImageManager({ propertyId, initialImages }: ImageManagerProps) {
           if (result.error !== undefined) {
             toast.error(`"${file.name}" yüklenemedi: ${result.error}`);
           } else {
-            // Optimistic append — we don't have the full DB row so we build
-            // a provisional PropertyImage from the returned data.
             const uploadedData = result.data as { id: string; url: string };
             const newImage: PropertyImage = {
               id: uploadedData.id,
@@ -333,7 +420,6 @@ export function ImageManager({ propertyId, initialImages }: ImageManagerProps) {
 
             setImages((prev) => {
               const updated = [...prev, newImage];
-              // If it is the first image, mark it as cover and unmark others
               if (newImage.is_cover) {
                 return updated.map((img) => ({
                   ...img,
@@ -376,8 +462,6 @@ export function ImageManager({ propertyId, initialImages }: ImageManagerProps) {
         } else {
           setImages((prev) => {
             const remaining = prev.filter((img) => img.id !== imageId);
-            // If the deleted image was the cover and there are remaining
-            // images, automatically promote the first one as cover.
             const deletedWasCover = prev.find((img) => img.id === imageId)
               ?.is_cover;
             if (deletedWasCover && remaining.length > 0) {
@@ -445,19 +529,28 @@ export function ImageManager({ propertyId, initialImages }: ImageManagerProps) {
         inputId={uploadInputId}
       />
 
-      {/* Image grid */}
+      {/* Image grid with drag-and-drop */}
       {images.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {images.map((image) => (
-            <ImageCard
-              key={image.id}
-              image={image}
-              onDelete={handleDelete}
-              onSetCover={handleSetCover}
-              isDeleting={deletingIds.has(image.id)}
-              isSettingCover={coveringIds.has(image.id)}
-            />
-          ))}
+        <div>
+          <p className="mb-2 text-xs text-muted-foreground">
+            Sıralamak için görselleri sürükleyip bırakın. İlk görsel varsayılan olarak kapak görseli olur.
+          </p>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={imageIds} strategy={rectSortingStrategy}>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {images.map((image) => (
+                  <SortableImageCard
+                    key={image.id}
+                    image={image}
+                    onDelete={handleDelete}
+                    onSetCover={handleSetCover}
+                    isDeleting={deletingIds.has(image.id)}
+                    isSettingCover={coveringIds.has(image.id)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       )}
 
