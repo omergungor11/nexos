@@ -552,8 +552,8 @@ async function renderMagazine(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
   const sY = 135 + 20;
 
-  // Thin accent line top
-  ctx.fillStyle = T.accent; ctx.fillRect(PAD, sY, W - PAD * 2, 3);
+  // Accent line top-right
+  ctx.fillStyle = T.accent; ctx.fillRect(W - PAD - 80, sY, 80, 4);
 
   // Logo left + badge right
   await drawLogo(ctx, PAD, sY + 20, 100, T.accent, "left");
