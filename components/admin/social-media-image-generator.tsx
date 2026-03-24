@@ -141,19 +141,28 @@ const TEMPLATES: DesignTemplate[] = [
 let fontLoaded = false;
 async function ensureMontserrat() {
   if (fontLoaded) return;
-  const weights = [
-    { weight: "500", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM73w5aXp-p7K4KLg.woff2" },
-    { weight: "600", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCu670w5aXp-p7K4KLg.woff2" },
-    { weight: "700", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM70w5aXp-p7K4KLg.woff2" },
-  ];
-  await Promise.all(
-    weights.map(async ({ weight, url }) => {
-      const font = new FontFace("Montserrat", `url(${url})`, { weight });
-      const loaded = await font.load();
-      document.fonts.add(loaded);
-    })
-  );
-  fontLoaded = true;
+  try {
+    const weights = [
+      { weight: "500", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM73w5aXp-p7K4KLg.woff2" },
+      { weight: "600", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCu670w5aXp-p7K4KLg.woff2" },
+      { weight: "700", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM70w5aXp-p7K4KLg.woff2" },
+    ];
+    const timeout = (ms: number) => new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms));
+    await Promise.race([
+      Promise.all(
+        weights.map(async ({ weight, url }) => {
+          const font = new FontFace("Montserrat", `url(${url})`, { weight });
+          const loaded = await font.load();
+          document.fonts.add(loaded);
+        })
+      ),
+      timeout(5000),
+    ]);
+    fontLoaded = true;
+  } catch {
+    // Font load failed/timed out — will use system-ui fallback
+    fontLoaded = true;
+  }
 }
 
 function fmtPrice(price: number, currency: string): string {
@@ -184,8 +193,9 @@ function loadImg(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = () => resolve(img);
-    img.onerror = reject;
+    const timer = setTimeout(() => reject(new Error("Image load timeout")), 8000);
+    img.onload = () => { clearTimeout(timer); resolve(img); };
+    img.onerror = () => { clearTimeout(timer); reject(new Error("Image load failed")); };
     img.src = src;
   });
 }
@@ -272,6 +282,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
   const generateImage = useCallback(async () => {
     if (!property || !canvasRef.current) return;
     setGenerating(true);
+    try {
     await ensureMontserrat();
 
     const canvas = canvasRef.current;
@@ -460,8 +471,13 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     ctx.fillStyle = T.accent;
     ctx.fillRect(PAD, brandY - 8, 40, 3);
 
-    setGenerating(false);
     setGenerated(true);
+    } catch (err) {
+      console.error("Image generation failed:", err);
+      toast.error("Görsel oluşturulamadı. Tekrar deneyin.");
+    } finally {
+      setGenerating(false);
+    }
   }, [property, template, customTitle, customPrice]);
 
   // Auto-generate when property or template changes
