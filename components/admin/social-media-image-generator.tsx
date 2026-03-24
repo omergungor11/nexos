@@ -514,8 +514,8 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   ctx.fillStyle = T.accent; rr(ctx, W - PAD - tw - 36, PAD, tw + 36, badgeH, 10); ctx.fill();
   ctx.fillStyle = T.bg; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - tw - 18, PAD + badgeH / 2);
 
-  // Logo on image (top left, same Y as badge)
-  await drawLogo(ctx, PAD, PAD, 110, T.accent, "left");
+  // Logo on image (top left, 30px above badge)
+  await drawLogo(ctx, PAD, PAD - 30, 110, T.accent, "left");
 
   // Content card below image
   const cardY = imgH - 40;
