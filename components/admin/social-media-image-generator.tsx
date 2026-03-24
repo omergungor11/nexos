@@ -427,13 +427,14 @@ async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate,
   grad.addColorStop(1, "rgba(0,0,0,0.85)");
   ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
 
-  // Top: logo + badge
-  await drawLogo(ctx, PAD, PAD + 40, 140, T.accent, "left");
+  // Top: logo + badge (same Y line)
+  const topY = PAD + 40;
+  await drawLogo(ctx, PAD, topY, 140, T.accent, "left");
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `bold 24px ${FONT}`;
   const tw = ctx.measureText(txLabel).width;
-  ctx.fillStyle = T.accent; rr(ctx, W - PAD - tw - 36, PAD + 50, tw + 36, 50, 10); ctx.fill();
-  ctx.fillStyle = "#000"; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - tw - 18, PAD + 75);
+  ctx.fillStyle = T.accent; rr(ctx, W - PAD - tw - 36, topY, tw + 36, 50, 10); ctx.fill();
+  ctx.fillStyle = "#000"; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - tw - 18, topY + 25);
 
   // Bottom content
   const bottomY = H - 420;
