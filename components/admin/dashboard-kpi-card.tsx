@@ -27,9 +27,9 @@ export function DashboardKpiCard({
   suffix,
 }: DashboardKpiCardProps) {
   return (
-    <Link href={href} className="group block">
-      <Card className="transition-shadow hover:shadow-md">
-        <CardContent className="pt-4">
+    <Link href={href} className="group block h-full">
+      <Card className="h-full transition-shadow hover:shadow-md">
+        <CardContent className="flex h-full flex-col pt-4">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">{label}</p>
@@ -47,7 +47,7 @@ export function DashboardKpiCard({
             </div>
           </div>
 
-          <div className="mt-3 flex items-center justify-between">
+          <div className="mt-auto flex items-center justify-between pt-3">
             {trend ? (
               <TrendBadge trend={trend} />
             ) : (
