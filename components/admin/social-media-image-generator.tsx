@@ -307,7 +307,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     const contentStartY = SAFE_TOP + 6;
 
     // -- Transaction type badge (left column starts here) --
-    const badgeY = contentStartY;
+    const badgeY = contentStartY + 30;
     const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
     ctx.font = `bold 24px ${FONT}`;
     const badgeTextW = ctx.measureText(txLabel).width;
