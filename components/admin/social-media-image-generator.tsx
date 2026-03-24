@@ -60,7 +60,7 @@ const TYPE_LABELS: Record<string, string> = {
 // Layout types
 // ---------------------------------------------------------------------------
 
-type LayoutType = "classic" | "fullimage" | "split" | "showcase" | "magazine" | "gallery" | "frame" | "boldprice";
+type LayoutType = "classic" | "fullimage" | "split" | "showcase" | "magazine" | "gallery" | "frame" | "boldprice" | "diagonal" | "ribbon";
 
 interface DesignTemplate {
   id: string;
@@ -174,6 +174,32 @@ const TEMPLATES: DesignTemplate[] = [
     textPrimary: "#fef2f2", textSecondary: "#ef4444", textMuted: "#fca5a5",
     gradientOverlay: ["rgba(26,5,5,0)", "rgba(26,5,5,0.9)"],
   },
+  // Diagonal
+  {
+    id: "diagonal-gold", name: "Çapraz Altın", layout: "diagonal",
+    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.7)"],
+  },
+  {
+    id: "diagonal-premium", name: "Çapraz Premium", layout: "diagonal",
+    bg: "#1a1207", cardBg: "#2a1f0e", accent: NEXOS_GOLD,
+    textPrimary: "#fef9e7", textSecondary: NEXOS_GOLD, textMuted: "#c4a352",
+    gradientOverlay: ["rgba(26,18,7,0)", "rgba(26,18,7,0.8)"],
+  },
+  // Ribbon
+  {
+    id: "ribbon-gold", name: "Şerit Altın", layout: "ribbon",
+    bg: "#0f172a", cardBg: "#162033", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
+  },
+  {
+    id: "ribbon-white", name: "Şerit Beyaz", layout: "ribbon",
+    bg: "#ffffff", cardBg: "#f1f5f9", accent: "#b8860b",
+    textPrimary: "#0f172a", textSecondary: "#b8860b", textMuted: "#64748b",
+    gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
+  },
 ];
 
 const LAYOUT_LABELS: Record<LayoutType, string> = {
@@ -183,6 +209,8 @@ const LAYOUT_LABELS: Record<LayoutType, string> = {
   gallery: "Galeri",
   frame: "Çerçeve",
   boldprice: "Dev Fiyat",
+  diagonal: "Çapraz",
+  ribbon: "Şerit",
   split: "Bölünmüş",
   showcase: "Vitrin",
 };
@@ -829,6 +857,183 @@ async function renderBoldPrice(ctx: CanvasRenderingContext2D, T: DesignTemplate,
   drawFooter(ctx, T);
 }
 
+// --- DIAGONAL: Image fills upper-left triangle, content in lower-right ---
+async function renderDiagonal(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+
+  // Draw image in upper-left diagonal clip
+  if (property.cover_image) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(W, 0);
+    ctx.lineTo(W, H * 0.45);
+    ctx.lineTo(0, H * 0.75);
+    ctx.closePath();
+    ctx.clip();
+    await drawCoverImg(ctx, property.cover_image, 0, 0, W, H * 0.75, 0, T.cardBg);
+    // Darken overlay
+    ctx.fillStyle = T.gradientOverlay[1]; ctx.fillRect(0, 0, W, H * 0.75);
+    ctx.restore();
+  }
+
+  // Gold diagonal accent line
+  ctx.strokeStyle = T.accent; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(W, H * 0.45); ctx.lineTo(0, H * 0.75); ctx.stroke();
+
+  // Logo top-left with blur backdrop
+  await drawLogo(ctx, PAD, PAD + 20, 80, T.accent, "left", true);
+
+  // Price on image area
+  ctx.fillStyle = T.textSecondary; ctx.font = `bold 64px ${FONT}`; ctx.textBaseline = "top";
+  ctx.fillText(price, PAD, PAD + 120);
+
+  // Badge top-right
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  ctx.font = `bold 24px ${FONT}`;
+  const bw = ctx.measureText(txLabel).width + 36;
+  ctx.fillStyle = T.accent; rr(ctx, W - PAD - bw, PAD + 20, bw, 50, 10); ctx.fill();
+  ctx.fillStyle = T.bg; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - bw + 18, PAD + 45);
+
+  // Content in lower-right area (below diagonal)
+  const contentY = H * 0.62;
+  const contentX = PAD + 60;
+  const contentW = W - contentX - PAD;
+
+  // Title
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 42px ${FONT}`; ctx.textBaseline = "top";
+  const lines = wrapText(ctx, title, contentW, 2);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], contentX, contentY + i * 54);
+  const titleEnd = contentY + lines.length * 54;
+
+  // Accent line
+  ctx.fillStyle = T.accent; ctx.fillRect(contentX, titleEnd + 16, 70, 4);
+
+  // Details vertical
+  const items: { icon: "pin" | "home" | "bed" | "ruler"; text: string }[] = [];
+  if (property.city_name) {
+    const loc = property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name;
+    items.push({ icon: "pin", text: loc });
+  }
+  items.push({ icon: "home", text: TYPE_LABELS[property.type] ?? property.type });
+  const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  if (roomStr) items.push({ icon: "bed", text: `${roomStr} Oda` });
+  if (property.area_sqm) items.push({ icon: "ruler", text: `${property.area_sqm} m²` });
+
+  let dy = titleEnd + 40;
+  ctx.font = `600 30px ${FONT}`; ctx.textBaseline = "middle";
+  for (const item of items) {
+    ctx.fillStyle = T.accent + "30"; ctx.beginPath();
+    ctx.arc(contentX + 24, dy + 24, 24, 0, Math.PI * 2); ctx.fill();
+    drawIcon(ctx, item.icon, contentX + 8, dy + 8, 32, T.textPrimary);
+    ctx.fillStyle = T.textPrimary; ctx.fillText(item.text, contentX + 60, dy + 24);
+    dy += 60;
+  }
+
+  if (desc) {
+    ctx.fillStyle = T.textMuted; ctx.font = `600 30px ${FONT}`; ctx.textBaseline = "top";
+    ctx.fillText(desc, contentX, dy + 16);
+  }
+
+  drawFooter(ctx, T);
+}
+
+// --- RIBBON: 4 horizontal bands separated by gold lines ---
+async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  // Band heights
+  const band1H = Math.round(H * 0.12); // Header
+  const band2H = Math.round(H * 0.38); // Image
+  const band3H = Math.round(H * 0.35); // Content
+  const band4H = H - band1H - band2H - band3H; // Footer
+
+  // Band 1: Header
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, band1H);
+  await drawLogo(ctx, PAD, (band1H - 50) / 2, 50, T.accent, "left");
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  ctx.font = `bold 22px ${FONT}`;
+  const bw = ctx.measureText(txLabel).width + 32;
+  ctx.fillStyle = T.accent; rr(ctx, W - PAD - bw, (band1H - 42) / 2, bw, 42, 8); ctx.fill();
+  ctx.fillStyle = T.bg; ctx.textBaseline = "middle"; ctx.fillText(txLabel, W - PAD - bw + 16, band1H / 2);
+
+  // Gold line
+  ctx.fillStyle = T.accent; ctx.fillRect(0, band1H - 3, W, 3);
+
+  // Band 2: Image (full width, gold side borders)
+  const imgY = band1H;
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, 0, imgY, W, band2H, 0, T.cardBg);
+  } else {
+    ctx.fillStyle = T.cardBg; ctx.fillRect(0, imgY, W, band2H);
+  }
+  // Gold side lines
+  ctx.fillStyle = T.accent;
+  ctx.fillRect(0, imgY, 4, band2H);
+  ctx.fillRect(W - 4, imgY, 4, band2H);
+
+  // Gold line
+  ctx.fillRect(0, imgY + band2H - 3, W, 3);
+
+  // Band 3: Content
+  const contentY = band1H + band2H;
+  ctx.fillStyle = T.cardBg; ctx.fillRect(0, contentY, W, band3H);
+
+  // Price
+  ctx.fillStyle = T.textSecondary; ctx.font = `bold 56px ${FONT}`; ctx.textBaseline = "top";
+  ctx.fillText(price, PAD, contentY + 24);
+
+  // Title
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 38px ${FONT}`;
+  const lines = wrapText(ctx, title, W - PAD * 2, 2);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], PAD, contentY + 96 + i * 48);
+  const titleEnd = contentY + 96 + lines.length * 48;
+
+  // 4-column detail icons (icon above, text below)
+  const items: { icon: "pin" | "home" | "bed" | "ruler"; label: string; value: string }[] = [];
+  if (property.city_name) items.push({ icon: "pin", label: "Konum", value: property.district_name ?? property.city_name });
+  items.push({ icon: "home", label: "Tip", value: TYPE_LABELS[property.type] ?? property.type });
+  const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  if (roomStr) items.push({ icon: "bed", label: "Oda", value: roomStr });
+  if (property.area_sqm) items.push({ icon: "ruler", label: "Alan", value: `${property.area_sqm} m²` });
+
+  const colW = (W - PAD * 2) / items.length;
+  const detailY = titleEnd + 24;
+
+  for (let i = 0; i < items.length; i++) {
+    const cx = PAD + i * colW + colW / 2;
+
+    // Icon circle
+    ctx.fillStyle = T.accent + "25"; ctx.beginPath();
+    ctx.arc(cx, detailY + 28, 28, 0, Math.PI * 2); ctx.fill();
+    drawIcon(ctx, items[i].icon, cx - 18, detailY + 10, 36, T.textPrimary);
+
+    // Label
+    ctx.fillStyle = T.textMuted; ctx.font = `500 20px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "top";
+    ctx.fillText(items[i].label, cx, detailY + 64);
+
+    // Value
+    ctx.fillStyle = T.textPrimary; ctx.font = `600 26px ${FONT}`;
+    ctx.fillText(items[i].value, cx, detailY + 90);
+    ctx.textAlign = "start";
+  }
+
+  // Gold line
+  ctx.fillStyle = T.accent; ctx.fillRect(0, contentY + band3H - 3, W, 3);
+
+  // Band 4: Footer
+  const footerY = contentY + band3H;
+  ctx.fillStyle = T.bg; ctx.fillRect(0, footerY, W, band4H);
+
+  if (desc) {
+    ctx.fillStyle = T.textMuted; ctx.font = `600 28px ${FONT}`; ctx.textBaseline = "middle"; ctx.textAlign = "center";
+    ctx.fillText(desc, W / 2, footerY + band4H * 0.3); ctx.textAlign = "start";
+  }
+
+  ctx.fillStyle = T.textMuted; ctx.font = `600 22px ${FONT}`; ctx.textBaseline = "bottom";
+  ctx.fillText("+90 542 880 64 56", PAD, footerY + band4H - 20);
+  ctx.textAlign = "right"; ctx.fillText("nexosinvestment.com", W - PAD, footerY + band4H - 20);
+  ctx.textAlign = "start";
+}
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -875,6 +1080,8 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         case "gallery": await renderGallery(ctx, T, property, title, price, desc); break;
         case "frame": await renderFrame(ctx, T, property, title, price, desc); break;
         case "boldprice": await renderBoldPrice(ctx, T, property, title, price, desc); break;
+        case "diagonal": await renderDiagonal(ctx, T, property, title, price, desc); break;
+        case "ribbon": await renderRibbon(ctx, T, property, title, price, desc); break;
       }
 
       setGenerated(true);
@@ -941,7 +1148,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {(["classic", "fullimage", "split", "showcase", "magazine", "gallery", "frame", "boldprice"] as LayoutType[]).map((layout) => (
+              {(["classic", "fullimage", "split", "showcase", "magazine", "gallery", "frame", "boldprice", "diagonal", "ribbon"] as LayoutType[]).map((layout) => (
                 <div key={layout}>
                   <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{LAYOUT_LABELS[layout]}</div>
                   {TEMPLATES.filter((t) => t.layout === layout).map((t) => (
