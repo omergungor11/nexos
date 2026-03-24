@@ -60,7 +60,7 @@ const TYPE_LABELS: Record<string, string> = {
 // Layout types
 // ---------------------------------------------------------------------------
 
-type LayoutType = "classic" | "fullimage" | "split" | "showcase";
+type LayoutType = "classic" | "fullimage" | "split" | "showcase" | "magazine" | "gallery" | "frame" | "boldprice";
 
 interface DesignTemplate {
   id: string;
@@ -128,11 +128,61 @@ const TEMPLATES: DesignTemplate[] = [
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
   },
+  // Magazine
+  {
+    id: "magazine-dark", name: "Dergi Koyu", layout: "magazine",
+    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
+  },
+  {
+    id: "magazine-white", name: "Dergi Beyaz", layout: "magazine",
+    bg: "#fafaf9", cardBg: "#e7e5e4", accent: "#b8860b",
+    textPrimary: "#1c1917", textSecondary: "#b8860b", textMuted: "#78716c",
+    gradientOverlay: ["rgba(250,250,249,0)", "rgba(250,250,249,0.85)"],
+  },
+  // Gallery
+  {
+    id: "gallery-gold", name: "Galeri Altın", layout: "gallery",
+    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
+  },
+  // Frame
+  {
+    id: "frame-gold", name: "Çerçeve Altın", layout: "frame",
+    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
+  },
+  {
+    id: "frame-premium", name: "Çerçeve Premium", layout: "frame",
+    bg: "#1a1207", cardBg: "#2a1f0e", accent: NEXOS_GOLD,
+    textPrimary: "#fef9e7", textSecondary: NEXOS_GOLD, textMuted: "#c4a352",
+    gradientOverlay: ["rgba(26,18,7,0)", "rgba(26,18,7,0.9)"],
+  },
+  // Bold Price
+  {
+    id: "boldprice-dark", name: "Dev Fiyat Koyu", layout: "boldprice",
+    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
+  },
+  {
+    id: "boldprice-red", name: "Dev Fiyat Kırmızı", layout: "boldprice",
+    bg: "#1a0505", cardBg: "#2d0a0a", accent: "#ef4444",
+    textPrimary: "#fef2f2", textSecondary: "#ef4444", textMuted: "#fca5a5",
+    gradientOverlay: ["rgba(26,5,5,0)", "rgba(26,5,5,0.9)"],
+  },
 ];
 
 const LAYOUT_LABELS: Record<LayoutType, string> = {
   classic: "Klasik",
   fullimage: "Tam Görsel",
+  magazine: "Dergi",
+  gallery: "Galeri",
+  frame: "Çerçeve",
+  boldprice: "Dev Fiyat",
   split: "Bölünmüş",
   showcase: "Vitrin",
 };
@@ -564,6 +614,221 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   drawFooter(ctx, T);
 }
 
+// --- MAGAZINE: Big price header, asymmetric image grid ---
+async function renderMagazine(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+  const sY = 135 + 20;
+
+  // Thin accent line top
+  ctx.fillStyle = T.accent; ctx.fillRect(PAD, sY, W - PAD * 2, 3);
+
+  // Logo left + badge right
+  await drawLogo(ctx, PAD, sY + 20, 60, T.accent, "left");
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  drawBadge(ctx, txLabel, W - PAD - 160, sY + 20, T.accent, T.bg);
+
+  // Big price
+  ctx.fillStyle = T.textSecondary; ctx.font = `bold 72px ${FONT}`; ctx.textBaseline = "top";
+  ctx.fillText(price, PAD, sY + 100);
+
+  // Title
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 40px ${FONT}`;
+  const lines = wrapText(ctx, title, W - PAD * 2, 2);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], PAD, sY + 190 + i * 52);
+  const titleEnd = sY + 190 + lines.length * 52;
+
+  // Accent line
+  ctx.fillStyle = T.accent; ctx.fillRect(PAD, titleEnd + 10, 80, 4);
+
+  // Asymmetric image grid: 2/3 left tall + 1/3 right two stacked
+  const imgY = titleEnd + 30; const imgH = 520;
+  const leftW = Math.round((W - PAD * 2 - 12) * 0.66);
+  const rightW = W - PAD * 2 - 12 - leftW;
+  const rightH = (imgH - 12) / 2;
+
+  if (property.cover_image) await drawCoverImg(ctx, property.cover_image, PAD, imgY, leftW, imgH, R, T.cardBg);
+  else { ctx.fillStyle = T.cardBg; rr(ctx, PAD, imgY, leftW, imgH, R); ctx.fill(); }
+
+  const rx = PAD + leftW + 12;
+  if (property.extra_images?.[0]) await drawCoverImg(ctx, property.extra_images[0], rx, imgY, rightW, rightH, 16, T.cardBg);
+  else { ctx.fillStyle = T.cardBg; rr(ctx, rx, imgY, rightW, rightH, 16); ctx.fill(); }
+  if (property.extra_images?.[1]) await drawCoverImg(ctx, property.extra_images[1], rx, imgY + rightH + 12, rightW, rightH, 16, T.cardBg);
+  else { ctx.fillStyle = T.cardBg; rr(ctx, rx, imgY + rightH + 12, rightW, rightH, 16); ctx.fill(); }
+
+  // Details row at bottom
+  const detailY = imgY + imgH + 24;
+  drawDetails(ctx, property, PAD, detailY, W - PAD * 2, T);
+
+  if (desc) {
+    ctx.fillStyle = T.textMuted; ctx.font = `600 32px ${FONT}`; ctx.textBaseline = "top";
+    ctx.fillText(desc, PAD, detailY + 180);
+  }
+
+  drawFooter(ctx, T);
+}
+
+// --- GALLERY: 3 equal images in a row ---
+async function renderGallery(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+  const sY = 135 + 30;
+
+  // Logo centered
+  await drawLogo(ctx, W / 2, sY, 80, T.accent, "right");
+
+  // Centered badge
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  ctx.font = `bold 24px ${FONT}`;
+  const bw = ctx.measureText(txLabel).width + 36;
+  ctx.fillStyle = T.accent; rr(ctx, (W - bw) / 2, sY + 100, bw, 50, 10); ctx.fill();
+  ctx.fillStyle = T.bg; ctx.textBaseline = "middle"; ctx.textAlign = "center";
+  ctx.fillText(txLabel, W / 2, sY + 125); ctx.textAlign = "start";
+
+  // Centered price
+  ctx.fillStyle = T.textSecondary; ctx.font = `bold 60px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+  ctx.fillText(price, W / 2, sY + 170); ctx.textAlign = "start";
+
+  // Centered title
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 38px ${FONT}`; ctx.textAlign = "center";
+  const lines = wrapText(ctx, title, W - PAD * 2, 2);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, sY + 250 + i * 50);
+  ctx.textAlign = "start";
+  const titleEnd = sY + 250 + lines.length * 50;
+
+  // 3 images in a row
+  const imgY = titleEnd + 24; const imgH = 380; const gap = 12;
+  const imgW = (W - PAD * 2 - gap * 2) / 3;
+  const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
+
+  for (let i = 0; i < 3; i++) {
+    const ix = PAD + i * (imgW + gap);
+    if (allImgs[i]) await drawCoverImg(ctx, allImgs[i], ix, imgY, imgW, imgH, 16, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, ix, imgY, imgW, imgH, 16); ctx.fill(); }
+  }
+
+  // Details
+  const detailY = imgY + imgH + 24;
+  drawDetails(ctx, property, PAD, detailY, W - PAD * 2, T);
+
+  if (desc) {
+    ctx.fillStyle = T.textMuted; ctx.font = `600 32px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+    ctx.fillText(desc, W / 2, detailY + 180); ctx.textAlign = "start";
+  }
+
+  drawFooter(ctx, T);
+}
+
+// --- FRAME: Gold border frame around image ---
+async function renderFrame(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+
+  // Outer accent frame
+  const frameW = 6;
+  ctx.strokeStyle = T.accent; ctx.lineWidth = frameW;
+  rr(ctx, PAD - 10, 135, W - PAD * 2 + 20, H - 135 - 80, R); ctx.stroke();
+
+  // Inner frame line
+  ctx.strokeStyle = T.accent + "40"; ctx.lineWidth = 1;
+  rr(ctx, PAD + 10, 155, W - PAD * 2 - 20, H - 155 - 100, R - 8); ctx.stroke();
+
+  const sY = 180;
+
+  // Logo centered top
+  await drawLogo(ctx, W / 2, sY, 70, T.accent, "right");
+
+  // Badge + Price
+  const badgeY = sY + 90;
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  drawBadge(ctx, txLabel, PAD + 30, badgeY, T.accent, T.bg);
+
+  ctx.fillStyle = T.textSecondary; ctx.font = `bold 52px ${FONT}`; ctx.textBaseline = "top";
+  ctx.textAlign = "right"; ctx.fillText(price, W - PAD - 30, badgeY); ctx.textAlign = "start";
+
+  // Title
+  const titleY = badgeY + 70;
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 38px ${FONT}`; ctx.textBaseline = "top";
+  const lines = wrapText(ctx, title, W - PAD * 2 - 60, 2);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], PAD + 30, titleY + i * 50);
+  const titleEnd = titleY + lines.length * 50;
+
+  // Image with inner padding
+  const imgY = titleEnd + 20; const imgH = 480;
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, PAD + 30, imgY, W - PAD * 2 - 60, imgH, 16, T.cardBg);
+  }
+
+  // Details below image
+  const detailY = imgY + imgH + 24;
+  const items: string[] = [];
+  if (property.city_name) items.push(`📍 ${property.district_name ? property.district_name + ", " : ""}${property.city_name}`);
+  const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  if (roomStr) items.push(`🛏️ ${roomStr}`);
+  if (property.area_sqm) items.push(`📐 ${property.area_sqm} m²`);
+  items.push(`🏠 ${TYPE_LABELS[property.type] ?? property.type}`);
+
+  ctx.fillStyle = T.textMuted; ctx.font = `500 28px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+  ctx.fillText(items.join("   •   "), W / 2, detailY); ctx.textAlign = "start";
+
+  if (desc) {
+    ctx.fillStyle = T.textMuted; ctx.font = `600 30px ${FONT}`; ctx.textAlign = "center";
+    ctx.fillText(desc, W / 2, detailY + 50); ctx.textAlign = "start";
+  }
+
+  drawFooter(ctx, T);
+}
+
+// --- BOLD PRICE: Giant price as hero, small image ---
+async function renderBoldPrice(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+  const sY = 135 + 40;
+
+  // Logo + badge row
+  await drawLogo(ctx, PAD, sY, 60, T.accent, "left");
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  drawBadge(ctx, txLabel, W - PAD - 160, sY + 5, T.accent, T.bg);
+
+  // GIANT price
+  ctx.fillStyle = T.textSecondary; ctx.font = `bold 96px ${FONT}`; ctx.textBaseline = "top";
+  ctx.fillText(price, PAD, sY + 90);
+
+  // Accent underline
+  ctx.fillStyle = T.accent;
+  const pw = ctx.measureText(price).width;
+  ctx.fillRect(PAD, sY + 200, Math.min(pw, W - PAD * 2), 6);
+
+  // Title
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 42px ${FONT}`;
+  const lines = wrapText(ctx, title, W - PAD * 2, 2);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], PAD, sY + 230 + i * 54);
+  const titleEnd = sY + 230 + lines.length * 54;
+
+  // Image — smaller, centered with rounded corners
+  const imgY = titleEnd + 30; const imgH = 380; const imgW = W - PAD * 2;
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, PAD, imgY, imgW, imgH, R, T.cardBg);
+    ctx.save(); rr(ctx, PAD, imgY, imgW, imgH, R); ctx.clip();
+    const grad = ctx.createLinearGradient(PAD, imgY + imgH - 100, PAD, imgY + imgH);
+    grad.addColorStop(0, T.gradientOverlay[0]); grad.addColorStop(1, T.gradientOverlay[1]);
+    ctx.fillStyle = grad; ctx.fillRect(PAD, imgY + imgH - 100, imgW, 100); ctx.restore();
+  }
+
+  // Details inline on image bottom
+  const items: string[] = [];
+  if (property.city_name) items.push(`📍 ${property.district_name ? property.district_name + ", " : ""}${property.city_name}`);
+  const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  if (roomStr) items.push(`🛏️ ${roomStr}`);
+  if (property.area_sqm) items.push(`📐 ${property.area_sqm} m²`);
+
+  ctx.fillStyle = T.textPrimary; ctx.font = `600 28px ${FONT}`; ctx.textBaseline = "bottom";
+  ctx.fillText(items.join("   •   "), PAD + 20, imgY + imgH - 20);
+
+  if (desc) {
+    ctx.fillStyle = T.textMuted; ctx.font = `600 34px ${FONT}`; ctx.textBaseline = "top";
+    ctx.fillText(desc, PAD, imgY + imgH + 24);
+  }
+
+  drawFooter(ctx, T);
+}
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -606,6 +871,10 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         case "fullimage": await renderFullImage(ctx, T, property, title, price, desc); break;
         case "split": await renderSplit(ctx, T, property, title, price, desc); break;
         case "showcase": await renderShowcase(ctx, T, property, title, price, desc); break;
+        case "magazine": await renderMagazine(ctx, T, property, title, price, desc); break;
+        case "gallery": await renderGallery(ctx, T, property, title, price, desc); break;
+        case "frame": await renderFrame(ctx, T, property, title, price, desc); break;
+        case "boldprice": await renderBoldPrice(ctx, T, property, title, price, desc); break;
       }
 
       setGenerated(true);
@@ -672,7 +941,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {(["classic", "fullimage", "split", "showcase"] as LayoutType[]).map((layout) => (
+              {(["classic", "fullimage", "split", "showcase", "magazine", "gallery", "frame", "boldprice"] as LayoutType[]).map((layout) => (
                 <div key={layout}>
                   <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{LAYOUT_LABELS[layout]}</div>
                   {TEMPLATES.filter((t) => t.layout === layout).map((t) => (
