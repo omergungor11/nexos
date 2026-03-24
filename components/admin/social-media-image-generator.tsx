@@ -1,8 +1,16 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import { Download, ImageIcon } from "lucide-react";
+import { Download, ImageIcon, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 
 // ---------------------------------------------------------------------------
@@ -31,61 +39,134 @@ interface SocialMediaImageGeneratorProps {
 // Constants
 // ---------------------------------------------------------------------------
 
-const CANVAS_WIDTH = 1080;
-const CANVAS_HEIGHT = 1350;
-const PADDING = 48;
-const BORDER_RADIUS = 24;
+const W = 1080;
+const H = 1350;
+const PAD = 48;
+const R = 24;
+const NEXOS_GOLD = "#E5A800";
+const FONT = "Montserrat, system-ui, sans-serif";
 
-const CURRENCY_SYMBOLS: Record<string, string> = {
-  TRY: "₺",
-  USD: "$",
-  EUR: "€",
-  GBP: "£",
-};
-
-const TRANSACTION_LABELS: Record<string, string> = {
-  sale: "SATILIK",
-  rent: "KİRALIK",
-  daily_rental: "GÜNLÜK KİRALIK",
-};
-
+const CURRENCY_SYMBOLS: Record<string, string> = { TRY: "₺", USD: "$", EUR: "€", GBP: "£" };
+const TX_LABELS: Record<string, string> = { sale: "SATILIK", rent: "KİRALIK", daily_rental: "GÜNLÜK KİRALIK" };
 const TYPE_LABELS: Record<string, string> = {
-  villa: "Villa",
-  apartment: "Daire",
-  twin_villa: "İkiz Villa",
-  penthouse: "Penthouse",
-  bungalow: "Bungalow",
-  detached: "Müstakil Ev",
-  residential_land: "Arsa",
-  shop: "Dükkan",
-  office: "Ofis",
-  hotel: "Hotel",
-  warehouse: "Depo",
+  villa: "Villa", apartment: "Daire", twin_villa: "İkiz Villa", penthouse: "Penthouse",
+  bungalow: "Bungalow", detached: "Müstakil Ev", residential_land: "Arsa", shop: "Dükkan",
+  office: "Ofis", hotel: "Hotel", warehouse: "Depo",
 };
+
+// ---------------------------------------------------------------------------
+// Design templates
+// ---------------------------------------------------------------------------
+
+interface DesignTemplate {
+  id: string;
+  name: string;
+  bg: string;
+  cardBg: string;
+  cardBg2: string;
+  accent: string;
+  textPrimary: string;
+  textSecondary: string;
+  textMuted: string;
+  gradientOverlay: [string, string];
+}
+
+const TEMPLATES: DesignTemplate[] = [
+  {
+    id: "dark-gold",
+    name: "Koyu Altın",
+    bg: "#0f172a",
+    cardBg: "#1e293b",
+    cardBg2: "#1e293b",
+    accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc",
+    textSecondary: NEXOS_GOLD,
+    textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
+  },
+  {
+    id: "gold-premium",
+    name: "Premium Altın",
+    bg: "#1a1207",
+    cardBg: "#2a1f0e",
+    cardBg2: "#2a1f0e",
+    accent: NEXOS_GOLD,
+    textPrimary: "#fef9e7",
+    textSecondary: NEXOS_GOLD,
+    textMuted: "#c4a352",
+    gradientOverlay: ["rgba(26,18,7,0)", "rgba(26,18,7,0.9)"],
+  },
+  {
+    id: "white-clean",
+    name: "Beyaz Minimal",
+    bg: "#ffffff",
+    cardBg: "#f1f5f9",
+    cardBg2: "#f8fafc",
+    accent: NEXOS_GOLD,
+    textPrimary: "#0f172a",
+    textSecondary: "#b8860b",
+    textMuted: "#64748b",
+    gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
+  },
+  {
+    id: "dark-blue",
+    name: "Koyu Mavi",
+    bg: "#0a1628",
+    cardBg: "#0f2240",
+    cardBg2: "#0f2240",
+    accent: "#3b82f6",
+    textPrimary: "#f0f9ff",
+    textSecondary: "#60a5fa",
+    textMuted: "#7db4f5",
+    gradientOverlay: ["rgba(10,22,40,0)", "rgba(10,22,40,0.9)"],
+  },
+  {
+    id: "emerald",
+    name: "Yeşil Doğa",
+    bg: "#022c22",
+    cardBg: "#064e3b",
+    cardBg2: "#064e3b",
+    accent: "#10b981",
+    textPrimary: "#ecfdf5",
+    textSecondary: "#34d399",
+    textMuted: "#6ee7b7",
+    gradientOverlay: ["rgba(2,44,34,0)", "rgba(2,44,34,0.9)"],
+  },
+];
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function formatPrice(price: number, currency: string): string {
-  const symbol = CURRENCY_SYMBOLS[currency] ?? currency;
-  const formatted = new Intl.NumberFormat("tr-TR").format(price);
-  return `${symbol}${formatted}`;
+let fontLoaded = false;
+async function ensureMontserrat() {
+  if (fontLoaded) return;
+  const weights = [
+    { weight: "500", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM73w5aXp-p7K4KLg.woff2" },
+    { weight: "600", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCu670w5aXp-p7K4KLg.woff2" },
+    { weight: "700", url: "https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM70w5aXp-p7K4KLg.woff2" },
+  ];
+  await Promise.all(
+    weights.map(async ({ weight, url }) => {
+      const font = new FontFace("Montserrat", `url(${url})`, { weight });
+      const loaded = await font.load();
+      document.fonts.add(loaded);
+    })
+  );
+  fontLoaded = true;
 }
 
-function formatRooms(rooms: number | null, livingRooms: number | null): string | null {
+function fmtPrice(price: number, currency: string): string {
+  const s = CURRENCY_SYMBOLS[currency] ?? currency;
+  return `${s}${new Intl.NumberFormat("tr-TR").format(price)}`;
+}
+
+function fmtRooms(rooms: number | null, lr: number | null): string | null {
   if (rooms == null) return null;
-  return `${rooms}+${livingRooms ?? 1}`;
+  return `${rooms}+${lr ?? 1}`;
 }
 
-function roundRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  r: number
-) {
+function rr(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
   ctx.lineTo(x + w - r, y);
@@ -99,7 +180,7 @@ function roundRect(
   ctx.closePath();
 }
 
-function loadImage(src: string): Promise<HTMLImageElement> {
+function loadImg(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -107,6 +188,63 @@ function loadImage(src: string): Promise<HTMLImageElement> {
     img.onerror = reject;
     img.src = src;
   });
+}
+
+// White SVG icon paths (simplified)
+function drawIcon(ctx: CanvasRenderingContext2D, type: "pin" | "home" | "bed" | "ruler" | "area", x: number, y: number, size: number, color: string) {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  const s = size;
+  const cx = x + s / 2;
+  const cy = y + s / 2;
+  const r2 = s * 0.35;
+
+  switch (type) {
+    case "pin": // Map pin
+      ctx.beginPath();
+      ctx.arc(cx, cy - s * 0.1, r2, Math.PI, 0);
+      ctx.lineTo(cx, cy + s * 0.4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy - s * 0.1, r2 * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = ctx.canvas.getContext("2d")!.fillStyle === color ? "rgba(0,0,0,0.3)" : color;
+      ctx.fill();
+      break;
+    case "home": // House
+      ctx.beginPath();
+      ctx.moveTo(cx, y + 2);
+      ctx.lineTo(x + s - 4, cy);
+      ctx.lineTo(x + s - 8, cy);
+      ctx.lineTo(x + s - 8, y + s - 4);
+      ctx.lineTo(x + 8, y + s - 4);
+      ctx.lineTo(x + 8, cy);
+      ctx.lineTo(x + 4, cy);
+      ctx.closePath();
+      ctx.fill();
+      break;
+    case "bed": // Bed
+      ctx.fillRect(x + 2, cy + 2, s - 4, 3);
+      ctx.fillRect(x + 4, cy - 4, s * 0.35, 8);
+      ctx.fillRect(x + 2, cy + 5, 3, 6);
+      ctx.fillRect(x + s - 5, cy + 5, 3, 6);
+      break;
+    case "ruler": // Area/ruler
+      ctx.fillRect(x + 2, cy - 1, s - 4, 3);
+      ctx.fillRect(x + 2, cy - 6, 3, 12);
+      ctx.fillRect(x + s - 5, cy - 6, 3, 12);
+      for (let i = 1; i < 4; i++) {
+        const tx = x + 2 + (s - 4) * (i / 4);
+        ctx.fillRect(tx, cy - 4, 2, 6);
+      }
+      break;
+    case "area": // Maximize square
+      ctx.strokeRect(x + 4, y + 4, s - 8, s - 8);
+      break;
+  }
+  ctx.restore();
 }
 
 // ---------------------------------------------------------------------------
@@ -117,179 +255,222 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
+  const [templateId, setTemplateId] = useState("dark-gold");
+  const [customTitle, setCustomTitle] = useState("");
+  const [customPrice, setCustomPrice] = useState("");
+
+  const template = TEMPLATES.find((t) => t.id === templateId) ?? TEMPLATES[0];
+
+  // Sync title/price when property changes
+  useEffect(() => {
+    if (property) {
+      setCustomTitle(property.title);
+      setCustomPrice(fmtPrice(property.price, property.currency));
+    }
+  }, [property]);
 
   const generateImage = useCallback(async () => {
     if (!property || !canvasRef.current) return;
-
     setGenerating(true);
+    await ensureMontserrat();
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d")!;
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
+    canvas.width = W;
+    canvas.height = H;
+    const T = template;
 
     // -- Background --
-    ctx.fillStyle = "#0f172a";
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.fillStyle = T.bg;
+    ctx.fillRect(0, 0, W, H);
 
-    // Content area height: img(620) + gap(20) + title(80) + gap(16) + detail(240) = 976
-    // Vertical centering offset
-    const contentH = 620 + 20 + 80 + 16 + 240;
-    const offsetY = Math.round((CANVAS_HEIGHT - contentH) / 2);
+    // Layout: logo(60) + gap(16) + title(auto) + gap(16) + txBadge(40) + gap(20) + image(600) + gap(20) + details(auto) + gap(16) + branding(30)
+    const logoH = 60;
+    const imgH = 580;
+    const detailH = 200;
+    const txBadgeH = 42;
+    const contentStartY = PAD;
 
-    // -- Cover image (top portion) --
-    if (property.cover_image) {
-      try {
-        const img = await loadImage(property.cover_image);
-        const imgH = 620;
-        const imgW = CANVAS_WIDTH - PADDING * 2;
-        const imgX = PADDING;
-        const imgY = offsetY;
-
-        // Clip with rounded corners
-        ctx.save();
-        roundRect(ctx, imgX, imgY, imgW, imgH, BORDER_RADIUS);
-        ctx.clip();
-
-        // Draw image cover-fit
-        const scale = Math.max(imgW / img.width, imgH / img.height);
-        const drawW = img.width * scale;
-        const drawH = img.height * scale;
-        const drawX = imgX + (imgW - drawW) / 2;
-        const drawY = imgY + (imgH - drawH) / 2;
-        ctx.drawImage(img, drawX, drawY, drawW, drawH);
-
-        // Gradient overlay at bottom of image
-        const grad = ctx.createLinearGradient(imgX, imgY + imgH - 150, imgX, imgY + imgH);
-        grad.addColorStop(0, "rgba(15,23,42,0)");
-        grad.addColorStop(1, "rgba(15,23,42,0.85)");
-        ctx.fillStyle = grad;
-        ctx.fillRect(imgX, imgY + imgH - 150, imgW, 150);
-
-        ctx.restore();
-
-        // Transaction type badge on image
-        const txLabel = TRANSACTION_LABELS[property.transaction_type] ?? "SATILIK";
-        ctx.font = "bold 22px system-ui, -apple-system, sans-serif";
-        const badgeW = ctx.measureText(txLabel).width + 28;
-        const badgeH = 38;
-        const badgeX = imgX + 20;
-        const badgeY = imgY + 20;
-
-        ctx.fillStyle = "#2563eb";
-        roundRect(ctx, badgeX, badgeY, badgeW, badgeH, 10);
-        ctx.fill();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.textBaseline = "middle";
-        ctx.fillText(txLabel, badgeX + 14, badgeY + badgeH / 2);
-      } catch {
-        // Image load failed — show placeholder
-        const imgH = 620;
-        const imgW = CANVAS_WIDTH - PADDING * 2;
-        ctx.fillStyle = "#1e293b";
-        roundRect(ctx, PADDING, offsetY, imgW, imgH, BORDER_RADIUS);
-        ctx.fill();
-        ctx.fillStyle = "#475569";
-        ctx.font = "48px system-ui";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("📷", PADDING + imgW / 2, offsetY + imgH / 2);
-        ctx.textAlign = "start";
-      }
+    // -- Logo --
+    let logoDrawn = false;
+    try {
+      const logoImg = await loadImg("/logo-trans.png");
+      const logoAspect = logoImg.width / logoImg.height;
+      const logoW = logoH * logoAspect;
+      ctx.drawImage(logoImg, PAD, contentStartY, logoW, logoH);
+      logoDrawn = true;
+    } catch {
+      // fallback text logo
+      ctx.fillStyle = T.accent;
+      ctx.font = `bold 36px ${FONT}`;
+      ctx.textBaseline = "middle";
+      ctx.fillText("NEXOS", PAD, contentStartY + logoH / 2);
+      logoDrawn = true;
     }
+
+    // -- Transaction type badge --
+    const badgeY = contentStartY + logoH + 16;
+    const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+    ctx.font = `bold 20px ${FONT}`;
+    const badgeTextW = ctx.measureText(txLabel).width;
+    const badgeW = badgeTextW + 28;
+
+    ctx.fillStyle = T.accent;
+    rr(ctx, PAD, badgeY, badgeW, txBadgeH, 8);
+    ctx.fill();
+
+    ctx.fillStyle = T.bg;
+    ctx.textBaseline = "middle";
+    ctx.fillText(txLabel, PAD + 14, badgeY + txBadgeH / 2);
+
+    // -- Price beside badge --
+    const priceText = customPrice || fmtPrice(property.price, property.currency);
+    ctx.fillStyle = T.textSecondary;
+    ctx.font = `bold 38px ${FONT}`;
+    ctx.textBaseline = "middle";
+    ctx.fillText(priceText, PAD + badgeW + 20, badgeY + txBadgeH / 2);
 
     // -- Title box --
-    const titleBoxY = offsetY + 620 + 20;
-    const titleBoxH = 80;
-    const titleBoxW = CANVAS_WIDTH - PADDING * 2;
+    const titleY = badgeY + txBadgeH + 20;
+    const titleBoxW = W - PAD * 2;
 
-    ctx.fillStyle = "#1e293b";
-    roundRect(ctx, PADDING, titleBoxY, titleBoxW, titleBoxH, 16);
-    ctx.fill();
-
-    // Title text
-    ctx.fillStyle = "#f8fafc";
-    ctx.font = "bold 30px system-ui, -apple-system, sans-serif";
-    ctx.textBaseline = "middle";
-
-    // Truncate title if needed
-    let titleText = property.title;
-    const maxTitleWidth = titleBoxW - 40;
-    while (ctx.measureText(titleText).width > maxTitleWidth && titleText.length > 3) {
-      titleText = titleText.slice(0, -4) + "...";
-    }
-    ctx.fillText(titleText, PADDING + 20, titleBoxY + titleBoxH / 2);
-
-    // -- Details box --
-    const detailBoxY = titleBoxY + titleBoxH + 16;
-    const detailBoxH = 240;
-    const detailBoxW = CANVAS_WIDTH - PADDING * 2;
-
-    ctx.fillStyle = "#1e293b";
-    roundRect(ctx, PADDING, detailBoxY, detailBoxW, detailBoxH, 16);
-    ctx.fill();
-
-    // Price — big
-    const priceText = formatPrice(property.price, property.currency);
-    ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 44px system-ui, -apple-system, sans-serif";
-    ctx.textBaseline = "top";
-    ctx.fillText(priceText, PADDING + 24, detailBoxY + 24);
-
-    // Detail items row
-    const detailY = detailBoxY + 90;
-    const items: { label: string; value: string }[] = [];
-
-    if (property.city_name) {
-      const loc = property.district_name
-        ? `${property.district_name}, ${property.city_name}`
-        : property.city_name;
-      items.push({ label: "📍", value: loc });
-    }
-
-    const typeLabel = TYPE_LABELS[property.type] ?? property.type;
-    items.push({ label: "🏠", value: typeLabel });
-
-    const roomStr = formatRooms(property.rooms, property.living_rooms);
-    if (roomStr) items.push({ label: "🛏️", value: roomStr });
-
-    if (property.area_sqm) items.push({ label: "📐", value: `${property.area_sqm} m²` });
-
-    ctx.font = "26px system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "#cbd5e1";
+    ctx.fillStyle = T.textPrimary;
+    ctx.font = `bold 36px ${FONT}`;
     ctx.textBaseline = "top";
 
-    let detailX = PADDING + 24;
-    for (const item of items) {
-      const text = `${item.label} ${item.value}`;
-      ctx.fillText(text, detailX, detailY);
-      detailX += ctx.measureText(text).width + 32;
+    // Word wrap title
+    const titleText = customTitle || property.title;
+    const words = titleText.split(" ");
+    const lines: string[] = [];
+    let currentLine = "";
+    const maxLineW = titleBoxW - 20;
 
-      // Wrap to next line if overflow
-      if (detailX > CANVAS_WIDTH - PADDING - 24) {
-        detailX = PADDING + 24;
+    for (const word of words) {
+      const test = currentLine ? `${currentLine} ${word}` : word;
+      if (ctx.measureText(test).width > maxLineW) {
+        if (currentLine) lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = test;
       }
     }
+    if (currentLine) lines.push(currentLine);
+    if (lines.length > 2) {
+      lines.length = 2;
+      lines[1] = lines[1].slice(0, -3) + "...";
+    }
 
-    // Nexos branding
-    ctx.fillStyle = "#64748b";
-    ctx.font = "20px system-ui, -apple-system, sans-serif";
+    const lineHeight = 46;
+    for (let i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], PAD, titleY + i * lineHeight);
+    }
+    const titleEndY = titleY + lines.length * lineHeight;
+
+    // -- Cover image --
+    const imgY = titleEndY + 20;
+    const imgW = W - PAD * 2;
+
+    if (property.cover_image) {
+      try {
+        const img = await loadImg(property.cover_image);
+        ctx.save();
+        rr(ctx, PAD, imgY, imgW, imgH, R);
+        ctx.clip();
+
+        const scale = Math.max(imgW / img.width, imgH / img.height);
+        const dw = img.width * scale;
+        const dh = img.height * scale;
+        ctx.drawImage(img, PAD + (imgW - dw) / 2, imgY + (imgH - dh) / 2, dw, dh);
+
+        // Bottom gradient
+        const grad = ctx.createLinearGradient(PAD, imgY + imgH - 120, PAD, imgY + imgH);
+        grad.addColorStop(0, T.gradientOverlay[0]);
+        grad.addColorStop(1, T.gradientOverlay[1]);
+        ctx.fillStyle = grad;
+        ctx.fillRect(PAD, imgY + imgH - 120, imgW, 120);
+
+        ctx.restore();
+      } catch {
+        ctx.fillStyle = T.cardBg;
+        rr(ctx, PAD, imgY, imgW, imgH, R);
+        ctx.fill();
+      }
+    } else {
+      ctx.fillStyle = T.cardBg;
+      rr(ctx, PAD, imgY, imgW, imgH, R);
+      ctx.fill();
+    }
+
+    // -- Details box --
+    const detailY = imgY + imgH + 20;
+    const detailW = W - PAD * 2;
+
+    ctx.fillStyle = T.cardBg;
+    rr(ctx, PAD, detailY, detailW, detailH, 16);
+    ctx.fill();
+
+    // Accent top border on detail box
+    ctx.fillStyle = T.accent;
+    rr(ctx, PAD, detailY, detailW, 4, 2);
+    ctx.fill();
+
+    // Detail items with icons
+    const items: { icon: "pin" | "home" | "bed" | "ruler"; text: string }[] = [];
+
+    if (property.city_name) {
+      const loc = property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name;
+      items.push({ icon: "pin", text: loc });
+    }
+    items.push({ icon: "home", text: TYPE_LABELS[property.type] ?? property.type });
+    const roomStr = fmtRooms(property.rooms, property.living_rooms);
+    if (roomStr) items.push({ icon: "bed", text: roomStr });
+    if (property.area_sqm) items.push({ icon: "ruler", text: `${property.area_sqm} m²` });
+
+    const iconSize = 24;
+    const itemY = detailY + 30;
+    const itemSpacing = (detailH - 60) / Math.max(items.length, 1);
+
+    ctx.font = `600 26px ${FONT}`;
+    ctx.textBaseline = "middle";
+
+    for (let i = 0; i < items.length; i++) {
+      const iy = itemY + i * itemSpacing;
+      // Icon circle bg
+      ctx.fillStyle = T.accent + "20";
+      ctx.beginPath();
+      ctx.arc(PAD + 36, iy + iconSize / 2, 20, 0, Math.PI * 2);
+      ctx.fill();
+
+      drawIcon(ctx, items[i].icon, PAD + 24, iy, iconSize, T.textPrimary);
+
+      ctx.fillStyle = T.textPrimary;
+      ctx.fillText(items[i].text, PAD + 68, iy + iconSize / 2);
+    }
+
+    // -- Bottom branding --
+    const brandY = H - PAD - 20;
+    ctx.fillStyle = T.textMuted;
+    ctx.font = `500 18px ${FONT}`;
     ctx.textBaseline = "bottom";
     ctx.textAlign = "right";
-    ctx.fillText("nexosinvestment.com", CANVAS_WIDTH - PADDING - 24, detailBoxY + detailBoxH - 16);
+    ctx.fillText("nexosinvestment.com", W - PAD, brandY);
     ctx.textAlign = "start";
+
+    // Small accent line
+    ctx.fillStyle = T.accent;
+    ctx.fillRect(PAD, brandY - 8, 40, 3);
 
     setGenerating(false);
     setGenerated(true);
-  }, [property]);
+  }, [property, template, customTitle, customPrice]);
 
-  // Auto-generate when property changes
+  // Auto-generate when property or template changes
   useEffect(() => {
     if (property) {
       setGenerated(false);
       void generateImage();
     }
-  }, [property, generateImage]);
+  }, [property, template, generateImage]);
 
   function handleDownload() {
     if (!canvasRef.current) return;
@@ -316,14 +497,6 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Instagram Görseli (1080×1350)</h3>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => void generateImage()}
-            disabled={generating}
-          >
-            {generating ? "Oluşturuluyor..." : "Yeniden Oluştur"}
-          </Button>
           {generated && (
             <Button size="sm" onClick={handleDownload}>
               <Download className="size-3.5" />
@@ -333,11 +506,66 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         </div>
       </div>
 
+      {/* Editable fields + template selector */}
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Başlık</label>
+          <Input
+            value={customTitle}
+            onChange={(e) => setCustomTitle(e.target.value)}
+            placeholder="İlan başlığı"
+            className="h-8 text-sm"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Fiyat</label>
+          <Input
+            value={customPrice}
+            onChange={(e) => setCustomPrice(e.target.value)}
+            placeholder="£285,000"
+            className="h-8 text-sm"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Tasarım</label>
+          <Select value={templateId} onValueChange={(v) => v && setTemplateId(String(v))}>
+            <SelectTrigger className="h-8 text-sm">
+              <Palette className="size-3.5 mr-1.5" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TEMPLATES.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="inline-block size-3 rounded-full border"
+                      style={{ backgroundColor: t.accent }}
+                    />
+                    {t.name}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => void generateImage()}
+          disabled={generating}
+        >
+          {generating ? "Oluşturuluyor..." : "Yeniden Oluştur"}
+        </Button>
+      </div>
+
       <div className="overflow-hidden rounded-lg border bg-muted">
         <canvas
           ref={canvasRef}
           className="w-full"
-          style={{ maxWidth: 540, aspectRatio: "1080/1350" }}
+          style={{ maxWidth: 480, aspectRatio: "1080/1350" }}
         />
       </div>
     </div>
