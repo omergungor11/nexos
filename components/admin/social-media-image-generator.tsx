@@ -1102,11 +1102,16 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         {generating ? "Oluşturuluyor..." : "Yeniden Oluştur"}
       </Button>
 
-      <div className="overflow-hidden rounded-lg border bg-muted">
-        <canvas ref={canvasRef} className="w-full" style={{ maxWidth: 480, aspectRatio: "1080/1350" }} />
-      </div>
+      {/* Canvas + Preview side by side on large screens */}
+      <div className="grid gap-6 xl:grid-cols-2">
+        <div className="overflow-hidden rounded-lg border bg-muted">
+          <canvas ref={canvasRef} className="w-full" style={{ aspectRatio: "1080/1350" }} />
+        </div>
 
-      <SocialMediaPreview canvasRef={canvasRef} generated={generated} />
+        <div>
+          <SocialMediaPreview canvasRef={canvasRef} generated={generated} />
+        </div>
+      </div>
     </div>
   );
 }

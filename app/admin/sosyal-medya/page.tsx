@@ -69,7 +69,7 @@ export default async function SosyalMedyaPage() {
         </p>
       </div>
 
-      <div className="max-w-2xl">
+      <div>
         <SocialMediaGenerator properties={properties} />
       </div>
     </div>

@@ -15,11 +15,14 @@ import {
   LogOut,
   Menu,
   ChevronRight,
+  ChevronLeft,
   BarChart3,
   Activity,
   ImageIcon,
   Tag,
   Share2,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -119,6 +122,7 @@ export function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(false);
   const [loggingOut, setLoggingOut] = React.useState(false);
   useAdminShortcuts();
 
@@ -155,10 +159,10 @@ export function AdminLayout({
     }
   };
 
-  const SidebarContent = () => (
+  const SidebarContent = ({ isCollapsed = false }: { isCollapsed?: boolean }) => (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <div className="flex h-16 items-center border-b border-slate-700 px-6">
+      <div className={cn("flex h-16 items-center border-b border-slate-700", isCollapsed ? "justify-center px-2" : "px-6")}>
         <Link
           href="/admin"
           className="flex items-center gap-2"
@@ -171,15 +175,28 @@ export function AdminLayout({
             height={32}
             className="size-8 rounded"
           />
-          <span className="text-lg font-semibold text-white">
-            Nexos{" "}
-            <span className="text-sm font-normal text-slate-400">Admin</span>
-          </span>
+          {!isCollapsed && (
+            <span className="text-lg font-semibold text-white">
+              Nexos{" "}
+              <span className="text-sm font-normal text-slate-400">Admin</span>
+            </span>
+          )}
         </Link>
       </div>
 
+      {/* Collapse toggle — desktop only */}
+      <div className={cn("hidden lg:flex border-b border-slate-700", isCollapsed ? "justify-center p-2" : "justify-end px-3 py-2")}>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="rounded-md p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          title={isCollapsed ? "Menüyü genişlet" : "Menüyü daralt"}
+        >
+          {isCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
+        </button>
+      </div>
+
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
+      <nav className={cn("flex-1 overflow-y-auto py-4", isCollapsed ? "px-2" : "px-3")}>
         <ul className="space-y-1">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
@@ -189,8 +206,10 @@ export function AdminLayout({
                 <Link
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
+                  title={isCollapsed ? item.label : undefined}
                   className={cn(
-                    "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    "group flex items-center rounded-lg text-sm font-medium transition-colors",
+                    isCollapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2.5",
                     active
                       ? "bg-blue-600 text-white"
                       : "text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -198,14 +217,15 @@ export function AdminLayout({
                 >
                   <Icon
                     className={cn(
-                      "size-4 shrink-0",
+                      "shrink-0",
+                      isCollapsed ? "size-5" : "size-4",
                       active
                         ? "text-white"
                         : "text-slate-400 group-hover:text-white"
                     )}
                   />
-                  {item.label}
-                  {active && (
+                  {!isCollapsed && item.label}
+                  {!isCollapsed && active && (
                     <ChevronRight className="ml-auto size-3.5 text-blue-300" />
                   )}
                 </Link>
@@ -216,27 +236,33 @@ export function AdminLayout({
       </nav>
 
       {/* User info + logout */}
-      <div className="border-t border-slate-700 p-4">
-        <div className="flex items-center gap-3">
-          <Avatar size="sm">
-            <AvatarFallback className="bg-blue-600 text-white text-xs">
-              {getInitials(adminName)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-white">
-              {adminName}
-            </p>
-            <p className="truncate text-xs text-slate-400">{adminEmail}</p>
+      <div className={cn("border-t border-slate-700", isCollapsed ? "p-2" : "p-4")}>
+        {!isCollapsed && (
+          <div className="flex items-center gap-3">
+            <Avatar size="sm">
+              <AvatarFallback className="bg-blue-600 text-white text-xs">
+                {getInitials(adminName)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-white">
+                {adminName}
+              </p>
+              <p className="truncate text-xs text-slate-400">{adminEmail}</p>
+            </div>
           </div>
-        </div>
+        )}
         <button
           onClick={handleLogout}
           disabled={loggingOut}
-          className="mt-3 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-white disabled:pointer-events-none disabled:opacity-50"
+          title={isCollapsed ? "Çıkış Yap" : undefined}
+          className={cn(
+            "flex w-full items-center rounded-lg text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-white disabled:pointer-events-none disabled:opacity-50",
+            isCollapsed ? "justify-center p-2.5 mt-0" : "gap-2 px-3 py-2 mt-3"
+          )}
         >
           <LogOut className="size-4 shrink-0" />
-          {loggingOut ? "Çıkış yapılıyor..." : "Çıkış Yap"}
+          {!isCollapsed && (loggingOut ? "Çıkış yapılıyor..." : "Çıkış Yap")}
         </button>
       </div>
     </div>
@@ -259,12 +285,13 @@ export function AdminLayout({
       {/* Sidebar — desktop always visible, mobile slides in */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-30 w-64 bg-slate-900 transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-30 bg-slate-900 transition-all duration-200 ease-in-out lg:relative lg:translate-x-0",
+          collapsed ? "lg:w-[72px]" : "lg:w-64",
+          sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"
         )}
         aria-label="Yönetim paneli gezinme"
       >
-        <SidebarContent />
+        <SidebarContent isCollapsed={collapsed && !sidebarOpen} />
       </aside>
 
       {/* Main content area */}
