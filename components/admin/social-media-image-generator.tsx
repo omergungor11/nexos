@@ -268,6 +268,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
   const [templateId, setTemplateId] = useState("dark-gold");
   const [customTitle, setCustomTitle] = useState("");
   const [customPrice, setCustomPrice] = useState("");
+  const [customDesc, setCustomDesc] = useState("");
 
   const template = TEMPLATES.find((t) => t.id === templateId) ?? TEMPLATES[0];
 
@@ -276,6 +277,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     if (property) {
       setCustomTitle(property.title);
       setCustomPrice(fmtPrice(property.price, property.currency));
+      setCustomDesc("Detaylı bilgi için bize ulaşın.");
     }
   }, [property]);
 
@@ -295,66 +297,59 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     ctx.fillStyle = T.bg;
     ctx.fillRect(0, 0, W, H);
 
-    // Layout: logo(60) + gap(16) + title(auto) + gap(16) + txBadge(40) + gap(20) + image(600) + gap(20) + details(auto) + gap(16) + branding(30)
-    const logoH = 60;
-    const imgH = 580;
-    const detailH = 200;
-    const txBadgeH = 42;
+    const logoH = 70;
+    const imgH = 560;
+    const txBadgeH = 50;
     const contentStartY = PAD;
 
     // -- Logo --
-    let logoDrawn = false;
     try {
       const logoImg = await loadImg("/logo-trans.png");
       const logoAspect = logoImg.width / logoImg.height;
       const logoW = logoH * logoAspect;
       ctx.drawImage(logoImg, PAD, contentStartY, logoW, logoH);
-      logoDrawn = true;
     } catch {
-      // fallback text logo
       ctx.fillStyle = T.accent;
-      ctx.font = `bold 36px ${FONT}`;
+      ctx.font = `bold 42px ${FONT}`;
       ctx.textBaseline = "middle";
       ctx.fillText("NEXOS", PAD, contentStartY + logoH / 2);
-      logoDrawn = true;
     }
 
     // -- Transaction type badge --
-    const badgeY = contentStartY + logoH + 16;
+    const badgeY = contentStartY + logoH + 20;
     const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
-    ctx.font = `bold 20px ${FONT}`;
+    ctx.font = `bold 26px ${FONT}`;
     const badgeTextW = ctx.measureText(txLabel).width;
-    const badgeW = badgeTextW + 28;
+    const badgeW = badgeTextW + 36;
 
     ctx.fillStyle = T.accent;
-    rr(ctx, PAD, badgeY, badgeW, txBadgeH, 8);
+    rr(ctx, PAD, badgeY, badgeW, txBadgeH, 10);
     ctx.fill();
 
     ctx.fillStyle = T.bg;
     ctx.textBaseline = "middle";
-    ctx.fillText(txLabel, PAD + 14, badgeY + txBadgeH / 2);
+    ctx.fillText(txLabel, PAD + 18, badgeY + txBadgeH / 2);
 
     // -- Price beside badge --
     const priceText = customPrice || fmtPrice(property.price, property.currency);
     ctx.fillStyle = T.textSecondary;
-    ctx.font = `bold 38px ${FONT}`;
+    ctx.font = `bold 48px ${FONT}`;
     ctx.textBaseline = "middle";
-    ctx.fillText(priceText, PAD + badgeW + 20, badgeY + txBadgeH / 2);
+    ctx.fillText(priceText, PAD + badgeW + 24, badgeY + txBadgeH / 2);
 
-    // -- Title box --
-    const titleY = badgeY + txBadgeH + 20;
+    // -- Title --
+    const titleY = badgeY + txBadgeH + 24;
     const titleBoxW = W - PAD * 2;
 
     ctx.fillStyle = T.textPrimary;
-    ctx.font = `bold 36px ${FONT}`;
+    ctx.font = `bold 44px ${FONT}`;
     ctx.textBaseline = "top";
 
-    // Word wrap title
     const titleText = customTitle || property.title;
     const words = titleText.split(" ");
     const lines: string[] = [];
     let currentLine = "";
-    const maxLineW = titleBoxW - 20;
+    const maxLineW = titleBoxW;
 
     for (const word of words) {
       const test = currentLine ? `${currentLine} ${word}` : word;
@@ -371,14 +366,14 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       lines[1] = lines[1].slice(0, -3) + "...";
     }
 
-    const lineHeight = 46;
+    const lineHeight = 56;
     for (let i = 0; i < lines.length; i++) {
       ctx.fillText(lines[i], PAD, titleY + i * lineHeight);
     }
     const titleEndY = titleY + lines.length * lineHeight;
 
     // -- Cover image --
-    const imgY = titleEndY + 20;
+    const imgY = titleEndY + 24;
     const imgW = W - PAD * 2;
 
     if (property.cover_image) {
@@ -393,12 +388,11 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         const dh = img.height * scale;
         ctx.drawImage(img, PAD + (imgW - dw) / 2, imgY + (imgH - dh) / 2, dw, dh);
 
-        // Bottom gradient
-        const grad = ctx.createLinearGradient(PAD, imgY + imgH - 120, PAD, imgY + imgH);
+        const grad = ctx.createLinearGradient(PAD, imgY + imgH - 140, PAD, imgY + imgH);
         grad.addColorStop(0, T.gradientOverlay[0]);
         grad.addColorStop(1, T.gradientOverlay[1]);
         ctx.fillStyle = grad;
-        ctx.fillRect(PAD, imgY + imgH - 120, imgW, 120);
+        ctx.fillRect(PAD, imgY + imgH - 140, imgW, 140);
 
         ctx.restore();
       } catch {
@@ -412,20 +406,11 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       ctx.fill();
     }
 
-    // -- Details box --
-    const detailY = imgY + imgH + 20;
+    // -- Details section (below image) --
+    const detailY = imgY + imgH + 24;
     const detailW = W - PAD * 2;
 
-    ctx.fillStyle = T.cardBg;
-    rr(ctx, PAD, detailY, detailW, detailH, 16);
-    ctx.fill();
-
-    // Accent top border on detail box
-    ctx.fillStyle = T.accent;
-    rr(ctx, PAD, detailY, detailW, 4, 2);
-    ctx.fill();
-
-    // Detail items with icons
+    // Detail items — horizontal layout with big icons
     const items: { icon: "pin" | "home" | "bed" | "ruler"; text: string }[] = [];
 
     if (property.city_name) {
@@ -434,42 +419,81 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     }
     items.push({ icon: "home", text: TYPE_LABELS[property.type] ?? property.type });
     const roomStr = fmtRooms(property.rooms, property.living_rooms);
-    if (roomStr) items.push({ icon: "bed", text: roomStr });
+    if (roomStr) items.push({ icon: "bed", text: `${roomStr} Oda` });
     if (property.area_sqm) items.push({ icon: "ruler", text: `${property.area_sqm} m²` });
 
-    const iconSize = 24;
-    const itemY = detailY + 30;
-    const itemSpacing = (detailH - 60) / Math.max(items.length, 1);
+    const iconSize = 36;
+    const iconCircleR = 28;
+    const itemRowH = 60;
 
-    ctx.font = `600 26px ${FONT}`;
+    // 2x2 grid layout for items
+    ctx.font = `600 30px ${FONT}`;
     ctx.textBaseline = "middle";
 
+    const colW = detailW / 2;
     for (let i = 0; i < items.length; i++) {
-      const iy = itemY + i * itemSpacing;
-      // Icon circle bg
-      ctx.fillStyle = T.accent + "20";
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const ix = PAD + col * colW;
+      const iy = detailY + row * itemRowH;
+
+      // Icon circle
+      ctx.fillStyle = T.accent + "30";
       ctx.beginPath();
-      ctx.arc(PAD + 36, iy + iconSize / 2, 20, 0, Math.PI * 2);
+      ctx.arc(ix + iconCircleR, iy + itemRowH / 2, iconCircleR, 0, Math.PI * 2);
       ctx.fill();
 
-      drawIcon(ctx, items[i].icon, PAD + 24, iy, iconSize, T.textPrimary);
+      drawIcon(ctx, items[i].icon, ix + iconCircleR - iconSize / 2, iy + (itemRowH - iconSize) / 2, iconSize, T.textPrimary);
 
       ctx.fillStyle = T.textPrimary;
-      ctx.fillText(items[i].text, PAD + 68, iy + iconSize / 2);
+      ctx.fillText(items[i].text, ix + iconCircleR * 2 + 16, iy + itemRowH / 2);
+    }
+
+    const itemRows = Math.ceil(items.length / 2);
+    const descY = detailY + itemRows * itemRowH + 16;
+
+    // -- Description text --
+    const descText = customDesc || "";
+    if (descText) {
+      ctx.fillStyle = T.textMuted;
+      ctx.font = `500 28px ${FONT}`;
+      ctx.textBaseline = "top";
+
+      // Word wrap description
+      const descWords = descText.split(" ");
+      const descLines: string[] = [];
+      let dLine = "";
+      for (const w of descWords) {
+        const test = dLine ? `${dLine} ${w}` : w;
+        if (ctx.measureText(test).width > detailW) {
+          if (dLine) descLines.push(dLine);
+          dLine = w;
+        } else {
+          dLine = test;
+        }
+      }
+      if (dLine) descLines.push(dLine);
+      if (descLines.length > 2) {
+        descLines.length = 2;
+        descLines[1] = descLines[1].slice(0, -3) + "...";
+      }
+
+      for (let i = 0; i < descLines.length; i++) {
+        ctx.fillText(descLines[i], PAD, descY + i * 36);
+      }
     }
 
     // -- Bottom branding --
-    const brandY = H - PAD - 20;
+    const brandY = H - PAD;
+    ctx.fillStyle = T.accent;
+    ctx.fillRect(PAD, brandY - 40, 50, 4);
+
     ctx.fillStyle = T.textMuted;
-    ctx.font = `500 18px ${FONT}`;
+    ctx.font = `600 24px ${FONT}`;
     ctx.textBaseline = "bottom";
     ctx.textAlign = "right";
     ctx.fillText("nexosinvestment.com", W - PAD, brandY);
     ctx.textAlign = "start";
-
-    // Small accent line
-    ctx.fillStyle = T.accent;
-    ctx.fillRect(PAD, brandY - 8, 40, 3);
 
     setGenerated(true);
     } catch (err) {
@@ -478,7 +502,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     } finally {
       setGenerating(false);
     }
-  }, [property, template, customTitle, customPrice]);
+  }, [property, template, customTitle, customPrice, customDesc]);
 
   // Auto-generate when property or template changes
   useEffect(() => {
@@ -523,7 +547,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       </div>
 
       {/* Editable fields + template selector */}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">Başlık</label>
           <Input
@@ -539,6 +563,15 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
             value={customPrice}
             onChange={(e) => setCustomPrice(e.target.value)}
             placeholder="£285,000"
+            className="h-8 text-sm"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Açıklama</label>
+          <Input
+            value={customDesc}
+            onChange={(e) => setCustomDesc(e.target.value)}
+            placeholder="Detaylı bilgi için bize ulaşın."
             className="h-8 text-sm"
           />
         </div>
