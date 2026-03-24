@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Copy, Share2, Globe } from "lucide-react";
+import { Copy, Share2, Globe, Search } from "lucide-react";
 import { SocialMediaImageGenerator } from "@/components/admin/social-media-image-generator";
 
 import { Button } from "@/components/ui/button";
@@ -80,7 +80,14 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
   const [activeHashtags, setActiveHashtags] = useState<Set<string>>(new Set());
   const [allHashtags, setAllHashtags] = useState<string[]>([]);
 
+  const [propertySearch, setPropertySearch] = useState("");
   const selectedProperty = properties.find((p) => p.id === selectedPropertyId) ?? null;
+
+  const filteredProperties = useMemo(() => {
+    if (!propertySearch.trim()) return properties;
+    const q = propertySearch.toLowerCase();
+    return properties.filter((p) => p.title.toLowerCase().includes(q) || p.city_name.toLowerCase().includes(q));
+  }, [properties, propertySearch]);
   const charLimit = getCharLimit(platform);
   const charCount = postText.length;
 
@@ -154,7 +161,7 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
 
   return (
     <div className="space-y-6">
-      {/* Property selector */}
+      {/* Property selector with search */}
       <div className="space-y-1.5">
         <label className="text-sm font-medium">İlan Seçin</label>
         <Select
@@ -165,11 +172,30 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
             <SelectValue placeholder="İlan seçmek için tıklayın..." />
           </SelectTrigger>
           <SelectContent>
-            {properties.map((property) => (
-              <SelectItem key={property.id} value={property.id}>
-                {property.title}
-              </SelectItem>
-            ))}
+            <div className="sticky top-0 bg-popover p-2">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={propertySearch}
+                  onChange={(e) => setPropertySearch(e.target.value)}
+                  placeholder="İlan ara..."
+                  className="flex h-8 w-full rounded-md border border-input bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  onKeyDown={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+            {filteredProperties.length === 0 ? (
+              <div className="px-3 py-4 text-center text-sm text-muted-foreground">
+                Sonuç bulunamadı
+              </div>
+            ) : (
+              filteredProperties.map((property) => (
+                <SelectItem key={property.id} value={property.id}>
+                  {property.title} — {property.city_name}
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
       </div>
