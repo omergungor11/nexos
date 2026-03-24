@@ -3,6 +3,45 @@
 import { useState, useTransition, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import {
+  Type,
+  FileText,
+  ArrowRightLeft,
+  LayoutGrid,
+  Home,
+  CircleDot,
+  UserCircle,
+  Banknote,
+  Coins,
+  Ruler,
+  BedDouble,
+  Sofa,
+  Bath,
+  CalendarDays,
+  Layers,
+  Building,
+  Flame,
+  MapPin,
+  Map,
+  Navigation,
+  Globe,
+  Star,
+  Search,
+  Video,
+  Eye,
+  Clock,
+  CreditCard,
+  Waves,
+  Car,
+  DoorOpen,
+  LandPlot,
+  ScrollText,
+  Zap,
+  Droplets,
+  Route,
+  FileCheck,
+  type LucideIcon,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -347,6 +386,7 @@ function Field({
   required,
   hint,
   error,
+  icon: Icon,
   children,
 }: {
   label: string;
@@ -354,11 +394,13 @@ function Field({
   required?: boolean;
   hint?: string;
   error?: string;
+  icon?: LucideIcon;
   children: React.ReactNode;
 }) {
   return (
     <div className="space-y-1.5">
-      <label htmlFor={htmlFor} className="text-sm font-medium leading-none">
+      <label htmlFor={htmlFor} className="flex items-center gap-1.5 text-sm font-medium leading-none">
+        {Icon && <Icon className="size-3.5 text-muted-foreground" />}
         {label}
         {required && <span className="ml-0.5 text-destructive">*</span>}
       </label>
@@ -866,7 +908,7 @@ export function PropertyForm({
         {/* Tab 1: Temel Bilgiler                                              */}
         {/* ----------------------------------------------------------------- */}
         <TabsContent value="temel" className="mt-6 space-y-5">
-          <Field label="Başlık" htmlFor="title" required error={errors.title}>
+          <Field label="Başlık" htmlFor="title" required error={errors.title} icon={Type}>
             <Input
               id="title"
               name="title"
@@ -877,7 +919,7 @@ export function PropertyForm({
             />
           </Field>
 
-          <Field label="Açıklama" htmlFor="description">
+          <Field label="Açıklama" htmlFor="description" icon={FileText}>
             <Textarea
               id="description"
               name="description"
@@ -889,7 +931,7 @@ export function PropertyForm({
           </Field>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <Field label="İşlem Türü" htmlFor="transaction_type" required>
+            <Field label="İşlem Türü" htmlFor="transaction_type" required icon={ArrowRightLeft}>
               <Select
                 value={form.transaction_type}
                 onValueChange={(v) =>
@@ -916,7 +958,7 @@ export function PropertyForm({
               </Select>
             </Field>
 
-            <Field label="Kategori" htmlFor="category" required>
+            <Field label="Kategori" htmlFor="category" required icon={LayoutGrid}>
               <Select
                 value={form.category}
                 onValueChange={(v) => {
@@ -942,7 +984,7 @@ export function PropertyForm({
               </Select>
             </Field>
 
-            <Field label="Emlak Türü" htmlFor="property_type" required>
+            <Field label="Emlak Türü" htmlFor="property_type" required icon={Home}>
               <Select
                 value={form.property_type}
                 onValueChange={(v) =>
@@ -964,7 +1006,7 @@ export function PropertyForm({
               </Select>
             </Field>
 
-            <Field label="Durum" htmlFor="status" required>
+            <Field label="Durum" htmlFor="status" required icon={CircleDot}>
               <Select
                 value={form.status}
                 onValueChange={(v) => handleSelectChange("status", v)}
@@ -995,6 +1037,7 @@ export function PropertyForm({
               label="Sorumlu Danışman"
               htmlFor="agent_id"
               hint="Bu ilanla ilgilenecek ekip üyesini seçin"
+              icon={UserCircle}
             >
               <Select
                 value={form.agent_id}
@@ -1043,6 +1086,7 @@ export function PropertyForm({
             label="Video URL"
             htmlFor="video_url"
             hint="YouTube veya Vimeo video linki"
+            icon={Video}
           >
             <Input
               id="video_url"
@@ -1059,6 +1103,7 @@ export function PropertyForm({
             label="360° Sanal Tur URL"
             htmlFor="virtual_tour_url"
             hint="Matterport, Kuula veya benzeri sanal tur linki"
+            icon={Eye}
           >
             <Input
               id="virtual_tour_url"
@@ -1081,6 +1126,7 @@ export function PropertyForm({
               htmlFor="price"
               required
               error={errors.price}
+              icon={Banknote}
               hint={form.price ? formatPriceDisplay(form.price) : undefined}
             >
               <Input
@@ -1096,7 +1142,7 @@ export function PropertyForm({
               />
             </Field>
 
-            <Field label="Para Birimi" htmlFor="currency">
+            <Field label="Para Birimi" htmlFor="currency" icon={Coins}>
               <Select
                 value={form.currency}
                 onValueChange={(v) => handleSelectChange("currency", v)}
@@ -1122,7 +1168,7 @@ export function PropertyForm({
           {/* Rental-specific fields */}
           {(form.transaction_type === "rent" || form.transaction_type === "daily_rental") && (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <Field label="Minimum Kiralama Süresi" htmlFor="min_rental_period">
+              <Field label="Minimum Kiralama Süresi" htmlFor="min_rental_period" icon={Clock}>
                 <Select
                   value={form.min_rental_period || "__none__"}
                   onValueChange={(v) =>
@@ -1147,7 +1193,7 @@ export function PropertyForm({
                 </Select>
               </Field>
 
-              <Field label="Kira Ödeme Aralığı" htmlFor="rental_payment_interval">
+              <Field label="Kira Ödeme Aralığı" htmlFor="rental_payment_interval" icon={CreditCard}>
                 <Select
                   value={form.rental_payment_interval || "__none__"}
                   onValueChange={(v) =>
@@ -1175,7 +1221,7 @@ export function PropertyForm({
           )}
 
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-2">
-            <Field label="Net Alan (m²)" htmlFor="area_sqm">
+            <Field label="Net Alan (m²)" htmlFor="area_sqm" icon={Ruler}>
               <Input
                 id="area_sqm"
                 name="area_sqm"
@@ -1188,7 +1234,7 @@ export function PropertyForm({
               />
             </Field>
 
-            <Field label="Brüt Alan (m²)" htmlFor="gross_area_sqm">
+            <Field label="Brüt Alan (m²)" htmlFor="gross_area_sqm" icon={Ruler}>
               <Input
                 id="gross_area_sqm"
                 name="gross_area_sqm"
@@ -1206,7 +1252,7 @@ export function PropertyForm({
           {!isLandType(form.property_type) && (
             <>
               <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
-                <Field label="Oda Sayısı" htmlFor="rooms">
+                <Field label="Oda Sayısı" htmlFor="rooms" icon={BedDouble}>
                   <Input
                     id="rooms"
                     name="rooms"
@@ -1219,7 +1265,7 @@ export function PropertyForm({
                   />
                 </Field>
 
-                <Field label="Salon Sayısı" htmlFor="living_rooms">
+                <Field label="Salon Sayısı" htmlFor="living_rooms" icon={Sofa}>
                   <Input
                     id="living_rooms"
                     name="living_rooms"
@@ -1232,7 +1278,7 @@ export function PropertyForm({
                   />
                 </Field>
 
-                <Field label="Banyo Sayısı" htmlFor="bathrooms">
+                <Field label="Banyo Sayısı" htmlFor="bathrooms" icon={Bath}>
                   <Input
                     id="bathrooms"
                     name="bathrooms"
@@ -1245,7 +1291,7 @@ export function PropertyForm({
                   />
                 </Field>
 
-                <Field label="Yapım Yılı" htmlFor="year_built">
+                <Field label="Yapım Yılı" htmlFor="year_built" icon={CalendarDays}>
                   <Input
                     id="year_built"
                     name="year_built"
@@ -1261,7 +1307,7 @@ export function PropertyForm({
               </div>
 
               <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
-                <Field label="Bulunduğu Kat" htmlFor="floor">
+                <Field label="Bulunduğu Kat" htmlFor="floor" icon={Layers}>
                   <Input
                     id="floor"
                     name="floor"
@@ -1273,7 +1319,7 @@ export function PropertyForm({
                   />
                 </Field>
 
-                <Field label="Toplam Kat" htmlFor="total_floors">
+                <Field label="Toplam Kat" htmlFor="total_floors" icon={Building}>
                   <Input
                     id="total_floors"
                     name="total_floors"
@@ -1286,7 +1332,7 @@ export function PropertyForm({
                   />
                 </Field>
 
-                <Field label="Isıtma Türü" htmlFor="heating_type">
+                <Field label="Isıtma Türü" htmlFor="heating_type" icon={Flame}>
                   <Select
                     value={form.heating_type}
                     onValueChange={(v) => handleSelectChange("heating_type", v)}
@@ -1325,6 +1371,7 @@ export function PropertyForm({
               htmlFor="city_id"
               required
               error={errors.city_id}
+              icon={MapPin}
             >
               <Select
                 value={form.city_id}
@@ -1349,7 +1396,7 @@ export function PropertyForm({
               </Select>
             </Field>
 
-            <Field label="İlçe" htmlFor="district_id">
+            <Field label="İlçe" htmlFor="district_id" icon={Map}>
               <Select
                 value={form.district_id}
                 onValueChange={(v) => void handleDistrictChange(v)}
@@ -1378,7 +1425,7 @@ export function PropertyForm({
               </Select>
             </Field>
 
-            <Field label="Mahalle" htmlFor="neighborhood_id">
+            <Field label="Mahalle" htmlFor="neighborhood_id" icon={Navigation}>
               <Select
                 value={form.neighborhood_id}
                 onValueChange={(v) =>
@@ -1412,7 +1459,7 @@ export function PropertyForm({
             </Field>
           </div>
 
-          <Field label="Açık Adres" htmlFor="address">
+          <Field label="Açık Adres" htmlFor="address" icon={MapPin}>
             <Textarea
               id="address"
               name="address"
@@ -1428,6 +1475,7 @@ export function PropertyForm({
               label="Enlem (Lat)"
               htmlFor="lat"
               hint="Harita koordinatı — ondalıklı sayı"
+              icon={Globe}
             >
               <Input
                 id="lat"
@@ -1444,6 +1492,7 @@ export function PropertyForm({
               label="Boylam (Lng)"
               htmlFor="lng"
               hint="Harita koordinatı — ondalıklı sayı"
+              icon={Globe}
             >
               <Input
                 id="lng"
@@ -1498,7 +1547,7 @@ export function PropertyForm({
               </div>
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-                <Field label="Havuz" htmlFor="pool_type">
+                <Field label="Havuz" htmlFor="pool_type" icon={Waves}>
                   <Select
                     value={form.pool_type}
                     onValueChange={(v) => {
@@ -1519,7 +1568,7 @@ export function PropertyForm({
                   </Select>
                 </Field>
 
-                <Field label="Otopark" htmlFor="parking_type">
+                <Field label="Otopark" htmlFor="parking_type" icon={Car}>
                   <Select
                     value={form.parking_type}
                     onValueChange={(v) => {
@@ -1544,6 +1593,7 @@ export function PropertyForm({
                   label="Balkon Sayısı"
                   htmlFor="balcony_count"
                   hint="0 girin balkon yoksa"
+                  icon={DoorOpen}
                 >
                   <Input
                     id="balcony_count"
@@ -1561,7 +1611,7 @@ export function PropertyForm({
 
           {/* Villa/Residential — Arazi Alanı */}
           {(form.property_type === "villa" || form.property_type === "twin_villa" || form.property_type === "detached" || form.property_type === "bungalow") && (
-            <Field label="Arazi Alanı (m²)" htmlFor="land_area_sqm" hint="Villanın üzerinde bulunduğu arazi büyüklüğü">
+            <Field label="Arazi Alanı (m²)" htmlFor="land_area_sqm" hint="Villanın üzerinde bulunduğu arazi büyüklüğü" icon={LandPlot}>
               <Input
                 id="land_area_sqm"
                 name="land_area_sqm"
@@ -1579,7 +1629,7 @@ export function PropertyForm({
           {/* Arsa — Koçan Durumu + Altyapı */}
           {isLandType(form.property_type) && (
             <>
-              <Field label="Koçan Durumu" htmlFor="title_deed_type" hint="Kıbrıs'a özel tapu/koçan türü">
+              <Field label="Koçan Durumu" htmlFor="title_deed_type" hint="Kıbrıs'a özel tapu/koçan türü" icon={ScrollText}>
                 <Select
                   value={form.title_deed_type || "__none__"}
                   onValueChange={(v) =>
@@ -1624,7 +1674,7 @@ export function PropertyForm({
                 />
               </div>
 
-              <Field label="İmar Durumu" htmlFor="zoning_status">
+              <Field label="İmar Durumu" htmlFor="zoning_status" icon={FileCheck}>
                 <Select
                   value={form.zoning_status || "__none__"}
                   onValueChange={(v) =>
@@ -1699,6 +1749,7 @@ export function PropertyForm({
             label="SEO Başlık"
             htmlFor="seo_title"
             hint="Boş bırakılırsa ilan başlığı kullanılır."
+            icon={Search}
           >
             <Input
               id="seo_title"
@@ -1714,6 +1765,7 @@ export function PropertyForm({
             label="SEO Açıklama"
             htmlFor="seo_description"
             hint="Maksimum 160 karakter önerilir."
+            icon={FileText}
           >
             <Textarea
               id="seo_description"
