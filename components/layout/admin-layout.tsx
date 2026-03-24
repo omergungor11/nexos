@@ -18,6 +18,8 @@ import {
   BarChart3,
   Activity,
   ImageIcon,
+  Tag,
+  Share2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -63,6 +65,18 @@ const NAV_ITEMS = [
     href: "/admin/talepler",
     label: "Talepler",
     icon: MessageSquare,
+    exact: false,
+  },
+  {
+    href: "/admin/teklifler",
+    label: "Teklifler",
+    icon: Tag,
+    exact: false,
+  },
+  {
+    href: "/admin/sosyal-medya",
+    label: "Sosyal Medya",
+    icon: Share2,
     exact: false,
   },
   {

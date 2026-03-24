@@ -47,6 +47,13 @@ export type FeatureCategoryEnum =
 
 export type ContactStatusEnum = "new" | "in_progress" | "resolved" | "spam";
 
+export type OfferStatusEnum =
+  | "draft"
+  | "sent"
+  | "accepted"
+  | "rejected"
+  | "expired";
+
 // ---------------------------------------------------------------------------
 // Database type
 // ---------------------------------------------------------------------------
@@ -668,6 +675,63 @@ export type Database = {
           updated_at?: string;
         };
       };
+
+      // -----------------------------------------------------------------------
+      // custom_offers
+      // -----------------------------------------------------------------------
+      custom_offers: {
+        Row: {
+          id: string;
+          property_id: string;
+          customer_name: string;
+          customer_phone: string | null;
+          customer_email: string | null;
+          offer_price: number;
+          currency: CurrencyEnum;
+          notes: string | null;
+          status: OfferStatusEnum;
+          expires_at: string | null;
+          sent_at: string | null;
+          responded_at: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          property_id: string;
+          customer_name: string;
+          customer_phone?: string | null;
+          customer_email?: string | null;
+          offer_price: number;
+          currency?: CurrencyEnum;
+          notes?: string | null;
+          status?: OfferStatusEnum;
+          expires_at?: string | null;
+          sent_at?: string | null;
+          responded_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          property_id?: string;
+          customer_name?: string;
+          customer_phone?: string | null;
+          customer_email?: string | null;
+          offer_price?: number;
+          currency?: CurrencyEnum;
+          notes?: string | null;
+          status?: OfferStatusEnum;
+          expires_at?: string | null;
+          sent_at?: string | null;
+          responded_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
 
     Views: Record<string, never>;
@@ -682,6 +746,7 @@ export type Database = {
       currency_enum: CurrencyEnum;
       feature_category_enum: FeatureCategoryEnum;
       contact_status_enum: ContactStatusEnum;
+      offer_status_enum: OfferStatusEnum;
     };
 
     CompositeTypes: Record<string, never>;
