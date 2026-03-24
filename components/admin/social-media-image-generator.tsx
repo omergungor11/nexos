@@ -940,7 +940,7 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
 
   for (let i = 0; i < 3; i++) {
     const tx = PAD + i * (thumbW + thumbGap);
-    const h = i === 1 ? 380 : 340;
+    const h = i === 1 ? 460 : 420;
     const ty = i === 1 ? baseThumbY - 20 : baseThumbY + 20;
     const radius = i === 1 ? 28 : 22;
     // Shadow
@@ -959,7 +959,7 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   }
 
   // Price card centered
-  const cardY = baseThumbY + 380 + 30;
+  const cardY = baseThumbY + 460 + 30;
   ctx.font = `bold 52px ${FONT}`;
   const prW = ctx.measureText(price).width;
   const cardW = prW + 80; const cardH = 120; const cardX = (W - cardW) / 2;
