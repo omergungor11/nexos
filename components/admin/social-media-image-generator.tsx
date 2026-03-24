@@ -421,7 +421,7 @@ async function renderClassic(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   const titleEndY = titleY + lines.length * 54;
 
   // Logo (right aligned with header)
-  await drawLogo(ctx, W - PAD, startY, 140, T.accent, "right");
+  await drawLogo(ctx, W - PAD, startY, 180, T.accent, "right");
 
   // Images
   const imgY = titleEndY + 20; const imgH = 530; const totalW = W - PAD * 2; const gap = 12;
@@ -473,7 +473,7 @@ async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate,
   ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
 
   // Top: logo + badge
-  await drawLogo(ctx, PAD, PAD + 40, 100, T.accent, "left", true);
+  await drawLogo(ctx, PAD, PAD + 40, 140, T.accent, "left", true);
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `bold 24px ${FONT}`;
   const tw = ctx.measureText(txLabel).width;
@@ -527,7 +527,7 @@ async function renderSplit(ctx: CanvasRenderingContext2D, T: DesignTemplate, pro
   let cy = PAD + 160;
 
   // Logo
-  await drawLogo(ctx, rx, cy, 80, T.accent, "left");
+  await drawLogo(ctx, rx, cy, 120, T.accent, "left");
   cy += 100;
 
   // Badge
@@ -594,7 +594,7 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   }
 
   // Logo on image (top left)
-  await drawLogo(ctx, PAD, PAD, 70, T.accent, "left", true);
+  await drawLogo(ctx, PAD, PAD, 110, T.accent, "left", true);
 
   // Badge on image (top right)
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
@@ -651,7 +651,7 @@ async function renderMagazine(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   ctx.fillStyle = T.accent; ctx.fillRect(PAD, sY, W - PAD * 2, 3);
 
   // Logo left + badge right
-  await drawLogo(ctx, PAD, sY + 20, 60, T.accent, "left");
+  await drawLogo(ctx, PAD, sY + 20, 100, T.accent, "left");
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   drawBadge(ctx, txLabel, W - PAD - 160, sY + 20, T.accent, T.bg);
 
@@ -701,7 +701,7 @@ async function renderGallery(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   const sY = 135 + 30;
 
   // Logo centered
-  await drawLogo(ctx, W / 2, sY, 80, T.accent, "right");
+  await drawLogo(ctx, W / 2, sY, 120, T.accent, "right");
 
   // Centered badge
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
@@ -761,7 +761,7 @@ async function renderFrame(ctx: CanvasRenderingContext2D, T: DesignTemplate, pro
   const sY = 180;
 
   // Logo centered top
-  await drawLogo(ctx, W / 2, sY, 70, T.accent, "right");
+  await drawLogo(ctx, W / 2, sY, 110, T.accent, "right");
 
   // Badge + Price
   const badgeY = sY + 90;
@@ -810,7 +810,7 @@ async function renderBoldPrice(ctx: CanvasRenderingContext2D, T: DesignTemplate,
   const sY = 135 + 40;
 
   // Logo + badge row
-  await drawLogo(ctx, PAD, sY, 60, T.accent, "left");
+  await drawLogo(ctx, PAD, sY, 100, T.accent, "left");
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   drawBadge(ctx, txLabel, W - PAD - 160, sY + 5, T.accent, T.bg);
 
@@ -882,7 +882,7 @@ async function renderDiagonal(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   ctx.beginPath(); ctx.moveTo(W, H * 0.45); ctx.lineTo(0, H * 0.75); ctx.stroke();
 
   // Logo top-left with blur backdrop
-  await drawLogo(ctx, PAD, PAD + 20, 80, T.accent, "left", true);
+  await drawLogo(ctx, PAD, PAD + 20, 120, T.accent, "left", true);
 
   // Price on image area
   ctx.fillStyle = T.textSecondary; ctx.font = `bold 64px ${FONT}`; ctx.textBaseline = "top";
@@ -948,7 +948,7 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
 
   // Band 1: Header
   ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, band1H);
-  await drawLogo(ctx, PAD, (band1H - 50) / 2, 50, T.accent, "left");
+  await drawLogo(ctx, PAD, (band1H - 80) / 2, 80, T.accent, "left");
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `bold 22px ${FONT}`;
   const bw = ctx.measureText(txLabel).width + 32;
