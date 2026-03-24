@@ -511,12 +511,16 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
     ctx.fillStyle = grad; ctx.fillRect(0, mainImgH - 200, W, 200);
   }
 
-  // 3 thumbnails below main image
+  // 3 thumbnails overlapping bottom of main image (pulled up)
   const thumbW = (W - PAD * 2 - thumbGap * 2) / 3;
-  const thumbY = mainImgH + thumbGap;
+  const thumbY = mainImgH - thumbH / 2;
   const extras = property.extra_images ?? [];
   for (let i = 0; i < 3; i++) {
     const tx = PAD + i * (thumbW + thumbGap);
+    // White/dark border effect
+    ctx.fillStyle = T.bg;
+    rr(ctx, tx - 3, thumbY - 3, thumbW + 6, thumbH + 6, 14);
+    ctx.fill();
     if (extras[i]) await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbH, 12, T.cardBg);
     else { ctx.fillStyle = T.cardBg; rr(ctx, tx, thumbY, thumbW, thumbH, 12); ctx.fill(); }
   }
