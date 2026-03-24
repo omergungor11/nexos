@@ -60,7 +60,7 @@ const TYPE_LABELS: Record<string, string> = {
 // Layout types
 // ---------------------------------------------------------------------------
 
-type LayoutType = "classic" | "fullimage" | "showcase" | "magazine" | "gallery" | "diagonal" | "ribbon";
+type LayoutType = "classic" | "fullimage" | "showcase" | "magazine" | "gallery" | "diagonal" | "ribbon" | "herooverlay" | "poster" | "catalog";
 
 interface DesignTemplate {
   id: string;
@@ -161,6 +161,45 @@ const TEMPLATES: DesignTemplate[] = [
     textPrimary: "#0f172a", textSecondary: "#ffca3e", textMuted: "#64748b",
     gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
   },
+  // Hero Overlay
+  {
+    id: "herooverlay-gold", name: "Hero Overlay Altın", layout: "herooverlay",
+    bg: "#0f172a", cardBg: "rgba(255,255,255,0.95)", accent: NEXOS_GOLD,
+    textPrimary: "#0f172a", textSecondary: NEXOS_GOLD, textMuted: "#475569",
+    gradientOverlay: ["rgba(0,0,0,0)", "rgba(0,0,0,0.7)"],
+  },
+  {
+    id: "herooverlay-dark", name: "Hero Overlay Koyu", layout: "herooverlay",
+    bg: "#0f172a", cardBg: "rgba(15,23,42,0.9)", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(0,0,0,0)", "rgba(0,0,0,0.75)"],
+  },
+  // Poster
+  {
+    id: "poster-gold", name: "Poster Altın", layout: "poster",
+    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(0,0,0,0)", "rgba(15,23,42,0.85)"],
+  },
+  {
+    id: "poster-white", name: "Poster Beyaz", layout: "poster",
+    bg: "#ffffff", cardBg: "#f1f5f9", accent: NEXOS_GOLD,
+    textPrimary: "#0f172a", textSecondary: NEXOS_GOLD, textMuted: "#64748b",
+    gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
+  },
+  // Catalog
+  {
+    id: "catalog-gold", name: "Katalog Altın", layout: "catalog",
+    bg: "#ffffff", cardBg: "#f8fafc", accent: NEXOS_GOLD,
+    textPrimary: "#0f172a", textSecondary: NEXOS_GOLD, textMuted: "#64748b",
+    gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
+  },
+  {
+    id: "catalog-dark", name: "Katalog Koyu", layout: "catalog",
+    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
+    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
+  },
 ];
 
 const LAYOUT_LABELS: Record<LayoutType, string> = {
@@ -171,6 +210,9 @@ const LAYOUT_LABELS: Record<LayoutType, string> = {
   gallery: "Galeri",
   diagonal: "Çapraz",
   ribbon: "Şerit",
+  herooverlay: "Hero Overlay",
+  poster: "Poster",
+  catalog: "Katalog",
 };
 
 // ---------------------------------------------------------------------------
@@ -862,6 +904,255 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   ctx.textAlign = "start";
 }
 
+// --- HERO OVERLAY: Full bg image + "NEXOS INVESTMENT" top + title + 3 rounded thumbnails middle + price card + details ---
+async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  // Full background image
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, 0, 0, W, H, 0, T.bg);
+  } else { ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H); }
+  // Gradient overlay
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, "rgba(0,0,0,0.2)");
+  grad.addColorStop(0.45, "rgba(0,0,0,0.1)");
+  grad.addColorStop(0.6, "rgba(0,0,0,0.5)");
+  grad.addColorStop(1, "rgba(0,0,0,0.85)");
+  ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
+
+  // Top: "NEXOS INVESTMENT" text centered
+  ctx.fillStyle = T.accent; ctx.font = `600 28px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+  ctx.fillText("NEXOS INVESTMENT", W / 2, PAD);
+
+  // Title large centered
+  ctx.fillStyle = "#ffffff"; ctx.font = `bold 52px ${FONT}`;
+  const lines = wrapText(ctx, title, W - PAD * 2, 2);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, PAD + 50 + i * 64);
+  ctx.textAlign = "start";
+
+  // 3 rounded thumbnails in the middle
+  const thumbY = 420; const thumbSize = 200; const thumbGap = 20;
+  const totalThumbW = thumbSize * 3 + thumbGap * 2;
+  const thumbStartX = (W - totalThumbW) / 2;
+  const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
+
+  for (let i = 0; i < 3; i++) {
+    const tx = thumbStartX + i * (thumbSize + thumbGap);
+    // Shadow
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.4)"; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
+    ctx.fillStyle = T.cardBg;
+    rr(ctx, tx, thumbY, thumbSize, thumbSize, 24);
+    ctx.fill(); ctx.restore();
+    // Image
+    if (allImgs[i + 1] ?? allImgs[i]) {
+      const src = allImgs[i + 1] ?? allImgs[i] ?? "";
+      if (src) await drawCoverImg(ctx, src, tx, thumbY, thumbSize, thumbSize, 24, T.cardBg);
+    } else { ctx.fillStyle = T.cardBg; rr(ctx, tx, thumbY, thumbSize, thumbSize, 24); ctx.fill(); }
+  }
+
+  // Price card centered below thumbnails
+  const cardY = thumbY + thumbSize + 30;
+  const priceLabel = "BAŞLAYAN FİYATLAR";
+  ctx.font = `600 22px ${FONT}`;
+  const plW = ctx.measureText(priceLabel).width;
+  ctx.font = `bold 52px ${FONT}`;
+  const prW = ctx.measureText(price).width;
+  const cardW = Math.max(plW, prW) + 60;
+  const cardH = 110;
+  const cardX = (W - cardW) / 2;
+
+  ctx.fillStyle = T.cardBg;
+  ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 4;
+  rr(ctx, cardX, cardY, cardW, cardH, 16); ctx.fill(); ctx.restore();
+
+  ctx.fillStyle = T.accent; ctx.font = `600 22px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+  ctx.fillText(priceLabel, W / 2, cardY + 16);
+  ctx.fillStyle = T.textSecondary; ctx.font = `bold 52px ${FONT}`;
+  ctx.fillText(price, W / 2, cardY + 46);
+  ctx.textAlign = "start";
+
+  // Details 2x3 grid with checkmarks
+  const detailY = cardY + cardH + 30;
+  const detailItems: string[] = [];
+  if (property.city_name) detailItems.push(property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name);
+  detailItems.push(TYPE_LABELS[property.type] ?? property.type);
+  const rs = fmtRooms(property.rooms, property.living_rooms);
+  if (rs) detailItems.push(`${rs} Oda`);
+  if (property.area_sqm) detailItems.push(`${property.area_sqm} m²`);
+
+  ctx.font = `600 28px ${FONT}`; ctx.textBaseline = "middle";
+  const colW = (W - PAD * 2) / 2;
+  for (let i = 0; i < detailItems.length; i++) {
+    const col = i % 2; const row = Math.floor(i / 2);
+    const dx = PAD + col * colW;
+    const dy = detailY + row * 50;
+    ctx.fillStyle = T.accent; ctx.fillText("✓", dx, dy + 20);
+    ctx.fillStyle = "#ffffff"; ctx.fillText(detailItems[i], dx + 32, dy + 20);
+  }
+
+  // Footer
+  const footerY = H - 80;
+  ctx.fillStyle = T.cardBg; ctx.fillRect(0, footerY - 10, W, 90);
+  ctx.fillStyle = T.textPrimary; ctx.font = `500 22px ${FONT}`; ctx.textBaseline = "middle";
+  ctx.fillText("📞  +90 542 880 64 56", PAD, footerY + 25);
+  ctx.textAlign = "right"; ctx.fillText("🌐  nexosinvestment.com", W - PAD, footerY + 25);
+  ctx.textAlign = "start";
+}
+
+// --- POSTER: Top bg image with logo+title overlay + 2 rounded images below + price badge + footer ---
+async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+
+  // Top half: background image
+  const topH = 580;
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, 0, 0, W, topH, 0, T.cardBg);
+    ctx.fillStyle = "rgba(0,0,0,0.35)"; ctx.fillRect(0, 0, W, topH);
+    const grad = ctx.createLinearGradient(0, topH - 200, 0, topH);
+    grad.addColorStop(0, "rgba(0,0,0,0)"); grad.addColorStop(1, T.gradientOverlay[1]);
+    ctx.fillStyle = grad; ctx.fillRect(0, topH - 200, W, 200);
+  }
+
+  // Logo centered on image
+  await drawLogo(ctx, W / 2, 60, 100, T.accent, "center");
+
+  // Title centered on image
+  ctx.fillStyle = "#ffffff"; ctx.font = `bold 48px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+  const lines = wrapText(ctx, title, W - PAD * 2, 3);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, 180 + i * 60);
+  ctx.textAlign = "start";
+
+  // 2 rounded images side by side below
+  const imgY = topH + 20; const imgH = 280; const gap = 16;
+  const imgW = (W - PAD * 2 - gap) / 2;
+  const extras = property.extra_images ?? [];
+  for (let i = 0; i < 2; i++) {
+    const ix = PAD + i * (imgW + gap);
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.25)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4;
+    ctx.fillStyle = T.cardBg; rr(ctx, ix, imgY, imgW, imgH, 20); ctx.fill(); ctx.restore();
+    if (extras[i]) await drawCoverImg(ctx, extras[i], ix, imgY, imgW, imgH, 20, T.cardBg);
+    else { ctx.fillStyle = T.cardBg; rr(ctx, ix, imgY, imgW, imgH, 20); ctx.fill(); }
+  }
+
+  // Price badge centered, overlapping images bottom
+  const badgeY = imgY + imgH - 30;
+  ctx.font = `bold 48px ${FONT}`;
+  const pw = ctx.measureText(price).width;
+  const bw = pw + 50; const bh = 70;
+  const bx = (W - bw) / 2;
+
+  ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 12;
+  ctx.fillStyle = T.accent; rr(ctx, bx, badgeY, bw, bh, 14); ctx.fill(); ctx.restore();
+  ctx.fillStyle = T.bg; ctx.textBaseline = "middle"; ctx.textAlign = "center";
+  ctx.fillText(price, W / 2, badgeY + bh / 2);
+  ctx.textAlign = "start";
+
+  // Footer bar
+  const footerY = H - 90;
+  ctx.fillStyle = T.accent; ctx.fillRect(0, footerY, W, 3);
+  ctx.fillStyle = T.cardBg; ctx.fillRect(0, footerY + 3, W, 87);
+  ctx.fillStyle = T.textPrimary; ctx.font = `500 22px ${FONT}`; ctx.textBaseline = "middle";
+  ctx.fillText("📞  +90 542 880 64 56", PAD, footerY + 48);
+  ctx.textAlign = "right"; ctx.fillText("🌐  nexosinvestment.com", W - PAD, footerY + 48);
+  ctx.textAlign = "start";
+}
+
+// --- CATALOG: Left column info + right column 3 rounded images stacked ---
+async function renderCatalog(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+
+  // Accent decorative rectangles (top-right and bottom-left corners)
+  ctx.fillStyle = T.accent + "25";
+  ctx.fillRect(W - 160, 0, 160, 180);
+  ctx.fillRect(W - 80, 180, 80, 120);
+  ctx.fillRect(0, H - 160, 120, 160);
+
+  const leftW = W * 0.48;
+  const rightX = W * 0.50;
+  const rightW = W - rightX - PAD;
+
+  // Left column
+  let ly = 100;
+
+  // Logo
+  await drawLogo(ctx, PAD, ly, 100, T.accent, "left");
+  ly += 120;
+
+  // Title big
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 46px ${FONT}`; ctx.textBaseline = "top";
+  const lines = wrapText(ctx, title, leftW - PAD, 4);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], PAD, ly + i * 58);
+  ly += lines.length * 58 + 24;
+
+  // "Başlayan Fiyatlarla" label + price
+  ctx.fillStyle = T.accent;
+  rr(ctx, PAD, ly, 260, 40, 8); ctx.fill();
+  ctx.fillStyle = T.bg; ctx.font = `600 22px ${FONT}`; ctx.textBaseline = "middle";
+  ctx.fillText("Başlayan Fiyatlarla", PAD + 16, ly + 20);
+  ly += 54;
+
+  ctx.fillStyle = T.textSecondary; ctx.font = `bold 56px ${FONT}`; ctx.textBaseline = "top";
+  ctx.fillText(price, PAD, ly);
+  ly += 76;
+
+  // "Özellikler:" header
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 30px ${FONT}`;
+  ctx.fillText("Özellikler:", PAD, ly);
+  ly += 44;
+
+  // Location
+  if (property.city_name) {
+    ctx.fillStyle = T.textMuted; ctx.font = `500 26px ${FONT}`;
+    const loc = property.district_name ? `${property.district_name} Bölgesinde` : `${property.city_name} Bölgesinde`;
+    ctx.fillText(loc, PAD, ly);
+    ly += 38;
+  }
+
+  // Detail items with checkmarks
+  const detailItems: string[] = [];
+  if (property.area_sqm) detailItems.push(`${property.area_sqm} m²`);
+  const rs = fmtRooms(property.rooms, property.living_rooms);
+  if (rs) detailItems.push(`${rs} Oda`);
+  detailItems.push(TYPE_LABELS[property.type] ?? property.type);
+
+  ctx.font = `600 26px ${FONT}`; ctx.textBaseline = "middle";
+  const dColW = (leftW - PAD) / 2;
+  for (let i = 0; i < detailItems.length; i++) {
+    const col = i % 2; const row = Math.floor(i / 2);
+    const dx = PAD + col * dColW;
+    const dy = ly + row * 44;
+    ctx.fillStyle = T.accent; ctx.fillText("✓", dx, dy + 20);
+    ctx.fillStyle = T.textPrimary; ctx.fillText(detailItems[i], dx + 28, dy + 20);
+  }
+  const detailRows = Math.ceil(detailItems.length / 2);
+  ly += detailRows * 44 + 30;
+
+  // CTA button
+  ctx.fillStyle = T.accent;
+  rr(ctx, PAD, ly, 340, 50, 10); ctx.fill();
+  ctx.fillStyle = T.bg; ctx.font = `bold 24px ${FONT}`; ctx.textBaseline = "middle";
+  ctx.fillText("Bir Görüşme Planlayın", PAD + 24, ly + 25);
+  ly += 70;
+
+  // Contact info
+  ctx.fillStyle = T.textMuted; ctx.font = `500 22px ${FONT}`; ctx.textBaseline = "top";
+  ctx.fillText("📞  +90 542 880 64 56", PAD, ly);
+  ctx.fillText("🌐  nexosinvestment.com", PAD, ly + 32);
+
+  // Right column: 3 rounded images stacked
+  const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
+  const imgGap = 16;
+  const imgCount = Math.min(allImgs.length, 3);
+  const totalImgH = H - 200;
+  const singleImgH = (totalImgH - imgGap * (imgCount - 1)) / Math.max(imgCount, 1);
+
+  for (let i = 0; i < imgCount; i++) {
+    const iy = 100 + i * (singleImgH + imgGap);
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.2)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4;
+    ctx.fillStyle = T.cardBg; rr(ctx, rightX, iy, rightW, singleImgH, 20); ctx.fill(); ctx.restore();
+    await drawCoverImg(ctx, allImgs[i], rightX, iy, rightW, singleImgH, 20, T.cardBg);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -907,6 +1198,9 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         case "gallery": await renderGallery(ctx, T, property, title, price, desc); break;
         case "diagonal": await renderDiagonal(ctx, T, property, title, price, desc); break;
         case "ribbon": await renderRibbon(ctx, T, property, title, price, desc); break;
+        case "herooverlay": await renderHeroOverlay(ctx, T, property, title, price, desc); break;
+        case "poster": await renderPoster(ctx, T, property, title, price, desc); break;
+        case "catalog": await renderCatalog(ctx, T, property, title, price, desc); break;
       }
 
       setGenerated(true);
@@ -973,7 +1267,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {(["classic", "fullimage", "showcase", "magazine", "gallery", "diagonal", "ribbon"] as LayoutType[]).map((layout) => (
+              {(["classic", "fullimage", "showcase", "magazine", "gallery", "diagonal", "ribbon", "herooverlay", "poster", "catalog"] as LayoutType[]).map((layout) => (
                 <div key={layout}>
                   <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{LAYOUT_LABELS[layout]}</div>
                   {TEMPLATES.filter((t) => t.layout === layout).map((t) => (
