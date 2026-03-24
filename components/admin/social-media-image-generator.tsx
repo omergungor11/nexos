@@ -301,26 +301,13 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
 
     // Safe zone: center 1080px of 1350px → top 135px, bottom 1215px
     const SAFE_TOP = 135;
-    const logoH = 80;
+    const logoH = 140;
     const imgH = 530;
     const txBadgeH = 50;
     const contentStartY = SAFE_TOP + 6;
 
-    // -- Logo --
-    try {
-      const logoImg = await loadImg("/logo-trans.png");
-      const logoAspect = logoImg.width / logoImg.height;
-      const logoW = logoH * logoAspect;
-      ctx.drawImage(logoImg, PAD, contentStartY, logoW, logoH);
-    } catch {
-      ctx.fillStyle = T.accent;
-      ctx.font = `bold 42px ${FONT}`;
-      ctx.textBaseline = "middle";
-      ctx.fillText("NEXOS", PAD, contentStartY + logoH / 2);
-    }
-
-    // -- Transaction type badge --
-    const badgeY = contentStartY + logoH + 16;
+    // -- Transaction type badge (left column starts here) --
+    const badgeY = contentStartY;
     const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
     ctx.font = `bold 24px ${FONT}`;
     const badgeTextW = ctx.measureText(txLabel).width;
@@ -376,6 +363,25 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       ctx.fillText(lines[i], PAD, titleY + i * lineHeight);
     }
     const titleEndY = titleY + lines.length * lineHeight;
+
+    // -- Logo (right column, aligned with badge/price/title block) --
+    const headerBlockH = titleEndY - contentStartY;
+    try {
+      const logoImg = await loadImg("/logo-trans.png");
+      const logoAspect = logoImg.width / logoImg.height;
+      const actualLogoH = Math.min(logoH, headerBlockH);
+      const logoW = actualLogoH * logoAspect;
+      const logoX = W - PAD - logoW;
+      const logoY = contentStartY + (headerBlockH - actualLogoH) / 2;
+      ctx.drawImage(logoImg, logoX, logoY, logoW, actualLogoH);
+    } catch {
+      ctx.fillStyle = T.accent;
+      ctx.font = `bold 48px ${FONT}`;
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "right";
+      ctx.fillText("NEXOS", W - PAD, contentStartY + headerBlockH / 2);
+      ctx.textAlign = "start";
+    }
 
     // -- Images section --
     const imgY = titleEndY + 20;
