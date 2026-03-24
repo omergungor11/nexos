@@ -610,14 +610,6 @@ async function renderGallery(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   // Logo centered
   await drawLogo(ctx, W / 2, sY, 120, T.accent, "center");
 
-  // Centered badge
-  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
-  ctx.font = `bold 24px ${FONT}`;
-  const bw = ctx.measureText(txLabel).width + 36;
-  ctx.fillStyle = T.accent; rr(ctx, (W - bw) / 2, sY + 100, bw, 50, 10); ctx.fill();
-  ctx.fillStyle = T.bg; ctx.textBaseline = "middle"; ctx.textAlign = "center";
-  ctx.fillText(txLabel, W / 2, sY + 125); ctx.textAlign = "start";
-
   // Centered price
   ctx.fillStyle = T.textSecondary; ctx.font = `bold 60px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
   ctx.fillText(price, W / 2, sY + 170); ctx.textAlign = "start";
