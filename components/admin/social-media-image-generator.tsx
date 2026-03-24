@@ -932,21 +932,20 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   const titleEndY = 160 + lines.length * 66;
   ctx.fillStyle = T.accent; ctx.fillRect((W - 80) / 2, titleEndY + 12, 80, 4);
 
-  // 3 rounded thumbnails — center row with elevated middle
-  const thumbW = 220; const thumbH = 220; const thumbGap = 24;
-  const totalThumbW = thumbW * 3 + thumbGap * 2;
-  const thumbStartX = (W - totalThumbW) / 2;
-  const baseThumbY = titleEndY + 40;
+  // 3 large rounded thumbnails — full width, elevated middle
+  const thumbGap = 16;
+  const thumbW = (W - PAD * 2 - thumbGap * 2) / 3;
+  const baseThumbY = titleEndY + 36;
   const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
 
   for (let i = 0; i < 3; i++) {
-    const tx = thumbStartX + i * (thumbW + thumbGap);
-    const ty = i === 1 ? baseThumbY - 20 : baseThumbY + 10; // middle elevated
-    const h = i === 1 ? thumbH + 20 : thumbH;
-    const radius = i === 1 ? 28 : 20;
+    const tx = PAD + i * (thumbW + thumbGap);
+    const h = i === 1 ? 380 : 340;
+    const ty = i === 1 ? baseThumbY - 20 : baseThumbY + 20;
+    const radius = i === 1 ? 28 : 22;
     // Shadow
     ctx.save();
-    ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+    ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 28; ctx.shadowOffsetY = 10;
     ctx.fillStyle = "#000"; rr(ctx, tx, ty, thumbW, h, radius); ctx.fill();
     ctx.restore();
     // Accent border on middle
@@ -960,7 +959,7 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   }
 
   // Price card centered
-  const cardY = baseThumbY + thumbH + 40;
+  const cardY = baseThumbY + 380 + 30;
   ctx.font = `bold 52px ${FONT}`;
   const prW = ctx.measureText(price).width;
   const cardW = prW + 80; const cardH = 120; const cardX = (W - cardW) / 2;
@@ -976,8 +975,8 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   ctx.fillText(price, W / 2, cardY + 48);
   ctx.textAlign = "start";
 
-  // Details with accent icons
-  const detailY = cardY + cardH + 30;
+  // Centered details with accent icons
+  const detailY = cardY + cardH + 24;
   const detailItems: string[] = [];
   if (property.city_name) detailItems.push(property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name);
   detailItems.push(TYPE_LABELS[property.type] ?? property.type);
@@ -985,17 +984,35 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   if (rs) detailItems.push(`${rs} Oda`);
   if (property.area_sqm) detailItems.push(`${property.area_sqm} m²`);
 
-  ctx.font = `600 30px ${FONT}`; ctx.textBaseline = "middle";
-  const colW2 = (W - PAD * 2) / 2;
-  for (let i = 0; i < detailItems.length; i++) {
-    const col = i % 2; const row = Math.floor(i / 2);
-    const dx = PAD + col * colW2; const dy = detailY + row * 52;
-    // Accent check circle
-    ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(dx + 14, dy + 20, 14, 0, Math.PI * 2); ctx.fill();
+  // Calculate total width for centering
+  ctx.font = `600 30px ${FONT}`;
+  const itemWidths = detailItems.map((item) => 40 + ctx.measureText(item).width);
+  const totalRowW1 = itemWidths.slice(0, 2).reduce((a, b) => a + b + 40, -40);
+  const totalRowW2 = itemWidths.slice(2).reduce((a, b) => a + b + 40, -40);
+
+  ctx.textBaseline = "middle";
+  // Row 1
+  let rx = (W - totalRowW1) / 2;
+  for (let i = 0; i < Math.min(2, detailItems.length); i++) {
+    ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(rx + 14, detailY + 20, 14, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#000"; ctx.font = `bold 18px ${FONT}`; ctx.textAlign = "center";
-    ctx.fillText("✓", dx + 14, dy + 21); ctx.textAlign = "start";
+    ctx.fillText("✓", rx + 14, detailY + 21); ctx.textAlign = "start";
     ctx.fillStyle = "#ffffff"; ctx.font = `600 30px ${FONT}`;
-    ctx.fillText(detailItems[i], dx + 40, dy + 20);
+    ctx.fillText(detailItems[i], rx + 40, detailY + 20);
+    rx += itemWidths[i] + 40;
+  }
+  // Row 2
+  if (detailItems.length > 2) {
+    rx = (W - totalRowW2) / 2;
+    for (let i = 2; i < detailItems.length; i++) {
+      const dy = detailY + 52;
+      ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(rx + 14, dy + 20, 14, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#000"; ctx.font = `bold 18px ${FONT}`; ctx.textAlign = "center";
+      ctx.fillText("✓", rx + 14, dy + 21); ctx.textAlign = "start";
+      ctx.fillStyle = "#ffffff"; ctx.font = `600 30px ${FONT}`;
+      ctx.fillText(detailItems[i], rx + 40, dy + 20);
+      rx += itemWidths[i] + 40;
+    }
   }
 
   // Footer bar with accent top line
