@@ -301,7 +301,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     const logoH = 70;
     const imgH = 560;
     const txBadgeH = 50;
-    const contentStartY = PAD;
+    const contentStartY = PAD + 80;
 
     // -- Logo --
     try {
