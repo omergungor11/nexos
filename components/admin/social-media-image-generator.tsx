@@ -32,7 +32,7 @@ interface SocialMediaImageGeneratorProps {
 // ---------------------------------------------------------------------------
 
 const CANVAS_WIDTH = 1080;
-const CANVAS_HEIGHT = 1080;
+const CANVAS_HEIGHT = 1350;
 const PADDING = 48;
 const BORDER_RADIUS = 24;
 
@@ -131,6 +131,11 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     ctx.fillStyle = "#0f172a";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+    // Content area height: img(620) + gap(20) + title(80) + gap(16) + detail(240) = 976
+    // Vertical centering offset
+    const contentH = 620 + 20 + 80 + 16 + 240;
+    const offsetY = Math.round((CANVAS_HEIGHT - contentH) / 2);
+
     // -- Cover image (top portion) --
     if (property.cover_image) {
       try {
@@ -138,7 +143,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         const imgH = 620;
         const imgW = CANVAS_WIDTH - PADDING * 2;
         const imgX = PADDING;
-        const imgY = PADDING;
+        const imgY = offsetY;
 
         // Clip with rounded corners
         ctx.save();
@@ -182,19 +187,19 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         const imgH = 620;
         const imgW = CANVAS_WIDTH - PADDING * 2;
         ctx.fillStyle = "#1e293b";
-        roundRect(ctx, PADDING, PADDING, imgW, imgH, BORDER_RADIUS);
+        roundRect(ctx, PADDING, offsetY, imgW, imgH, BORDER_RADIUS);
         ctx.fill();
         ctx.fillStyle = "#475569";
         ctx.font = "48px system-ui";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("📷", PADDING + imgW / 2, PADDING + imgH / 2);
+        ctx.fillText("📷", PADDING + imgW / 2, offsetY + imgH / 2);
         ctx.textAlign = "start";
       }
     }
 
     // -- Title box --
-    const titleBoxY = PADDING + 620 + 20;
+    const titleBoxY = offsetY + 620 + 20;
     const titleBoxH = 80;
     const titleBoxW = CANVAS_WIDTH - PADDING * 2;
 
@@ -309,7 +314,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Instagram Görseli (1080×1080)</h3>
+        <h3 className="text-sm font-semibold">Instagram Görseli (1080×1350)</h3>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -332,7 +337,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         <canvas
           ref={canvasRef}
           className="w-full"
-          style={{ maxWidth: 540, aspectRatio: "1/1" }}
+          style={{ maxWidth: 540, aspectRatio: "1080/1350" }}
         />
       </div>
     </div>
