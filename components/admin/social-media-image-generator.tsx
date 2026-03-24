@@ -629,7 +629,7 @@ async function renderGallery(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   // 2x2 image grid (4 images)
   const imgY = titleEnd + 24; const gap = 10;
   const cellW = (W - PAD * 2 - gap) / 2;
-  const cellH = 185;
+  const cellH = 240;
   const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
 
   for (let i = 0; i < 4; i++) {
