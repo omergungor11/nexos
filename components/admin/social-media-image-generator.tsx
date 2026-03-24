@@ -60,7 +60,7 @@ const TYPE_LABELS: Record<string, string> = {
 // Layout types
 // ---------------------------------------------------------------------------
 
-type LayoutType = "classic" | "fullimage" | "showcase" | "magazine" | "gallery" | "boldprice" | "diagonal" | "ribbon";
+type LayoutType = "classic" | "fullimage" | "showcase" | "magazine" | "gallery" | "diagonal" | "ribbon";
 
 interface DesignTemplate {
   id: string;
@@ -135,19 +135,6 @@ const TEMPLATES: DesignTemplate[] = [
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
   },
-  // Bold Price
-  {
-    id: "boldprice-dark", name: "Dev Fiyat Koyu", layout: "boldprice",
-    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
-    textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
-    gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
-  },
-  {
-    id: "boldprice-red", name: "Dev Fiyat Kırmızı", layout: "boldprice",
-    bg: "#1a0505", cardBg: "#2d0a0a", accent: "#ef4444",
-    textPrimary: "#fef2f2", textSecondary: "#ef4444", textMuted: "#fca5a5",
-    gradientOverlay: ["rgba(26,5,5,0)", "rgba(26,5,5,0.9)"],
-  },
   // Diagonal
   {
     id: "diagonal-gold", name: "Çapraz Altın", layout: "diagonal",
@@ -182,7 +169,6 @@ const LAYOUT_LABELS: Record<LayoutType, string> = {
   showcase: "Vitrin",
   magazine: "Dergi",
   gallery: "Galeri",
-  boldprice: "Dev Fiyat",
   diagonal: "Çapraz",
   ribbon: "Şerit",
 };
@@ -485,8 +471,8 @@ async function renderShowcase(ctx: CanvasRenderingContext2D, T: DesignTemplate, 
   ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
 
   // Top: main image + 3 thumbnails below
-  const mainImgH = 580;
-  const thumbH = 110; const thumbGap = 10;
+  const mainImgH = 540;
+  const thumbH = 160; const thumbGap = 10;
   const imgH = mainImgH + thumbGap + thumbH;
 
   if (property.cover_image) {
@@ -673,60 +659,6 @@ async function renderGallery(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
     ctx.fillText(desc, W / 2, detailY + 50);
   }
   ctx.textAlign = "start";
-
-  drawFooter(ctx, T);
-}
-
-// --- FRAME: Gold border frame around image ---
-// --- BOLD PRICE: Giant price as hero, small image ---
-async function renderBoldPrice(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
-  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
-  const sY = 135 + 40;
-
-  // Logo + badge row
-  await drawLogo(ctx, PAD, sY, 100, T.accent, "left");
-  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
-  drawBadge(ctx, txLabel, W - PAD - 160, sY + 5, T.accent, T.bg);
-
-  // GIANT price
-  ctx.fillStyle = T.textSecondary; ctx.font = `bold 96px ${FONT}`; ctx.textBaseline = "top";
-  ctx.fillText(price, PAD, sY + 90);
-
-  // Accent underline
-  ctx.fillStyle = T.accent;
-  const pw = ctx.measureText(price).width;
-  ctx.fillRect(PAD, sY + 200, Math.min(pw, W - PAD * 2), 6);
-
-  // Title
-  ctx.fillStyle = T.textPrimary; ctx.font = `bold 42px ${FONT}`;
-  const lines = wrapText(ctx, title, W - PAD * 2, 2);
-  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], PAD, sY + 230 + i * 54);
-  const titleEnd = sY + 230 + lines.length * 54;
-
-  // Image — smaller, centered with rounded corners
-  const imgY = titleEnd + 30; const imgH = 380; const imgW = W - PAD * 2;
-  if (property.cover_image) {
-    await drawCoverImg(ctx, property.cover_image, PAD, imgY, imgW, imgH, R, T.cardBg);
-    ctx.save(); rr(ctx, PAD, imgY, imgW, imgH, R); ctx.clip();
-    const grad = ctx.createLinearGradient(PAD, imgY + imgH - 100, PAD, imgY + imgH);
-    grad.addColorStop(0, T.gradientOverlay[0]); grad.addColorStop(1, T.gradientOverlay[1]);
-    ctx.fillStyle = grad; ctx.fillRect(PAD, imgY + imgH - 100, imgW, 100); ctx.restore();
-  }
-
-  // Details inline on image bottom
-  const items: string[] = [];
-  if (property.city_name) items.push(`📍 ${property.district_name ? property.district_name + ", " : ""}${property.city_name}`);
-  const roomStr = fmtRooms(property.rooms, property.living_rooms);
-  if (roomStr) items.push(`🛏️ ${roomStr}`);
-  if (property.area_sqm) items.push(`📐 ${property.area_sqm} m²`);
-
-  ctx.fillStyle = T.textPrimary; ctx.font = `600 28px ${FONT}`; ctx.textBaseline = "bottom";
-  ctx.fillText(items.join("   •   "), PAD + 20, imgY + imgH - 20);
-
-  if (desc) {
-    ctx.fillStyle = T.textMuted; ctx.font = `600 34px ${FONT}`; ctx.textBaseline = "top";
-    ctx.fillText(desc, PAD, imgY + imgH + 24);
-  }
 
   drawFooter(ctx, T);
 }
@@ -961,7 +893,6 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         case "showcase": await renderShowcase(ctx, T, property, title, price, desc); break;
         case "magazine": await renderMagazine(ctx, T, property, title, price, desc); break;
         case "gallery": await renderGallery(ctx, T, property, title, price, desc); break;
-        case "boldprice": await renderBoldPrice(ctx, T, property, title, price, desc); break;
         case "diagonal": await renderDiagonal(ctx, T, property, title, price, desc); break;
         case "ribbon": await renderRibbon(ctx, T, property, title, price, desc); break;
       }
@@ -1030,7 +961,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {(["classic", "fullimage", "showcase", "magazine", "gallery", "boldprice", "diagonal", "ribbon"] as LayoutType[]).map((layout) => (
+              {(["classic", "fullimage", "showcase", "magazine", "gallery", "diagonal", "ribbon"] as LayoutType[]).map((layout) => (
                 <div key={layout}>
                   <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{LAYOUT_LABELS[layout]}</div>
                   {TEMPLATES.filter((t) => t.layout === layout).map((t) => (
