@@ -10,6 +10,7 @@ import { getAgents } from "@/lib/queries/content";
 import { PropertyForm } from "@/components/admin/property-form";
 import { ImageManager } from "@/components/admin/image-manager";
 import { PropertyAnalytics } from "@/components/admin/property-analytics";
+import { SocialMediaGenerator } from "@/components/admin/social-media-generator";
 import type { PropertyImage } from "@/types/property";
 
 export const metadata: Metadata = {
@@ -152,6 +153,25 @@ export default async function AdminPropertyEditPage({ params }: Props) {
     title: a.title,
   }));
 
+  // Social media data
+  const cityName = cities.find((c) => c.id === property.city_id)?.name ?? "";
+  const sortedImgs = [...rawImages].sort((a, b) => (a.is_cover ? -1 : 0) - (b.is_cover ? -1 : 0));
+  const socialProperty = {
+    id: property.id as string,
+    title: property.title as string,
+    price: property.price as number,
+    currency: property.currency as string,
+    type: property.type as string,
+    transaction_type: property.transaction_type as string,
+    area_sqm: property.area_sqm as number | null,
+    rooms: property.rooms as number | null,
+    living_rooms: property.living_rooms as number | null,
+    city_name: cityName,
+    district_name: null as string | null, // will be filled if district_id exists
+    cover_image: sortedImgs[0]?.url ?? null,
+    extra_images: sortedImgs.slice(1, 5).map((i) => i.url),
+  };
+
   return (
     <div className="space-y-8">
       {/* Breadcrumb */}
@@ -183,6 +203,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
         propertyId={id}
         mediaSlot={<ImageManager propertyId={id} initialImages={images} />}
         analyticsSlot={<PropertyAnalytics propertyId={id} />}
+        socialMediaSlot={<SocialMediaGenerator properties={[socialProperty]} />}
       />
     </div>
   );

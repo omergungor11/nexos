@@ -49,6 +49,7 @@ import {
   Armchair,
   ShieldCheck,
   TreePine,
+  Share2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -121,6 +122,7 @@ export interface PropertyFormProps {
   propertyId?: string;
   mediaSlot?: React.ReactNode;
   analyticsSlot?: React.ReactNode;
+  socialMediaSlot?: React.ReactNode;
 }
 
 interface InitialPropertyData {
@@ -567,6 +569,7 @@ export function PropertyForm({
   propertyId,
   mediaSlot,
   analyticsSlot,
+  socialMediaSlot,
 }: PropertyFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -917,6 +920,7 @@ export function PropertyForm({
             </TabsTrigger>
             );
           })}
+          {socialMediaSlot && <TabsTrigger value="sosyal" className="gap-1.5"><Share2 className="size-3.5" />Sosyal Medya</TabsTrigger>}
           {analyticsSlot && <TabsTrigger value="analiz" className="gap-1.5"><BarChart3 className="size-3.5" />Analiz</TabsTrigger>}
         </TabsList>
 
@@ -1823,7 +1827,16 @@ export function PropertyForm({
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}
-        {/* Tab 7: Analiz (only in edit mode)                                  */}
+        {/* Tab 7: Sosyal Medya (only in edit mode)                            */}
+        {/* ----------------------------------------------------------------- */}
+        {socialMediaSlot && (
+          <TabsContent value="sosyal" className="mt-6">
+            {socialMediaSlot}
+          </TabsContent>
+        )}
+
+        {/* ----------------------------------------------------------------- */}
+        {/* Tab 8: Analiz (only in edit mode)                                  */}
         {/* ----------------------------------------------------------------- */}
         {analyticsSlot && (
           <TabsContent value="analiz" className="mt-6">
