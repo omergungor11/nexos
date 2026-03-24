@@ -26,6 +26,9 @@ import {
   type ActivityContact,
   type ActivityProperty,
 } from "@/components/admin/dashboard-activity-feed";
+import { DashboardStatusChart } from "@/components/admin/dashboard-status-chart";
+import { DashboardCityDistribution } from "@/components/admin/dashboard-city-distribution";
+import { DashboardPendingActions } from "@/components/admin/dashboard-pending-actions";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -165,6 +168,13 @@ export default async function AdminDashboardPage() {
     // Recent lists
     recentContactsRes,
     recentPropertiesRes,
+
+    // New dashboard sections
+    statusDistributionRes,
+    inactivePropertiesRes,
+    cityDistributionRes,
+    inProgressContactsRes,
+    draftBlogPostsRes,
   ] = await Promise.all([
     // --- KPI totals ---
     supabase
@@ -248,6 +258,33 @@ export default async function AdminDashboardPage() {
       )
       .order("created_at", { ascending: false })
       .limit(5),
+
+    // --- Status distribution ---
+    supabase.from("properties").select("status"),
+
+    // --- Inactive properties count ---
+    supabase
+      .from("properties")
+      .select("*", { count: "exact", head: true })
+      .eq("is_active", false),
+
+    // --- City distribution ---
+    supabase
+      .from("properties")
+      .select("city:cities(name)")
+      .eq("is_active", true),
+
+    // --- In-progress contacts ---
+    supabase
+      .from("contact_requests")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "in_progress"),
+
+    // --- Draft blog posts ---
+    supabase
+      .from("blog_posts")
+      .select("*", { count: "exact", head: true })
+      .eq("is_published", false),
   ]);
 
   // ── Compute KPI values ───────────────────────────────────────────────────
@@ -288,6 +325,31 @@ export default async function AdminDashboardPage() {
   // ── Activity feed data (top 5 each, feed sorts internally) ───────────────
   const activityContacts = recentContacts as unknown as ActivityContact[];
   const activityProperties = recentProperties as unknown as ActivityProperty[];
+
+  // ── Status distribution ──────────────────────────────────────────────────
+  const statusRaw = (statusDistributionRes.data ?? []) as { status: string }[];
+  const statusCounts = new Map<string, number>();
+  for (const row of statusRaw) {
+    statusCounts.set(row.status, (statusCounts.get(row.status) ?? 0) + 1);
+  }
+  const statusData = Array.from(statusCounts.entries()).map(([status, count]) => ({ status, count }));
+  const inactiveProperties = inactivePropertiesRes.count ?? 0;
+
+  // ── City distribution ──────────────────────────────────────────────────
+  const cityRaw = (cityDistributionRes.data ?? []) as unknown as { city: { name: string } | { name: string }[] | null }[];
+  const cityCounts = new Map<string, number>();
+  for (const row of cityRaw) {
+    const c = row.city;
+    const name = c == null ? "Bilinmeyen" : Array.isArray(c) ? c[0]?.name ?? "Bilinmeyen" : c.name;
+    cityCounts.set(name, (cityCounts.get(name) ?? 0) + 1);
+  }
+  const cityData = Array.from(cityCounts.entries())
+    .map(([city_name, count]) => ({ city_name, count }))
+    .sort((a, b) => b.count - a.count);
+
+  // ── Pending actions ────────────────────────────────────────────────────
+  const inProgressContacts = inProgressContactsRes.count ?? 0;
+  const draftBlogPosts = draftBlogPostsRes.count ?? 0;
 
   return (
     <div className="space-y-6">
@@ -415,6 +477,22 @@ export default async function AdminDashboardPage() {
             )}
           </CardContent>
         </Card>
+      </div>
+
+      {/* Status + City + Pending — 3 columns */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <DashboardStatusChart
+          data={statusData}
+          totalActive={activeProperties}
+          totalInactive={inactiveProperties}
+        />
+        <DashboardCityDistribution data={cityData} />
+        <DashboardPendingActions
+          newContacts={newContacts}
+          inProgressContacts={inProgressContacts}
+          inactiveProperties={inactiveProperties}
+          draftBlogPosts={draftBlogPosts}
+        />
       </div>
 
       {/* Recent properties — full width */}
