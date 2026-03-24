@@ -920,16 +920,16 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
 
   // Logo centered top
-  await drawLogo(ctx, W / 2, 80, 120, T.accent, "center");
+  await drawLogo(ctx, W / 2, 160, 120, T.accent, "center");
 
   // Title large centered
   ctx.fillStyle = "#ffffff"; ctx.font = `bold 54px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
   const lines = wrapText(ctx, title, W - PAD * 2, 2);
-  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, 160 + i * 66);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, 300 + i * 66);
   ctx.textAlign = "start";
 
   // Decorative accent line under title
-  const titleEndY = 160 + lines.length * 66;
+  const titleEndY = 300 + lines.length * 66;
   ctx.fillStyle = T.accent; ctx.fillRect((W - 80) / 2, titleEndY + 12, 80, 4);
 
   // 3 large rounded thumbnails — full width, elevated middle
