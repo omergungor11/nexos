@@ -42,7 +42,7 @@ interface SocialMediaImageGeneratorProps {
 
 const W = 1080;
 const H = 1350;
-const PAD = 48;
+const PAD = 16;
 const R = 24;
 const NEXOS_GOLD = "#E5A800";
 const FONT = "Montserrat, system-ui, sans-serif";
