@@ -1039,14 +1039,7 @@ async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
     ctx.fillStyle = grad; ctx.fillRect(0, topH - 250, W, 250);
   }
 
-  // Title centered large with text shadow (no logo here — moved to bottom)
-  ctx.fillStyle = "#ffffff"; ctx.font = `bold 50px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
-  ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 10;
-  const lines = wrapText(ctx, title, W - PAD * 2, 3);
-  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, 100 + i * 62);
-  ctx.restore(); ctx.textAlign = "start";
-
-  // 2 rounded images — same height, overlapping bottom of main image
+  // 2 rounded images — overlapping bottom of main image
   const imgY = topH - 60; const gap = 20;
   const imgW = (W - PAD * 2 - gap) / 2;
   const imgH = 300;
@@ -1061,20 +1054,27 @@ async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
     else { ctx.fillStyle = T.cardBg; rr(ctx, ix, imgY, imgW, imgH, 22); ctx.fill(); }
   }
 
-  // Price badge centered
-  const badgeY = imgY + imgH + 20;
+  // Title centered below images
+  let contentY = imgY + imgH + 24;
+  ctx.fillStyle = T.textPrimary; ctx.font = `bold 44px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+  const lines = wrapText(ctx, title, W - PAD * 2, 2);
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, contentY + i * 56);
+  ctx.textAlign = "start";
+  contentY += lines.length * 56 + 16;
+
+  // Price badge centered below title
   ctx.font = `bold 54px ${FONT}`;
   const pw = ctx.measureText(price).width;
   const bw = pw + 70; const bh = 80; const bx = (W - bw) / 2;
 
   ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 16;
-  ctx.fillStyle = T.accent; rr(ctx, bx, badgeY, bw, bh, 16); ctx.fill(); ctx.restore();
+  ctx.fillStyle = T.accent; rr(ctx, bx, contentY, bw, bh, 16); ctx.fill(); ctx.restore();
   ctx.fillStyle = T.bg; ctx.font = `bold 54px ${FONT}`; ctx.textBaseline = "middle"; ctx.textAlign = "center";
-  ctx.fillText(price, W / 2, badgeY + bh / 2);
+  ctx.fillText(price, W / 2, contentY + bh / 2);
   ctx.textAlign = "start";
 
-  // Detail items centered below price badge (gray text)
-  const detailY2 = badgeY + bh + 20;
+  // Detail items centered below price (gray text)
+  const detailY2 = contentY + bh + 20;
   const posterItems: string[] = [];
   if (property.city_name) posterItems.push(property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name);
   posterItems.push(TYPE_LABELS[property.type] ?? property.type);
