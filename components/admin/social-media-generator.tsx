@@ -42,6 +42,7 @@ interface PropertyOption {
   city_name: string;
   district_name: string | null;
   cover_image: string | null;
+  extra_images: string[];
 }
 
 interface SocialMediaGeneratorProps {

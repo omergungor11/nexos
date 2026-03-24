@@ -29,6 +29,7 @@ interface PropertyForImage {
   city_name: string;
   district_name: string | null;
   cover_image: string | null;
+  extra_images: string[];
 }
 
 interface SocialMediaImageGeneratorProps {
@@ -372,41 +373,71 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     }
     const titleEndY = titleY + lines.length * lineHeight;
 
-    // -- Cover image --
+    // -- Images section --
     const imgY = titleEndY + 24;
-    const imgW = W - PAD * 2;
+    const totalImgW = W - PAD * 2;
+    const gap = 12;
+    const hasExtras = property.extra_images && property.extra_images.length > 0;
+    const mainImgW = hasExtras ? Math.round(totalImgW * 0.65) : totalImgW;
+    const sideImgW = totalImgW - mainImgW - gap;
+    const sideImgH = (imgH - gap) / 2;
 
-    if (property.cover_image) {
+    // Helper to draw an image into a rounded rect
+    async function drawCoverImg(src: string, x: number, y: number, w: number, h: number, radius: number) {
       try {
-        const img = await loadImg(property.cover_image);
+        const img = await loadImg(src);
         ctx.save();
-        rr(ctx, PAD, imgY, imgW, imgH, R);
+        rr(ctx, x, y, w, h, radius);
         ctx.clip();
-
-        const scale = Math.max(imgW / img.width, imgH / img.height);
+        const scale = Math.max(w / img.width, h / img.height);
         const dw = img.width * scale;
         const dh = img.height * scale;
-        ctx.drawImage(img, PAD + (imgW - dw) / 2, imgY + (imgH - dh) / 2, dw, dh);
-
-        const grad = ctx.createLinearGradient(PAD, imgY + imgH - 140, PAD, imgY + imgH);
-        grad.addColorStop(0, T.gradientOverlay[0]);
-        grad.addColorStop(1, T.gradientOverlay[1]);
-        ctx.fillStyle = grad;
-        ctx.fillRect(PAD, imgY + imgH - 140, imgW, 140);
-
+        ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
         ctx.restore();
       } catch {
         ctx.fillStyle = T.cardBg;
-        rr(ctx, PAD, imgY, imgW, imgH, R);
+        rr(ctx, x, y, w, h, radius);
         ctx.fill();
       }
+    }
+
+    // Main cover image
+    if (property.cover_image) {
+      await drawCoverImg(property.cover_image, PAD, imgY, mainImgW, imgH, R);
+      // Gradient overlay on main image
+      ctx.save();
+      rr(ctx, PAD, imgY, mainImgW, imgH, R);
+      ctx.clip();
+      const grad = ctx.createLinearGradient(PAD, imgY + imgH - 140, PAD, imgY + imgH);
+      grad.addColorStop(0, T.gradientOverlay[0]);
+      grad.addColorStop(1, T.gradientOverlay[1]);
+      ctx.fillStyle = grad;
+      ctx.fillRect(PAD, imgY + imgH - 140, mainImgW, 140);
+      ctx.restore();
     } else {
       ctx.fillStyle = T.cardBg;
-      rr(ctx, PAD, imgY, imgW, imgH, R);
+      rr(ctx, PAD, imgY, mainImgW, imgH, R);
       ctx.fill();
     }
 
-    // -- Details section (below image) --
+    // Extra images (right side, stacked)
+    if (hasExtras) {
+      const sideX = PAD + mainImgW + gap;
+      const extras = property.extra_images;
+      if (extras.length >= 1) {
+        await drawCoverImg(extras[0], sideX, imgY, sideImgW, sideImgH, 16);
+      }
+      if (extras.length >= 2) {
+        await drawCoverImg(extras[1], sideX, imgY + sideImgH + gap, sideImgW, sideImgH, 16);
+      } else {
+        // Placeholder for second slot
+        ctx.fillStyle = T.cardBg;
+        rr(ctx, sideX, imgY + sideImgH + gap, sideImgW, sideImgH, 16);
+        ctx.fill();
+      }
+    }
+
+    // -- Details section (below images) --
     const detailY = imgY + imgH + 24;
     const detailW = W - PAD * 2;
 

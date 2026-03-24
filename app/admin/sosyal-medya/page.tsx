@@ -42,7 +42,7 @@ export default async function SosyalMedyaPage() {
   const rows = (data ?? []) as unknown as RawRow[];
 
   const properties = rows.map((row) => {
-    const cover = row.images?.find((i) => i.is_cover) ?? row.images?.[0];
+    const sortedImages = (row.images ?? []).sort((a, b) => (a.is_cover ? -1 : 0) - (b.is_cover ? -1 : 0));
     return {
       id: row.id,
       title: row.title,
@@ -55,7 +55,8 @@ export default async function SosyalMedyaPage() {
       living_rooms: row.living_rooms,
       city_name: row.city?.name ?? "",
       district_name: row.district?.name ?? null,
-      cover_image: cover?.url ?? null,
+      cover_image: sortedImages[0]?.url ?? null,
+      extra_images: sortedImages.slice(1, 3).map((i) => i.url),
     };
   });
 
