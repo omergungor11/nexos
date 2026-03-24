@@ -267,6 +267,18 @@ const ZONING_STATUS_OPTIONS: Record<ZoningStatus, string> = {
   agricultural: "Tarım",
 };
 
+const MIN_RENTAL_PERIOD_OPTIONS: Record<string, string> = {
+  "1_day": "1 Gün",
+  "2_days": "2 Gün",
+  "3_days": "3 Gün",
+  "1_week": "1 Hafta",
+  "2_weeks": "2 Hafta",
+  "1_month": "1 Ay",
+  "3_months": "3 Ay",
+  "6_months": "6 Ay",
+  "1_year": "1 Yıl",
+};
+
 const RENTAL_PAYMENT_INTERVAL_OPTIONS: Record<RentalPaymentInterval, string> = {
   daily: "Günlük",
   monthly: "Aylık",
@@ -1110,18 +1122,29 @@ export function PropertyForm({
           {/* Rental-specific fields */}
           {(form.transaction_type === "rent" || form.transaction_type === "daily_rental") && (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <Field
-                label="Minimum Kiralama Süresi"
-                htmlFor="min_rental_period"
-                hint="Örn: 6 ay, 30 gün, 1 yıl"
-              >
-                <Input
-                  id="min_rental_period"
-                  name="min_rental_period"
-                  value={form.min_rental_period}
-                  onChange={handleChange}
-                  placeholder="Örn: 6 ay"
-                />
+              <Field label="Minimum Kiralama Süresi" htmlFor="min_rental_period">
+                <Select
+                  value={form.min_rental_period || "__none__"}
+                  onValueChange={(v) =>
+                    setForm((prev) => ({ ...prev, min_rental_period: v === "__none__" ? "" : String(v) }))
+                  }
+                >
+                  <SelectTrigger id="min_rental_period" className="w-full">
+                    <SelectValue placeholder="Seçiniz">
+                      {form.min_rental_period
+                        ? MIN_RENTAL_PERIOD_OPTIONS[form.min_rental_period] ?? form.min_rental_period
+                        : "Belirtilmemiş"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                    {Object.entries(MIN_RENTAL_PERIOD_OPTIONS).map(
+                      ([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
               </Field>
 
               <Field label="Kira Ödeme Aralığı" htmlFor="rental_payment_interval">
