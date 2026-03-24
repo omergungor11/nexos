@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Copy, Share2, Globe } from "lucide-react";
+import { SocialMediaImageGenerator } from "@/components/admin/social-media-image-generator";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +41,7 @@ interface PropertyOption {
   living_rooms: number | null;
   city_name: string;
   district_name: string | null;
+  cover_image: string | null;
 }
 
 interface SocialMediaGeneratorProps {
@@ -240,6 +242,9 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
           </div>
         </div>
       )}
+
+      {/* Instagram image generator */}
+      <SocialMediaImageGenerator property={selectedProperty} />
 
       {!selectedProperty && (
         <div className="flex min-h-40 items-center justify-center rounded-lg border border-dashed border-border bg-muted/30">

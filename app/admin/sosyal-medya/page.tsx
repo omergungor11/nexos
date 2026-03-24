@@ -11,7 +11,7 @@ export default async function SosyalMedyaPage() {
   const { data, error } = await supabase
     .from("properties")
     .select(
-      "id, title, price, currency, type, transaction_type, area_sqm, rooms, living_rooms, city:cities(name), district:districts(name)"
+      "id, title, price, currency, type, transaction_type, area_sqm, rooms, living_rooms, city:cities(name), district:districts(name), images:property_images(url, is_cover)"
     )
     .eq("is_active", true)
     .order("title");
@@ -36,23 +36,28 @@ export default async function SosyalMedyaPage() {
     living_rooms: number | null;
     city: { name: string } | null;
     district: { name: string } | null;
+    images: { url: string; is_cover: boolean }[] | null;
   };
 
   const rows = (data ?? []) as unknown as RawRow[];
 
-  const properties = rows.map((row) => ({
-    id: row.id,
-    title: row.title,
-    price: row.price,
-    currency: row.currency,
-    type: row.type,
-    transaction_type: row.transaction_type,
-    area_sqm: row.area_sqm,
-    rooms: row.rooms,
-    living_rooms: row.living_rooms,
-    city_name: row.city?.name ?? "",
-    district_name: row.district?.name ?? null,
-  }));
+  const properties = rows.map((row) => {
+    const cover = row.images?.find((i) => i.is_cover) ?? row.images?.[0];
+    return {
+      id: row.id,
+      title: row.title,
+      price: row.price,
+      currency: row.currency,
+      type: row.type,
+      transaction_type: row.transaction_type,
+      area_sqm: row.area_sqm,
+      rooms: row.rooms,
+      living_rooms: row.living_rooms,
+      city_name: row.city?.name ?? "",
+      district_name: row.district?.name ?? null,
+      cover_image: cover?.url ?? null,
+    };
+  });
 
   return (
     <div className="p-6 space-y-6">
