@@ -24,20 +24,20 @@
     },
     "infoCards": {
       "consultants": {
-        "value": "15+",
-        "label": "Экспертов-консультантов"
+        "value": "3",
+        "label": "Эксперта-консультанта"
       },
       "referralRate": {
-        "value": "80%",
-        "label": "Клиентов по рекомендациям"
-      },
-      "portfolio": {
-        "value": "1 200+",
+        "value": "200+",
         "label": "Портфель объектов"
       },
+      "portfolio": {
+        "value": "30+",
+        "label": "Проектов и участков"
+      },
       "regions": {
-        "value": "5 регионов",
-        "label": "По всему острову"
+        "value": "5",
+        "label": "Регионов"
       }
     },
     "mission": {

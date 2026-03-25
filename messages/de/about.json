@@ -24,20 +24,20 @@
     },
     "infoCards": {
       "consultants": {
-        "value": "15+",
+        "value": "3",
         "label": "Fachberater"
       },
       "referralRate": {
-        "value": "80%",
-        "label": "Empfehlungsrate"
-      },
-      "portfolio": {
-        "value": "1.200+",
+        "value": "200+",
         "label": "Immobilienportfolio"
       },
+      "portfolio": {
+        "value": "30+",
+        "label": "Projekte & Grundstücke"
+      },
       "regions": {
-        "value": "5 Regionen",
-        "label": "Inselweit"
+        "value": "5",
+        "label": "Regionen"
       }
     },
     "mission": {

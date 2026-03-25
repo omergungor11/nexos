@@ -24,20 +24,20 @@
     },
     "infoCards": {
       "consultants": {
-        "value": "۱۵+",
+        "value": "۳",
         "label": "مشاوران متخصص"
       },
       "referralRate": {
-        "value": "۸۰٪",
-        "label": "نرخ معرفی"
-      },
-      "portfolio": {
-        "value": "۱,۲۰۰+",
+        "value": "۲۰۰+",
         "label": "مجموعه املاک"
       },
+      "portfolio": {
+        "value": "۳۰+",
+        "label": "پروژه و زمین"
+      },
       "regions": {
-        "value": "۵ منطقه",
-        "label": "سراسر جزیره"
+        "value": "۵",
+        "label": "منطقه"
       }
     },
     "mission": {
