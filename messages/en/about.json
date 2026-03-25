@@ -78,26 +78,22 @@
     },
     "timeline": {
       "title": "Our Story",
-      "description": "The growth journey of Nexos Real Estate from 2020 to today.",
+      "description": "The growth journey of Nexos Investment from 2020 to today.",
       "2020": {
         "title": "Foundation",
-        "description": "Nexos Real Estate was founded with a small office in Iskele. In our first year, we helped more than 50 families find their dream home."
-      },
-      "2018": {
-        "title": "Growth",
-        "description": "We expanded our team and began serving in Kyrenia and Nicosia as well. Our portfolio grew to over 300 properties."
-      },
-      "2020": {
-        "title": "Digital Transformation",
-        "description": "During the pandemic, we strengthened our digital infrastructure. We introduced virtual tours, online consultancy and digital contract processes."
+        "description": "Nexos Investment was founded in Famagusta with a mission to provide reliable real estate consultancy in North Cyprus."
       },
       "2022": {
-        "title": "International Expansion",
-        "description": "We established our multilingual service infrastructure for British, German and Russian clients. We started participating in international real estate exhibitions."
+        "title": "Growth",
+        "description": "We expanded our team and began serving in Kyrenia and Nicosia. Our portfolio reached 200+ properties."
       },
       "2024": {
-        "title": "Market Leadership",
-        "description": "We became the most preferred property consultancy in the Iskele region. Over 1,000 happy clients and a team of 15+ specialists."
+        "title": "International Expansion",
+        "description": "We established our multilingual service infrastructure for British, German and Russian clients and launched our digital platform."
+      },
+      "2026": {
+        "title": "Digital Transformation",
+        "description": "With AI-powered social media tools, automated presentation system and advanced admin panel, we became a pioneer in the sector."
       }
     },
     "services": {

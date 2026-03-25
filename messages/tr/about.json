@@ -24,15 +24,15 @@
     },
     "infoCards": {
       "consultants": {
-        "value": "15+",
-        "label": "Uzman Danışman"
+        "value": "6+",
+        "label": "Yıllık Deneyim"
       },
       "referralRate": {
         "value": "%80",
         "label": "Referans Oranı"
       },
       "portfolio": {
-        "value": "1.200+",
+        "value": "200+",
         "label": "İlan Portföyü"
       },
       "regions": {

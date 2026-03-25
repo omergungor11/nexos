@@ -78,26 +78,22 @@
     },
     "timeline": {
       "title": "Unsere Geschichte",
-      "description": "Der Wachstumsweg von Nexos Immobilien von 2020 bis heute.",
+      "description": "Der Wachstumsweg von Nexos Investment von 2020 bis heute.",
       "2020": {
         "title": "Gründung",
-        "description": "Nexos Immobilien wurde mit einem kleinen Büro in Iskele gegründet. In unserem ersten Jahr halfen wir mehr als 50 Familien, ihr Traumhaus zu finden."
-      },
-      "2018": {
-        "title": "Wachstum",
-        "description": "Wir erweiterten unser Team und begannen auch in Kyrenia und Nikosia tätig zu werden. Unser Portfolio wuchs auf über 300 Immobilien."
-      },
-      "2020": {
-        "title": "Digitale Transformation",
-        "description": "Während der Pandemie stärkten wir unsere digitale Infrastruktur. Wir führten virtuelle Rundgänge, Online-Beratung und digitale Vertragsprozesse ein."
+        "description": "Nexos Investment wurde in Famagusta gegründet, mit dem Ziel, zuverlässige Immobilienberatung in Nordzypern anzubieten."
       },
       "2022": {
-        "title": "Internationale Expansion",
-        "description": "Wir bauten unsere mehrsprachige Service-Infrastruktur für britische, deutsche und russische Kunden auf. Wir begannen an internationalen Immobilienmessen teilzunehmen."
+        "title": "Wachstum",
+        "description": "Wir erweiterten unser Team und begannen in Kyrenia und Nikosia tätig zu werden. Unser Portfolio erreichte 200+ Immobilien."
       },
       "2024": {
-        "title": "Marktführerschaft",
-        "description": "Wir wurden zur bevorzugten Immobilienberatung in der Region Iskele. Über 1.000 zufriedene Kunden und ein Team von mehr als 15 Fachberatern."
+        "title": "Internationale Expansion",
+        "description": "Wir bauten unsere mehrsprachige Infrastruktur für britische, deutsche und russische Kunden auf und starteten unsere digitale Plattform."
+      },
+      "2026": {
+        "title": "Digitale Transformation",
+        "description": "Mit KI-gestützten Social-Media-Tools, automatisiertem Präsentationssystem und erweitertem Admin-Panel wurden wir Vorreiter der Branche."
       }
     },
     "services": {
