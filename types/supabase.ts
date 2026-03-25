@@ -281,6 +281,7 @@ export type Database = {
           zoning_status: string | null;
           min_rental_period: string | null;
           rental_payment_interval: string | null;
+          internal_notes: string | null;
           lat: number | null;
           lng: number | null;
           address: string | null;
@@ -334,6 +335,7 @@ export type Database = {
           zoning_status?: string | null;
           min_rental_period?: string | null;
           rental_payment_interval?: string | null;
+          internal_notes?: string | null;
           lat?: number | null;
           lng?: number | null;
           address?: string | null;
@@ -387,6 +389,7 @@ export type Database = {
           zoning_status?: string | null;
           min_rental_period?: string | null;
           rental_payment_interval?: string | null;
+          internal_notes?: string | null;
           lat?: number | null;
           lng?: number | null;
           address?: string | null;

@@ -214,6 +214,8 @@ interface FormState {
   // Rental-specific
   min_rental_period: string;
   rental_payment_interval: RentalPaymentInterval | "";
+  // Internal
+  internal_notes: string;
 }
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
@@ -542,6 +544,7 @@ function buildInitialState(
     // Rental-specific
     min_rental_period: ((initialData as Record<string, unknown>)?.min_rental_period as string) ?? "",
     rental_payment_interval: ((initialData as Record<string, unknown>)?.rental_payment_interval as RentalPaymentInterval) ?? "",
+    internal_notes: ((initialData as Record<string, unknown>)?.internal_notes as string) ?? "",
   };
 }
 
@@ -854,6 +857,7 @@ export function PropertyForm({
       // Rental-specific
       min_rental_period: form.min_rental_period.trim() || null,
       rental_payment_interval: form.rental_payment_interval || null,
+      internal_notes: form.internal_notes.trim() || null,
     };
   }
 
@@ -1804,6 +1808,25 @@ export function PropertyForm({
               maxLength={300}
             />
           </Field>
+
+          <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 dark:border-amber-900/50 dark:bg-amber-950/20">
+            <Field
+              label="Dahili Notlar"
+              htmlFor="internal_notes"
+              icon={FileText}
+              hint="Bu notlar sadece admin panelinde görünür, müşteriler göremez."
+            >
+              <Textarea
+                id="internal_notes"
+                name="internal_notes"
+                value={form.internal_notes}
+                onChange={handleChange}
+                placeholder="Mülk sahibi ile görüşme notları, özel durumlar, fiyat pazarlık marjı vb."
+                rows={4}
+                className="bg-white dark:bg-background"
+              />
+            </Field>
+          </div>
 
           <div className="flex items-center gap-3 rounded-lg border p-4">
             <Switch

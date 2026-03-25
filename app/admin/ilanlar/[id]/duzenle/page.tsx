@@ -40,7 +40,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
           city_id, district_id, neighborhood_id,
           is_featured, seo_title, seo_description, agent_id,
           video_url, virtual_tour_url,
-          pool_type, parking_type, land_area_sqm, title_deed_type,
+          pool_type, parking_type, land_area_sqm, title_deed_type, internal_notes,
           images:property_images(id, url, alt_text, sort_order, is_cover, created_at, property_id)
         `
         )
@@ -144,6 +144,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
     parking_type: property.parking_type ?? null,
     land_area_sqm: property.land_area_sqm ?? null,
     title_deed_type: property.title_deed_type ?? null,
+    internal_notes: property.internal_notes ?? null,
     feature_ids: featureIds,
   };
 

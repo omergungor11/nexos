@@ -58,6 +58,8 @@ export type PropertyCreateInput = {
   // Rental-specific
   min_rental_period?: string | null;
   rental_payment_interval?: string | null;
+  // Internal
+  internal_notes?: string | null;
 };
 
 export type PropertyUpdateInput = Partial<PropertyCreateInput>;
@@ -260,6 +262,7 @@ export async function createProperty(
     zoning_status: data.zoning_status ?? null,
     min_rental_period: data.min_rental_period ?? null,
     rental_payment_interval: data.rental_payment_interval ?? null,
+    internal_notes: data.internal_notes ?? null,
     parking_type: data.parking_type ?? "none",
     lat: data.lat ?? null,
     lng: data.lng ?? null,
@@ -351,6 +354,7 @@ export async function updateProperty(
   if (data.zoning_status !== undefined) payload.zoning_status = data.zoning_status;
   if (data.min_rental_period !== undefined) payload.min_rental_period = data.min_rental_period;
   if (data.rental_payment_interval !== undefined) payload.rental_payment_interval = data.rental_payment_interval;
+  if (data.internal_notes !== undefined) payload.internal_notes = data.internal_notes;
   if (data.parking_type !== undefined) payload.parking_type = data.parking_type;
   if (data.lat !== undefined) payload.lat = data.lat;
   if (data.lng !== undefined) payload.lng = data.lng;
