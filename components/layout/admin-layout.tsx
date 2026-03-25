@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Building2,
+  ClipboardList,
   Users,
   BookOpen,
   MessageSquare,
@@ -69,6 +70,12 @@ const NAV_ITEMS = [
     href: "/admin/talepler",
     label: "Talepler",
     icon: MessageSquare,
+    exact: false,
+  },
+  {
+    href: "/admin/emlak-talepleri",
+    label: "Emlak Talepleri",
+    icon: ClipboardList,
     exact: false,
   },
   {

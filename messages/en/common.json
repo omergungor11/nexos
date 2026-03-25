@@ -89,6 +89,10 @@
     "title": "Recently Added",
     "description": "Latest real estate listings"
   },
+  "deals": {
+    "title": "Best Deals",
+    "description": "Don't miss out on the most affordable property opportunities."
+  },
   "whyUs": {
     "label": "Why Choose Us?",
     "title": "For Your Real Estate Investment in Cyprus",

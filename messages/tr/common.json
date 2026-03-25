@@ -89,6 +89,10 @@
     "title": "Son Eklenen İlanlar",
     "description": "En güncel gayrimenkul ilanları"
   },
+  "deals": {
+    "title": "Fırsat İlanlar",
+    "description": "En uygun fiyatlı emlak fırsatlarını kaçırmayın."
+  },
   "whyUs": {
     "label": "Neden Bizi Seçmelisiniz?",
     "title": "Kıbrıs'ta Gayrimenkul Yatırımınız İçin",

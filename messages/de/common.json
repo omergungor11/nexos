@@ -89,6 +89,10 @@
     "title": "Kürzlich hinzugefügt",
     "description": "Neueste Immobilieninserate"
   },
+  "deals": {
+    "title": "Top-Angebote",
+    "description": "Verpassen Sie nicht die günstigsten Immobilienangebote."
+  },
   "whyUs": {
     "label": "Warum uns wählen?",
     "title": "Für Ihre Immobilieninvestition auf Zypern",

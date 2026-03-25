@@ -235,3 +235,15 @@ export async function getPropertiesByAgent(agentId: string, limit = 20) {
     .order("created_at", { ascending: false })
     .limit(limit);
 }
+
+export async function getDealProperties(limit = 4) {
+  const supabase = await createClient();
+  return supabase
+    .from("properties")
+    .select(PROPERTY_LIST_SELECT)
+    .eq("is_active", true)
+    .eq("transaction_type", "sale")
+    .not("area_sqm", "is", null)
+    .order("price", { ascending: true })
+    .limit(limit);
+}

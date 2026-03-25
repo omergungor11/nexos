@@ -3,6 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import {
   ArrowRight,
   Building2,
+  Flame,
   Home,
   MapPin,
   TrendingUp,
@@ -24,7 +25,7 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { PropertyCard } from "@/components/property/property-card";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Link } from "@/i18n/navigation";
-import { getFeaturedProperties, getRecentProperties } from "@/lib/queries/properties";
+import { getFeaturedProperties, getRecentProperties, getDealProperties } from "@/lib/queries/properties";
 import { getCities } from "@/lib/queries/locations";
 import { PROPERTY_TYPE_TKEYS } from "@/lib/constants";
 import type { PropertyListItem } from "@/types";
@@ -88,11 +89,13 @@ export default async function HomePage({ params }: Props) {
 
   const t = await getTranslations();
 
-  const [{ data: featured }, { data: recent }, cities] = await Promise.all([
-    getFeaturedProperties(6),
-    getRecentProperties(8),
-    getCities(),
-  ]);
+  const [{ data: featured }, { data: recent }, { data: deals }, cities] =
+    await Promise.all([
+      getFeaturedProperties(6),
+      getRecentProperties(8),
+      getDealProperties(4),
+      getCities(),
+    ]);
 
   const serviceItems = [
     { icon: HandCoins, tTitle: "services.forSale", tDesc: "services.forSaleDesc" },
@@ -173,6 +176,32 @@ export default async function HomePage({ params }: Props) {
             {featured.map((property) => (
               <PropertyCard key={property.id} property={mapListItem(property)} />
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Deal Properties */}
+      {deals && deals.length > 0 && (
+        <section className="border-t bg-muted/20">
+          <div className="container mx-auto px-4 py-16">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <div className="mb-2 flex items-center gap-2">
+                  <Flame className="h-6 w-6 text-orange-500" />
+                  <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                    {t("deals.title")}
+                  </h2>
+                </div>
+                <p className="mt-1 text-muted-foreground">
+                  {t("deals.description")}
+                </p>
+              </div>
+            </div>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {deals.map((property) => (
+                <PropertyCard key={property.id} property={mapListItem(property)} />
+              ))}
+            </div>
           </div>
         </section>
       )}
