@@ -146,7 +146,7 @@ export default async function HomePage({ params }: Props) {
             { icon: Home, tLabel: "stats.activeListings", value: "1.200+" },
             { icon: Building2, tLabel: "stats.completedSales", value: "850+" },
             { icon: MapPin, tLabel: "stats.cities", value: "15+" },
-            { icon: TrendingUp, tLabel: "stats.yearsExperience", value: "10+" },
+            { icon: TrendingUp, tLabel: "stats.yearsExperience", value: "6+" },
           ].map((stat) => (
             <div key={stat.tLabel} className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">

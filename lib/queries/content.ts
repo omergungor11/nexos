@@ -60,6 +60,7 @@ export async function getAgents() {
     .from("agents")
     .select("*")
     .eq("is_active", true)
+    .order("sort_order", { ascending: true })
     .order("name");
 }
 

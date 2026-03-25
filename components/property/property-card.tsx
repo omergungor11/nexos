@@ -84,14 +84,17 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
               {t("property.featured")}
             </Badge>
           )}
+          {/* Price badge on image */}
+          <div className="absolute bottom-2 left-2 rounded-lg bg-black/70 px-3 py-1.5 backdrop-blur-sm">
+            <p className="text-base font-bold text-white">
+              {formatPrice(property.price, property.currency)}
+            </p>
+          </div>
         </div>
 
         {/* Content */}
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <p className="text-lg font-bold text-primary">
-              {formatPrice(property.price, property.currency)}
-            </p>
             <span className="font-mono text-[10px] text-muted-foreground">
               #{listingNumber}
             </span>
