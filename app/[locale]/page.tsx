@@ -30,7 +30,8 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { PropertyCard } from "@/components/property/property-card";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Link } from "@/i18n/navigation";
-import { getFeaturedProperties, getRecentProperties, getDealProperties } from "@/lib/queries/properties";
+import { getFeaturedProperties, getRecentProperties, getDealProperties, getPropertyTypeCounts, getPropertyCityCounts } from "@/lib/queries/properties";
+import { CityShowcase } from "@/components/shared/city-showcase";
 import { getCities } from "@/lib/queries/locations";
 import { PROPERTY_TYPE_TKEYS } from "@/lib/constants";
 import type { PropertyListItem } from "@/types";
@@ -94,13 +95,78 @@ export default async function HomePage({ params }: Props) {
 
   const t = await getTranslations();
 
-  const [{ data: featured }, { data: recent }, { data: deals }, cities] =
-    await Promise.all([
-      getFeaturedProperties(6),
-      getRecentProperties(8),
-      getDealProperties(4),
-      getCities(),
-    ]);
+  const [
+    { data: featured },
+    { data: recent },
+    { data: deals },
+    cities,
+    { data: rawTypeCounts },
+    { data: rawCityCounts },
+  ] = await Promise.all([
+    getFeaturedProperties(6),
+    getRecentProperties(8),
+    getDealProperties(4),
+    getCities(),
+    getPropertyTypeCounts(),
+    getPropertyCityCounts(),
+  ]);
+
+  const TYPE_LABELS: Record<string, string> = {
+    apartment: "Daire",
+    villa: "Villa",
+    detached: "Müstakil Ev",
+    penthouse: "Penthouse",
+    twin_villa: "İkiz Villa",
+    bungalow: "Bungalow",
+    residential_land: "Arsa",
+    shop: "Dükkan",
+    office: "Ofis",
+    field: "Tarla",
+    hotel: "Otel",
+  };
+
+  const CITY_IMAGES: Record<string, string> = {
+    gazimagusa:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=400&fit=crop",
+    iskele:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=400&fit=crop",
+    lefkosa:
+      "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=400&h=400&fit=crop",
+    girne:
+      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=400&fit=crop",
+    guzelyurt:
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=400&fit=crop",
+    lefke:
+      "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop",
+  };
+
+  // Aggregate type counts from raw rows
+  const typeCountMap: Record<string, number> = {};
+  for (const row of rawTypeCounts ?? []) {
+    const key = row.type as string;
+    typeCountMap[key] = (typeCountMap[key] ?? 0) + 1;
+  }
+  const typeCounts = Object.entries(typeCountMap)
+    .filter(([key]) => key in TYPE_LABELS)
+    .map(([type, count]) => ({ type, label: TYPE_LABELS[type] ?? type, count }))
+    .sort((a, b) => b.count - a.count);
+
+  // Aggregate city counts from raw rows
+  type CityRow = { city_id: number; city: { name: string; slug: string } | null };
+  const cityCountMap: Record<string, { name: string; slug: string; count: number }> = {};
+  for (const row of (rawCityCounts ?? []) as unknown as CityRow[]) {
+    if (!row.city) continue;
+    const slug = row.city.slug;
+    if (!cityCountMap[slug]) {
+      cityCountMap[slug] = { name: row.city.name, slug, count: 0 };
+    }
+    cityCountMap[slug].count += 1;
+  }
+  const showcaseCities = Object.values(cityCountMap)
+    .filter((c) => c.slug in CITY_IMAGES)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6)
+    .map((c) => ({ ...c, image: CITY_IMAGES[c.slug] ?? "" }));
 
   const serviceItems = [
     { icon: HandCoins, tTitle: "services.forSale", tDesc: "services.forSaleDesc" },
@@ -168,6 +234,9 @@ export default async function HomePage({ params }: Props) {
           ))}
         </div>
       </section>
+
+      {/* City & Type Showcase */}
+      <CityShowcase typeCounts={typeCounts} cities={showcaseCities} />
 
       {/* Deal Properties (Fırsat İlanlar — before featured) */}
       {deals && deals.length > 0 && (

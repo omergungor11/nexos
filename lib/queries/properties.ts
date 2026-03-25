@@ -247,3 +247,16 @@ export async function getDealProperties(limit = 4) {
     .order("price", { ascending: true })
     .limit(limit);
 }
+
+export async function getPropertyTypeCounts() {
+  const supabase = await createClient();
+  return supabase.from("properties").select("type").eq("is_active", true);
+}
+
+export async function getPropertyCityCounts() {
+  const supabase = await createClient();
+  return supabase
+    .from("properties")
+    .select("city_id, city:cities(name, slug)")
+    .eq("is_active", true);
+}
