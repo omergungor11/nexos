@@ -107,20 +107,20 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="tel:+905428806456"
+                  href="tel:+905488604030"
                   className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Phone className="h-4 w-4 shrink-0" />
-                  +90 542 880 64 56
+                  +90 548 860 40 30
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:nexosinvestmentcy@gmail.com"
+                  href="mailto:info@nexosinvestment.com"
                   className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Mail className="h-4 w-4 shrink-0" />
-                  nexosinvestmentcy@gmail.com
+                  info@nexosinvestment.com
                 </a>
               </li>
             </ul>

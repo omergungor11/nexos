@@ -66,10 +66,10 @@ export default async function EmlakTalebiPage({
               <div>
                 <p className="font-medium">Telefon</p>
                 <a
-                  href="tel:+905428806456"
+                  href="tel:+905488604030"
                   className="mt-1 text-sm text-muted-foreground hover:text-foreground"
                 >
-                  +90 542 880 64 56
+                  +90 548 860 40 30
                 </a>
               </div>
             </CardContent>
@@ -83,10 +83,10 @@ export default async function EmlakTalebiPage({
               <div>
                 <p className="font-medium">E-posta</p>
                 <a
-                  href="mailto:nexosinvestmentcy@gmail.com"
+                  href="mailto:info@nexosinvestment.com"
                   className="mt-1 text-sm text-muted-foreground hover:text-foreground"
                 >
-                  nexosinvestmentcy@gmail.com
+                  info@nexosinvestment.com
                 </a>
               </div>
             </CardContent>

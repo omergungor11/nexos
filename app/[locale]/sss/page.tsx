@@ -221,7 +221,7 @@ export default async function SSSPage({ params }: Props) {
               {t("cta.contactUs")}
             </Link>
             <a
-              href="https://wa.me/905428806456"
+              href="https://wa.me/905488604030"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex h-10 items-center rounded-lg border px-6 text-sm font-medium transition-colors hover:bg-muted"

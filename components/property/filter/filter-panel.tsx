@@ -272,7 +272,9 @@ export function FilterPanel({ cities = [] }: FilterPanelProps) {
               onValueChange={(v) => updateParam("tip", v ?? "")}
             >
               <SelectTrigger className="h-9">
-                <SelectValue placeholder={t("filter.all")} />
+                <SelectValue placeholder={t("filter.all")}>
+                  {currentTip && PROPERTY_TYPE_TKEYS[currentTip] ? t(PROPERTY_TYPE_TKEYS[currentTip]) : undefined}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {CATEGORY_SUBTYPES[selectedCategory].map((type) => (
@@ -457,28 +459,6 @@ export function FilterPanel({ cities = [] }: FilterPanelProps) {
           </div>
 
           <Separator />
-
-          {/* Heating */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium">
-              {t("filter.heating")}
-            </label>
-            <Select
-              value={searchParams.get("isitma") ?? ""}
-              onValueChange={(v) => updateParam("isitma", v ?? "")}
-            >
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder={t("filter.all")} />
-              </SelectTrigger>
-              <SelectContent>
-                {HEATING_TYPES.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {t(HEATING_TYPE_TKEYS[type])}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
 
           <Separator />
 

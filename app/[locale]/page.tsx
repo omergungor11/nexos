@@ -70,8 +70,8 @@ const localBusinessJsonLd: Record<string, unknown> = {
     postalCode: "5876",
     addressCountry: "CY",
   },
-  telephone: "+905428806456",
-  email: "nexosinvestmentcy@gmail.com",
+  telephone: "+905488604030",
+  email: "info@nexosinvestment.com",
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
@@ -146,9 +146,9 @@ export default async function HomePage({ params }: Props) {
       <section className="border-b bg-muted/30">
         <div className="container mx-auto flex flex-wrap items-center justify-center gap-8 px-4 py-6 sm:gap-16">
           {[
-            { icon: Home, tLabel: "stats.activeListings", value: "1.200+" },
+            { icon: Home, tLabel: "stats.activeListings", value: "200+" },
             { icon: Building2, tLabel: "stats.completedSales", value: "850+" },
-            { icon: MapPin, tLabel: "stats.cities", value: "15+" },
+            { icon: MapPin, tLabel: "stats.cities", value: "5+" },
             { icon: TrendingUp, tLabel: "stats.yearsExperience", value: "6+" },
           ].map((stat) => (
             <div key={stat.tLabel} className="flex items-center gap-3">
@@ -164,23 +164,7 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Featured Properties */}
-      {featured && featured.length > 0 && (
-        <section className="container mx-auto px-4 py-16">
-          <SectionHeader
-            title={t("featured.title")}
-            description={t("featured.description")}
-            href="/emlak"
-          />
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((property) => (
-              <PropertyCard key={property.id} property={mapListItem(property)} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Deal Properties */}
+      {/* Deal Properties (Fırsat İlanlar — before featured) */}
       {deals && deals.length > 0 && (
         <section className="border-t bg-muted/20">
           <div className="container mx-auto px-4 py-16">
@@ -202,6 +186,22 @@ export default async function HomePage({ params }: Props) {
                 <PropertyCard key={property.id} property={mapListItem(property)} />
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Featured Properties (Vitrin) */}
+      {featured && featured.length > 0 && (
+        <section className="container mx-auto px-4 py-16">
+          <SectionHeader
+            title={t("featured.title")}
+            description={t("featured.description")}
+            href="/emlak"
+          />
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.map((property) => (
+              <PropertyCard key={property.id} property={mapListItem(property)} />
+            ))}
           </div>
         </section>
       )}

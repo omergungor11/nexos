@@ -381,7 +381,7 @@ function drawFooter(ctx: CanvasRenderingContext2D, T: DesignTemplate) {
   const brandY = H - 60;
   ctx.fillStyle = T.accent; ctx.fillRect(PAD, brandY - 40, 50, 4);
   ctx.fillStyle = T.textMuted; ctx.font = `600 24px ${FONT}`; ctx.textBaseline = "bottom";
-  ctx.fillText("+90 542 880 64 56", PAD, brandY);
+  ctx.fillText("+90 548 860 40 30", PAD, brandY);
   ctx.textAlign = "right"; ctx.fillText("nexosinvestment.com", W - PAD, brandY);
   ctx.textAlign = "start";
 }
@@ -899,7 +899,7 @@ async function renderRibbon(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   }
 
   ctx.fillStyle = T.textMuted; ctx.font = `600 22px ${FONT}`; ctx.textBaseline = "bottom";
-  ctx.fillText("+90 542 880 64 56", PAD, footerY + band4H - 16);
+  ctx.fillText("+90 548 860 40 30", PAD, footerY + band4H - 16);
   ctx.textAlign = "right"; ctx.fillText("nexosinvestment.com", W - PAD, footerY + band4H - 16);
   ctx.textAlign = "start";
 }
@@ -1020,7 +1020,7 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   ctx.fillStyle = T.accent; ctx.fillRect(0, footerY - 6, W, 3);
   ctx.fillStyle = T.cardBg; ctx.fillRect(0, footerY - 3, W, 83);
   ctx.fillStyle = T.textPrimary; ctx.font = `600 22px ${FONT}`; ctx.textBaseline = "middle";
-  ctx.fillText("+90 542 880 64 56", PAD + 10, footerY + 32);
+  ctx.fillText("+90 548 860 40 30", PAD + 10, footerY + 32);
   ctx.textAlign = "right"; ctx.fillText("nexosinvestment.com", W - PAD - 10, footerY + 32);
   ctx.textAlign = "start";
 }
@@ -1094,7 +1094,7 @@ async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   ctx.fillStyle = T.accent; ctx.fillRect(0, footerY, W, 3);
   ctx.fillStyle = T.cardBg; ctx.fillRect(0, footerY + 3, W, 87);
   ctx.fillStyle = T.textPrimary; ctx.font = `600 22px ${FONT}`; ctx.textBaseline = "middle";
-  ctx.fillText("+90 542 880 64 56", PAD + 10, footerY + 48);
+  ctx.fillText("+90 548 860 40 30", PAD + 10, footerY + 48);
   ctx.textAlign = "right"; ctx.fillText("nexosinvestment.com", W - PAD - 10, footerY + 48);
   ctx.textAlign = "start";
 }
@@ -1185,7 +1185,7 @@ async function renderCatalog(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
 
   // Contact info
   ctx.fillStyle = T.textMuted; ctx.font = `500 22px ${FONT}`; ctx.textBaseline = "top";
-  ctx.fillText("+90 542 880 64 56", PAD, ly);
+  ctx.fillText("+90 548 860 40 30", PAD, ly);
   ctx.fillText("nexosinvestment.com", PAD, ly + 32);
 
   // Right column: main image (big) + 2 smaller below

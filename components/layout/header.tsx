@@ -65,11 +65,11 @@ export function Header() {
           <ThemeSwitcher />
           <LanguageSwitcher />
           <a
-            href="tel:+905428806456"
+            href="tel:+905488604030"
             className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
           >
             <Phone className="h-4 w-4" />
-            +90 542 880 64 56
+            +90 548 860 40 30
           </a>
           <Link href="/iletisim" className={buttonVariants({ size: "sm" })}>
             {t("nav.contactUs")}
@@ -122,11 +122,11 @@ export function Header() {
                   )}
                   <HrSeparator className="my-2" />
                   <a
-                    href="tel:+905428806456"
+                    href="tel:+905488604030"
                     className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent"
                   >
                     <Phone className="h-4 w-4" />
-                    +90 542 880 64 56
+                    +90 548 860 40 30
                   </a>
                   <Link
                     href="/iletisim"

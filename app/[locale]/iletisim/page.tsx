@@ -30,8 +30,8 @@ const contactJsonLd: Record<string, unknown> = {
     postalCode: "5876",
     addressCountry: "CY",
   },
-  telephone: "+905428806456",
-  email: "nexosinvestmentcy@gmail.com",
+  telephone: "+905488604030",
+  email: "info@nexosinvestment.com",
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
@@ -75,10 +75,10 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
               <div>
                 <p className="text-sm font-medium">{t("phone")}</p>
                 <a
-                  href="tel:+905428806456"
+                  href="tel:+905488604030"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  +90 542 880 64 56
+                  +90 548 860 40 30
                 </a>
               </div>
             </CardContent>
@@ -92,10 +92,10 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
               <div>
                 <p className="text-sm font-medium">{t("email")}</p>
                 <a
-                  href="mailto:nexosinvestmentcy@gmail.com"
+                  href="mailto:info@nexosinvestment.com"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  nexosinvestmentcy@gmail.com
+                  info@nexosinvestment.com
                 </a>
               </div>
             </CardContent>
@@ -108,9 +108,16 @@ export default async function IletisimPage({ params }: { params: Promise<{ local
               </div>
               <div>
                 <p className="text-sm font-medium">{t("address")}</p>
-                <p className="text-sm text-muted-foreground">
-                  {t("addressValue")}
-                </p>
+                <a
+                  href="https://maps.app.goo.gl/jUajHgW2DWPzDKfJA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Yeniboğaziçi, Gazimağusa-Karpaz Anayolu,
+                  Piri Reis Sok. No. 1, Gazimağusa, KKTC
+                </a>
+                <p className="mt-0.5 text-xs text-muted-foreground/70">Salamis Otel&apos;e 500m mesafede</p>
               </div>
             </CardContent>
           </Card>

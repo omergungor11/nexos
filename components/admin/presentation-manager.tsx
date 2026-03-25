@@ -400,7 +400,7 @@ function SlideContact() {
         <div className="flex items-center gap-3 justify-center">
           <Phone className="size-4" style={{ color: "#ffca3e" }} />
           <span className="text-white font-semibold text-lg">
-            +90 542 880 64 56
+            +90 548 860 40 30
           </span>
         </div>
         <div className="flex items-center gap-3 justify-center">
@@ -577,7 +577,7 @@ function buildPrintHTML(property: PropertyForPresentation): string {
       </div>
       <div style="width:50px;height:2px;background:${accentColor};border-radius:2px;"></div>
       <div style="display:flex;flex-direction:column;gap:10px;">
-        <p style="color:white;font-size:16px;font-weight:700;margin:0;">📞 +90 542 880 64 56</p>
+        <p style="color:white;font-size:16px;font-weight:700;margin:0;">📞 +90 548 860 40 30</p>
         <p style="color:rgba(255,255,255,0.7);font-size:13px;margin:0;">🌐 nexosinvestment.com</p>
       </div>
       <div style="margin-top:6px;background:${accentColor};color:#0f172a;font-size:13px;font-weight:700;padding:10px 28px;border-radius:10px;">
