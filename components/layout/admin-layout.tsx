@@ -21,6 +21,7 @@ import {
   ImageIcon,
   Tag,
   Share2,
+  Monitor,
   PanelLeftClose,
   PanelLeftOpen,
 } from "lucide-react";
@@ -80,6 +81,12 @@ const NAV_ITEMS = [
     href: "/admin/sosyal-medya",
     label: "Sosyal Medya",
     icon: Share2,
+    exact: false,
+  },
+  {
+    href: "/admin/sunumlar",
+    label: "Sunumlar",
+    icon: Monitor,
     exact: false,
   },
   {
