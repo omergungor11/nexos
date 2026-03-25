@@ -18,7 +18,7 @@
     },
     "whoWeAre": {
       "title": "Biz Kimiz?",
-      "paragraph1": "Nexos Emlak, Kuzey Kıbrıs'ın önde gelen gayrimenkul danışmanlık şirketidir. 2016 yılında İskele'de kurulan firmamız, bugün İskele, Girne, Lefkoşa, Gazimağusa ve Güzelyurt'u kapsayan geniş bir hizmet ağına sahiptir.",
+      "paragraph1": "Nexos Investment, Kuzey Kıbrıs'ın önde gelen gayrimenkul danışmanlık şirketidir. 2020 yılında kurulan firmamız, bugün Gazimağusa, İskele, Lefkoşa, Girne ve Güzelyurt'u kapsayan geniş bir hizmet ağına sahiptir.",
       "paragraph2": "Satılık ve kiralık mülk danışmanlığından yatırım portföyü yönetimine, tapu işlemlerinden kiralama yönetimine kadar gayrimenkulün her alanında uçtan uca hizmet sunuyoruz. Müşterilerimizin %80'inin referans yoluyla bize ulaşması, güven ve kalite odaklı yaklaşımımızın en somut kanıtıdır.",
       "paragraph3": "Türk, İngiliz, Alman, Rus ve birçok farklı milletten müşterilerimize Türkçe ve İngilizce dillerinde profesyonel hizmet veriyoruz. Her müşterimiz için kişiye özel çözümler üretir, alım sürecinin her aşamasında şeffaf ve dürüst iletişim kurarız."
     },
@@ -78,26 +78,22 @@
     },
     "timeline": {
       "title": "Hikayemiz",
-      "description": "2016'dan bugüne Nexos Emlak'ın büyüme yolculuğu.",
-      "2016": {
-        "title": "Kuruluş",
-        "description": "Nexos Emlak, İskele'de küçük bir ofisle kuruldu. İlk yılda 50'den fazla aileye hayallerindeki evi bulmalarında yardımcı olduk."
-      },
-      "2018": {
-        "title": "Büyüme",
-        "description": "Ekibimizi genişlettik, Girne ve Lefkoşa'da da hizmet vermeye başladık. Portföyümüz 300+ mülke ulaştı."
-      },
+      "description": "2020'den bugüne Nexos Investment'ın büyüme yolculuğu.",
       "2020": {
-        "title": "Dijital Dönüşüm",
-        "description": "Pandemi sürecinde dijital altyapımızı güçlendirdik. Sanal turlar, online danışmanlık ve dijital sözleşme süreçlerini hayata geçirdik."
+        "title": "Kuruluş",
+        "description": "Nexos Investment, Gazimağusa'da kuruldu. Kuzey Kıbrıs'ta güvenilir gayrimenkul danışmanlığı hedefiyle yola çıktık."
       },
       "2022": {
-        "title": "Uluslararası Açılım",
-        "description": "İngiliz, Alman ve Rus müşterilere yönelik çok dilli hizmet altyapımızı kurduk. Uluslararası emlak fuarlarına katılmaya başladık."
+        "title": "Büyüme",
+        "description": "Ekibimizi genişlettik, Girne ve Lefkoşa'da da hizmet vermeye başladık. Portföyümüz 200+ mülke ulaştı."
       },
       "2024": {
-        "title": "Liderlik",
-        "description": "İskele bölgesinde en çok tercih edilen emlak danışmanlık şirketi konumuna ulaştık. 1.000+ mutlu müşteri ve 15+ kişilik uzman kadro."
+        "title": "Uluslararası Açılım",
+        "description": "İngiliz, Alman ve Rus müşterilere yönelik çok dilli hizmet altyapımızı kurduk. Dijital platformumuzu hayata geçirdik."
+      },
+      "2026": {
+        "title": "Dijital Dönüşüm",
+        "description": "Yapay zeka destekli sosyal medya araçları, otomatik sunum sistemi ve gelişmiş admin paneli ile sektörde öncü konuma ulaştık."
       }
     },
     "services": {

@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, type LucideIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 interface SectionHeaderProps {
@@ -6,6 +6,8 @@ interface SectionHeaderProps {
   description?: string;
   href?: string;
   linkLabel?: string;
+  icon?: LucideIcon;
+  iconColor?: string;
 }
 
 export function SectionHeader({
@@ -13,13 +15,18 @@ export function SectionHeader({
   description,
   href,
   linkLabel = "Tümünü Gör",
+  icon: Icon,
+  iconColor = "text-primary",
 }: SectionHeaderProps) {
   return (
     <div className="flex items-end justify-between gap-4">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          {title}
-        </h2>
+        <div className="flex items-center gap-2.5">
+          {Icon && <Icon className={`h-7 w-7 ${iconColor}`} />}
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            {title}
+          </h2>
+        </div>
         {description && (
           <p className="mt-1 text-muted-foreground">{description}</p>
         )}

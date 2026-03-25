@@ -18,6 +18,11 @@ import {
   Clock,
   Users,
   HeartHandshake,
+  Star,
+  Briefcase,
+  LayoutGrid,
+  Sparkles,
+  Play,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroSearch } from "@/components/shared/hero-search";
@@ -197,6 +202,8 @@ export default async function HomePage({ params }: Props) {
             title={t("featured.title")}
             description={t("featured.description")}
             href="/emlak"
+            icon={Star}
+            iconColor="text-amber-500"
           />
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((property) => (
@@ -213,6 +220,7 @@ export default async function HomePage({ params }: Props) {
             title={t("services.title")}
             description={t("services.description")}
             href="/hizmetlerimiz"
+            icon={Briefcase}
           />
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {serviceItems.map((service) => (
@@ -237,6 +245,7 @@ export default async function HomePage({ params }: Props) {
         <SectionHeader
           title={t("categories.title")}
           description={t("categories.description")}
+          icon={LayoutGrid}
         />
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {["apartment", "villa", "detached", "land"].map((key) => (
@@ -321,6 +330,8 @@ export default async function HomePage({ params }: Props) {
               title={t("recent.title")}
               description={t("recent.description")}
               href="/emlak?siralama=yeni"
+              icon={Sparkles}
+              iconColor="text-violet-500"
             />
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {recent.map((property) => (
@@ -336,6 +347,8 @@ export default async function HomePage({ params }: Props) {
         <SectionHeader
           title={t("video.title")}
           description={t("video.description")}
+          icon={Play}
+          iconColor="text-red-500"
         />
         <div className="mx-auto mt-8 max-w-4xl overflow-hidden rounded-2xl shadow-lg">
           <div className="relative aspect-video">
