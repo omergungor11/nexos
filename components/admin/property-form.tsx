@@ -1088,6 +1088,26 @@ export function PropertyForm({
               </Select>
             </Field>
           )}
+
+          {/* Internal notes */}
+          <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 dark:border-amber-900/50 dark:bg-amber-950/20">
+            <Field
+              label="Özel Notlar"
+              htmlFor="internal_notes"
+              icon={FileText}
+              hint="Bu notlar sadece admin panelinde görünür, müşteriler göremez."
+            >
+              <Textarea
+                id="internal_notes"
+                name="internal_notes"
+                value={form.internal_notes}
+                onChange={handleChange}
+                placeholder="Mülk sahibi ile görüşme notları, özel durumlar, fiyat pazarlık marjı vb."
+                rows={4}
+                className="bg-white dark:bg-background"
+              />
+            </Field>
+          </div>
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}
@@ -1384,25 +1404,6 @@ export function PropertyForm({
             </>
           )}
 
-          {/* Internal notes */}
-          <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 dark:border-amber-900/50 dark:bg-amber-950/20">
-            <Field
-              label="Özel Notlar"
-              htmlFor="internal_notes"
-              icon={FileText}
-              hint="Bu notlar sadece admin panelinde görünür, müşteriler göremez."
-            >
-              <Textarea
-                id="internal_notes"
-                name="internal_notes"
-                value={form.internal_notes}
-                onChange={handleChange}
-                placeholder="Mülk sahibi ile görüşme notları, özel durumlar, fiyat pazarlık marjı vb."
-                rows={4}
-                className="bg-white dark:bg-background"
-              />
-            </Field>
-          </div>
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}
