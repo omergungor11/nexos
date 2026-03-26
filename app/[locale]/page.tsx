@@ -218,19 +218,7 @@ export default async function HomePage({ params }: Props) {
       <JsonLd data={localBusinessJsonLd} />
       {/* Hero Section with Slider */}
       <HeroSlider slides={heroSlides}>
-        <div className="flex flex-col items-center gap-8 text-center">
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {t("hero.title1")}
-              <br />
-              <span className="text-primary">{t("hero.title2")}</span>
-            </h1>
-            <p className="mx-auto max-w-xl text-base text-slate-300 sm:text-lg">
-              {t("hero.description")}
-            </p>
-          </div>
-          <HeroSearch cities={cities} />
-        </div>
+        <HeroSearch cities={cities} />
       </HeroSlider>
 
       {/* Stats Bar */}

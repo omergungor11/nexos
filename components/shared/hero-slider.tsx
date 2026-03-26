@@ -39,14 +39,9 @@ const TX_LABELS: Record<string, string> = {
 };
 
 const TYPE_LABELS: Record<string, string> = {
-  villa: "Villa",
-  apartment: "Daire",
-  twin_villa: "İkiz Villa",
-  penthouse: "Penthouse",
-  bungalow: "Bungalow",
-  detached: "Müstakil Ev",
-  residential_land: "Arsa",
-  shop: "Dükkan",
+  villa: "Villa", apartment: "Daire", twin_villa: "İkiz Villa",
+  penthouse: "Penthouse", bungalow: "Bungalow", detached: "Müstakil Ev",
+  residential_land: "Arsa", shop: "Dükkan",
 };
 
 // ---------------------------------------------------------------------------
@@ -103,12 +98,12 @@ export function HeroSlider({ slides, children }: HeroSliderProps) {
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/50 to-slate-900/80" />
 
-      {/* Property info overlay — bottom left */}
-      {currentSlide && (
-        <div className="absolute bottom-24 left-0 z-20 w-full px-4 sm:bottom-28 sm:px-8 lg:px-16">
-          <div className="max-w-xl space-y-3">
-            {/* Transaction + Type badges */}
-            <div className="flex items-center gap-2">
+      {/* Center content — property info replaces static title */}
+      <div className="relative z-10 flex flex-col items-center gap-8 px-4 text-center">
+        {currentSlide ? (
+          <div className="space-y-4">
+            {/* Badges */}
+            <div className="flex items-center justify-center gap-2">
               <span className="rounded-md bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
                 {TX_LABELS[currentSlide.transactionType] ?? "SATILIK"}
               </span>
@@ -118,39 +113,52 @@ export function HeroSlider({ slides, children }: HeroSliderProps) {
             </div>
 
             {/* Title */}
-            <h2 className="text-xl font-bold text-white sm:text-2xl lg:text-3xl">
+            <h1 className="text-3xl font-bold tracking-tight text-white transition-opacity duration-500 sm:text-5xl lg:text-6xl">
               {currentSlide.title}
-            </h2>
+            </h1>
 
             {/* Location */}
-            <p className="flex items-center gap-1.5 text-sm text-white/80">
-              <MapPin className="h-4 w-4 text-primary" />
+            <p className="flex items-center justify-center gap-1.5 text-base text-white/80 sm:text-lg">
+              <MapPin className="h-5 w-5 text-primary" />
               {currentSlide.location}
             </p>
 
-            {/* Stats row */}
-            <div className="flex items-center gap-4 text-sm text-white/70">
+            {/* Stats */}
+            <div className="flex items-center justify-center gap-5 text-sm text-white/70 sm:text-base">
               {currentSlide.rooms && (
-                <span className="flex items-center gap-1">
-                  <BedDouble className="h-4 w-4 text-primary" />
+                <span className="flex items-center gap-1.5">
+                  <BedDouble className="h-5 w-5 text-primary" />
                   {currentSlide.rooms}
                 </span>
               )}
               {currentSlide.area && (
-                <span className="flex items-center gap-1">
-                  <Maximize2 className="h-4 w-4 text-primary" />
+                <span className="flex items-center gap-1.5">
+                  <Maximize2 className="h-5 w-5 text-primary" />
                   {currentSlide.area}
                 </span>
               )}
             </div>
 
             {/* Price */}
-            <p className="text-2xl font-bold text-primary sm:text-3xl">
+            <p className="text-3xl font-bold text-primary sm:text-4xl lg:text-5xl">
               {currentSlide.price}
             </p>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Kuzey Kıbrıs&apos;ta<br />
+              <span className="text-primary">Gayrimenkul Yatırımı</span>
+            </h1>
+            <p className="mx-auto max-w-xl text-base text-slate-300 sm:text-lg">
+              Profesyonel emlak danışmanlığı ile hayalinizdeki mülke ulaşın.
+            </p>
+          </div>
+        )}
+
+        {/* Search bar */}
+        {children}
+      </div>
 
       {/* Navigation arrows */}
       {totalSlides > 1 && (
@@ -187,11 +195,6 @@ export function HeroSlider({ slides, children }: HeroSliderProps) {
           ))}
         </div>
       )}
-
-      {/* Center content (search bar etc.) */}
-      <div className="relative z-10 px-4">
-        {children}
-      </div>
     </section>
   );
 }
