@@ -32,6 +32,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { Link } from "@/i18n/navigation";
 import { getFeaturedProperties, getRecentProperties, getDealProperties, getPropertyTypeCounts, getPropertyCityCounts } from "@/lib/queries/properties";
 import { CityShowcase } from "@/components/shared/city-showcase";
+import { HeroSlider } from "@/components/shared/hero-slider";
 import { getCities } from "@/lib/queries/locations";
 import { PROPERTY_TYPE_TKEYS } from "@/lib/constants";
 import type { PropertyListItem } from "@/types";
@@ -193,11 +194,9 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       <JsonLd data={localBusinessJsonLd} />
-      {/* Hero Section */}
-      <section className="relative flex min-h-[calc(100vh-6rem)] items-center justify-center px-4 py-20">
-        <div className="absolute inset-0 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-900/70 to-slate-800/80" />
-        <div className="relative z-10 flex flex-col items-center gap-8 text-center">
+      {/* Hero Section with Slider */}
+      <HeroSlider>
+        <div className="flex flex-col items-center gap-8 text-center">
           <div className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
               {t("hero.title1")}
@@ -210,7 +209,7 @@ export default async function HomePage({ params }: Props) {
           </div>
           <HeroSearch cities={cities} />
         </div>
-      </section>
+      </HeroSlider>
 
       {/* Stats Bar */}
       <section className="border-b bg-muted/30">
