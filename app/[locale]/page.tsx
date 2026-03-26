@@ -217,9 +217,24 @@ export default async function HomePage({ params }: Props) {
     <>
       <JsonLd data={localBusinessJsonLd} />
       {/* Hero Section with Slider */}
-      <HeroSlider slides={heroSlides}>
-        <HeroSearch cities={cities} />
-      </HeroSlider>
+      {/* Hero Section */}
+      <section className="relative flex min-h-[calc(100vh-6rem)] items-center justify-center px-4 py-20">
+        <div className="absolute inset-0 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-900/70 to-slate-800/80" />
+        <div className="relative z-10 flex flex-col items-center gap-8 text-center">
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              {t("hero.title1")}
+              <br />
+              <span className="text-primary">{t("hero.title2")}</span>
+            </h1>
+            <p className="mx-auto max-w-xl text-base text-slate-300 sm:text-lg">
+              {t("hero.description")}
+            </p>
+          </div>
+          <HeroSearch cities={cities} />
+        </div>
+      </section>
 
       {/* Stats Bar */}
       <section className="border-b bg-muted/30">
@@ -269,6 +284,15 @@ export default async function HomePage({ params }: Props) {
               ))}
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Property Slider */}
+      {heroSlides.length > 0 && (
+        <section className="border-t">
+          <HeroSlider slides={heroSlides}>
+            <div />
+          </HeroSlider>
         </section>
       )}
 

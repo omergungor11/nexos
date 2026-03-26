@@ -70,7 +70,7 @@ export function HeroSlider({ slides, children }: HeroSliderProps) {
   const currentSlide = hasSlides ? slides[current] : null;
 
   return (
-    <section className="relative flex min-h-[calc(100vh-6rem)] items-center justify-center overflow-hidden">
+    <section className="relative flex min-h-[500px] items-center justify-center overflow-hidden sm:min-h-[600px]">
       {/* Background images */}
       {hasSlides ? (
         slides.map((slide, i) => (
