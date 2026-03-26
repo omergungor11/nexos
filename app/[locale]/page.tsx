@@ -162,7 +162,7 @@ export default async function HomePage({ params }: Props) {
     }
     cityCountMap[slug].count += 1;
   }
-  const CITY_ORDER = ["gazimagusa", "iskele", "lefkosa", "girne", "guzelyurt"];
+  const CITY_ORDER = ["gazimagusa", "iskele", "lefkosa", "girne", "guzelyurt", "lefke"];
   const showcaseCities = CITY_ORDER
     .filter((slug) => slug in cityCountMap && slug in CITY_IMAGES)
     .map((slug) => ({ ...cityCountMap[slug], image: CITY_IMAGES[slug] ?? "" }));
