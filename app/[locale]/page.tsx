@@ -376,7 +376,7 @@ export default async function HomePage({ params }: Props) {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-xl transition-shadow hover:shadow-2xl">
               <Image
                 src="/images/about-team.jpg"
                 alt="Nexos Investment"
