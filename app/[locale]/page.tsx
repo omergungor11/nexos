@@ -32,9 +32,10 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { Link } from "@/i18n/navigation";
 import { getFeaturedProperties, getRecentProperties, getDealProperties, getPropertyTypeCounts, getPropertyCityCounts } from "@/lib/queries/properties";
 import { CityShowcase } from "@/components/shared/city-showcase";
-import { HeroSlider } from "@/components/shared/hero-slider";
+import { HeroSlider, type HeroSlide } from "@/components/shared/hero-slider";
 import { getCities } from "@/lib/queries/locations";
 import { PROPERTY_TYPE_TKEYS } from "@/lib/constants";
+import { formatPrice, formatArea, formatRooms } from "@/lib/format";
 import type { PropertyListItem } from "@/types";
 
 type Props = {
@@ -191,11 +192,32 @@ export default async function HomePage({ params }: Props) {
     t("about.features.consultancy"),
   ];
 
+  // Build hero slides from featured properties
+  const heroSlides: HeroSlide[] = (featured ?? []).slice(0, 5).map((raw) => {
+    const item = mapListItem(raw);
+    const images = raw.images as Array<{ url: string; is_cover: boolean }> | null;
+    const cover = images?.find((i) => i.is_cover) ?? images?.[0];
+    const cityObj = raw.city as unknown as { name: string; slug: string } | null;
+    const districtObj = raw.district as unknown as { name: string; slug: string } | null;
+    const location = districtObj ? `${districtObj.name}, ${cityObj?.name ?? ""}` : cityObj?.name ?? "";
+    return {
+      image: cover?.url ?? "/images/hero-bg.jpg",
+      title: item.title,
+      price: formatPrice(item.price, item.currency),
+      location,
+      rooms: item.rooms != null ? formatRooms(item.rooms, item.living_rooms) : null,
+      area: item.area_sqm ? formatArea(item.area_sqm) : null,
+      slug: item.slug,
+      type: item.type,
+      transactionType: item.transaction_type,
+    };
+  });
+
   return (
     <>
       <JsonLd data={localBusinessJsonLd} />
       {/* Hero Section with Slider */}
-      <HeroSlider>
+      <HeroSlider slides={heroSlides}>
         <div className="flex flex-col items-center gap-8 text-center">
           <div className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
