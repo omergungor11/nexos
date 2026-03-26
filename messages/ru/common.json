@@ -38,7 +38,7 @@
     "noResults": "По запросу \"{query}\" ничего не найдено",
     "viewAll": "Все результаты",
     "searchAll": "Искать среди всех объявлений",
-    "searching": "Поиск...",
+    "searching": "Поиск..."
   },
   "stats": {
     "activeListings": "Активных объявлений",
@@ -130,7 +130,7 @@
     "shop": "Магазин",
     "warehouse": "Склад",
     "sale": "Продажа",
-    "rent": "Аренда",
+    "rent": "Аренда"
   },
   "propertyCategories": {
     "residential": "Жилая",

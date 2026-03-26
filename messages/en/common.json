@@ -38,7 +38,7 @@
     "noResults": "No results found for \"{query}\"",
     "viewAll": "View all results",
     "searchAll": "Search all listings",
-    "searching": "Searching...",
+    "searching": "Searching..."
   },
   "stats": {
     "activeListings": "Active Listings",
@@ -130,7 +130,7 @@
     "shop": "Shop",
     "warehouse": "Warehouse",
     "sale": "For Sale",
-    "rent": "For Rent",
+    "rent": "For Rent"
   },
   "propertyCategories": {
     "residential": "Residential",

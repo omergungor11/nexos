@@ -38,7 +38,7 @@
     "noResults": "نتیجه‌ای برای \"{query}\" یافت نشد",
     "viewAll": "مشاهده همه نتایج",
     "searchAll": "جستجوی تمام آگهی‌ها",
-    "searching": "در حال جستجو...",
+    "searching": "در حال جستجو..."
   },
   "stats": {
     "activeListings": "آگهی‌های فعال",
@@ -130,7 +130,7 @@
     "shop": "مغازه",
     "warehouse": "انبار",
     "sale": "فروشی",
-    "rent": "اجاره‌ای",
+    "rent": "اجاره‌ای"
   },
   "propertyCategories": {
     "residential": "مسکونی",

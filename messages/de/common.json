@@ -38,7 +38,7 @@
     "noResults": "Keine Ergebnisse für \"{query}\" gefunden",
     "viewAll": "Alle Ergebnisse anzeigen",
     "searchAll": "Alle Inserate durchsuchen",
-    "searching": "Suche läuft...",
+    "searching": "Suche läuft..."
   },
   "stats": {
     "activeListings": "Aktive Inserate",
@@ -130,7 +130,7 @@
     "shop": "Geschäft",
     "warehouse": "Lager",
     "sale": "Zum Verkauf",
-    "rent": "Zur Miete",
+    "rent": "Zur Miete"
   },
   "propertyCategories": {
     "residential": "Wohnimmobilien",
