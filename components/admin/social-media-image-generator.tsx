@@ -913,10 +913,10 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
 
   // Multi-stop gradient for depth
   const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, "rgba(0,0,0,0.15)");
-  grad.addColorStop(0.35, "rgba(0,0,0,0.05)");
-  grad.addColorStop(0.55, "rgba(0,0,0,0.4)");
-  grad.addColorStop(1, "rgba(0,0,0,0.92)");
+  grad.addColorStop(0, "rgba(0,0,0,0.08)");
+  grad.addColorStop(0.35, "rgba(0,0,0,0.03)");
+  grad.addColorStop(0.55, "rgba(0,0,0,0.25)");
+  grad.addColorStop(1, "rgba(0,0,0,0.8)");
   ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
 
   // Logo centered top
