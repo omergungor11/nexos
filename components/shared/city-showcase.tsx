@@ -30,7 +30,7 @@ export function CityShowcase({ typeCounts, cities }: CityShowcaseProps) {
 
         {/* City Circles */}
         {cities.length > 0 && (
-          <div className="grid grid-cols-3 gap-6 sm:gap-8 lg:grid-cols-6">
+          <div className="flex flex-wrap items-start justify-center gap-8 sm:gap-10">
             {cities.map((city) => (
               <Link
                 key={city.slug}

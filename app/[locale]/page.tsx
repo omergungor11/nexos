@@ -162,11 +162,10 @@ export default async function HomePage({ params }: Props) {
     }
     cityCountMap[slug].count += 1;
   }
-  const showcaseCities = Object.values(cityCountMap)
-    .filter((c) => c.slug in CITY_IMAGES)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 6)
-    .map((c) => ({ ...c, image: CITY_IMAGES[c.slug] ?? "" }));
+  const CITY_ORDER = ["gazimagusa", "iskele", "lefkosa", "girne", "guzelyurt"];
+  const showcaseCities = CITY_ORDER
+    .filter((slug) => slug in cityCountMap && slug in CITY_IMAGES)
+    .map((slug) => ({ ...cityCountMap[slug], image: CITY_IMAGES[slug] ?? "" }));
 
   const serviceItems = [
     { icon: HandCoins, tTitle: "services.forSale", tDesc: "services.forSaleDesc" },
