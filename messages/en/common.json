@@ -12,6 +12,9 @@
     "team": "Our Team",
     "about": "About Us",
     "faq": "FAQ",
+    "propertyRequest": "Property Request",
+    "penthouse": "Penthouse",
+    "regions": "Regions",
     "contact": "Contact",
     "contactUs": "Contact Us",
     "menu": "Menu"
@@ -36,7 +39,6 @@
     "viewAll": "View all results",
     "searchAll": "Search all listings",
     "searching": "Searching...",
-    "dailyRental": "Daily Rental"
   },
   "stats": {
     "activeListings": "Active Listings",
@@ -129,7 +131,6 @@
     "warehouse": "Warehouse",
     "sale": "For Sale",
     "rent": "For Rent",
-    "dailyRental": "Daily Rental"
   },
   "propertyCategories": {
     "residential": "Residential",
@@ -141,7 +142,6 @@
     "villa": "Villa",
     "apartment": "Apartment",
     "twin_villa": "Twin Villa",
-    "penthouse": "Penthouse",
     "residence": "Residence",
     "bungalow": "Bungalow",
     "detached": "Detached House",

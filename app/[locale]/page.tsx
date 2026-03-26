@@ -435,7 +435,7 @@ export default async function HomePage({ params }: Props) {
       <section className="container mx-auto px-4 py-16">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="relative">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-xl transition-shadow hover:shadow-2xl">
               <Image
                 src="/images/why-us.jpg"
                 alt="Nexos"

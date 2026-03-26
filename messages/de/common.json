@@ -5,13 +5,16 @@
     "listings": "Immobilien",
     "featured": "Highlights",
     "corporate": "Unternehmen",
-    "dailyRental": "Tagesmiete",
+    "dailyRental": "Daily Rental",
     "map": "Karte",
     "services": "Dienstleistungen",
     "guide": "Ratgeber",
     "team": "Unser Team",
     "about": "Über uns",
     "faq": "FAQ",
+    "propertyRequest": "Property Request",
+    "penthouse": "Penthouse",
+    "regions": "Regions",
     "contact": "Kontakt",
     "contactUs": "Kontaktieren Sie uns",
     "menu": "Menü"
@@ -36,7 +39,6 @@
     "viewAll": "Alle Ergebnisse anzeigen",
     "searchAll": "Alle Inserate durchsuchen",
     "searching": "Suche läuft...",
-    "dailyRental": "Tagesmiete"
   },
   "stats": {
     "activeListings": "Aktive Inserate",
@@ -129,7 +131,6 @@
     "warehouse": "Lager",
     "sale": "Zum Verkauf",
     "rent": "Zur Miete",
-    "dailyRental": "Tagesmiete"
   },
   "propertyCategories": {
     "residential": "Wohnimmobilien",
@@ -141,7 +142,6 @@
     "villa": "Villa",
     "apartment": "Wohnung",
     "twin_villa": "Doppelhaushälfte",
-    "penthouse": "Penthouse",
     "residence": "Residenz",
     "bungalow": "Bungalow",
     "detached": "Einfamilienhaus",

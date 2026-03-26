@@ -5,13 +5,16 @@
     "listings": "Объявления",
     "featured": "Витрина",
     "corporate": "Компания",
-    "dailyRental": "Посуточная аренда",
+    "dailyRental": "Daily Rental",
     "map": "Карта",
     "services": "Услуги",
     "guide": "Руководство",
     "team": "Наша команда",
     "about": "О нас",
-    "faq": "Вопросы и ответы",
+    "faq": "FAQ",
+    "propertyRequest": "Property Request",
+    "penthouse": "Penthouse",
+    "regions": "Regions",
     "contact": "Контакты",
     "contactUs": "Свяжитесь с нами",
     "menu": "Меню"
@@ -36,7 +39,6 @@
     "viewAll": "Все результаты",
     "searchAll": "Искать среди всех объявлений",
     "searching": "Поиск...",
-    "dailyRental": "Посуточно"
   },
   "stats": {
     "activeListings": "Активных объявлений",
@@ -129,7 +131,6 @@
     "warehouse": "Склад",
     "sale": "Продажа",
     "rent": "Аренда",
-    "dailyRental": "Посуточная аренда"
   },
   "propertyCategories": {
     "residential": "Жилая",
@@ -141,7 +142,6 @@
     "villa": "Вилла",
     "apartment": "Квартира",
     "twin_villa": "Дуплекс",
-    "penthouse": "Пентхаус",
     "residence": "Резиденция",
     "bungalow": "Бунгало",
     "detached": "Дом",
@@ -186,7 +186,7 @@
     "team": "Наша команда",
     "guide": "Руководство",
     "contact": "Контакты",
-    "faq": "Вопросы и ответы",
+    "faq": "FAQ",
     "contactTitle": "Контакты",
     "location": "Йеннибоазичи, Фамагуста, Северный Кипр",
     "rights": "Все права защищены.",

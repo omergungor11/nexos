@@ -12,9 +12,20 @@ export function Footer() {
   const emlakLinks = [
     { href: "/emlak?islem=satilik", tKey: "forSale" as const },
     { href: "/emlak?islem=kiralik", tKey: "forRent" as const },
+    { href: "/emlak?islem=gunluk", tKey: "dailyRental" as const },
     { href: "/emlak?tip=villa", tKey: "villa" as const },
     { href: "/emlak?tip=apartment", tKey: "apartment" as const },
-    { href: "/emlak?tip=land", tKey: "land" as const },
+    { href: "/emlak?tip=penthouse", tKey: "penthouse" as const },
+    { href: "/emlak?tip=residential_land", tKey: "land" as const },
+  ];
+
+  const bolgeLinks = [
+    { href: "/emlak?sehir=gazimagusa", label: "Gazimağusa" },
+    { href: "/emlak?sehir=iskele", label: "İskele" },
+    { href: "/emlak?sehir=lefkosa", label: "Lefkoşa" },
+    { href: "/emlak?sehir=girne", label: "Girne" },
+    { href: "/emlak?sehir=guzelyurt", label: "Güzelyurt" },
+    { href: "/emlak?sehir=lefke", label: "Lefke" },
   ];
 
   const kurumsalLinks = [
@@ -22,6 +33,7 @@ export function Footer() {
     { href: "/hizmetlerimiz" as const, tKey: "services" as const },
     { href: "/ekibimiz" as const, tKey: "team" as const },
     { href: "/blog" as const, tKey: "guide" as const },
+    { href: "/emlak-talebi" as const, tKey: "propertyRequest" as const },
     { href: "/iletisim" as const, tKey: "contact" as const },
     { href: "/sss" as const, tKey: "faq" as const },
   ];
@@ -29,7 +41,7 @@ export function Footer() {
   return (
     <footer className="border-t bg-muted/30">
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-5">
           {/* Brand */}
           <div className="col-span-2 space-y-3 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2">
@@ -74,10 +86,29 @@ export function Footer() {
               {kurumsalLinks.map((link) => (
                 <li key={link.tKey}>
                   <Link
-                    href={link.href}
+                    href={link.href as never}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {t(link.tKey)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Bölgeler */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold sm:mb-4">
+              {t("regions")}
+            </h3>
+            <ul className="space-y-2">
+              {bolgeLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href as never}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.label}
                   </Link>
                 </li>
               ))}

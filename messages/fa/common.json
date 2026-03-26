@@ -5,13 +5,16 @@
     "listings": "آگهی‌ها",
     "featured": "ویترین",
     "corporate": "شرکتی",
-    "dailyRental": "اجاره روزانه",
+    "dailyRental": "Daily Rental",
     "map": "نقشه",
     "services": "خدمات",
     "guide": "راهنما",
     "team": "تیم ما",
     "about": "درباره ما",
-    "faq": "سوالات متداول",
+    "faq": "FAQ",
+    "propertyRequest": "Property Request",
+    "penthouse": "Penthouse",
+    "regions": "Regions",
     "contact": "تماس",
     "contactUs": "تماس با ما",
     "menu": "منو"
@@ -36,7 +39,6 @@
     "viewAll": "مشاهده همه نتایج",
     "searchAll": "جستجوی تمام آگهی‌ها",
     "searching": "در حال جستجو...",
-    "dailyRental": "اجاره روزانه"
   },
   "stats": {
     "activeListings": "آگهی‌های فعال",
@@ -129,7 +131,6 @@
     "warehouse": "انبار",
     "sale": "فروشی",
     "rent": "اجاره‌ای",
-    "dailyRental": "اجاره روزانه"
   },
   "propertyCategories": {
     "residential": "مسکونی",
@@ -141,7 +142,6 @@
     "villa": "ویلا",
     "apartment": "آپارتمان",
     "twin_villa": "ویلای دوقلو",
-    "penthouse": "پنت‌هاوس",
     "residence": "رزیدانس",
     "bungalow": "بانگلو",
     "detached": "خانه مستقل",
@@ -186,7 +186,7 @@
     "team": "تیم ما",
     "guide": "راهنما",
     "contact": "تماس",
-    "faq": "سوالات متداول",
+    "faq": "FAQ",
     "contactTitle": "تماس",
     "location": "ینی‌بوغازیچی، فاماگوستا، قبرس شمالی",
     "rights": "تمامی حقوق محفوظ است.",
