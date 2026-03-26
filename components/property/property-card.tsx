@@ -106,7 +106,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
 
           {location && (
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" />
+              <MapPin className="h-3 w-3 text-primary" />
               {location}
             </p>
           )}
@@ -115,25 +115,25 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
           <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
             {property.rooms !== null && (
               <span className="flex items-center gap-1">
-                <BedDouble className="h-3.5 w-3.5" />
+                <BedDouble className="h-3.5 w-3.5 text-primary" />
                 {formatRooms(property.rooms, property.living_rooms)}
               </span>
             )}
             {property.area_sqm && (
               <span className="flex items-center gap-1">
-                <Maximize2 className="h-3.5 w-3.5" />
+                <Maximize2 className="h-3.5 w-3.5 text-primary" />
                 {formatArea(property.area_sqm)}
               </span>
             )}
             {property.floor !== null && (
               <span className="flex items-center gap-1">
-                <Building2 className="h-3.5 w-3.5" />
+                <Building2 className="h-3.5 w-3.5 text-primary" />
                 {t("property.floor", { floor: property.floor })}
               </span>
             )}
             {property.views_count > 0 && (
               <span className="ml-auto flex items-center gap-1">
-                <Eye className="h-3.5 w-3.5" />
+                <Eye className="h-3.5 w-3.5 text-primary" />
                 {property.views_count}
               </span>
             )}
