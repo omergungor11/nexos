@@ -108,7 +108,7 @@ export function RegisterForm() {
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Hesap Oluştur</CardTitle>
             <CardDescription>
-              NexOS Emlak&apos;a ücretsiz kayıt olun
+              Nexos Investment&apos;a ücretsiz kayıt olun
             </CardDescription>
           </CardHeader>
           <CardContent>

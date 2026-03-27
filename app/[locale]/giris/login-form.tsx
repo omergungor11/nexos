@@ -68,7 +68,7 @@ export function LoginForm() {
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Giriş Yap</CardTitle>
             <CardDescription>
-              NexOS Emlak hesabınıza giriş yapın
+              Nexos Investment hesabınıza giriş yapın
             </CardDescription>
           </CardHeader>
           <CardContent>
