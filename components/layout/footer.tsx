@@ -137,7 +137,7 @@ export function Footer() {
               </li>
             </ul>
             {/* Social icons */}
-            <div className="mt-4 flex gap-3">
+            <div className="mt-4 flex justify-center gap-3">
               <a href="https://www.facebook.com/nexosinvestment" target="_blank" rel="noopener noreferrer" className="rounded-full bg-muted p-2 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground" aria-label="Facebook">
                 <Facebook className="size-4" />
               </a>
