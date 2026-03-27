@@ -1116,8 +1116,13 @@ async function renderCatalog(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   const rightX = W * 0.50;
   const rightW = W - rightX - 40;
 
+  // Estimate left column content height for vertical centering
+  // Logo(90) + gap(110) + title(~180) + gap(28) + badge(42) + gap(56) + price(80) + divider(24) + header(48) + location(40) + details(~96) + gap(34) + CTA(54) + gap(74) + contact(54) ≈ 1010
+  const estimatedContentH = 900;
+  const startY = Math.max(80, (H - estimatedContentH) / 2);
+
   // Left column
-  let ly = 112; // ~2rem padding-top
+  let ly = startY;
 
   // Logo
   await drawLogo(ctx, PAD, ly, 90, T.accent, "left");
