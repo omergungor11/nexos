@@ -41,7 +41,7 @@ export function Footer() {
   return (
     <footer className="border-t bg-muted/30">
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4">
           {/* Brand */}
           <div className="col-span-2 space-y-3 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2">
@@ -90,25 +90,6 @@ export function Footer() {
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {t(link.tKey)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Bölgeler */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold sm:mb-4">
-              {t("regions")}
-            </h3>
-            <ul className="grid grid-cols-2 gap-2 sm:grid-cols-1 sm:gap-2">
-              {bolgeLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href as never}
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {link.label}
                   </Link>
                 </li>
               ))}
