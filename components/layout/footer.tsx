@@ -101,7 +101,7 @@ export function Footer() {
             <h3 className="mb-3 text-sm font-semibold sm:mb-4">
               {t("regions")}
             </h3>
-            <ul className="space-y-2">
+            <ul className="grid grid-cols-2 gap-2 sm:grid-cols-1 sm:gap-2">
               {bolgeLinks.map((link) => (
                 <li key={link.href}>
                   <Link
