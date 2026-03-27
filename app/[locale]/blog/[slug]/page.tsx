@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = post.seo_title || post.title;
   const description = post.seo_description || post.excerpt || undefined;
-  const ogSubtitle = post.excerpt || "Nexos Emlak Rehber";
+  const ogSubtitle = post.excerpt || "Nexos Investment Rehber";
   const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(ogSubtitle)}&type=blog`;
 
   return {
@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: Props) {
     },
     publisher: {
       "@type": "Organization",
-      name: "Nexos Emlak",
+      name: "Nexos Investment",
       url: siteUrl,
     },
   };

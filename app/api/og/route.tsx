@@ -5,7 +5,7 @@ export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const title = searchParams.get("title") || "Nexos Emlak";
+  const title = searchParams.get("title") || "Nexos Investment";
   const subtitle =
     searchParams.get("subtitle") || "Güvenilir Gayrimenkul Danışmanlığı";
   const type = searchParams.get("type") || "default";

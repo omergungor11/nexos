@@ -16,7 +16,7 @@ const defaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = defaultIcon;
 
-// Nexos Emlak office location (İskele, Kuzey Kıbrıs)
+// Nexos Investment office location (İskele, Kuzey Kıbrıs)
 const OFFICE_LAT = 35.2856;
 const OFFICE_LNG = 33.8839;
 
@@ -35,7 +35,7 @@ export default function ContactMap() {
       <Marker position={[OFFICE_LAT, OFFICE_LNG]}>
         <Popup>
           <div className="space-y-1">
-            <p className="font-semibold">Nexos Emlak</p>
+            <p className="font-semibold">Nexos Investment</p>
             <p className="text-sm text-gray-600">
               İskele, Kuzey Kıbrıs
             </p>

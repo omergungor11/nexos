@@ -2,13 +2,13 @@
   "aboutPage": {
     "meta": {
       "title": "About Us",
-      "description": "Nexos Real Estate — Northern Cyprus's trusted property consultancy. Our mission, vision, values and story."
+      "description": "Nexos Investment — Northern Cyprus's trusted property consultancy. Our mission, vision, values and story."
     },
     "hero": {
       "subtitle": "Northern Cyprus's Trusted Property Consultant",
       "titleLine1": "Reach Your Dream Property",
       "titleLine2": "With Confidence",
-      "description": "At Nexos Real Estate, we are by your side throughout every step of buying, selling and renting property in Northern Cyprus. With our professional team, transparent approach and deep local knowledge, we find the right investment for you."
+      "description": "At Nexos Investment, we are by your side throughout every step of buying, selling and renting property in Northern Cyprus. With our professional team, transparent approach and deep local knowledge, we find the right investment for you."
     },
     "stats": {
       "happyClients": "Happy Clients",
@@ -18,7 +18,7 @@
     },
     "whoWeAre": {
       "title": "Who We Are",
-      "paragraph1": "Nexos Real Estate is one of Northern Cyprus's leading property consultancy firms. Founded in Iskele in 2020, our company now operates across a wide service network covering Iskele, Kyrenia, Nicosia, Famagusta and Guzelyurt.",
+      "paragraph1": "Nexos Investment is one of Northern Cyprus's leading property consultancy firms. Founded in Iskele in 2020, our company now operates across a wide service network covering Iskele, Kyrenia, Nicosia, Famagusta and Guzelyurt.",
       "paragraph2": "We provide end-to-end services across every area of real estate, from sales and rental consultancy to investment portfolio management, title deed processing and rental management. The fact that 80% of our clients reach us through referrals is the strongest proof of our trust and quality-driven approach.",
       "paragraph3": "We serve clients from Turkey, the UK, Germany, Russia and many other nationalities in both Turkish and English. We create tailored solutions for every client and maintain transparent, honest communication throughout every stage of the purchasing process."
     },
@@ -50,7 +50,7 @@
     },
     "values": {
       "title": "Our Values",
-      "description": "At Nexos Real Estate, these values guide every decision we make and every client relationship we build.",
+      "description": "At Nexos Investment, these values guide every decision we make and every client relationship we build.",
       "trustTransparency": {
         "title": "Trust & Transparency",
         "description": "We ensure complete transparency in every transaction. No hidden costs, surprise commissions or misleading information. We offer honest and open communication to our clients at every stage."
@@ -132,7 +132,7 @@
       }
     },
     "whyNexos": {
-      "title": "Why Nexos Real Estate?",
+      "title": "Why Nexos Investment?",
       "description": "The reasons our clients choose us.",
       "statsLabels": {
         "happyClients": "Happy Clients",

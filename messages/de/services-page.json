@@ -2,7 +2,7 @@
   "servicesPage": {
     "meta": {
       "title": "Unsere Dienstleistungen",
-      "description": "Nexos Immobilien Dienstleistungen — Immobilienberatung, Investitionsbegleitung, Immobilienbewertung, Mietverwaltung und mehr. Vertrauenswürdige Immobilienlösungen in Nordzypern."
+      "description": "Nexos Investment Dienstleistungen — Immobilienberatung, Investitionsbegleitung, Immobilienbewertung, Mietverwaltung und mehr. Vertrauenswürdige Immobilienlösungen in Nordzypern."
     },
     "hero": {
       "title": "Professionelle Immobilien",
@@ -159,9 +159,9 @@
     },
     "whyUs": {
       "title": "Warum",
-      "titleHighlight": "Nexos Immobilien?",
+      "titleHighlight": "Nexos Investment?",
       "description": "Mit über 10 Jahren Erfahrung im Immobiliensektor Nordzyperns bieten wir unseren Kunden einen zuverlässigen, transparenten und ergebnisorientierten Service. Wir verwandeln jede Immobilientransaktion in ein persönliches Erlebnis.",
-      "imageAlt": "Nexos Immobilien Büro",
+      "imageAlt": "Nexos Investment Büro",
       "features": {
         "reliable": {
           "title": "Zuverlässig und transparent",

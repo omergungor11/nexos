@@ -1,4 +1,4 @@
-// Auto-generated Supabase Database types for Nexos Emlak
+// Auto-generated Supabase Database types for Nexos Investment
 // Schema source: supabase/migrations/001_initial_schema.sql
 // Regenerate with: npx supabase gen types typescript --project-id "$PROJECT_ID" > types/supabase.ts
 

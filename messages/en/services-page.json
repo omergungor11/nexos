@@ -2,7 +2,7 @@
   "servicesPage": {
     "meta": {
       "title": "Our Services",
-      "description": "Nexos Real Estate services — property consultancy, investment guidance, property valuation, rental management and more. Trusted real estate solutions in North Cyprus."
+      "description": "Nexos Investment services — property consultancy, investment guidance, property valuation, rental management and more. Trusted real estate solutions in North Cyprus."
     },
     "hero": {
       "title": "Professional Real Estate",
@@ -159,9 +159,9 @@
     },
     "whyUs": {
       "title": "Why",
-      "titleHighlight": "Nexos Real Estate?",
+      "titleHighlight": "Nexos Investment?",
       "description": "With over 10 years of experience in the North Cyprus real estate sector, we provide our clients with reliable, transparent and results-driven service. We transform every property transaction into a personalized experience.",
-      "imageAlt": "Nexos Real Estate office",
+      "imageAlt": "Nexos Investment office",
       "features": {
         "reliable": {
           "title": "Reliable and Transparent",

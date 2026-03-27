@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: Props) {
           url: "/api/og?title=Nexos+Emlak&subtitle=G%C3%BCvenilir+Gayrimenkul+Dan%C4%B1%C5%9Fmanl%C4%B1%C4%9F%C4%B1",
           width: 1200,
           height: 630,
-          alt: "Nexos Emlak",
+          alt: "Nexos Investment",
         },
       ],
     },
@@ -65,11 +65,11 @@ export async function generateMetadata({ params }: Props) {
 const localBusinessJsonLd: Record<string, unknown> = {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
-  name: "Nexos Emlak",
+  name: "Nexos Investment",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   logo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/logo-trans.png`,
   description:
-    "Nexos Emlak — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
+    "Nexos Investment — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Yeniboğaziçi Gazimagusa-Karpaz Anayolu, Piri Reis. Sok. No. 1",

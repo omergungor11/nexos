@@ -2,7 +2,7 @@
   "servicesPage": {
     "meta": {
       "title": "Hizmetlerimiz",
-      "description": "Nexos Emlak hizmetleri — gayrimenkul danışmanlığı, yatırım rehberliği, mülk değerleme, kiralama yönetimi ve daha fazlası. Kuzey Kıbrıs'ta güvenilir emlak çözümleri."
+      "description": "Nexos Investment hizmetleri — gayrimenkul danışmanlığı, yatırım rehberliği, mülk değerleme, kiralama yönetimi ve daha fazlası. Kuzey Kıbrıs'ta güvenilir emlak çözümleri."
     },
     "hero": {
       "title": "Profesyonel Emlak",
@@ -159,9 +159,9 @@
     },
     "whyUs": {
       "title": "Neden",
-      "titleHighlight": "Nexos Emlak?",
+      "titleHighlight": "Nexos Investment?",
       "description": "Kuzey Kıbrıs emlak sektöründe 10 yılı aşkın deneyimimizle, müşterilerimize güvenilir, şeffaf ve sonuç odaklı hizmet sunuyoruz. Her mülk alım-satım sürecini kişiselleştirilmiş bir deneyime dönüştürüyoruz.",
-      "imageAlt": "Nexos Emlak ofisi",
+      "imageAlt": "Nexos Investment ofisi",
       "features": {
         "reliable": {
           "title": "Güvenilir ve Şeffaf",

@@ -2,13 +2,13 @@
   "aboutPage": {
     "meta": {
       "title": "Über uns",
-      "description": "Nexos Immobilien — Nordzyperns vertrauenswürdige Immobilienberatung. Unsere Mission, Vision, Werte und Geschichte."
+      "description": "Nexos Investment — Nordzyperns vertrauenswürdige Immobilienberatung. Unsere Mission, Vision, Werte und Geschichte."
     },
     "hero": {
       "subtitle": "Nordzyperns vertrauenswürdiger Immobilienberater",
       "titleLine1": "Erreichen Sie Ihre Traumimmobilie",
       "titleLine2": "mit Vertrauen",
-      "description": "Bei Nexos Immobilien begleiten wir Sie bei jedem Schritt des Kaufs, Verkaufs und der Vermietung von Immobilien in Nordzypern. Mit unserem professionellen Team, transparentem Ansatz und fundierter Ortskenntnis finden wir die richtige Investition für Sie."
+      "description": "Bei Nexos Investment begleiten wir Sie bei jedem Schritt des Kaufs, Verkaufs und der Vermietung von Immobilien in Nordzypern. Mit unserem professionellen Team, transparentem Ansatz und fundierter Ortskenntnis finden wir die richtige Investition für Sie."
     },
     "stats": {
       "happyClients": "Zufriedene Kunden",
@@ -18,7 +18,7 @@
     },
     "whoWeAre": {
       "title": "Wer wir sind",
-      "paragraph1": "Nexos Immobilien ist eines der führenden Immobilienberatungsunternehmen in Nordzypern. Unser 2020 in Iskele gegründetes Unternehmen ist heute über ein breites Servicenetzwerk in Iskele, Kyrenia, Nikosia, Famagusta und Güzelyurt tätig.",
+      "paragraph1": "Nexos Investment ist eines der führenden Immobilienberatungsunternehmen in Nordzypern. Unser 2020 in Iskele gegründetes Unternehmen ist heute über ein breites Servicenetzwerk in Iskele, Kyrenia, Nikosia, Famagusta und Güzelyurt tätig.",
       "paragraph2": "Wir bieten umfassende Dienstleistungen in allen Bereichen der Immobilienbranche — von der Kauf- und Mietberatung über die Verwaltung von Investmentportfolios bis hin zur Grundbuchabwicklung und Mietverwaltung. Dass 80 % unserer Kunden durch Empfehlungen zu uns kommen, ist der stärkste Beweis für unseren vertrauens- und qualitätsorientierten Ansatz.",
       "paragraph3": "Wir betreuen Kunden aus der Türkei, Großbritannien, Deutschland, Russland und vielen weiteren Ländern auf Türkisch und Englisch. Wir entwickeln maßgeschneiderte Lösungen für jeden Kunden und pflegen in jeder Phase des Kaufprozesses eine transparente, ehrliche Kommunikation."
     },
@@ -50,7 +50,7 @@
     },
     "values": {
       "title": "Unsere Werte",
-      "description": "Bei Nexos Immobilien leiten diese Werte jede unserer Entscheidungen und jede Kundenbeziehung, die wir aufbauen.",
+      "description": "Bei Nexos Investment leiten diese Werte jede unserer Entscheidungen und jede Kundenbeziehung, die wir aufbauen.",
       "trustTransparency": {
         "title": "Vertrauen & Transparenz",
         "description": "Wir sorgen für vollständige Transparenz bei jeder Transaktion. Keine versteckten Kosten, überraschende Provisionen oder irreführende Informationen. Wir bieten unseren Kunden in jeder Phase eine ehrliche und offene Kommunikation."
@@ -132,7 +132,7 @@
       }
     },
     "whyNexos": {
-      "title": "Warum Nexos Immobilien?",
+      "title": "Warum Nexos Investment?",
       "description": "Die Gründe, warum unsere Kunden uns wählen.",
       "statsLabels": {
         "happyClients": "Zufriedene Kunden",

@@ -2,13 +2,13 @@
   "aboutPage": {
     "meta": {
       "title": "Hakkımızda",
-      "description": "Nexos Emlak — Kuzey Kıbrıs'ın güvenilir gayrimenkul danışmanlık şirketi. Misyonumuz, vizyonumuz, değerlerimiz ve hikayemiz."
+      "description": "Nexos Investment — Kuzey Kıbrıs'ın güvenilir gayrimenkul danışmanlık şirketi. Misyonumuz, vizyonumuz, değerlerimiz ve hikayemiz."
     },
     "hero": {
       "subtitle": "Kuzey Kıbrıs'ın Güvenilir Emlak Danışmanı",
       "titleLine1": "Hayalinizdeki Mülke",
       "titleLine2": "Güvenle Ulaşın",
-      "description": "Nexos Emlak olarak, Kuzey Kıbrıs'ta gayrimenkul alım-satım ve kiralama süreçlerinde yanınızdayız. Profesyonel kadromuz, şeffaf yaklaşımımız ve bölge bilgimizle sizin için en doğru yatırımı buluyoruz."
+      "description": "Nexos Investment olarak, Kuzey Kıbrıs'ta gayrimenkul alım-satım ve kiralama süreçlerinde yanınızdayız. Profesyonel kadromuz, şeffaf yaklaşımımız ve bölge bilgimizle sizin için en doğru yatırımı buluyoruz."
     },
     "stats": {
       "happyClients": "Mutlu Müşteri",
@@ -50,7 +50,7 @@
     },
     "values": {
       "title": "Değerlerimiz",
-      "description": "Nexos Emlak olarak her kararımızda ve her müşteri ilişkimizde bu değerlerle hareket ediyoruz.",
+      "description": "Nexos Investment olarak her kararımızda ve her müşteri ilişkimizde bu değerlerle hareket ediyoruz.",
       "trustTransparency": {
         "title": "Güven & Şeffaflık",
         "description": "Her işlemde tam şeffaflık sağlarız. Gizli maliyet, sürpriz komisyon veya yanıltıcı bilgi vermeyiz. Müşterilerimize her aşamada dürüst ve açık iletişim sunarız."
@@ -132,7 +132,7 @@
       }
     },
     "whyNexos": {
-      "title": "Neden Nexos Emlak?",
+      "title": "Neden Nexos Investment?",
       "description": "Müşterilerimizin bizi tercih etme sebepleri.",
       "statsLabels": {
         "happyClients": "Mutlu Müşteri",

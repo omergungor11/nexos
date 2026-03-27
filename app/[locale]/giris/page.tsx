@@ -4,7 +4,7 @@ import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
   title: "Giriş Yap",
-  description: "Nexos Emlak hesabınıza giriş yapın.",
+  description: "Nexos Investment hesabınıza giriş yapın.",
 };
 
 export default async function GirisPage({ params }: { params: Promise<{ locale: string }> }) {

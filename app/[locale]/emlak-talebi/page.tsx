@@ -12,7 +12,7 @@ export async function generateMetadata({
   const { locale } = await params;
   void locale;
   return {
-    title: "Emlak Talebi | Nexos Emlak",
+    title: "Emlak Talebi | Nexos Investment",
     description:
       "Aradığınız gayrimenkulü bize bildirin. Uzman danışmanlarımız sizin için en uygun seçenekleri belirlesin.",
   };

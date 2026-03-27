@@ -357,7 +357,7 @@ export default async function AdminDashboardPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Nexos Emlak yönetim panelinize hoş geldiniz.
+          Nexos Investment yönetim panelinize hoş geldiniz.
         </p>
       </div>
 

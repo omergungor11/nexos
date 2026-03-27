@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `${agent.name} — ${agentJobTitle}`;
   const description =
     agent.bio ??
-    `${agent.name} — Nexos Emlak danışmanının aktif ilanlarını ve iletişim bilgilerini görüntüleyin.`;
+    `${agent.name} — Nexos Investment danışmanının aktif ilanlarını ve iletişim bilgilerini görüntüleyin.`;
   const ogImageUrl = `/api/og?title=${encodeURIComponent(agent.name)}&subtitle=${encodeURIComponent(agentJobTitle)}`;
 
   return {

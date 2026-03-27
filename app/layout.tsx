@@ -17,8 +17,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Nexos Emlak | Güvenilir Gayrimenkul Danışmanlığı",
-    template: "%s | Nexos Emlak",
+    default: "Nexos Investment | Güvenilir Gayrimenkul Danışmanlığı",
+    template: "%s | Nexos Investment",
   },
   description:
     "Nexos Gayrimenkul - Satılık ve kiralık emlak ilanları, güvenilir danışmanlık hizmeti.",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "tr_TR",
-    siteName: "Nexos Emlak",
+    siteName: "Nexos Investment",
   },
   robots: {
     index: true,
