@@ -50,7 +50,7 @@ export function Footer() {
                 alt="Nexos Investment"
                 width={260}
                 height={72}
-                className="h-14 w-auto object-contain sm:h-22"
+                className="h-20 w-auto object-contain sm:h-22"
               />
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
