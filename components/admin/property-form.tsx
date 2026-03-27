@@ -1292,6 +1292,23 @@ export function PropertyForm({
             </Field>
           </div>
 
+          {/* Villa/Residential — Arazi Alanı */}
+          {(form.property_type === "villa" || form.property_type === "twin_villa" || form.property_type === "detached" || form.property_type === "bungalow" || isLandType(form.property_type)) && (
+            <Field label="Arazi Alanı (m²)" htmlFor="land_area_sqm" hint="Villanın veya arsanın toplam arazi büyüklüğü" icon={LandPlot}>
+              <Input
+                id="land_area_sqm"
+                name="land_area_sqm"
+                type="number"
+                min="0"
+                step="0.01"
+                value={form.land_area_sqm}
+                onChange={handleChange}
+                placeholder="0"
+                className="w-48"
+              />
+            </Field>
+          )}
+
           {/* Room/floor/heating fields — hidden for land types */}
           {!isLandType(form.property_type) && (
             <>
@@ -1656,23 +1673,6 @@ export function PropertyForm({
             </Field>
           </div>
             </>
-          )}
-
-          {/* Villa/Residential — Arazi Alanı */}
-          {(form.property_type === "villa" || form.property_type === "twin_villa" || form.property_type === "detached" || form.property_type === "bungalow") && (
-            <Field label="Arazi Alanı (m²)" htmlFor="land_area_sqm" hint="Villanın üzerinde bulunduğu arazi büyüklüğü" icon={LandPlot}>
-              <Input
-                id="land_area_sqm"
-                name="land_area_sqm"
-                type="number"
-                min="0"
-                step="0.01"
-                value={form.land_area_sqm}
-                onChange={handleChange}
-                placeholder="0"
-                className="w-48"
-              />
-            </Field>
           )}
 
           {/* Arsa — Koçan Durumu + Altyapı */}
