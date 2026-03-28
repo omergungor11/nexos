@@ -101,6 +101,7 @@ function normalizeProperties(
         is_featured: Boolean(item["is_featured"]),
         views_count: Number(item["views_count"] ?? 0),
         status: (item["status"] as PropertyListItem["status"]) ?? "available",
+        listing_number: Number(item["listing_number"] ?? 0),
         city: {
           id: Number(city?.["id"] ?? 0),
           name: String(city?.["name"] ?? ""),

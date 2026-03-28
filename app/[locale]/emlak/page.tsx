@@ -182,6 +182,7 @@ function mapListItem(raw: Record<string, unknown>): PropertyListItem {
     status: raw.status as PropertyListItem["status"],
     is_featured: raw.is_featured as boolean,
     views_count: raw.views_count as number,
+    listing_number: (raw.listing_number as number) ?? 0,
     city: raw.city as PropertyListItem["city"],
     district: raw.district as PropertyListItem["district"],
     cover_image: cover?.url ?? null,

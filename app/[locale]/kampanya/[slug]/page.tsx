@@ -86,6 +86,7 @@ export default async function LandingPage({ params }: Props) {
         status: "available" as const,
         is_featured: raw.is_featured as boolean,
         views_count: raw.views_count as number,
+    listing_number: (raw.listing_number as number) ?? 0,
         city: raw.city as PropertyListItem["city"],
         district: raw.district as PropertyListItem["district"],
         cover_image: cover?.url ?? null,

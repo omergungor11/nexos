@@ -500,6 +500,7 @@ function mapRelatedItem(p: Record<string, unknown>): PropertyListItem {
     status: p.status as PropertyListItem["status"],
     is_featured: p.is_featured as boolean,
     views_count: p.views_count as number,
+    listing_number: (p.listing_number as number) ?? 0,
     city: p.city as PropertyListItem["city"],
     district: p.district as PropertyListItem["district"],
     cover_image: cov?.url ?? null,

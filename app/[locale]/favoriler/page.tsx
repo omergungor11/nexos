@@ -57,6 +57,7 @@ function toPropertyListItem(raw: RawFavoriteProperty): PropertyListItem | null {
     floor: null,
     is_featured: raw.is_featured,
     views_count: 0,
+    listing_number: 0,
     status: "available",
     city: raw.city,
     district: raw.district,

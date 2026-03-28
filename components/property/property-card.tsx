@@ -40,9 +40,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
   const location = [property.district?.name, property.city?.name]
     .filter(Boolean)
     .join(", ");
-  const listingNumber = Math.abs(
-    property.id.split("").reduce((acc: number, ch: string) => ((acc << 5) - acc + ch.charCodeAt(0)) | 0, 0)
-  ) % 900000 + 100000;
+  const listingNumber = String(property.listing_number ?? 0).padStart(4, "0");
 
   const transactionLabel =
     TRANSACTION_TYPE_TKEYS[property.transaction_type]

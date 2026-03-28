@@ -78,6 +78,7 @@ export type PropertyListItem = Pick<
   | "is_featured"
   | "views_count"
   | "status"
+  | "listing_number"
 > & {
   city: Pick<CityRow, "id" | "name" | "slug">;
   district: Pick<DistrictRow, "id" | "name" | "slug"> | null;

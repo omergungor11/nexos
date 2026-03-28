@@ -3,7 +3,7 @@ import type { PropertyFilters } from "@/types";
 
 const PROPERTY_LIST_SELECT = `
   id, slug, title, price, currency, type, transaction_type,
-  area_sqm, rooms, living_rooms, floor, is_featured, views_count, created_at,
+  area_sqm, rooms, living_rooms, floor, is_featured, views_count, created_at, listing_number,
   city:cities(id, name, slug),
   district:districts(id, name, slug),
   images:property_images(url, alt_text, is_cover)
