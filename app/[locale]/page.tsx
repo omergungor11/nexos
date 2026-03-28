@@ -264,10 +264,7 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* City & Type Showcase */}
-      <CityShowcase typeCounts={typeCounts} cities={showcaseCities} />
-
-      {/* Deal Properties (Fırsat İlanlar — before featured) */}
+      {/* Deal Properties (Fırsat İlanlar — before city showcase) */}
       {deals && deals.length > 0 && (
         <section className="border-t bg-muted/20">
           <div className="container mx-auto px-4 py-16">
@@ -292,6 +289,9 @@ export default async function HomePage({ params }: Props) {
           </div>
         </section>
       )}
+
+      {/* City & Type Showcase */}
+      <CityShowcase typeCounts={typeCounts} cities={showcaseCities} />
 
       {/* Property Slider */}
       {heroSlides.length > 0 && (
