@@ -295,11 +295,9 @@ export default async function HomePage({ params }: Props) {
 
       {/* Property Slider */}
       {heroSlides.length > 0 && (
-        <section className="border-t">
-          <HeroSlider slides={heroSlides}>
-            <div />
-          </HeroSlider>
-        </section>
+        <HeroSlider slides={heroSlides}>
+          <div />
+        </HeroSlider>
       )}
 
       {/* Featured Properties (Vitrin) */}
