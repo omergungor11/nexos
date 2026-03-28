@@ -8,8 +8,9 @@ interface CityShowcaseProps {
 
 export function CityShowcase({ typeCounts, cities }: CityShowcaseProps) {
   return (
-    <section className="border-t bg-background">
+    <section className="bg-background">
       <div className="container mx-auto px-4 py-14">
+        <h2 className="mb-8 text-center text-2xl font-bold tracking-tight sm:text-3xl">Şehirler</h2>
         {/* Property Type Filter Pills */}
         {typeCounts.length > 0 && (
           <div className="mb-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
