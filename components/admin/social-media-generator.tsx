@@ -2,8 +2,9 @@
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Copy, Share2, Globe, Search } from "lucide-react";
+import { Copy, Share2, Globe, Search, Smartphone } from "lucide-react";
 import { SocialMediaImageGenerator } from "@/components/admin/social-media-image-generator";
+import { StoryGenerator } from "@/components/admin/story-generator";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -49,19 +50,21 @@ interface SocialMediaGeneratorProps {
   properties: PropertyOption[];
 }
 
-type Platform = "instagram" | "facebook";
+type Platform = "instagram" | "facebook" | "story";
 
 function getCharLimit(platform: Platform): number {
-  return platform === "instagram" ? INSTAGRAM_CHAR_LIMIT : FACEBOOK_CHAR_LIMIT;
+  if (platform === "instagram") return INSTAGRAM_CHAR_LIMIT;
+  if (platform === "facebook") return FACEBOOK_CHAR_LIMIT;
+  return 0;
 }
 
 function generatePostForPlatform(
   platform: Platform,
   property: PropertyForSocial
 ): string {
-  return platform === "instagram"
-    ? generateInstagramPost(property)
-    : generateFacebookPost(property);
+  if (platform === "instagram") return generateInstagramPost(property);
+  if (platform === "facebook") return generateFacebookPost(property);
+  return "";
 }
 
 function getCharCountColor(count: number, limit: number): string {
@@ -91,12 +94,14 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
   const charLimit = getCharLimit(platform);
   const charCount = postText.length;
 
-  // Regenerate post when property or platform changes
+  // Regenerate post when property or platform changes (not for story tab)
   useEffect(() => {
-    if (!selectedProperty) {
-      setPostText("");
-      setAllHashtags([]);
-      setActiveHashtags(new Set());
+    if (!selectedProperty || platform === "story") {
+      if (!selectedProperty) {
+        setPostText("");
+        setAllHashtags([]);
+        setActiveHashtags(new Set());
+      }
       return;
     }
 
@@ -113,7 +118,7 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
   }, []);
 
   const handlePlatformChange = useCallback((value: string | null) => {
-    if (value === "instagram" || value === "facebook") {
+    if (value === "instagram" || value === "facebook" || value === "story") {
       setPlatform(value);
     }
   }, []);
@@ -212,6 +217,10 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
               <Globe className="size-3.5" />
               Facebook
             </TabsTrigger>
+            <TabsTrigger value="story" className="flex-1 gap-1.5">
+              <Smartphone className="size-3.5" />
+              Story
+            </TabsTrigger>
           </TabsList>
 
           {/* Instagram panel */}
@@ -235,11 +244,16 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
               onCopy={handleCopy}
             />
           </TabsContent>
+
+          {/* Story panel */}
+          <TabsContent value="story" className="mt-4">
+            <StoryGenerator property={selectedProperty} />
+          </TabsContent>
         </Tabs>
       )}
 
-      {/* Hashtag chips — shown below tabs so they persist across platforms */}
-      {selectedProperty && allHashtags.length > 0 && (
+      {/* Hashtag chips — shown below tabs so they persist across instagram/facebook */}
+      {selectedProperty && platform !== "story" && allHashtags.length > 0 && (
         <div className="space-y-2">
           <p className="text-sm font-medium text-muted-foreground">
             Hashtagler
@@ -270,8 +284,10 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
         </div>
       )}
 
-      {/* Instagram image generator */}
-      <SocialMediaImageGenerator property={selectedProperty} />
+      {/* Instagram / Facebook image generator — hidden on story tab */}
+      {platform !== "story" && (
+        <SocialMediaImageGenerator property={selectedProperty} />
+      )}
 
       {!selectedProperty && (
         <div className="flex min-h-40 items-center justify-center rounded-lg border border-dashed border-border bg-muted/30">
