@@ -128,24 +128,12 @@ export default async function HomePage({ params }: Props) {
   };
 
   const CITY_IMAGES: Record<string, string> = {
-    // Gazimağusa — Lala Mustafa Paşa Camii (eski St. Nicholas Katedrali)
-    gazimagusa:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=400&fit=crop&crop=center",
-    // İskele — Altın kumsal, Long Beach sahili
-    iskele:
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&h=400&fit=crop&crop=center",
-    // Lefkoşa — Tarihi cami ve surlar
-    lefkosa:
-      "https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&h=400&fit=crop&crop=center",
-    // Girne — Tarihi liman
-    girne:
-      "https://images.pexels.com/photos/10534187/pexels-photo-10534187.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-    // Güzelyurt — Narenciye bahçeleri
-    guzelyurt:
-      "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop&crop=center",
-    // Lefke — Doğal yeşillik manzara
-    lefke:
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=400&fit=crop&crop=center",
+    gazimagusa: "/images/cities/gazimagusa.webp",
+    iskele: "/images/cities/iskele.webp",
+    lefkosa: "/images/cities/lefkosa.webp",
+    girne: "/images/cities/girne.webp",
+    guzelyurt: "/images/cities/guzelyurt.webp",
+    lefke: "/images/cities/lefke.webp",
   };
 
   // Aggregate type counts from raw rows
