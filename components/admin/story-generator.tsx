@@ -731,35 +731,29 @@ async function renderGaleri(
   const priceY = titleY + titleLines.length * 82 + 16;
   ctx.fillStyle = NEXOS_GOLD;
   ctx.font = `bold 80px ${FONT}`;
-  ctx.fillText(price, SPAD, priceY);
+  ctx.textBaseline = "top";
 
-  // Details strip on bottom images
-  const detailY = mainH + gap + (bottomH - gap) * 0.5;
+  // Price + location/details inline
   const loc = property.district_name
     ? `${property.district_name}, ${property.city_name}`
     : property.city_name;
   const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  const detailParts: string[] = [];
+  if (loc) detailParts.push(loc);
+  if (roomStr) detailParts.push(`${roomStr} Oda`);
+  if (property.area_sqm) detailParts.push(`${property.area_sqm} m²`);
 
-  ctx.font = `600 36px ${FONT}`;
+  ctx.fillText(price, SPAD, priceY);
+
+  // Details right next to price or below
+  const detailY = priceY + 96;
+  ctx.font = `600 34px ${FONT}`;
+  ctx.fillStyle = "#e2e8f0";
   ctx.textBaseline = "middle";
-
-  // Left cell: location
-  if (loc) {
-    const icoSize = 44;
-    drawIcon(ctx, "pin", SPAD / 2, detailY - icoSize / 2, icoSize, NEXOS_GOLD);
-    ctx.fillStyle = "#e2e8f0";
-    ctx.fillText(loc, SPAD / 2 + icoSize + 12, detailY);
-  }
-
-  // Right cell: rooms + area
-  const rightDetails: string[] = [];
-  if (roomStr) rightDetails.push(`${roomStr} Oda`);
-  if (property.area_sqm) rightDetails.push(`${property.area_sqm} m²`);
-  if (rightDetails.length > 0) {
-    ctx.fillStyle = "#e2e8f0";
-    ctx.textAlign = "right";
-    ctx.fillText(rightDetails.join("  •  "), SW - SPAD / 2, detailY);
-    ctx.textAlign = "start";
+  if (detailParts.length > 0) {
+    const icoSize = 40;
+    drawIcon(ctx, "pin", SPAD, detailY - icoSize / 2, icoSize, NEXOS_GOLD);
+    ctx.fillText(detailParts.join("  •  "), SPAD + icoSize + 12, detailY);
   }
 
   // Branding bar very bottom
