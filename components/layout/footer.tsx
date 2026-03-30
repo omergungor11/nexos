@@ -33,6 +33,7 @@ export function Footer() {
     { href: "/hizmetlerimiz" as const, tKey: "services" as const },
     { href: "/ekibimiz" as const, tKey: "team" as const },
     { href: "/blog" as const, tKey: "guide" as const },
+    { href: "/projeler" as const, tKey: "projects" as const },
     { href: "/emlak-talebi" as const, tKey: "propertyRequest" as const },
     { href: "/iletisim" as const, tKey: "contact" as const },
     { href: "/sss" as const, tKey: "faq" as const },

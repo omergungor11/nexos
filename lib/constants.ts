@@ -198,6 +198,7 @@ export const NAV_LINKS: NavItem[] = [
     ],
   },
   { href: "/vitrin", tKey: "nav.featured" },
+  { href: "/projeler", tKey: "nav.projects" },
   { href: "/harita", tKey: "nav.map" },
   {
     tKey: "nav.corporate",

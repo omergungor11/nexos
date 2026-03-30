@@ -37,6 +37,20 @@ export const routing = defineRouting({
     },
     "/blog": "/blog",
     "/blog/[slug]": "/blog/[slug]",
+    "/projeler": {
+      tr: "/projeler",
+      en: "/projects",
+      ru: "/proekty",
+      fa: "/projeler",
+      de: "/projekte",
+    },
+    "/projeler/[slug]": {
+      tr: "/projeler/[slug]",
+      en: "/projects/[slug]",
+      ru: "/proekty/[slug]",
+      fa: "/projeler/[slug]",
+      de: "/projekte/[slug]",
+    },
     "/ekibimiz": {
       tr: "/ekibimiz",
       en: "/team",
