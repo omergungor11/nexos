@@ -368,11 +368,6 @@ async function renderKlasik(
   // Logo centered at top
   await drawLogo(ctx, SW / 2, 90, 180, "center");
 
-  // Gold accent line under logo
-  const lineW = 120;
-  ctx.fillStyle = NEXOS_GOLD;
-  ctx.fillRect((SW - lineW) / 2, 252, lineW, 4);
-
   // Transaction badge below logo
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `bold 34px ${FONT}`;
@@ -608,6 +603,23 @@ async function renderVitrin(
     ctx.fillText(details[i].text, dx + icoSize + 20, dy + icoSize / 2);
   }
   cy += Math.ceil(details.length / 2) * 72 + 32;
+
+  // 2 extra thumbnail images
+  const extras = property.extra_images ?? [];
+  if (extras.length > 0) {
+    const thumbGap = 16;
+    const thumbW = (SW - SPAD * 2 - thumbGap) / 2;
+    const thumbH = 200;
+    for (let i = 0; i < Math.min(2, extras.length); i++) {
+      const tx = SPAD + i * (thumbW + thumbGap);
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 4;
+      ctx.fillStyle = "#1e293b"; rr(ctx, tx, cy, thumbW, thumbH, 16); ctx.fill();
+      ctx.restore();
+      await drawCoverImg(ctx, extras[i], tx, cy, thumbW, thumbH, 16, "#1e293b");
+    }
+    cy += thumbH + 24;
+  }
 
   // Contact footer
   const footerY = SH - 80;
@@ -914,82 +926,67 @@ async function renderMinimal(
   title: string,
   price: string
 ): Promise<void> {
-  // Dark background with subtle gradient
-  const bgGrad = ctx.createLinearGradient(0, 0, SW, SH);
-  bgGrad.addColorStop(0, "#0d1117");
-  bgGrad.addColorStop(1, "#161b22");
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, SW, SH);
-
-  // Decorative corner accent top-right
-  ctx.save();
-  const cornerGrad = ctx.createRadialGradient(SW, 0, 0, SW, 0, 600);
-  cornerGrad.addColorStop(0, "rgba(255,202,62,0.12)");
-  cornerGrad.addColorStop(1, "rgba(255,202,62,0)");
-  ctx.fillStyle = cornerGrad;
-  ctx.fillRect(0, 0, SW, SH);
-  ctx.restore();
-
-  // Decorative bottom-left accent
-  ctx.save();
-  const blGrad = ctx.createRadialGradient(0, SH, 0, 0, SH, 500);
-  blGrad.addColorStop(0, "rgba(255,202,62,0.08)");
-  blGrad.addColorStop(1, "rgba(255,202,62,0)");
-  ctx.fillStyle = blGrad;
-  ctx.fillRect(0, 0, SW, SH);
-  ctx.restore();
-
-  // Circular image top-right (optional)
+  // Background: cover image with heavy dark overlay
   if (property.cover_image) {
-    const circR = 180;
-    const circX = SW - SPAD - circR;
-    const circY = 80 + circR;
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(circX, circY, circR, 0, Math.PI * 2);
-    ctx.clip();
-    try {
-      const img = await loadImg(property.cover_image);
-      const scale = Math.max((circR * 2) / img.width, (circR * 2) / img.height);
-      const dw = img.width * scale;
-      const dh = img.height * scale;
-      ctx.drawImage(
-        img,
-        circX - dw / 2,
-        circY - dh / 2,
-        dw,
-        dh
-      );
-    } catch {
-      ctx.fillStyle = "#1e2937";
-      ctx.fill();
-    }
-    ctx.restore();
-    // Gold ring around circle
-    ctx.strokeStyle = NEXOS_GOLD;
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.arc(circX, circY, circR + 6, 0, Math.PI * 2);
-    ctx.stroke();
+    await drawCoverImg(ctx, property.cover_image, 0, 0, SW, SH, 0, "#0d1117");
+    ctx.fillStyle = "rgba(0,0,0,0.75)";
+    ctx.fillRect(0, 0, SW, SH);
+  } else {
+    const bgGrad = ctx.createLinearGradient(0, 0, SW, SH);
+    bgGrad.addColorStop(0, "#0d1117");
+    bgGrad.addColorStop(1, "#161b22");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, SW, SH);
   }
 
-  // Logo centered
-  await drawLogo(ctx, SW / 2, 92, 160, "center");
+  // 3 circular property images in a row
+  const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
+  const circCount = Math.min(allImgs.length, 3);
+  if (circCount > 0) {
+    const circR = 130;
+    const circGap = 40;
+    const totalW = circCount * circR * 2 + (circCount - 1) * circGap;
+    const startX = (SW - totalW) / 2 + circR;
+    const circY = 340;
 
-  // Gold accent line
-  ctx.fillStyle = NEXOS_GOLD;
-  ctx.fillRect((SW - 160) / 2, 240, 160, 4);
+    for (let i = 0; i < circCount; i++) {
+      const cx = startX + i * (circR * 2 + circGap);
+      // Shadow
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.4)"; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
+      ctx.fillStyle = "#1e293b";
+      ctx.beginPath(); ctx.arc(cx, circY, circR, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      // Image in circle
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, circY, circR, 0, Math.PI * 2); ctx.clip();
+      try {
+        const img = await loadImg(allImgs[i]);
+        const scale = Math.max((circR * 2) / img.width, (circR * 2) / img.height);
+        const dw = img.width * scale; const dh = img.height * scale;
+        ctx.drawImage(img, cx - dw / 2, circY - dh / 2, dw, dh);
+      } catch { /* fallback already drawn */ }
+      ctx.restore();
+      // Gold ring
+      ctx.strokeStyle = NEXOS_GOLD;
+      ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(cx, circY, circR + 4, 0, Math.PI * 2); ctx.stroke();
+    }
+  }
 
-  // Transaction badge
+  // Logo centered at top
+  await drawLogo(ctx, SW / 2, 80, 160, "center");
+
+  // Transaction badge below logo
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
   ctx.font = `700 32px ${FONT}`;
   ctx.fillStyle = NEXOS_GOLD;
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
-  ctx.fillText(txLabel, SW / 2, 268);
+  ctx.fillText(txLabel, SW / 2, 250);
 
-  // Main content starts at 42% down
-  const contentY = Math.round(SH * 0.42);
+  // Main content starts below circles
+  const contentY = circCount > 0 ? 520 : Math.round(SH * 0.35);
 
   // Thin gold line
   ctx.fillStyle = NEXOS_GOLD + "60";
