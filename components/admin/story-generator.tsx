@@ -366,7 +366,7 @@ async function renderKlasik(
   ctx.fillRect(0, SH * 0.45, SW, SH * 0.55);
 
   // Logo centered at top
-  await drawLogo(ctx, SW / 2, 90, 140, "center");
+  await drawLogo(ctx, SW / 2, 90, 180, "center");
 
   // Gold accent line under logo
   const lineW = 120;
@@ -533,7 +533,7 @@ async function renderVitrin(
   ctx.fillRect(0, cardY - 3, SW, 6);
 
   // Logo top-left on image
-  await drawLogo(ctx, SPAD, 70, 120, "left");
+  await drawLogo(ctx, SPAD, 70, 160, "left");
 
   // Transaction badge top-right on image
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
@@ -681,14 +681,14 @@ async function renderGaleri(
     ctx.fillRect(halfW + gap, mainH + gap, halfW, bottomH - gap);
   }
 
-  // Overlay on all images — 35% dark tint
-  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  // Overlay on all images — lighter tint
+  ctx.fillStyle = "rgba(0,0,0,0.18)";
   ctx.fillRect(0, 0, SW, SH);
 
   // Heavy gradient on main image bottom (for text legibility)
   const mainGrad = ctx.createLinearGradient(0, mainH * 0.45, 0, mainH);
   mainGrad.addColorStop(0, "rgba(0,0,0,0)");
-  mainGrad.addColorStop(1, "rgba(0,0,0,0.88)");
+  mainGrad.addColorStop(1, "rgba(0,0,0,0.7)");
   ctx.fillStyle = mainGrad;
   ctx.fillRect(0, mainH * 0.45, SW, mainH * 0.55);
 
@@ -700,7 +700,7 @@ async function renderGaleri(
   ctx.fillRect(0, mainH + gap, SW, bottomH);
 
   // Logo top-left
-  await drawLogo(ctx, SPAD, 60, 110, "left");
+  await drawLogo(ctx, SPAD, 60, 150, "left");
 
   // Transaction badge top-right
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
@@ -806,7 +806,7 @@ async function renderFiyat(
   ctx.fillRect(0, 0, SW, SH);
 
   // Logo top center
-  await drawLogo(ctx, SW / 2, 80, 130, "center");
+  await drawLogo(ctx, SW / 2, 80, 170, "center");
 
   // Top decorative line
   ctx.fillStyle = NEXOS_GOLD;
@@ -974,7 +974,7 @@ async function renderMinimal(
   }
 
   // Logo centered
-  await drawLogo(ctx, SW / 2, 92, 120, "center");
+  await drawLogo(ctx, SW / 2, 92, 160, "center");
 
   // Gold accent line
   ctx.fillStyle = NEXOS_GOLD;
