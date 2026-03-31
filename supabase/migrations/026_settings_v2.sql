@@ -1,4 +1,15 @@
--- 026: Seed additional settings for comprehensive settings page
+-- 026: Add category column + seed new settings
+-- Run in Supabase Dashboard > SQL Editor
+
+-- Step 1: Add category column if missing
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'general';
+
+-- Step 2: Update existing rows with categories
+UPDATE site_settings SET category = 'company' WHERE key LIKE 'company_%';
+UPDATE site_settings SET category = 'hero' WHERE key LIKE 'hero_%';
+UPDATE site_settings SET category = 'social' WHERE key LIKE 'social_%';
+
+-- Step 3: Seed new settings
 INSERT INTO site_settings (key, value, value_type, label, category) VALUES
   ('site_title', 'Nexos Investment', 'string', 'Site Başlığı', 'general'),
   ('site_description', 'Kuzey Kıbrıs gayrimenkul danışmanlığı', 'string', 'Site Açıklaması', 'general'),
@@ -14,9 +25,6 @@ INSERT INTO site_settings (key, value, value_type, label, category) VALUES
   ('working_hours_sunday', 'Kapalı', 'string', 'Pazar', 'contact'),
   ('office_lat', '35.160', 'string', 'Ofis Enlem', 'contact'),
   ('office_lng', '33.880', 'string', 'Ofis Boylam', 'contact'),
-  ('social_facebook', 'https://www.facebook.com/nexosinvestment', 'url', 'Facebook', 'social'),
-  ('social_instagram', 'https://www.instagram.com/nexosinvestment', 'url', 'Instagram', 'social'),
-  ('social_youtube', 'https://www.youtube.com/@nexosinvestment', 'url', 'YouTube', 'social'),
   ('social_tiktok', 'https://www.tiktok.com/@nexosinvestment', 'url', 'TikTok', 'social'),
   ('default_hashtags', 'KuzeyKıbrıs,KKTC,NexosInvestment,Emlak', 'string', 'Varsayılan Hashtagler', 'social'),
   ('notification_email', 'info@nexosinvestment.com', 'string', 'Bildirim E-postası', 'email'),
@@ -30,3 +38,10 @@ INSERT INTO site_settings (key, value, value_type, label, category) VALUES
   ('notify_new_offer', 'true', 'boolean', 'Yeni Teklif', 'notifications'),
   ('notify_property_expiry', 'true', 'boolean', 'İlan Süresi Dolma', 'notifications')
 ON CONFLICT (key) DO NOTHING;
+
+-- Step 4: Update existing social URLs
+UPDATE site_settings SET value = 'https://www.facebook.com/nexosinvestment', category = 'social' WHERE key = 'social_facebook' AND (value IS NULL OR value = '');
+UPDATE site_settings SET value = 'https://www.instagram.com/nexosinvestment', category = 'social' WHERE key = 'social_instagram' AND (value IS NULL OR value = '');
+UPDATE site_settings SET value = 'https://www.youtube.com/@nexosinvestment', category = 'social' WHERE key = 'social_youtube' AND (value IS NULL OR value = '');
+UPDATE site_settings SET value = '+905488604030' WHERE key = 'company_phone';
+UPDATE site_settings SET value = 'info@nexosinvestment.com' WHERE key = 'company_email';
