@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Blog Yazıları",
 };
 
-type BlogPostRow = {
+type RawBlogPost = {
   id: string;
   title: string;
   slug: string;
@@ -18,6 +18,7 @@ type BlogPostRow = {
   published_at: string | null;
   views_count: number;
   created_at: string;
+  category: { name: string } | null;
 };
 
 export default async function AdminBlogPage() {
@@ -26,11 +27,20 @@ export default async function AdminBlogPage() {
   const { data: posts } = await supabase
     .from("blog_posts")
     .select(
-      "id, title, slug, author, is_published, published_at, views_count, created_at"
+      "id, title, slug, author, is_published, published_at, views_count, created_at, category:blog_categories(name)"
     )
     .order("created_at", { ascending: false });
 
-  const rows = (posts ?? []) as BlogPostRow[];
+  const rows = ((posts ?? []) as unknown as RawBlogPost[]).map((p) => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    author: (p.category as unknown as { name: string } | null)?.name ?? p.author ?? null,
+    is_published: p.is_published,
+    published_at: p.published_at,
+    views_count: p.views_count,
+    created_at: p.created_at,
+  }));
 
   return (
     <div className="space-y-6">

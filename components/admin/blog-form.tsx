@@ -4,10 +4,12 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { MediaPicker } from "@/components/admin/media-picker";
 import {
   Select,
   SelectContent,
@@ -152,6 +154,8 @@ export function BlogForm({ mode, post, categories = [], tags = [] }: BlogFormPro
   const [errors, setErrors] = useState<
     Partial<Record<keyof FormState, string>>
   >({});
+  const [contentMode, setContentMode] = useState<"visual" | "html">("visual");
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -297,22 +301,55 @@ export function BlogForm({ mode, post, categories = [], tags = [] }: BlogFormPro
         />
       </Field>
 
-      {/* Content */}
-      <Field
-        label="İçerik"
-        htmlFor="content"
-        hint="TipTap editör ileride entegre edilecektir."
-      >
-        <Textarea
-          id="content"
-          name="content"
-          value={form.content}
-          onChange={handleChange}
-          placeholder="Yazı içeriği..."
-          rows={12}
-          className="font-mono text-sm"
-        />
-      </Field>
+      {/* Content with Visual/HTML tabs */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">İçerik</label>
+          <div className="flex gap-1 rounded-lg border p-0.5">
+            <button
+              type="button"
+              onClick={() => setContentMode("visual")}
+              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${contentMode === "visual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Metin
+            </button>
+            <button
+              type="button"
+              onClick={() => setContentMode("html")}
+              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${contentMode === "html" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              HTML
+            </button>
+          </div>
+        </div>
+
+        {contentMode === "visual" ? (
+          <div
+            className="min-h-[300px] rounded-lg border bg-background p-4 text-sm leading-relaxed focus-within:ring-1 focus-within:ring-ring"
+          >
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => setForm((prev) => ({ ...prev, content: e.currentTarget.innerHTML }))}
+              dangerouslySetInnerHTML={{ __html: form.content }}
+              className="min-h-[280px] outline-none prose prose-sm max-w-none dark:prose-invert [&_h2]:text-lg [&_h2]:font-bold [&_h2]:mt-4 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-3 [&_p]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline"
+            />
+          </div>
+        ) : (
+          <Textarea
+            id="content"
+            name="content"
+            value={form.content}
+            onChange={handleChange}
+            placeholder="<h2>Başlık</h2><p>İçerik...</p>"
+            rows={16}
+            className="font-mono text-xs leading-relaxed"
+          />
+        )}
+        <p className="text-xs text-muted-foreground">
+          {contentMode === "visual" ? "Metni düzenleyin. Başlık, liste, link gibi biçimlendirmeler desteklenir." : "HTML kodunu doğrudan düzenleyin."}
+        </p>
+      </div>
 
       {/* Author */}
       <Field label="Yazar" htmlFor="author">
@@ -385,25 +422,42 @@ export function BlogForm({ mode, post, categories = [], tags = [] }: BlogFormPro
         </Field>
       )}
 
-      {/* Cover image */}
-      <Field
-        label="Kapak Görseli URL"
-        htmlFor="cover_image"
-        hint="Görseli önce CDN veya storage'a yükleyin."
-      >
-        <Input
-          id="cover_image"
-          name="cover_image"
-          type="url"
-          value={form.cover_image}
-          onChange={handleChange}
-          placeholder="https://cdn.nexos.com.tr/blog/kapak.jpg"
-          aria-invalid={!!errors.cover_image}
-        />
+      {/* Cover image with media picker */}
+      <div className="space-y-1.5">
+        <label className="text-sm font-medium">Kapak Görseli</label>
+        <div className="flex gap-2">
+          <Input
+            id="cover_image"
+            name="cover_image"
+            type="url"
+            value={form.cover_image}
+            onChange={handleChange}
+            placeholder="https://... veya galeriden seçin"
+            aria-invalid={!!errors.cover_image}
+            className="flex-1"
+          />
+          <Button type="button" variant="outline" onClick={() => setMediaPickerOpen(true)} className="gap-1.5 shrink-0">
+            <ImageIcon className="size-4" />
+            Galeri
+          </Button>
+        </div>
+        {form.cover_image && /^https?:\/\/.+/.test(form.cover_image) && (
+          <div className="relative mt-2 h-32 w-48 overflow-hidden rounded-lg border">
+            <img src={form.cover_image} alt="Kapak önizleme" className="h-full w-full object-cover" />
+          </div>
+        )}
         {errors.cover_image && (
           <p className="text-xs text-destructive">{errors.cover_image}</p>
         )}
-      </Field>
+        <p className="text-xs text-muted-foreground">URL girin veya medya kütüphanesinden seçin.</p>
+      </div>
+
+      <MediaPicker
+        open={mediaPickerOpen}
+        onClose={() => setMediaPickerOpen(false)}
+        onSelect={(url) => setForm((prev) => ({ ...prev, cover_image: url }))}
+        currentUrl={form.cover_image}
+      />
 
       {/* SEO divider */}
       <div className="border-t pt-2">

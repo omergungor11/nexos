@@ -147,7 +147,7 @@ export function BlogDataTable({ initialData }: { initialData: BlogPostRow[] }) {
         <thead className="bg-muted/40">
           <tr>
             <th className={thClass}>Başlık</th>
-            <th className={thClass}>Yazar</th>
+            <th className={thClass}>Kategori</th>
             <th className={thClass}>Durum</th>
             <th className={thClass}>Yayın Tarihi</th>
             <th className={thClass}>Görüntülenme</th>
