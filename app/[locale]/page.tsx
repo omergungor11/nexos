@@ -33,6 +33,7 @@ import { Link } from "@/i18n/navigation";
 import { getFeaturedProperties, getRecentProperties, getDealProperties, getPropertyTypeCounts, getPropertyCityCounts } from "@/lib/queries/properties";
 import { CityShowcase } from "@/components/shared/city-showcase";
 import { HeroSlider, type HeroSlide } from "@/components/shared/hero-slider";
+import { CtaMiniForm } from "@/components/shared/cta-mini-form";
 import { getCities } from "@/lib/queries/locations";
 import { PROPERTY_TYPE_TKEYS } from "@/lib/constants";
 import { formatPrice, formatArea, formatRooms } from "@/lib/format";
@@ -507,7 +508,7 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section with Form */}
       <section className="bg-primary text-primary-foreground">
         <div className="container mx-auto flex flex-col items-center gap-6 px-4 py-16 text-center">
           <h2 className="text-2xl font-bold sm:text-3xl">
@@ -516,12 +517,7 @@ export default async function HomePage({ params }: Props) {
           <p className="max-w-lg text-primary-foreground/80">
             {t("cta.description")}
           </p>
-          <Link
-            href="/iletisim"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-secondary px-4 text-sm font-medium text-secondary-foreground hover:bg-secondary/80"
-          >
-            {t("cta.button")}
-          </Link>
+          <CtaMiniForm />
         </div>
       </section>
     </>
