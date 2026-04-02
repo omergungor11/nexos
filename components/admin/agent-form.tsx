@@ -4,8 +4,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MediaPicker } from "@/components/admin/media-picker";
 
 import { createAgent, updateAgent, type AgentInput } from "@/actions/agents";
 import type { AdminAgentRow } from "@/components/admin/agent-data-table";
@@ -64,6 +66,7 @@ export function AgentForm({ mode, agent }: AgentFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const [form, setForm] = useState<FormState>({
     name: agent?.name ?? "",
@@ -194,24 +197,45 @@ export function AgentForm({ mode, agent }: AgentFormProps) {
         )}
       </Field>
 
-      {/* Photo URL */}
-      <Field label="Fotoğraf URL" htmlFor="photo_url">
-        <Input
-          id="photo_url"
-          name="photo_url"
-          type="url"
-          value={form.photo_url}
-          onChange={handleChange}
-          placeholder="https://cdn.nexosinvestment.com/photos/ahmet.jpg"
-          aria-invalid={!!errors.photo_url}
-        />
+      {/* Photo URL with media picker */}
+      <div className="space-y-1.5">
+        <label htmlFor="photo_url" className="text-sm font-medium leading-none">Fotoğraf</label>
+        <div className="flex gap-2">
+          <Input
+            id="photo_url"
+            name="photo_url"
+            type="url"
+            value={form.photo_url}
+            onChange={handleChange}
+            placeholder="https://... veya galeriden seçin"
+            aria-invalid={!!errors.photo_url}
+            className="flex-1"
+          />
+          <Button type="button" variant="outline" onClick={() => setMediaPickerOpen(true)} className="gap-1.5 shrink-0">
+            <ImageIcon className="size-4" />
+            Galeri
+          </Button>
+        </div>
+        {form.photo_url && /^https?:\/\/.+/.test(form.photo_url) && (
+          <div className="mt-2 flex items-center gap-3">
+            <div className="relative size-16 overflow-hidden rounded-full border">
+              <img src={form.photo_url} alt="Önizleme" className="h-full w-full object-cover" />
+            </div>
+            <p className="text-xs text-muted-foreground">Profil fotoğrafı önizleme</p>
+          </div>
+        )}
         {errors.photo_url && (
           <p className="text-xs text-destructive">{errors.photo_url}</p>
         )}
-        <p className="text-xs text-muted-foreground">
-          Fotoğraf yüklemek için önce CDN veya storage&apos;a yükleyin, ardından URL&apos;yi girin.
-        </p>
-      </Field>
+        <p className="text-xs text-muted-foreground">URL girin veya medya kütüphanesinden seçin.</p>
+      </div>
+
+      <MediaPicker
+        open={mediaPickerOpen}
+        onClose={() => setMediaPickerOpen(false)}
+        onSelect={(url) => setForm((prev) => ({ ...prev, photo_url: url }))}
+        currentUrl={form.photo_url}
+      />
 
       {/* Bio */}
       <Field label="Biyografi" htmlFor="bio">
