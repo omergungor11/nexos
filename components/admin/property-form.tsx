@@ -1777,7 +1777,12 @@ export function PropertyForm({
           ) : (
             Object.entries(featuresByCategory)
               .filter(([category]) => category !== "accessibility")
-              .map(([category, features]) => (
+              .map(([category, features]) => {
+                // Filter out features already in "Öne Çıkan" tab
+                const EXCLUDED_NAMES = ["Eşyalı", "Asansör", "Bahçe", "24 Saat Güvenlik", "Yüzme Havuzu", "Otopark", "Balkon"];
+                const filtered = features.filter((f) => !EXCLUDED_NAMES.includes(f.name));
+                if (filtered.length === 0) return null;
+                return (
                 <div key={category} className="space-y-3">
                   <h3 className="text-sm font-semibold text-foreground">
                     {FEATURE_CATEGORY_LABELS[
@@ -1785,7 +1790,7 @@ export function PropertyForm({
                     ] ?? category}
                   </h3>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                    {features.map((feature) => (
+                    {filtered.map((feature) => (
                       <CheckboxField
                         key={feature.id}
                         id={`feature-${feature.id}`}
@@ -1798,8 +1803,8 @@ export function PropertyForm({
                     ))}
                   </div>
                 </div>
-              )
-            )
+                );
+              }).filter(Boolean)
           )}
         </TabsContent>
 
