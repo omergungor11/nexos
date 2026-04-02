@@ -436,27 +436,6 @@ export default async function HomePage({ params }: Props) {
         </section>
       )}
 
-      {/* Video Section */}
-      <section className="container mx-auto px-4 py-16">
-        <SectionHeader
-          title={t("video.title")}
-          description={t("video.description")}
-          icon={Play}
-          iconColor="text-red-500"
-        />
-        <div className="mx-auto mt-8 max-w-4xl overflow-hidden rounded-2xl shadow-lg">
-          <div className="relative aspect-video">
-            <iframe
-              src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-              title="Nexos Investment — Kuzey Kıbrıs Gayrimenkul"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              className="absolute inset-0 h-full w-full"
-            />
-          </div>
-        </div>
-      </section>
-
       {/* Why Choose Us Section */}
       <section className="container mx-auto px-4 py-16">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
