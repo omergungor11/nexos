@@ -34,10 +34,10 @@ export default async function HakkimizdaPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "aboutPage" });
 
   const STATS = [
-    { value: "500+", label: t("stats.happyClients") },
-    { value: "1.200+", label: t("stats.portfolio") },
-    { value: "8+", label: t("stats.experience") },
-    { value: "15+", label: t("stats.consultants") },
+    { value: t("infoCards.consultants.value"), label: t("infoCards.consultants.label") },
+    { value: t("infoCards.referralRate.value"), label: t("infoCards.referralRate.label") },
+    { value: t("infoCards.portfolio.value"), label: t("infoCards.portfolio.label") },
+    { value: t("infoCards.regions.value"), label: t("infoCards.regions.label") },
   ];
 
   const VALUES = [
@@ -88,16 +88,6 @@ export default async function HakkimizdaPage({ params }: Props) {
 
   const TIMELINE = [
     {
-      year: "2016",
-      title: t("timeline.2016.title"),
-      description: t("timeline.2016.description"),
-    },
-    {
-      year: "2018",
-      title: t("timeline.2018.title"),
-      description: t("timeline.2018.description"),
-    },
-    {
       year: "2020",
       title: t("timeline.2020.title"),
       description: t("timeline.2020.description"),
@@ -111,6 +101,11 @@ export default async function HakkimizdaPage({ params }: Props) {
       year: "2024",
       title: t("timeline.2024.title"),
       description: t("timeline.2024.description"),
+    },
+    {
+      year: "2026",
+      title: t("timeline.2026.title"),
+      description: t("timeline.2026.description"),
     },
   ];
 
@@ -363,14 +358,14 @@ export default async function HakkimizdaPage({ params }: Props) {
             <div className="grid grid-cols-3 gap-3">
               <div className="flex aspect-square items-center justify-center rounded-2xl bg-primary p-4 text-white">
                 <div className="text-center">
-                  <p className="text-2xl font-bold">500+</p>
-                  <p className="text-xs text-white/80">{t("whyNexos.statsLabels.happyClients")}</p>
+                  <p className="text-2xl font-bold">{t("infoCards.referralRate.value")}</p>
+                  <p className="text-xs text-white/80">{t("infoCards.referralRate.label")}</p>
                 </div>
               </div>
               <div className="flex aspect-square items-center justify-center rounded-2xl bg-gray-900 p-4 text-white">
                 <div className="text-center">
-                  <p className="text-2xl font-bold">8+</p>
-                  <p className="text-xs text-gray-400">{t("whyNexos.statsLabels.yearsExperience")}</p>
+                  <p className="text-2xl font-bold">{t("infoCards.regions.value")}</p>
+                  <p className="text-xs text-gray-400">{t("infoCards.regions.label")}</p>
                 </div>
               </div>
               <div className="flex aspect-square items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 p-4">

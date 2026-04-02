@@ -4,9 +4,10 @@ import { Link } from "@/i18n/navigation";
 interface CityShowcaseProps {
   typeCounts: { type: string; label: string; count: number }[];
   cities: { name: string; slug: string; count: number; image: string }[];
+  listingLabel?: string;
 }
 
-export function CityShowcase({ typeCounts, cities }: CityShowcaseProps) {
+export function CityShowcase({ typeCounts, cities, listingLabel = "ilan" }: CityShowcaseProps) {
   return (
     <section className="bg-background">
       <div className="container mx-auto px-4 py-14">
@@ -57,7 +58,7 @@ export function CityShowcase({ typeCounts, cities }: CityShowcaseProps) {
                   {city.name}
                 </p>
                 <p className="text-center text-xs text-muted-foreground">
-                  {city.count} ilan
+                  {city.count} {listingLabel}
                 </p>
               </Link>
             ))}
