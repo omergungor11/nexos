@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Bold, Italic, Heading2, Heading3, List, ListOrdered, Link2, Quote, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -324,16 +324,58 @@ export function BlogForm({ mode, post, categories = [], tags = [] }: BlogFormPro
         </div>
 
         {contentMode === "visual" ? (
-          <div
-            className="min-h-[300px] rounded-lg border bg-background p-4 text-sm leading-relaxed focus-within:ring-1 focus-within:ring-ring"
-          >
-            <div
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => setForm((prev) => ({ ...prev, content: e.currentTarget.innerHTML }))}
-              dangerouslySetInnerHTML={{ __html: form.content }}
-              className="min-h-[280px] outline-none prose prose-sm max-w-none dark:prose-invert [&_h2]:text-lg [&_h2]:font-bold [&_h2]:mt-4 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-3 [&_p]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline"
-            />
+          <div className="overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
+            {/* Toolbar */}
+            <div className="flex flex-wrap items-center gap-0.5 border-b bg-muted/30 px-2 py-1.5">
+              {[
+                { cmd: "bold", icon: Bold, title: "Kalın" },
+                { cmd: "italic", icon: Italic, title: "İtalik" },
+              ].map((btn) => (
+                <button key={btn.cmd} type="button" title={btn.title} onClick={() => document.execCommand(btn.cmd)} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                  <btn.icon className="size-4" />
+                </button>
+              ))}
+              <div className="mx-1 h-5 w-px bg-border" />
+              <button type="button" title="Başlık 2" onClick={() => document.execCommand("formatBlock", false, "h2")} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                <Heading2 className="size-4" />
+              </button>
+              <button type="button" title="Başlık 3" onClick={() => document.execCommand("formatBlock", false, "h3")} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                <Heading3 className="size-4" />
+              </button>
+              <button type="button" title="Paragraf" onClick={() => document.execCommand("formatBlock", false, "p")} className="rounded px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground">
+                P
+              </button>
+              <div className="mx-1 h-5 w-px bg-border" />
+              <button type="button" title="Madde Listesi" onClick={() => document.execCommand("insertUnorderedList")} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                <List className="size-4" />
+              </button>
+              <button type="button" title="Numaralı Liste" onClick={() => document.execCommand("insertOrderedList")} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                <ListOrdered className="size-4" />
+              </button>
+              <button type="button" title="Alıntı" onClick={() => document.execCommand("formatBlock", false, "blockquote")} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                <Quote className="size-4" />
+              </button>
+              <div className="mx-1 h-5 w-px bg-border" />
+              <button type="button" title="Link Ekle" onClick={() => {
+                const url = prompt("Link URL'si girin:");
+                if (url) document.execCommand("createLink", false, url);
+              }} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                <Link2 className="size-4" />
+              </button>
+              <button type="button" title="Yatay Çizgi" onClick={() => document.execCommand("insertHorizontalRule")} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                <Minus className="size-4" />
+              </button>
+            </div>
+            {/* Editable area */}
+            <div className="p-4">
+              <div
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => setForm((prev) => ({ ...prev, content: e.currentTarget.innerHTML }))}
+                dangerouslySetInnerHTML={{ __html: form.content }}
+                className="min-h-[300px] text-sm leading-relaxed outline-none prose prose-sm max-w-none dark:prose-invert [&_h2]:text-lg [&_h2]:font-bold [&_h2]:mt-4 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-3 [&_p]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-primary/30 [&_blockquote]:pl-4 [&_blockquote]:italic"
+              />
+            </div>
           </div>
         ) : (
           <Textarea
