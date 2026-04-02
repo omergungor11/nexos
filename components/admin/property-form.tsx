@@ -74,6 +74,7 @@ import {
 import {
   createProperty,
   updateProperty,
+  syncPropertyFeatures,
   type PropertyCreateInput,
 } from "@/actions/properties";
 
@@ -876,18 +877,27 @@ export function PropertyForm({
         const result = await updateProperty(propertyId, { ...payload, is_active: true });
         if (result.error) {
           toast.error(result.error);
-        } else {
-          toast.success("İlan kaydedildi.");
-          router.push("/admin/ilanlar");
+          return;
         }
+        // Sync features
+        const featureResult = await syncPropertyFeatures(propertyId, Array.from(selectedFeatureIds));
+        if (featureResult.error) {
+          toast.error(`Özellikler kaydedilemedi: ${featureResult.error}`);
+        }
+        toast.success("İlan kaydedildi.");
+        router.push("/admin/ilanlar");
       } else {
         const result = await createProperty(payload);
         if (result.error) {
           toast.error(result.error);
-        } else {
-          toast.success("İlan oluşturuldu.");
-          router.push("/admin/ilanlar");
+          return;
         }
+        // Sync features for new property
+        if (result.data && selectedFeatureIds.size > 0) {
+          await syncPropertyFeatures(result.data.id, Array.from(selectedFeatureIds));
+        }
+        toast.success("İlan oluşturuldu.");
+        router.push("/admin/ilanlar");
       }
     });
   }

@@ -519,3 +519,46 @@ export async function duplicateProperty(
   void logAdminAction({ action: "duplicate", entityType: "property", entityId: newProperty.id, metadata: { source_id: sourceId } });
   return { data: newProperty as Property };
 }
+
+// ---------------------------------------------------------------------------
+// syncPropertyFeatures
+// ---------------------------------------------------------------------------
+
+export async function syncPropertyFeatures(
+  propertyId: string,
+  featureIds: number[]
+): Promise<ActionResult<{ count: number }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  // Delete existing features
+  const { error: deleteError } = await supabase
+    .from("property_features")
+    .delete()
+    .eq("property_id", propertyId);
+
+  if (deleteError) {
+    return { error: deleteError.message };
+  }
+
+  // Insert new features
+  if (featureIds.length > 0) {
+    const rows = featureIds.map((fid) => ({
+      property_id: propertyId,
+      feature_id: fid,
+    }));
+
+    const { error: insertError } = await supabase
+      .from("property_features")
+      .insert(rows);
+
+    if (insertError) {
+      return { error: insertError.message };
+    }
+  }
+
+  revalidateTag("properties", {});
+  return { data: { count: featureIds.length } };
+}
