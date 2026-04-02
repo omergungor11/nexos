@@ -523,6 +523,24 @@ async function renderVitrin(
     ctx.fillRect(0, imgH - 300, SW, 300);
   }
 
+  // 2 extra thumbnails overlapping the separator
+  const extras = property.extra_images ?? [];
+  const thumbGap = 16;
+  const thumbW = (SW - SPAD * 2 - thumbGap) / 2;
+  const thumbH = 220;
+  const thumbY = cardY - thumbH / 2;
+
+  if (extras.length > 0) {
+    for (let i = 0; i < Math.min(2, extras.length); i++) {
+      const tx = SPAD + i * (thumbW + thumbGap);
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.4)"; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
+      ctx.fillStyle = "#1e293b"; rr(ctx, tx, thumbY, thumbW, thumbH, 18); ctx.fill();
+      ctx.restore();
+      await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbH, 18, "#1e293b");
+    }
+  }
+
   // Gold separator line
   ctx.fillStyle = NEXOS_GOLD;
   ctx.fillRect(0, cardY - 3, SW, 6);
@@ -604,22 +622,7 @@ async function renderVitrin(
   }
   cy += Math.ceil(details.length / 2) * 72 + 32;
 
-  // 2 extra thumbnail images
-  const extras = property.extra_images ?? [];
-  if (extras.length > 0) {
-    const thumbGap = 16;
-    const thumbW = (SW - SPAD * 2 - thumbGap) / 2;
-    const thumbH = 200;
-    for (let i = 0; i < Math.min(2, extras.length); i++) {
-      const tx = SPAD + i * (thumbW + thumbGap);
-      ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 4;
-      ctx.fillStyle = "#1e293b"; rr(ctx, tx, cy, thumbW, thumbH, 16); ctx.fill();
-      ctx.restore();
-      await drawCoverImg(ctx, extras[i], tx, cy, thumbW, thumbH, 16, "#1e293b");
-    }
-    cy += thumbH + 24;
-  }
+  // (thumbnails already drawn above the separator)
 
   // Contact footer
   const footerY = SH - 80;
