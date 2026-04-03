@@ -392,6 +392,14 @@ function drawFooter(ctx: CanvasRenderingContext2D, T: DesignTemplate) {
 
 async function renderClassic(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
   ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+  // 5px left/right margin via translate
+  const M = 5;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(M, 0, W - M * 2, H);
+  ctx.clip();
+  ctx.translate(M, 0);
+  const effectiveW = W - M * 2;
   const startY = 135 + 36;
 
   // Badge
@@ -449,6 +457,7 @@ async function renderClassic(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   }
 
   drawFooter(ctx, T);
+  ctx.restore(); // restore margin translate
 }
 
 async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate, property: PropertyForImage, title: string, price: string, desc: string) {
