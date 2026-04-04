@@ -927,56 +927,15 @@ async function renderMinimal(
   title: string,
   price: string
 ): Promise<void> {
-  // Background: cover image with heavy dark overlay
-  if (property.cover_image) {
-    await drawCoverImg(ctx, property.cover_image, 0, 0, SW, SH, 0, "#0d1117");
-    ctx.fillStyle = "rgba(0,0,0,0.75)";
-    ctx.fillRect(0, 0, SW, SH);
-  } else {
-    const bgGrad = ctx.createLinearGradient(0, 0, SW, SH);
-    bgGrad.addColorStop(0, "#0d1117");
-    bgGrad.addColorStop(1, "#161b22");
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, SW, SH);
-  }
-
-  // 3 circular property images in a row
-  const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
-  const circCount = Math.min(allImgs.length, 3);
-  if (circCount > 0) {
-    const circR = 130;
-    const circGap = 40;
-    const totalW = circCount * circR * 2 + (circCount - 1) * circGap;
-    const startX = (SW - totalW) / 2 + circR;
-    const circY = 340;
-
-    for (let i = 0; i < circCount; i++) {
-      const cx = startX + i * (circR * 2 + circGap);
-      // Shadow
-      ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,0.4)"; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
-      ctx.fillStyle = "#1e293b";
-      ctx.beginPath(); ctx.arc(cx, circY, circR, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-      // Image in circle
-      ctx.save();
-      ctx.beginPath(); ctx.arc(cx, circY, circR, 0, Math.PI * 2); ctx.clip();
-      try {
-        const img = await loadImg(allImgs[i]);
-        const scale = Math.max((circR * 2) / img.width, (circR * 2) / img.height);
-        const dw = img.width * scale; const dh = img.height * scale;
-        ctx.drawImage(img, cx - dw / 2, circY - dh / 2, dw, dh);
-      } catch { /* fallback already drawn */ }
-      ctx.restore();
-      // Gold ring
-      ctx.strokeStyle = NEXOS_GOLD;
-      ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.arc(cx, circY, circR + 4, 0, Math.PI * 2); ctx.stroke();
-    }
-  }
+  // Dark background
+  const bgGrad = ctx.createLinearGradient(0, 0, SW, SH);
+  bgGrad.addColorStop(0, "#0d1117");
+  bgGrad.addColorStop(1, "#161b22");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, SW, SH);
 
   // Logo centered at top
-  await drawLogo(ctx, SW / 2, 80, 160, "center");
+  await drawLogo(ctx, SW / 2, 70, 160, "center");
 
   // Transaction badge below logo
   const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
@@ -984,95 +943,110 @@ async function renderMinimal(
   ctx.fillStyle = NEXOS_GOLD;
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
-  ctx.fillText(txLabel, SW / 2, 250);
+  ctx.fillText(txLabel, SW / 2, 240);
+  ctx.textAlign = "start";
 
-  // Main content starts below circles
-  const contentY = circCount > 0 ? 520 : Math.round(SH * 0.35);
+  // Big square background image (centered)
+  const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
+  const sqSize = 620;
+  const sqX = (SW - sqSize) / 2;
+  const sqY = 310;
 
-  // Thin gold line
-  ctx.fillStyle = NEXOS_GOLD + "60";
-  ctx.fillRect(SPAD, contentY - 24, SW - SPAD * 2, 2);
-
-  // Large title
-  ctx.fillStyle = "#f1f5f9";
-  ctx.font = `bold 76px ${FONT}`;
-  ctx.textBaseline = "top";
-  ctx.textAlign = "left";
-  const titleLines = wrapText(ctx, title, SW - SPAD * 2, 3);
-  for (let i = 0; i < titleLines.length; i++) {
-    ctx.fillText(titleLines[i], SPAD, contentY + i * 90);
+  if (allImgs[0]) {
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
+    ctx.fillStyle = "#1e293b";
+    rr(ctx, sqX, sqY, sqSize, sqSize, 28);
+    ctx.fill();
+    ctx.restore();
+    await drawCoverImg(ctx, allImgs[0], sqX, sqY, sqSize, sqSize, 28, "#1e293b");
+    // Slight dark overlay
+    ctx.fillStyle = "rgba(0,0,0,0.1)";
+    rr(ctx, sqX, sqY, sqSize, sqSize, 28);
+    ctx.fill();
   }
-  let cy = contentY + titleLines.length * 90 + 32;
 
-  // Price in gold
+  // 3 circular images overlapping the square (centered row)
+  const circCount = Math.min(allImgs.length, 3);
+  if (circCount > 0) {
+    const circR = 100;
+    const circGap = 30;
+    const totalCircW = circCount * circR * 2 + (circCount - 1) * circGap;
+    const circStartX = (SW - totalCircW) / 2 + circR;
+    const circY = sqY + sqSize - circR - 20;
+
+    for (let i = 0; i < circCount; i++) {
+      const cx = circStartX + i * (circR * 2 + circGap);
+      const imgIdx = i + 1 < allImgs.length ? i + 1 : 0;
+      // Shadow
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 4;
+      ctx.fillStyle = "#1e293b";
+      ctx.beginPath(); ctx.arc(cx, circY, circR, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      // Image
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, circY, circR, 0, Math.PI * 2); ctx.clip();
+      try {
+        const img = await loadImg(allImgs[imgIdx]);
+        const scale = Math.max((circR * 2) / img.width, (circR * 2) / img.height);
+        const dw = img.width * scale; const dh = img.height * scale;
+        ctx.drawImage(img, cx - dw / 2, circY - dh / 2, dw, dh);
+      } catch { /* fallback */ }
+      ctx.restore();
+      // Gold ring
+      ctx.strokeStyle = NEXOS_GOLD;
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(cx, circY, circR + 3, 0, Math.PI * 2); ctx.stroke();
+    }
+  }
+
+  // Content below — all centered
+  let cy = sqY + sqSize + 50;
+
+  // Title centered
+  ctx.fillStyle = "#f1f5f9";
+  ctx.font = `bold 64px ${FONT}`;
+  ctx.textBaseline = "top";
+  ctx.textAlign = "center";
+  const titleLines = wrapText(ctx, title, SW - SPAD * 2, 2);
+  for (let i = 0; i < titleLines.length; i++) {
+    ctx.fillText(titleLines[i], SW / 2, cy + i * 78);
+  }
+  cy += titleLines.length * 78 + 20;
+
+  // Price centered
   ctx.fillStyle = NEXOS_GOLD;
-  ctx.font = `bold 96px ${FONT}`;
-  ctx.fillText(price, SPAD, cy);
-  cy += 116;
+  ctx.font = `bold 88px ${FONT}`;
+  ctx.fillText(price, SW / 2, cy);
+  cy += 108;
 
-  // Gold separator
+  // Gold separator centered
   ctx.fillStyle = NEXOS_GOLD;
-  ctx.fillRect(SPAD, cy, 80, 5);
-  cy += 36;
+  ctx.fillRect((SW - 80) / 2, cy, 80, 4);
+  cy += 32;
 
-  // Detail rows: icon + text
-  const details: { icon: "pin" | "home" | "bed" | "ruler"; label: string }[] =
-    [];
+  // Details centered as inline
+  const detailParts: string[] = [];
   const loc = property.district_name
     ? `${property.district_name}, ${property.city_name}`
     : property.city_name;
-  if (loc) details.push({ icon: "pin", label: loc });
-  details.push({
-    icon: "home",
-    label: TYPE_LABELS[property.type] ?? property.type,
-  });
+  if (loc) detailParts.push(loc);
   const roomStr = fmtRooms(property.rooms, property.living_rooms);
-  if (roomStr) details.push({ icon: "bed", label: `${roomStr} Oda` });
-  if (property.area_sqm)
-    details.push({ icon: "ruler", label: `${property.area_sqm} m²` });
+  if (roomStr) detailParts.push(`${roomStr} Oda`);
+  if (property.area_sqm) detailParts.push(`${property.area_sqm} m²`);
+  detailParts.push(TYPE_LABELS[property.type] ?? property.type);
 
-  const rowH = 80;
-  const icoSize = 44;
-  for (let i = 0; i < details.length; i++) {
-    const dy = cy + i * rowH;
-    // Icon background pill
-    ctx.fillStyle = NEXOS_GOLD + "22";
-    rr(ctx, SPAD, dy + (rowH - icoSize) / 2, icoSize, icoSize, 12);
-    ctx.fill();
-    drawIcon(
-      ctx,
-      details[i].icon,
-      SPAD,
-      dy + (rowH - icoSize) / 2,
-      icoSize,
-      NEXOS_GOLD
-    );
-    ctx.fillStyle = "#cbd5e1";
-    ctx.font = `600 40px ${FONT}`;
-    ctx.textBaseline = "middle";
-    ctx.fillText(details[i].label, SPAD + icoSize + 24, dy + rowH / 2);
-    // Subtle separator
-    if (i < details.length - 1) {
-      ctx.fillStyle = "rgba(255,255,255,0.06)";
-      ctx.fillRect(SPAD, dy + rowH - 1, SW - SPAD * 2, 1);
-    }
-  }
-  cy += details.length * rowH + 40;
-
-  // Bottom accent line
-  ctx.fillStyle = NEXOS_GOLD + "40";
-  ctx.fillRect(SPAD, SH - 120, SW - SPAD * 2, 2);
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = `500 34px ${FONT}`;
+  ctx.fillText(detailParts.join("  •  "), SW / 2, cy);
+  cy += 50;
 
   // Footer
   ctx.fillStyle = "#475569";
   ctx.font = `500 28px ${FONT}`;
   ctx.textBaseline = "bottom";
-  ctx.textAlign = "center";
-  ctx.fillText(
-    "+90 548 860 40 30  •  nexosinvestment.com",
-    SW / 2,
-    SH - 70
-  );
+  ctx.fillText("+90 548 860 40 30  •  nexosinvestment.com", SW / 2, SH - 70);
   ctx.textAlign = "start";
 }
 
