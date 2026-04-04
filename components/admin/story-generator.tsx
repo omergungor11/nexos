@@ -529,7 +529,7 @@ async function renderVitrin(
   const thumbGap = 16;
   const thumbW = (SW - SPAD * 2 - thumbGap) / 2;
   const thumbH = 280;
-  const thumbY = cardY - thumbH * 0.65;
+  const thumbY = cardY - thumbH * 0.85;
 
   if (extras.length > 0) {
     for (let i = 0; i < Math.min(2, extras.length); i++) {
