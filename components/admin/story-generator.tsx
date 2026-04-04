@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import { Download, ImageIcon, Palette, RefreshCw } from "lucide-react";
+import { Download, ImageIcon, Palette, RefreshCw, PenSquare } from "lucide-react";
+import { MediaPicker } from "@/components/admin/media-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -1089,12 +1090,19 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
   const [templateId, setTemplateId] = useState<StoryTemplateId>("klasik");
   const [customTitle, setCustomTitle] = useState("");
   const [customPrice, setCustomPrice] = useState("");
+  const [customImages, setCustomImages] = useState<string[]>([]);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+  const [editingImageIndex, setEditingImageIndex] = useState<number>(0);
 
   // Sync fields when property changes
   useEffect(() => {
     if (property) {
       setCustomTitle(property.title);
       setCustomPrice(fmtPrice(property.price, property.currency));
+      setCustomImages([
+        property.cover_image ?? "",
+        ...(property.extra_images ?? []),
+      ].filter(Boolean));
     }
   }, [property]);
 
@@ -1112,21 +1120,28 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
       const title = customTitle || property.title;
       const price = customPrice || fmtPrice(property.price, property.currency);
 
+      // Override property images with custom selections
+      const propWithCustomImages: PropertyData = {
+        ...property,
+        cover_image: customImages[0] ?? property.cover_image,
+        extra_images: customImages.length > 1 ? customImages.slice(1) : property.extra_images,
+      };
+
       switch (templateId) {
         case "klasik":
-          await renderKlasik(ctx, property, title, price);
+          await renderKlasik(ctx, propWithCustomImages, title, price);
           break;
         case "vitrin":
-          await renderVitrin(ctx, property, title, price);
+          await renderVitrin(ctx, propWithCustomImages, title, price);
           break;
         case "galeri":
-          await renderGaleri(ctx, property, title, price);
+          await renderGaleri(ctx, propWithCustomImages, title, price);
           break;
         case "fiyat":
-          await renderFiyat(ctx, property, title, price);
+          await renderFiyat(ctx, propWithCustomImages, title, price);
           break;
         case "minimal":
-          await renderMinimal(ctx, property, title, price);
+          await renderMinimal(ctx, propWithCustomImages, title, price);
           break;
       }
 
@@ -1137,7 +1152,7 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
     } finally {
       setGenerating(false);
     }
-  }, [property, templateId, customTitle, customPrice]);
+  }, [property, templateId, customTitle, customPrice, customImages]);
 
   // Auto-generate when property or template changes
   useEffect(() => {
@@ -1231,6 +1246,53 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
           </Select>
         </div>
       </div>
+
+      {/* Image editor */}
+      {customImages.length > 0 && (
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">Görseller (tıklayarak değiştir)</label>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {customImages.map((img, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => { setEditingImageIndex(i); setMediaPickerOpen(true); }}
+                className="group relative size-16 shrink-0 overflow-hidden rounded-lg border transition-all hover:ring-2 hover:ring-primary"
+              >
+                <img src={img} alt={`Görsel ${i + 1}`} className="h-full w-full object-cover" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/40">
+                  <PenSquare className="size-4 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+                </div>
+                <span className="absolute bottom-0.5 right-0.5 rounded bg-black/60 px-1 text-[9px] text-white">{i + 1}</span>
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => { setEditingImageIndex(customImages.length); setMediaPickerOpen(true); }}
+              className="flex size-16 shrink-0 items-center justify-center rounded-lg border border-dashed text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+            >
+              <ImageIcon className="size-5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <MediaPicker
+        open={mediaPickerOpen}
+        onClose={() => setMediaPickerOpen(false)}
+        onSelect={(url) => {
+          setCustomImages((prev) => {
+            const next = [...prev];
+            if (editingImageIndex < next.length) {
+              next[editingImageIndex] = url;
+            } else {
+              next.push(url);
+            }
+            return next;
+          });
+        }}
+        currentUrl={customImages[editingImageIndex] ?? ""}
+      />
 
       <Button
         variant="outline"
