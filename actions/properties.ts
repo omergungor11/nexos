@@ -245,7 +245,7 @@ export async function createProperty(
     floor: data.floor ?? null,
     total_floors: data.total_floors ?? null,
     year_built: data.year_built ?? null,
-    heating_type: data.heating_type as TablesInsert<"properties">["heating_type"],
+    heating_type: (data.heating_type || "none") as TablesInsert<"properties">["heating_type"],
     parking: data.parking ?? null,
     furnished: data.furnished ?? null,
     balcony_count: data.balcony_count ?? 0,
