@@ -80,8 +80,8 @@ export default async function BlogPage({ params, searchParams }: Props) {
           {posts.map((post) => (
             <Link key={post.id} href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }}>
               <Card className="group h-full gap-0 overflow-hidden py-0 transition-shadow hover:shadow-lg">
-                {post.cover_image && (
-                  <div className="relative aspect-[16/10] overflow-hidden">
+                <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+                  {post.cover_image ? (
                     <Image
                       src={post.cover_image}
                       alt={post.title}
@@ -89,8 +89,17 @@ export default async function BlogPage({ params, searchParams }: Props) {
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <div className="text-center">
+                        <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10">
+                          <span className="text-xl font-bold text-primary">N</span>
+                        </div>
+                        <p className="mt-2 text-xs text-muted-foreground">Nexos Investment</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>{post.author}</span>

@@ -82,6 +82,7 @@ type Agent = {
 
 export type AdminPropertyRow = {
   id: string;
+  listing_number: number;
   slug: string;
   title: string;
   price: number;
@@ -606,6 +607,7 @@ export function PropertyDataTable({
                   aria-label="Tümünü seç"
                 />
               </th>
+              <th className={thClass}>No</th>
               <th className={thClass}>Görsel</th>
               <th
                 className={thSortClass}
@@ -674,6 +676,10 @@ export function PropertyDataTable({
                         className="size-4 rounded accent-primary"
                         aria-label={`${row.title} seç`}
                       />
+                    </td>
+                    {/* Listing Number */}
+                    <td className="px-3 py-2 font-mono text-xs text-muted-foreground">
+                      #{String(row.listing_number ?? 0).padStart(4, "0")}
                     </td>
                     {/* Image */}
                     <td className="px-3 py-2">

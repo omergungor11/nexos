@@ -19,7 +19,7 @@ export default async function AdminIlanlarPage() {
       .from("properties")
       .select(
         `
-        id, slug, title, price, currency, type, transaction_type, status,
+        id, listing_number, slug, title, price, currency, type, transaction_type, status,
         is_active, is_featured, views_count, created_at,
         city:cities(name),
         district:districts(name),
