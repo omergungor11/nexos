@@ -76,8 +76,8 @@ type StoryTemplateId =
   | "klasik"
   | "vitrin"
   | "galeri"
-  | "fiyat"
-  | "minimal";
+  | "kesit"
+  | "panorama";
 
 interface StoryTemplate {
   id: StoryTemplateId;
@@ -88,8 +88,8 @@ const STORY_TEMPLATES: StoryTemplate[] = [
   { id: "klasik", name: "Klasik" },
   { id: "vitrin", name: "Vitrin" },
   { id: "galeri", name: "Galeri" },
-  { id: "fiyat", name: "Fiyat Odaklı" },
-  { id: "minimal", name: "Minimal" },
+  { id: "kesit", name: "Kesit" },
+  { id: "panorama", name: "Panorama" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -781,272 +781,276 @@ async function renderGaleri(
 }
 
 // ---------------------------------------------------------------------------
-// Template 4 — "Fiyat Odaklı"
-// Full background, heavy dark overlay, giant price centered, small title above,
+// Template 4 — "Kesit" (Vertical Split)
+// Left 40% dark panel with text, right 60% full-height image, diagonal gold accent
 // location below, minimal details, strong CTA "Hemen Ara", logo at top
 // ---------------------------------------------------------------------------
 
-async function renderFiyat(
-  ctx: CanvasRenderingContext2D,
-  property: PropertyData,
-  title: string,
-  price: string
-): Promise<void> {
-  // Background image
-  if (property.cover_image) {
-    await drawCoverImg(ctx, property.cover_image, 0, 0, SW, SH, 0, "#0f172a");
-  } else {
-    ctx.fillStyle = "#0f172a";
-    ctx.fillRect(0, 0, SW, SH);
-  }
-
-  // Heavy dark overlay
-  ctx.fillStyle = "rgba(0,0,0,0.78)";
-  ctx.fillRect(0, 0, SW, SH);
-
-  // Subtle radial light center
-  const radGrad = ctx.createRadialGradient(
-    SW / 2,
-    SH * 0.52,
-    0,
-    SW / 2,
-    SH * 0.52,
-    SW * 0.7
-  );
-  radGrad.addColorStop(0, "rgba(255,202,62,0.07)");
-  radGrad.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = radGrad;
-  ctx.fillRect(0, 0, SW, SH);
-
-  // Logo top center
-  await drawLogo(ctx, SW / 2, 80, 170, "center");
-
-  // Top decorative line
-  ctx.fillStyle = NEXOS_GOLD;
-  ctx.fillRect((SW - 140) / 2, 236, 140, 4);
-
-  // Transaction label
-  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
-  ctx.font = `600 38px ${FONT}`;
-  ctx.fillStyle = NEXOS_GOLD + "cc";
-  ctx.textBaseline = "top";
-  ctx.textAlign = "center";
-  ctx.fillText(txLabel, SW / 2, 268);
-  ctx.textAlign = "start";
-
-  // Small title above price
-  const titleContentY = SH * 0.36;
-  ctx.fillStyle = "#94a3b8";
-  ctx.font = `600 44px ${FONT}`;
-  ctx.textBaseline = "top";
-  ctx.textAlign = "center";
-  const titleLines = wrapText(ctx, title, SW - SPAD * 2, 2);
-  for (let i = 0; i < titleLines.length; i++) {
-    ctx.fillText(titleLines[i], SW / 2, titleContentY + i * 56);
-  }
-  ctx.textAlign = "start";
-  const afterTitle = titleContentY + titleLines.length * 56 + 32;
-
-  // Giant price
-  ctx.fillStyle = NEXOS_GOLD;
-  ctx.font = `bold 120px ${FONT}`;
-  ctx.textBaseline = "top";
-  ctx.textAlign = "center";
-  ctx.fillText(price, SW / 2, afterTitle);
-  ctx.textAlign = "start";
-  const afterPrice = afterTitle + 144;
-
-  // Gold accent lines around price
-  ctx.fillStyle = NEXOS_GOLD;
-  ctx.fillRect(SPAD, afterPrice + 8, SW - SPAD * 2, 3);
-
-  // Location
-  const loc = property.district_name
-    ? `${property.district_name}, ${property.city_name}`
-    : property.city_name;
-  ctx.fillStyle = "#e2e8f0";
-  ctx.font = `600 46px ${FONT}`;
-  ctx.textBaseline = "top";
-  ctx.textAlign = "center";
-  ctx.fillText(loc, SW / 2, afterPrice + 40);
-  ctx.textAlign = "start";
-
-  // Property type badge
-  const typeLabel = TYPE_LABELS[property.type] ?? property.type;
-  ctx.font = `500 36px ${FONT}`;
-  ctx.fillStyle = "#64748b";
-  ctx.textAlign = "center";
-  ctx.fillText(typeLabel, SW / 2, afterPrice + 104);
-  ctx.textAlign = "start";
-
-  // CTA button
-  const ctaY = SH * 0.78;
-  const ctaW = 540;
-  const ctaH = 112;
-  const ctaX = (SW - ctaW) / 2;
-  ctx.save();
-  ctx.shadowColor = NEXOS_GOLD + "66";
-  ctx.shadowBlur = 32;
-  ctx.fillStyle = NEXOS_GOLD;
-  rr(ctx, ctaX, ctaY, ctaW, ctaH, 28);
-  ctx.fill();
-  ctx.restore();
-  ctx.fillStyle = "#000000";
-  ctx.font = `bold 52px ${FONT}`;
-  ctx.textBaseline = "middle";
-  ctx.textAlign = "center";
-  ctx.fillText("Hemen Ara", SW / 2, ctaY + ctaH / 2);
-  ctx.textAlign = "start";
-
-  // Phone under CTA
-  ctx.fillStyle = "#94a3b8";
-  ctx.font = `500 36px ${FONT}`;
-  ctx.textBaseline = "top";
-  ctx.textAlign = "center";
-  ctx.fillText("+90 548 860 40 30", SW / 2, ctaY + ctaH + 28);
-  ctx.textAlign = "start";
-
-  // Website footer
-  const footerY = SH - 80;
-  ctx.fillStyle = "#475569";
-  ctx.font = `500 28px ${FONT}`;
-  ctx.textAlign = "center";
-  ctx.fillText("nexosinvestment.com", SW / 2, footerY);
-  ctx.textAlign = "start";
-}
-
-// ---------------------------------------------------------------------------
-// Template 5 — "Minimal"
-// Dark solid background, clean typography, optional small circular image,
-// large title, price in gold, icon+text detail rows, centered logo
-// ---------------------------------------------------------------------------
-
-async function renderMinimal(
+async function renderKesit(
   ctx: CanvasRenderingContext2D,
   property: PropertyData,
   title: string,
   price: string
 ): Promise<void> {
   // Dark background
-  const bgGrad = ctx.createLinearGradient(0, 0, SW, SH);
-  bgGrad.addColorStop(0, "#0d1117");
-  bgGrad.addColorStop(1, "#161b22");
-  ctx.fillStyle = bgGrad;
+  ctx.fillStyle = "#0d1117";
   ctx.fillRect(0, 0, SW, SH);
 
-  // Logo centered at top
-  await drawLogo(ctx, SW / 2, 70, 160, "center");
-
-  // Transaction badge below logo
-  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
-  ctx.font = `700 32px ${FONT}`;
-  ctx.fillStyle = NEXOS_GOLD;
-  ctx.textBaseline = "top";
-  ctx.textAlign = "center";
-  ctx.fillText(txLabel, SW / 2, 240);
-  ctx.textAlign = "start";
-
-  // Big square background image (centered)
-  const allImgs = [property.cover_image, ...(property.extra_images ?? [])].filter(Boolean) as string[];
-  const sqSize = 620;
-  const sqX = (SW - sqSize) / 2;
-  const sqY = 310;
-
-  if (allImgs[0]) {
-    ctx.save();
-    ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
-    ctx.fillStyle = "#1e293b";
-    rr(ctx, sqX, sqY, sqSize, sqSize, 28);
-    ctx.fill();
-    ctx.restore();
-    await drawCoverImg(ctx, allImgs[0], sqX, sqY, sqSize, sqSize, 28, "#1e293b");
-    // Slight dark overlay
-    ctx.fillStyle = "rgba(0,0,0,0.1)";
-    rr(ctx, sqX, sqY, sqSize, sqSize, 28);
-    ctx.fill();
+  // Right 60% — full-height property image
+  const imgX = 432;
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, imgX, 0, SW - imgX, SH, 0, "#1e293b");
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    ctx.fillRect(imgX, 0, SW - imgX, SH);
   }
 
-  // 3 circular images overlapping the square (centered row)
-  const circCount = Math.min(allImgs.length, 3);
-  if (circCount > 0) {
-    const circR = 100;
-    const circGap = 30;
-    const totalCircW = circCount * circR * 2 + (circCount - 1) * circGap;
-    const circStartX = (SW - totalCircW) / 2 + circR;
-    const circY = sqY + sqSize - circR - 20;
+  // Left dark panel with gradient fade into image
+  ctx.fillStyle = "#0d1117";
+  ctx.fillRect(0, 0, 460, SH);
+  const panelGrad = ctx.createLinearGradient(380, 0, 500, 0);
+  panelGrad.addColorStop(0, "rgba(13,17,23,1)");
+  panelGrad.addColorStop(1, "rgba(13,17,23,0)");
+  ctx.fillStyle = panelGrad;
+  ctx.fillRect(380, 0, 120, SH);
 
-    for (let i = 0; i < circCount; i++) {
-      const cx = circStartX + i * (circR * 2 + circGap);
-      const imgIdx = i + 1 < allImgs.length ? i + 1 : 0;
-      // Shadow
+  // Diagonal gold accent line
+  ctx.beginPath();
+  ctx.moveTo(400, 0);
+  ctx.lineTo(360, SH);
+  ctx.strokeStyle = NEXOS_GOLD;
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // Diagonal gold strip (subtle)
+  ctx.save();
+  ctx.globalAlpha = 0.08;
+  ctx.beginPath();
+  ctx.moveTo(390, 0); ctx.lineTo(470, 0);
+  ctx.lineTo(430, SH); ctx.lineTo(350, SH);
+  ctx.closePath();
+  ctx.fillStyle = NEXOS_GOLD;
+  ctx.fill();
+  ctx.globalAlpha = 1.0;
+  ctx.restore();
+
+  // Logo top-left
+  await drawLogo(ctx, 50, 70, 140, "left");
+
+  // Transaction badge
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  ctx.font = `bold 26px ${FONT}`;
+  const badgeTW = ctx.measureText(txLabel).width;
+  const badgeW = badgeTW + 40;
+  ctx.fillStyle = NEXOS_GOLD;
+  rr(ctx, 50, 240, badgeW, 52, 12);
+  ctx.fill();
+  ctx.fillStyle = "#000";
+  ctx.textBaseline = "middle";
+  ctx.fillText(txLabel, 70, 266);
+
+  // Price — hero element
+  ctx.fillStyle = NEXOS_GOLD;
+  ctx.font = `bold 72px ${FONT}`;
+  ctx.textBaseline = "top";
+  const priceLines = wrapText(ctx, price, 340, 2);
+  let py = 420;
+  for (let i = 0; i < priceLines.length; i++) {
+    ctx.fillText(priceLines[i], 50, py + i * 86);
+  }
+  py += priceLines.length * 86 + 20;
+
+  // Gold separator
+  ctx.fillStyle = NEXOS_GOLD;
+  ctx.fillRect(50, py, 80, 4);
+  py += 32;
+
+  // Title
+  ctx.fillStyle = "#f1f5f9";
+  ctx.font = `bold 48px ${FONT}`;
+  const titleLines = wrapText(ctx, title, 320, 3);
+  for (let i = 0; i < titleLines.length; i++) {
+    ctx.fillText(titleLines[i], 50, py + i * 58);
+  }
+  py += titleLines.length * 58 + 36;
+
+  // Detail rows with icons
+  const loc = property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name;
+  const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  const details: { icon: "pin" | "home" | "bed" | "ruler"; label: string }[] = [];
+  if (loc) details.push({ icon: "pin", label: loc });
+  details.push({ icon: "home", label: TYPE_LABELS[property.type] ?? property.type });
+  if (roomStr) details.push({ icon: "bed", label: `${roomStr} Oda` });
+  if (property.area_sqm) details.push({ icon: "ruler", label: `${property.area_sqm} m²` });
+
+  ctx.font = `500 32px ${FONT}`;
+  ctx.textBaseline = "middle";
+  for (let i = 0; i < details.length; i++) {
+    const dy = py + i * 56;
+    drawIcon(ctx, details[i].icon, 50, dy, 36, NEXOS_GOLD);
+    ctx.fillStyle = "#94a3b8";
+    ctx.fillText(details[i].label, 98, dy + 18);
+  }
+
+  // Extra thumbnails overlapping diagonal
+  const extras = property.extra_images ?? [];
+  if (extras.length > 0) {
+    for (let i = 0; i < Math.min(2, extras.length); i++) {
+      const tx = 320; const ty = 1380 + i * 160;
       ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 4;
-      ctx.fillStyle = "#1e293b";
-      ctx.beginPath(); ctx.arc(cx, circY, circR, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowColor = "rgba(0,0,0,0.4)"; ctx.shadowBlur = 16;
+      ctx.fillStyle = "#1e293b"; rr(ctx, tx, ty, 200, 140, 16); ctx.fill();
       ctx.restore();
-      // Image
-      ctx.save();
-      ctx.beginPath(); ctx.arc(cx, circY, circR, 0, Math.PI * 2); ctx.clip();
-      try {
-        const img = await loadImg(allImgs[imgIdx]);
-        const scale = Math.max((circR * 2) / img.width, (circR * 2) / img.height);
-        const dw = img.width * scale; const dh = img.height * scale;
-        ctx.drawImage(img, cx - dw / 2, circY - dh / 2, dw, dh);
-      } catch { /* fallback */ }
-      ctx.restore();
-      // Gold ring
-      ctx.strokeStyle = NEXOS_GOLD;
-      ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(cx, circY, circR + 3, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = NEXOS_GOLD; ctx.lineWidth = 2;
+      rr(ctx, tx, ty, 200, 140, 16); ctx.stroke();
+      await drawCoverImg(ctx, extras[i], tx, ty, 200, 140, 16, "#1e293b");
     }
   }
 
-  // Content below — all centered
-  let cy = sqY + sqSize + 50;
-
-  // Title centered
-  ctx.fillStyle = "#f1f5f9";
-  ctx.font = `bold 64px ${FONT}`;
-  ctx.textBaseline = "top";
-  ctx.textAlign = "center";
-  const titleLines = wrapText(ctx, title, SW - SPAD * 2, 2);
-  for (let i = 0; i < titleLines.length; i++) {
-    ctx.fillText(titleLines[i], SW / 2, cy + i * 78);
-  }
-  cy += titleLines.length * 78 + 20;
-
-  // Price centered
-  ctx.fillStyle = NEXOS_GOLD;
-  ctx.font = `bold 88px ${FONT}`;
-  ctx.fillText(price, SW / 2, cy);
-  cy += 108;
-
-  // Gold separator centered
-  ctx.fillStyle = NEXOS_GOLD;
-  ctx.fillRect((SW - 80) / 2, cy, 80, 4);
-  cy += 32;
-
-  // Details centered as inline
-  const detailParts: string[] = [];
-  const loc = property.district_name
-    ? `${property.district_name}, ${property.city_name}`
-    : property.city_name;
-  if (loc) detailParts.push(loc);
-  const roomStr = fmtRooms(property.rooms, property.living_rooms);
-  if (roomStr) detailParts.push(`${roomStr} Oda`);
-  if (property.area_sqm) detailParts.push(`${property.area_sqm} m²`);
-  detailParts.push(TYPE_LABELS[property.type] ?? property.type);
-
-  ctx.fillStyle = "#94a3b8";
-  ctx.font = `500 34px ${FONT}`;
-  ctx.fillText(detailParts.join("  •  "), SW / 2, cy);
-  cy += 50;
-
   // Footer
   ctx.fillStyle = "#475569";
-  ctx.font = `500 28px ${FONT}`;
+  ctx.font = `500 24px ${FONT}`;
   ctx.textBaseline = "bottom";
-  ctx.fillText("+90 548 860 40 30  •  nexosinvestment.com", SW / 2, SH - 70);
+  ctx.fillText("nexosinvestment.com", 50, SH - 70);
+}
+
+// ---------------------------------------------------------------------------
+// Template 5 — "Panorama" (Stacked Horizontal Bands)
+// Top: price hero + title, Middle: floating image with shadow, Bottom: detail chips
+// ---------------------------------------------------------------------------
+
+async function renderPanorama(
+  ctx: CanvasRenderingContext2D,
+  property: PropertyData,
+  title: string,
+  price: string
+): Promise<void> {
+  // Dark gradient background
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, SH);
+  bgGrad.addColorStop(0, "#0d1117");
+  bgGrad.addColorStop(1, "#131920");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, SW, SH);
+
+  // Logo top-left
+  await drawLogo(ctx, SPAD, 60, 120, "left");
+
+  // Transaction badge top-right
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  ctx.font = `bold 24px ${FONT}`;
+  const badgeTW = ctx.measureText(txLabel).width;
+  const badgeW = badgeTW + 40;
+  ctx.fillStyle = NEXOS_GOLD;
+  rr(ctx, SW - SPAD - badgeW, 60, badgeW, 48, 12);
+  ctx.fill();
+  ctx.fillStyle = "#000";
+  ctx.textBaseline = "middle";
+  ctx.fillText(txLabel, SW - SPAD - badgeW + 20, 84);
+
+  // Hero price (biggest element)
+  ctx.fillStyle = NEXOS_GOLD;
+  ctx.font = `bold 100px ${FONT}`;
+  ctx.textBaseline = "top";
+  ctx.textAlign = "center";
+  ctx.fillText(price, SW / 2, 240);
+
+  // Title below price
+  ctx.fillStyle = "#f1f5f9";
+  ctx.font = `bold 50px ${FONT}`;
+  const titleLines = wrapText(ctx, title, SW - SPAD * 2, 2);
+  for (let i = 0; i < titleLines.length; i++) {
+    ctx.fillText(titleLines[i], SW / 2, 370 + i * 62);
+  }
+  const afterTitle = 370 + titleLines.length * 62;
+
+  // Location
+  const loc = property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name;
+  ctx.fillStyle = "#64748b";
+  ctx.font = `500 34px ${FONT}`;
+  ctx.fillText(loc, SW / 2, afterTitle + 16);
+  ctx.textAlign = "start";
+
+  // Floating main image (inset with shadow)
+  const imgX = 40; const imgY = afterTitle + 80; const imgW = SW - 80; const imgH = 680;
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 16;
+  ctx.fillStyle = "#1e293b";
+  rr(ctx, imgX, imgY, imgW, imgH, 24);
+  ctx.fill();
+  ctx.restore();
+
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, imgX, imgY, imgW, imgH, 24, "#1e293b");
+  }
+
+  // Subtle gold border around image
+  ctx.strokeStyle = "rgba(255,202,62,0.2)";
+  ctx.lineWidth = 2;
+  rr(ctx, imgX, imgY, imgW, imgH, 24);
+  ctx.stroke();
+
+  // Extra image strip below main (3 thumbnails)
+  const extras = property.extra_images ?? [];
+  const thumbY = imgY + imgH + 16;
+  const thumbGap = 12;
+  const thumbCount = Math.min(extras.length, 3);
+  if (thumbCount > 0) {
+    const thumbW = (imgW - thumbGap * (thumbCount - 1)) / thumbCount;
+    const thumbH = 150;
+    for (let i = 0; i < thumbCount; i++) {
+      const tx = imgX + i * (thumbW + thumbGap);
+      await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbH, 12, "#1e293b");
+    }
+  }
+
+  // Detail chips row (centered)
+  const chipY = thumbCount > 0 ? thumbY + 180 : imgY + imgH + 40;
+  const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  const chipItems: string[] = [];
+  if (roomStr) chipItems.push(roomStr);
+  if (property.area_sqm) chipItems.push(`${property.area_sqm} m²`);
+  chipItems.push(TYPE_LABELS[property.type] ?? property.type);
+
+  ctx.font = `600 28px ${FONT}`;
+  // Measure chips
+  const chipPad = 48;
+  const chipGap = 16;
+  const chipWidths = chipItems.map((t) => ctx.measureText(t).width + chipPad);
+  const totalChipW = chipWidths.reduce((a, b) => a + b, 0) + chipGap * (chipItems.length - 1);
+  let chipX = (SW - totalChipW) / 2;
+
+  for (let i = 0; i < chipItems.length; i++) {
+    const cw = chipWidths[i];
+    // Chip background
+    ctx.fillStyle = "rgba(255,202,62,0.08)";
+    rr(ctx, chipX, chipY, cw, 56, 28);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,202,62,0.2)";
+    ctx.lineWidth = 1;
+    rr(ctx, chipX, chipY, cw, 56, 28);
+    ctx.stroke();
+    // Chip text
+    ctx.fillStyle = "#e2e8f0";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillText(chipItems[i], chipX + cw / 2, chipY + 28);
+    ctx.textAlign = "start";
+    chipX += cw + chipGap;
+  }
+
+  // CTA
+  ctx.fillStyle = NEXOS_GOLD;
+  ctx.font = `500 30px ${FONT}`;
+  ctx.textBaseline = "top";
+  ctx.textAlign = "center";
+  ctx.fillText("Detaylar için yukarı kaydır", SW / 2, chipY + 80);
+
+  // Footer
+  ctx.fillStyle = "rgba(255,202,62,0.15)";
+  ctx.fillRect(40, SH - 100, SW - 80, 1);
+  ctx.fillStyle = "#475569";
+  ctx.font = `500 26px ${FONT}`;
+  ctx.textBaseline = "bottom";
+  ctx.fillText("+90 548 860 40 30  |  nexosinvestment.com", SW / 2, SH - 60);
   ctx.textAlign = "start";
 }
 
@@ -1108,11 +1112,11 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
         case "galeri":
           await renderGaleri(ctx, propWithCustomImages, title, price);
           break;
-        case "fiyat":
-          await renderFiyat(ctx, propWithCustomImages, title, price);
+        case "kesit":
+          await renderKesit(ctx, propWithCustomImages, title, price);
           break;
-        case "minimal":
-          await renderMinimal(ctx, propWithCustomImages, title, price);
+        case "panorama":
+          await renderPanorama(ctx, propWithCustomImages, title, price);
           break;
       }
 
