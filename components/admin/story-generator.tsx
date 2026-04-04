@@ -528,8 +528,8 @@ async function renderVitrin(
   const extras = property.extra_images ?? [];
   const thumbGap = 16;
   const thumbW = (SW - SPAD * 2 - thumbGap) / 2;
-  const thumbH = 300;
-  const thumbY = cardY - thumbH / 2;
+  const thumbH = 280;
+  const thumbY = cardY - thumbH * 0.65;
 
   if (extras.length > 0) {
     for (let i = 0; i < Math.min(2, extras.length); i++) {
@@ -560,8 +560,9 @@ async function renderVitrin(
   ctx.fillText(txLabel, SW - SPAD - 22, 70 + badgeH / 2);
   ctx.textAlign = "start";
 
-  // Card content
-  let cy = cardY + 64;
+  // Card content — start below thumbnails
+  const thumbBottom = thumbY + thumbH;
+  let cy = Math.max(cardY + 64, thumbBottom + 30);
 
   // Price
   ctx.fillStyle = NEXOS_GOLD;
