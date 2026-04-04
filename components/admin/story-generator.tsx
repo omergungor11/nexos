@@ -995,7 +995,7 @@ async function renderPanorama(
   const thumbCount = Math.min(extras.length, 3);
   if (thumbCount > 0) {
     const thumbW = (imgW - thumbGap * (thumbCount - 1)) / thumbCount;
-    const thumbH = 150;
+    const thumbH = 240;
     for (let i = 0; i < thumbCount; i++) {
       const tx = imgX + i * (thumbW + thumbGap);
       await drawCoverImg(ctx, extras[i], tx, thumbY, thumbW, thumbH, 12, "#1e293b");
@@ -1003,7 +1003,7 @@ async function renderPanorama(
   }
 
   // Detail chips row (centered)
-  const chipY = thumbCount > 0 ? thumbY + 180 : imgY + imgH + 40;
+  const chipY = thumbCount > 0 ? thumbY + 270 : imgY + imgH + 40;
   const roomStr = fmtRooms(property.rooms, property.living_rooms);
   const chipItems: string[] = [];
   if (roomStr) chipItems.push(roomStr);
