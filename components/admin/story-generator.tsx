@@ -1246,23 +1246,15 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
       {/* Image editor */}
       {customImages.length > 0 && (
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Görseller — ilk görsel ana görsel olur (tıkla: değiştir, yıldız: öne al)</label>
+          <label className="text-xs font-medium text-muted-foreground">Görseller — yıldıza tıklayarak ana görseli seçin</label>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {customImages.map((img, i) => (
               <div key={i} className="relative shrink-0">
-                <button
-                  type="button"
-                  onClick={() => { setEditingImageIndex(i); setMediaPickerOpen(true); }}
-                  className={`group relative size-16 overflow-hidden rounded-lg border-2 transition-all hover:ring-2 hover:ring-primary ${i === 0 ? "border-primary" : "border-transparent"}`}
-                >
+                <div className={`relative size-16 overflow-hidden rounded-lg border-2 ${i === 0 ? "border-primary" : "border-transparent"}`}>
                   <img src={img} alt={`Görsel ${i + 1}`} className="h-full w-full object-cover" />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/40">
-                    <PenSquare className="size-4 text-white opacity-0 transition-opacity group-hover:opacity-100" />
-                  </div>
                   {i === 0 && <span className="absolute left-0.5 top-0.5 rounded bg-primary px-1 text-[8px] font-bold text-primary-foreground">ANA</span>}
-                </button>
-                {/* Make cover + remove buttons */}
-                <div className="mt-0.5 flex justify-center gap-0.5">
+                </div>
+                <div className="mt-0.5 flex justify-center">
                   {i !== 0 && (
                     <button
                       type="button"
@@ -1278,16 +1270,7 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
                       <Star className="size-3" />
                     </button>
                   )}
-                  {customImages.length > 1 && (
-                    <button
-                      type="button"
-                      title="Görseli kaldır"
-                      onClick={() => setCustomImages((prev) => prev.filter((_, idx) => idx !== i))}
-                      className="rounded p-0.5 text-muted-foreground hover:text-destructive"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  )}
+                  {i === 0 && <Star className="size-3 text-primary" />}
                 </div>
               </div>
             ))}
