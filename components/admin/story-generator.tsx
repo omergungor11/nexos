@@ -77,7 +77,9 @@ type StoryTemplateId =
   | "vitrin"
   | "galeri"
   | "kesit"
-  | "panorama";
+  | "panorama"
+  | "cerceve"
+  | "sahne";
 
 interface StoryTemplate {
   id: StoryTemplateId;
@@ -90,6 +92,8 @@ const STORY_TEMPLATES: StoryTemplate[] = [
   { id: "galeri", name: "Galeri" },
   { id: "kesit", name: "Kesit" },
   { id: "panorama", name: "Panorama" },
+  { id: "cerceve", name: "Çerçeve" },
+  { id: "sahne", name: "Sahne" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -1055,6 +1059,224 @@ async function renderPanorama(
 }
 
 // ---------------------------------------------------------------------------
+// Template 6 — "Çerçeve" (Gallery/Polaroid frame card)
+// ---------------------------------------------------------------------------
+
+async function renderCerceve(
+  ctx: CanvasRenderingContext2D,
+  property: PropertyData,
+  title: string,
+  price: string
+): Promise<void> {
+  // Dark background
+  ctx.fillStyle = "#0d1117";
+  ctx.fillRect(0, 0, SW, SH);
+
+  // Subtle diagonal texture
+  ctx.save();
+  ctx.strokeStyle = "rgba(255,202,62,0.04)";
+  ctx.lineWidth = 1;
+  for (let i = -SH; i < SW + SH; i += 40) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i - SH, SH); ctx.stroke();
+  }
+  ctx.restore();
+
+  // Top bar: logo left, city right
+  await drawLogo(ctx, SPAD, 35, 100, "left");
+  const cityText = (property.city_name || "").toUpperCase();
+  ctx.fillStyle = "#64748b"; ctx.font = `500 28px ${FONT}`; ctx.textBaseline = "middle"; ctx.textAlign = "right";
+  ctx.fillText(cityText, SW - SPAD, 85); ctx.textAlign = "start";
+
+  // Main frame
+  const frameX = 80; const frameY = 160; const frameW = SW - 160; const frameH = 1180;
+  ctx.fillStyle = "#1a1f2e";
+  rr(ctx, frameX, frameY, frameW, frameH, 4); ctx.fill();
+  // Gold border
+  ctx.strokeStyle = "rgba(255,202,62,0.5)"; ctx.lineWidth = 3;
+  rr(ctx, frameX, frameY, frameW, frameH, 4); ctx.stroke();
+
+  // Image inside frame (sharp corners)
+  const imgX = 110; const imgY = 190; const imgW = frameW - 60; const imgH = 700;
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, imgX, imgY, imgW, imgH, 0, "#1e293b");
+  } else {
+    ctx.fillStyle = "#1e293b"; ctx.fillRect(imgX, imgY, imgW, imgH);
+  }
+
+  // Caption area inside frame
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  ctx.font = `bold 24px ${FONT}`;
+  const badgeTW = ctx.measureText(txLabel).width;
+  ctx.fillStyle = NEXOS_GOLD;
+  rr(ctx, 110, 920, badgeTW + 40, 48, 8); ctx.fill();
+  ctx.fillStyle = "#000"; ctx.textBaseline = "middle";
+  ctx.fillText(txLabel, 130, 944);
+
+  // Title
+  ctx.fillStyle = "#f1f5f9"; ctx.font = `bold 56px ${FONT}`; ctx.textBaseline = "top";
+  const titleLines = wrapText(ctx, title, imgW, 2);
+  for (let i = 0; i < titleLines.length; i++) ctx.fillText(titleLines[i], 110, 990 + i * 68);
+  const afterTitle = 990 + titleLines.length * 68 + 16;
+
+  // Price
+  ctx.fillStyle = NEXOS_GOLD; ctx.font = `bold 78px ${FONT}`;
+  ctx.fillText(price, 110, afterTitle);
+
+  // Gold rule
+  ctx.fillStyle = NEXOS_GOLD; ctx.fillRect(110, afterTitle + 100, 80, 3);
+
+  // Type label
+  const typeLabel = TYPE_LABELS[property.type] ?? property.type;
+  ctx.fillStyle = "#64748b"; ctx.font = `500 30px ${FONT}`;
+  ctx.fillText(typeLabel, 110, afterTitle + 120);
+
+  // Bottom stat blocks (3 columns)
+  const loc = property.district_name ? `${property.district_name}` : property.city_name;
+  const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  const stats = [
+    { icon: "pin" as const, value: loc, label: "Konum" },
+    { icon: "bed" as const, value: roomStr ?? "—", label: "Oda" },
+    { icon: "ruler" as const, value: property.area_sqm ? `${property.area_sqm} m²` : "—", label: "Alan" },
+  ];
+
+  const statY = 1400; const statColW = (SW - 120) / 3;
+  for (let i = 0; i < stats.length; i++) {
+    const cx = 60 + i * statColW + statColW / 2;
+    drawIcon(ctx, stats[i].icon, cx - 20, statY, 40, NEXOS_GOLD);
+    ctx.fillStyle = "#f1f5f9"; ctx.font = `bold 36px ${FONT}`; ctx.textBaseline = "top"; ctx.textAlign = "center";
+    ctx.fillText(stats[i].value, cx, statY + 52);
+    ctx.fillStyle = "#64748b"; ctx.font = `500 24px ${FONT}`;
+    ctx.fillText(stats[i].label, cx, statY + 96);
+    ctx.textAlign = "start";
+  }
+
+  // Film-strip thumbnails
+  const extras = property.extra_images ?? [];
+  const stripY = 1600;
+  for (let i = 0; i < Math.min(2, extras.length); i++) {
+    const tx = 60 + i * 500; const tw = 460; const th = 140;
+    await drawCoverImg(ctx, extras[i], tx, stripY, tw, th, 8, "#1e293b");
+    ctx.strokeStyle = "rgba(255,202,62,0.2)"; ctx.lineWidth = 1;
+    rr(ctx, tx, stripY, tw, th, 8); ctx.stroke();
+  }
+
+  // Footer
+  ctx.fillStyle = "#475569"; ctx.font = `500 26px ${FONT}`;
+  ctx.textBaseline = "bottom"; ctx.textAlign = "center";
+  ctx.fillText("+90 548 860 40 30 | nexosinvestment.com", SW / 2, SH - 50);
+  ctx.textAlign = "start";
+}
+
+// ---------------------------------------------------------------------------
+// Template 7 — "Sahne" (Magazine Cover / Editorial)
+// ---------------------------------------------------------------------------
+
+async function renderSahne(
+  ctx: CanvasRenderingContext2D,
+  property: PropertyData,
+  title: string,
+  price: string
+): Promise<void> {
+  // Full-bleed background image
+  if (property.cover_image) {
+    await drawCoverImg(ctx, property.cover_image, 0, 0, SW, SH, 0, "#0f172a");
+  } else {
+    ctx.fillStyle = "#0f172a"; ctx.fillRect(0, 0, SW, SH);
+  }
+
+  // Top dark gradient (masthead)
+  const topGrad = ctx.createLinearGradient(0, 0, 0, 450);
+  topGrad.addColorStop(0, "rgba(0,0,0,0.88)");
+  topGrad.addColorStop(1, "rgba(0,0,0,0.05)");
+  ctx.fillStyle = topGrad; ctx.fillRect(0, 0, SW, 450);
+
+  // Bottom dark gradient (editorial block)
+  const botGrad = ctx.createLinearGradient(0, 1050, 0, SH);
+  botGrad.addColorStop(0, "rgba(0,0,0,0)");
+  botGrad.addColorStop(0.3, "rgba(0,0,0,0.6)");
+  botGrad.addColorStop(1, "rgba(0,0,0,0.95)");
+  ctx.fillStyle = botGrad; ctx.fillRect(0, 1050, SW, SH - 1050);
+
+  // Masthead: logo centered
+  await drawLogo(ctx, SW / 2, 60, 150, "center");
+
+  // Gold horizontal rule
+  ctx.fillStyle = NEXOS_GOLD; ctx.fillRect(200, 240, SW - 400, 2);
+
+  // Flanking labels
+  ctx.font = `500 22px ${FONT}`; ctx.textBaseline = "top";
+  ctx.fillStyle = NEXOS_GOLD;
+  ctx.fillText("LUXURY PROPERTY", 200, 258);
+  ctx.textAlign = "right";
+  ctx.fillText(property.city_name.toUpperCase(), SW - 200, 258);
+  ctx.textAlign = "start";
+
+  // Price — hero element high on canvas
+  ctx.fillStyle = NEXOS_GOLD; ctx.font = `bold 110px ${FONT}`; ctx.textBaseline = "top";
+  ctx.fillText(price, SPAD, 380);
+  // Gold underline
+  ctx.fillStyle = NEXOS_GOLD; ctx.fillRect(SPAD, 510, 160, 5);
+
+  // Bottom editorial block
+  const txLabel = TX_LABELS[property.transaction_type] ?? "SATILIK";
+  ctx.font = `bold 26px ${FONT}`;
+  const badgeTW = ctx.measureText(txLabel).width;
+  ctx.fillStyle = NEXOS_GOLD;
+  rr(ctx, SPAD, 1200, badgeTW + 44, 52, 26); ctx.fill();
+  ctx.fillStyle = "#000"; ctx.textBaseline = "middle";
+  ctx.fillText(txLabel, SPAD + 22, 1226);
+
+  // Title
+  ctx.fillStyle = "#ffffff"; ctx.font = `bold 62px ${FONT}`; ctx.textBaseline = "top";
+  const titleLines = wrapText(ctx, title, SW - SPAD * 2, 2);
+  for (let i = 0; i < titleLines.length; i++) ctx.fillText(titleLines[i], SPAD, 1280 + i * 76);
+  const afterTitle = 1280 + titleLines.length * 76 + 16;
+
+  // Detail line
+  const loc = property.district_name ?? property.city_name;
+  const roomStr = fmtRooms(property.rooms, property.living_rooms);
+  const detailParts: string[] = [];
+  if (loc) detailParts.push(loc);
+  if (roomStr) detailParts.push(`${roomStr} Oda`);
+  if (property.area_sqm) detailParts.push(`${property.area_sqm} m²`);
+
+  ctx.fillStyle = "#cbd5e1"; ctx.font = `600 32px ${FONT}`;
+  ctx.fillText(detailParts.join("  |  "), SPAD, afterTitle);
+
+  // Extra thumbnails + quote
+  const extras = property.extra_images ?? [];
+  const thumbRowY = afterTitle + 60;
+  for (let i = 0; i < Math.min(2, extras.length); i++) {
+    const tx = SPAD + i * 220;
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.4)"; ctx.shadowBlur = 16;
+    ctx.fillStyle = "#1e293b"; rr(ctx, tx, thumbRowY, 200, 130, 12); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = "rgba(255,202,62,0.3)"; ctx.lineWidth = 2;
+    rr(ctx, tx, thumbRowY, 200, 130, 12); ctx.stroke();
+    await drawCoverImg(ctx, extras[i], tx, thumbRowY, 200, 130, 12, "#1e293b");
+  }
+
+  // Quote/CTA on right side
+  ctx.fillStyle = "rgba(255,202,62,0.3)"; ctx.font = `bold 80px serif`;
+  ctx.textBaseline = "top"; ctx.fillText("\u201C", 540, thumbRowY - 10);
+  ctx.fillStyle = "#94a3b8"; ctx.font = `500 28px ${FONT}`;
+  ctx.fillText("Hayalinizdeki eve", 560, thumbRowY + 50);
+  ctx.fillText("bir adım", 560, thumbRowY + 86);
+
+  // Gold accent bar
+  ctx.fillStyle = "rgba(255,202,62,0.25)";
+  ctx.fillRect(SPAD, SH - 130, SW - SPAD * 2, 1);
+
+  // Footer
+  ctx.fillStyle = "#64748b"; ctx.font = `500 26px ${FONT}`;
+  ctx.textBaseline = "bottom";
+  ctx.fillText("+90 548 860 40 30", SPAD, SH - 60);
+  ctx.textAlign = "right";
+  ctx.fillText("nexosinvestment.com", SW - SPAD, SH - 60);
+  ctx.textAlign = "start";
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -1117,6 +1339,12 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
           break;
         case "panorama":
           await renderPanorama(ctx, propWithCustomImages, title, price);
+          break;
+        case "cerceve":
+          await renderCerceve(ctx, propWithCustomImages, title, price);
+          break;
+        case "sahne":
+          await renderSahne(ctx, propWithCustomImages, title, price);
           break;
       }
 
