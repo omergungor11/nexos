@@ -45,23 +45,25 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      void loadImages();
-      setUrlInput(currentUrl ?? "");
+    if (!open) return;
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("property_images")
+        .select("id, url, alt_text, created_at")
+        .order("created_at", { ascending: false })
+        .limit(60);
+      if (!cancelled) {
+        setImages((data ?? []) as GalleryImage[]);
+        setLoading(false);
+        setUrlInput(currentUrl ?? "");
+      }
     }
+    void load();
+    return () => { cancelled = true; };
   }, [open, currentUrl]);
-
-  async function loadImages() {
-    setLoading(true);
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("property_images")
-      .select("id, url, alt_text, created_at")
-      .order("created_at", { ascending: false })
-      .limit(60);
-    setImages((data ?? []) as GalleryImage[]);
-    setLoading(false);
-  }
 
   const filtered = search.trim()
     ? images.filter((img) => img.alt_text?.toLowerCase().includes(search.toLowerCase()) || img.url.toLowerCase().includes(search.toLowerCase()))

@@ -95,23 +95,30 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
   const charCount = postText.length;
 
   // Regenerate post when property or platform changes (not for story tab)
+  const selectedPropertyRef = selectedProperty;
   useEffect(() => {
-    if (!selectedProperty || platform === "story") {
-      if (!selectedProperty) {
-        setPostText("");
-        setAllHashtags([]);
-        setActiveHashtags(new Set());
+    const prop = selectedPropertyRef;
+    if (!prop || platform === "story") {
+      if (!prop) {
+        // Use timeout to avoid synchronous setState cascade
+        setTimeout(() => {
+          setPostText("");
+          setAllHashtags([]);
+          setActiveHashtags(new Set());
+        }, 0);
       }
       return;
     }
 
-    const tags = generateHashtags(selectedProperty);
-    setAllHashtags(tags);
-    setActiveHashtags(new Set(tags));
-
-    const generated = generatePostForPlatform(platform, selectedProperty);
-    setPostText(generated);
-  }, [selectedProperty, platform]);
+    const tags = generateHashtags(prop);
+    const generated = generatePostForPlatform(platform, prop);
+    setTimeout(() => {
+      setAllHashtags(tags);
+      setActiveHashtags(new Set(tags));
+      setPostText(generated);
+    }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPropertyRef, platform]);
 
   const handlePropertyChange = useCallback((value: string | null) => {
     if (value) setSelectedPropertyId(value);

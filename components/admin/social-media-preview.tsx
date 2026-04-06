@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Monitor, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -20,11 +20,17 @@ const PREVIEW_CONFIGS: { id: PreviewMode; label: string; platform: string; devic
 
 export function SocialMediaPreview({ canvasRef, generated }: SocialMediaPreviewProps) {
   const [mode, setMode] = useState<PreviewMode>("ig-mobile");
+  const [dataUrl, setDataUrl] = useState("");
 
-  if (!generated) return null;
+  useEffect(() => {
+    if (generated && canvasRef.current) {
+      setDataUrl(canvasRef.current.toDataURL("image/png"));
+    } else {
+      setDataUrl("");
+    }
+  }, [generated, canvasRef]);
 
-  const dataUrl = canvasRef.current?.toDataURL("image/png") ?? "";
-  if (!dataUrl) return null;
+  if (!generated || !dataUrl) return null;
 
   const config = PREVIEW_CONFIGS.find((c) => c.id === mode)!;
 
