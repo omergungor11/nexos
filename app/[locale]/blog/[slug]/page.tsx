@@ -49,7 +49,7 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://nexos-sand.vercel.app";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.nexosinvestment.com";
   const postUrl = `${siteUrl}/blog/${post.slug}`;
 
   const jsonLdData: Record<string, unknown> = {

@@ -19,7 +19,7 @@ const contactJsonLd: Record<string, unknown> = {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
   name: "Nexos Investment",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://nexos-sand.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.nexosinvestment.com",
   description:
     "Nexos Investment — Satılık ve kiralık gayrimenkul ilanları, güvenilir danışmanlık hizmeti.",
   address: {

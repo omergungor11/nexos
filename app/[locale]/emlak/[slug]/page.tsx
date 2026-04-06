@@ -120,7 +120,7 @@ export default async function PropertyDetailPage({ params }: Props) {
   );
 
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://nexos-sand.vercel.app";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.nexosinvestment.com";
   const propertyUrl = `${siteUrl}/emlak/${property.slug}`;
   const imageUrls = (property.images ?? []).map(
     (img: { url: string }) => img.url

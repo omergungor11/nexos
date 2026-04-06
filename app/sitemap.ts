@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://nexos-sand.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.nexosinvestment.com";
 
 // Pathname mapping for English URLs
 const EN_PATHNAMES: Record<string, string> = {

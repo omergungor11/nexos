@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "emlak ilanları",
   ],
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://nexos-sand.vercel.app"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.nexosinvestment.com"
   ),
   openGraph: {
     type: "website",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_SITE_URL || "https://nexos-sand.vercel.app",
+    canonical: process.env.NEXT_PUBLIC_SITE_URL || "https://www.nexosinvestment.com",
   },
 };
 
