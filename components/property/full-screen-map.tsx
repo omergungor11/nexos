@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { MapProperty } from "./map-property-popup";
+import type { MapProject } from "./map-project-popup";
 
 // ---------------------------------------------------------------------------
 // The actual map implementation — loaded only on the client to avoid SSR
@@ -22,8 +23,9 @@ const FullScreenMapInner = dynamic(() => import("./full-screen-map-inner"), {
 
 interface FullScreenMapProps {
   properties: MapProperty[];
+  projects?: MapProject[];
 }
 
-export function FullScreenMap({ properties }: FullScreenMapProps) {
-  return <FullScreenMapInner properties={properties} />;
+export function FullScreenMap({ properties, projects = [] }: FullScreenMapProps) {
+  return <FullScreenMapInner properties={properties} projects={projects} />;
 }

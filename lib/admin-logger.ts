@@ -11,6 +11,7 @@ export type AdminAction =
   | "bulk_update"
   | "bulk_delete"
   | "duplicate"
+  | "toggle_show_on_map"
   | "update_settings"
   | "update_contact_status";
 

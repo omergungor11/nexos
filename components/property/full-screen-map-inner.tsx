@@ -6,6 +6,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapPropertyPopup } from "./map-property-popup";
 import type { MapProperty } from "./map-property-popup";
+import { MapProjectPopup } from "./map-project-popup";
+import type { MapProject } from "./map-project-popup";
 
 // ---------------------------------------------------------------------------
 // Fix default marker icon resolution with webpack / Next.js bundler.
@@ -73,19 +75,59 @@ function createClusterIcon(cluster: MarkerClusterLike): L.DivIcon {
 const DEFAULT_CENTER: [number, number] = [35.24, 33.66];
 const DEFAULT_ZOOM = 10;
 
+// ---------------------------------------------------------------------------
+// Custom project pin — purple labeled marker with building icon.
+// Displayed outside cluster groups so they're always visible.
+// ---------------------------------------------------------------------------
+function createProjectIcon(title: string): L.DivIcon {
+  return L.divIcon({
+    html: `
+      <div style="
+        background: #7c3aed;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        line-height: 1;
+      ">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+          <path d="M9 22V12h6v10"/>
+          <path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01"/>
+        </svg>
+        ${title}
+      </div>
+    `,
+    className: "",
+    iconSize: undefined as unknown as L.PointExpression,
+    iconAnchor: [0, 16],
+  });
+}
+
 interface FullScreenMapInnerProps {
   properties: MapProperty[];
+  projects?: MapProject[];
 }
 
 export default function FullScreenMapInner({
   properties,
+  projects = [],
 }: FullScreenMapInnerProps) {
   return (
     <div className="relative h-[calc(100vh-4rem)] w-full overflow-hidden">
-      {/* Property count badge */}
-      {properties.length > 0 && (
-        <div className="absolute top-3 right-3 z-[1000] rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold shadow-md backdrop-blur-sm">
-          {properties.length} ilan haritada
+      {/* Count badge */}
+      {(properties.length > 0 || projects.length > 0) && (
+        <div className="absolute top-3 right-3 z-[1000] flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold shadow-md backdrop-blur-sm">
+          {properties.length > 0 && <span>{properties.length} ilan</span>}
+          {properties.length > 0 && projects.length > 0 && <span className="text-gray-400">·</span>}
+          {projects.length > 0 && <span className="text-violet-600">{projects.length} proje</span>}
         </div>
       )}
 
@@ -124,10 +166,24 @@ export default function FullScreenMapInner({
             </Marker>
           ))}
         </MarkerClusterGroup>
+
+        {/* Project markers — outside cluster group, always visible */}
+        {projects.map((project) => (
+          <Marker
+            key={`project-${project.id}`}
+            position={[project.lat, project.lng]}
+            icon={createProjectIcon(project.title)}
+            zIndexOffset={1000}
+          >
+            <Popup minWidth={224} maxWidth={224} className="project-popup">
+              <MapProjectPopup project={project} />
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
 
       {/* Empty state overlay */}
-      {properties.length === 0 && (
+      {properties.length === 0 && projects.length === 0 && (
         <div className="pointer-events-none absolute inset-0 z-[999] flex items-center justify-center">
           <div className="rounded-xl bg-white/90 px-6 py-4 text-center shadow-lg backdrop-blur-sm">
             <p className="font-semibold text-gray-900">
