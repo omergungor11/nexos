@@ -22,7 +22,6 @@ const TX_KEYWORDS: Record<string, string> = {
   satılik: "sale",
   kiralık: "rent",
   kiralik: "rent",
-  kiralik: "rent",
   günlük: "daily_rental",
   gunluk: "daily_rental",
   "günlük kiralık": "daily_rental",
