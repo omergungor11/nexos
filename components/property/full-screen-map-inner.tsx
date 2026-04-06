@@ -1,9 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import Image from "next/image";
+import Link from "next/link";
+import { X, ChevronRight, List, Building2, MapPin } from "lucide-react";
 import { MapPropertyPopup } from "./map-property-popup";
 import type { MapProperty } from "./map-property-popup";
 import { MapProjectPopup } from "./map-project-popup";
@@ -116,20 +120,162 @@ interface FullScreenMapInnerProps {
   projects?: MapProject[];
 }
 
+function formatPrice(price: number, currency: string) {
+  const sym = currency === "GBP" ? "£" : currency === "USD" ? "$" : currency === "EUR" ? "€" : "₺";
+  return `${sym}${price.toLocaleString("tr-TR")}`;
+}
+
+const TX_LABELS: Record<string, string> = {
+  sale: "Satılık",
+  rent: "Kiralık",
+  daily_rental: "Günlük",
+};
+
+const TYPE_LABELS: Record<string, string> = {
+  villa: "Villa", apartment: "Daire", twin_villa: "İkiz Villa",
+  penthouse: "Penthouse", bungalow: "Bungalow", detached: "Müstakil Ev",
+  residential_land: "Arsa", shop: "Dükkan", office: "Ofis",
+};
+
 export default function FullScreenMapInner({
   properties,
   projects = [],
 }: FullScreenMapInnerProps) {
+  const [panelOpen, setPanelOpen] = useState(false);
+
   return (
     <div className="relative h-[calc(100vh-4rem)] w-full overflow-hidden">
-      {/* Count badge */}
+      {/* Count badge — clickable */}
       {(properties.length > 0 || projects.length > 0) && (
-        <div className="absolute top-3 right-3 z-[1000] flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold shadow-md backdrop-blur-sm">
+        <button
+          onClick={() => setPanelOpen(!panelOpen)}
+          className="absolute top-3 right-3 z-[1000] flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold shadow-md backdrop-blur-sm transition-colors hover:bg-white"
+        >
+          <List className="h-3.5 w-3.5 text-gray-500" />
           {properties.length > 0 && <span>{properties.length} ilan</span>}
           {properties.length > 0 && projects.length > 0 && <span className="text-gray-400">·</span>}
           {projects.length > 0 && <span className="text-violet-600">{projects.length} proje</span>}
-        </div>
+          <ChevronRight className={`h-3.5 w-3.5 text-gray-400 transition-transform ${panelOpen ? "rotate-180" : ""}`} />
+        </button>
       )}
+
+      {/* Side panel — property list */}
+      <div
+        className={`absolute top-0 right-0 z-[999] h-full w-80 transform bg-white shadow-2xl transition-transform duration-300 ease-in-out sm:w-96 ${
+          panelOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex h-full flex-col">
+          {/* Panel header */}
+          <div className="flex items-center justify-between border-b px-4 py-3">
+            <h3 className="text-sm font-semibold">
+              Haritadaki İlanlar ({properties.length + projects.length})
+            </h3>
+            <button
+              onClick={() => setPanelOpen(false)}
+              className="rounded-lg p-1 hover:bg-gray-100"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Panel body */}
+          <div className="flex-1 overflow-y-auto">
+            {/* Properties */}
+            {properties.map((p) => (
+              <Link
+                key={p.id}
+                href={`/emlak/${p.slug}`}
+                className="flex gap-3 border-b px-4 py-3 transition-colors hover:bg-gray-50"
+              >
+                <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                  {p.cover_image ? (
+                    <Image
+                      src={p.cover_image}
+                      alt={p.title}
+                      fill
+                      className="object-cover"
+                      sizes="80px"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <Building2 className="h-5 w-5 text-gray-300" />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {p.title}
+                  </p>
+                  <div className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
+                    <MapPin className="h-3 w-3" />
+                    <span className="truncate">{p.city}</span>
+                  </div>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="text-sm font-bold text-primary">
+                      {formatPrice(p.price, p.currency)}
+                    </span>
+                    <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
+                      {TX_LABELS[p.transaction_type] ?? p.transaction_type}
+                    </span>
+                    <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
+                      {TYPE_LABELS[p.type] ?? p.type}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+
+            {/* Projects */}
+            {projects.length > 0 && (
+              <>
+                {properties.length > 0 && (
+                  <div className="bg-violet-50 px-4 py-2 text-xs font-semibold text-violet-700">
+                    Projeler ({projects.length})
+                  </div>
+                )}
+                {projects.map((p) => (
+                  <Link
+                    key={`proj-${p.id}`}
+                    href={`/projeler/${p.slug}`}
+                    className="flex gap-3 border-b px-4 py-3 transition-colors hover:bg-violet-50/50"
+                  >
+                    <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-violet-100">
+                      {p.cover_image ? (
+                        <Image
+                          src={p.cover_image}
+                          alt={p.title}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <Building2 className="h-5 w-5 text-violet-300" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900">
+                        {p.title}
+                      </p>
+                      {p.city && (
+                        <div className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
+                          <MapPin className="h-3 w-3" />
+                          <span className="truncate">{p.city}</span>
+                        </div>
+                      )}
+                      <span className="mt-1 inline-block rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700">
+                        Proje
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
 
       <MapContainer
         center={DEFAULT_CENTER}

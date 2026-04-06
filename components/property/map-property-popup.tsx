@@ -21,6 +21,7 @@ export interface MapProperty {
   lat: number;
   lng: number;
   cover_image: string | null;
+  city?: string | null;
 }
 
 interface MapPropertyPopupProps {

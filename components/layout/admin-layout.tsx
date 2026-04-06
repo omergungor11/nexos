@@ -26,6 +26,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Map,
+  FolderKanban,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -47,6 +48,12 @@ const NAV_ITEMS = [
     href: "/admin/ilanlar",
     label: "İlanlar",
     icon: Building2,
+    exact: false,
+  },
+  {
+    href: "/admin/projeler",
+    label: "Projeler",
+    icon: FolderKanban,
     exact: false,
   },
   {

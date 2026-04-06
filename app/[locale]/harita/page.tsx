@@ -26,7 +26,7 @@ async function getMapProperties(): Promise<MapProperty[]> {
       type, transaction_type,
       rooms, living_rooms, area_sqm,
       lat, lng,
-      city:cities(lat, lng),
+      city:cities(name, lat, lng),
       district:districts(lat, lng),
       images:property_images(url, is_cover)
     `
@@ -44,7 +44,7 @@ async function getMapProperties(): Promise<MapProperty[]> {
 
   return data
     .map((row) => {
-      const city = row.city as unknown as { lat: number | null; lng: number | null } | null;
+      const city = row.city as unknown as { name: string; lat: number | null; lng: number | null } | null;
       const district = row.district as unknown as { lat: number | null; lng: number | null } | null;
 
       const lat = row.lat ?? district?.lat ?? city?.lat;
@@ -72,6 +72,7 @@ async function getMapProperties(): Promise<MapProperty[]> {
         lat,
         lng,
         cover_image: cover,
+        city: city?.name ?? null,
       } satisfies MapProperty;
     })
     .filter((p): p is NonNullable<typeof p> => p !== null) as MapProperty[];
@@ -85,7 +86,7 @@ async function getMapProjects(): Promise<MapProject[]> {
 
   const { data, error } = await supabase
     .from("projects")
-    .select("id, slug, title, cover_image, starting_price, currency, developer, status, lat, lng")
+    .select("id, slug, title, cover_image, starting_price, currency, developer, status, lat, lng, city:cities(name)")
     .eq("is_active", true)
     .not("lat", "is", null)
     .not("lng", "is", null);
@@ -95,18 +96,22 @@ async function getMapProjects(): Promise<MapProject[]> {
     return [];
   }
 
-  return (data ?? []).map((row) => ({
-    id: row.id,
-    slug: row.slug,
-    title: row.title,
-    cover_image: row.cover_image,
-    starting_price: row.starting_price,
-    currency: row.currency ?? "GBP",
-    developer: row.developer,
-    status: row.status ?? "selling",
-    lat: row.lat as number,
-    lng: row.lng as number,
-  }));
+  return (data ?? []).map((row) => {
+    const projCity = row.city as unknown as { name: string } | null;
+    return {
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      cover_image: row.cover_image,
+      starting_price: row.starting_price,
+      currency: row.currency ?? "GBP",
+      developer: row.developer,
+      status: row.status ?? "selling",
+      lat: row.lat as number,
+      lng: row.lng as number,
+      city: projCity?.name ?? null,
+    };
+  });
 }
 
 export default async function HaritaPage({ params }: { params: Promise<{ locale: string }> }) {

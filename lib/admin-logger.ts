@@ -21,6 +21,7 @@ export type EntityType =
   | "blog_post"
   | "page"
   | "contact_request"
+  | "project"
   | "settings";
 
 export async function logAdminAction(params: {

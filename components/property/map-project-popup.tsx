@@ -14,6 +14,7 @@ export interface MapProject {
   status: string;
   lat: number;
   lng: number;
+  city?: string | null;
 }
 
 const STATUS_LABELS: Record<string, string> = {
