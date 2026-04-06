@@ -187,6 +187,7 @@ export interface Property {
   agent_id: string | null;
   is_featured: boolean;
   is_active: boolean;
+  show_on_map: boolean;
   views_count: number;
   seo_title: string | null;
   seo_description: string | null;

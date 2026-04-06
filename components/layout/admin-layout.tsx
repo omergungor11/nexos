@@ -25,6 +25,7 @@ import {
   Monitor,
   PanelLeftClose,
   PanelLeftOpen,
+  Map,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -100,6 +101,12 @@ const NAV_ITEMS = [
     href: "/admin/konumlar",
     label: "Konumlar",
     icon: MapPin,
+    exact: false,
+  },
+  {
+    href: "/admin/harita",
+    label: "Harita",
+    icon: Map,
     exact: false,
   },
   {

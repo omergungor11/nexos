@@ -46,6 +46,7 @@ export type PropertyCreateInput = {
   agent_id?: string | null;
   is_featured?: boolean;
   is_active?: boolean;
+  show_on_map?: boolean;
   seo_title?: string;
   seo_description?: string;
   video_url?: string;
@@ -271,6 +272,7 @@ export async function createProperty(
     neighborhood_id: data.neighborhood_id ?? null,
     agent_id: data.agent_id ?? null,
     is_featured: data.is_featured ?? false,
+    show_on_map: data.show_on_map ?? false,
     seo_title: data.seo_title ?? null,
     seo_description: data.seo_description ?? null,
     video_url: data.video_url ?? null,
@@ -366,6 +368,7 @@ export async function updateProperty(
   if (data.agent_id !== undefined) payload.agent_id = data.agent_id ?? null;
   if (data.is_featured !== undefined) payload.is_featured = data.is_featured;
   if (data.is_active !== undefined) payload.is_active = data.is_active;
+  if (data.show_on_map !== undefined) payload.show_on_map = data.show_on_map;
   if (data.seo_title !== undefined) payload.seo_title = data.seo_title;
   if (data.seo_description !== undefined)
     payload.seo_description = data.seo_description;
@@ -467,6 +470,33 @@ export async function togglePropertyFeatured(
   revalidateTag("properties", {});
   void logAdminAction({ action: "toggle_featured", entityType: "property", entityId: id, metadata: { is_featured: isFeatured } });
   return { data: { id, is_featured: isFeatured } };
+}
+
+// ---------------------------------------------------------------------------
+// togglePropertyShowOnMap
+// ---------------------------------------------------------------------------
+
+export async function togglePropertyShowOnMap(
+  id: string,
+  showOnMap: boolean
+): Promise<ActionResult<{ id: string; show_on_map: boolean }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const { error } = await supabase
+    .from("properties")
+    .update({ show_on_map: showOnMap })
+    .eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("properties", {});
+  void logAdminAction({ action: "toggle_show_on_map", entityType: "property", entityId: id, metadata: { show_on_map: showOnMap } });
+  return { data: { id, show_on_map: showOnMap } };
 }
 
 // ---------------------------------------------------------------------------

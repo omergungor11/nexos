@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { MapPin, BedDouble, Maximize2, ChevronLeft, ChevronRight } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -102,7 +103,7 @@ export function HeroSlider({ slides, children }: HeroSliderProps) {
       {/* Center content — property info replaces static title */}
       <div className="relative z-10 flex flex-col items-center gap-8 px-4 text-center">
         {currentSlide ? (
-          <div className="space-y-4">
+          <Link href={`/emlak/${currentSlide.slug}`} className="block space-y-4 transition-transform hover:scale-[1.01]">
             {/* Badges */}
             <div className="flex items-center justify-center gap-2">
               <span className="rounded-md bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
@@ -144,7 +145,7 @@ export function HeroSlider({ slides, children }: HeroSliderProps) {
             <p className="text-3xl font-bold text-primary sm:text-4xl lg:text-5xl">
               {currentSlide.price}
             </p>
-          </div>
+          </Link>
         ) : (
           <div className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">

@@ -282,6 +282,37 @@ export default async function HomePage({ params }: Props) {
         </section>
       )}
 
+      {/* Quick Category Links */}
+      <section className="container mx-auto px-4 py-16">
+        <SectionHeader
+          title={t("categories.title")}
+          description={t("categories.description")}
+          icon={LayoutGrid}
+        />
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {["apartment", "villa", "detached", "land"].map((key) => (
+            <Link key={key} href={`/emlak?tip=${key}` as never}>
+              <Card className="group transition-shadow hover:shadow-md">
+                <CardContent className="flex items-center gap-4 p-5">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/20">
+                    <Building2 className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">
+                      {t(PROPERTY_TYPE_TKEYS[key])}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("categories.viewListings")}
+                    </p>
+                  </div>
+                  <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Property Slider */}
       {heroSlides.length > 0 && (
         <HeroSlider slides={heroSlides}>
@@ -331,37 +362,6 @@ export default async function HomePage({ params }: Props) {
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Quick Category Links */}
-      <section className="container mx-auto px-4 py-16">
-        <SectionHeader
-          title={t("categories.title")}
-          description={t("categories.description")}
-          icon={LayoutGrid}
-        />
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {["apartment", "villa", "detached", "land"].map((key) => (
-            <Link key={key} href={`/emlak?tip=${key}` as never}>
-              <Card className="group transition-shadow hover:shadow-md">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/20">
-                    <Building2 className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">
-                      {t(PROPERTY_TYPE_TKEYS[key])}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {t("categories.viewListings")}
-                    </p>
-                  </div>
-                  <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
         </div>
       </section>
 
