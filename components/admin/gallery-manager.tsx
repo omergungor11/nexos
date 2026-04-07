@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useState, useTransition, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -16,6 +16,8 @@ import {
   ChevronDown,
   ChevronRight,
   GripVertical,
+  Upload,
+  Loader2,
 } from "lucide-react";
 import {
   DndContext,
@@ -50,7 +52,7 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import { deletePropertyImage, reorderPropertyImages } from "@/actions/images";
+import { deletePropertyImage, reorderPropertyImages, uploadMediaImage } from "@/actions/images";
 import type { GalleryImage, GalleryCity, GalleryDistrict } from "@/app/admin/galeri/page";
 
 // ---------------------------------------------------------------------------
@@ -335,6 +337,61 @@ export function GalleryManager({ initialImages, properties, cities, districts }:
   const [isPending, startTransition] = useTransition();
   const [visibleCount, setVisibleCount] = useState(60);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Upload handler
+  async function handleUploadFiles(files: FileList | File[]) {
+    const fileArr = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    if (fileArr.length === 0) {
+      toast.error("Sadece görsel dosyaları yüklenebilir.");
+      return;
+    }
+
+    setUploading(true);
+    let successCount = 0;
+    const newUrls: string[] = [];
+
+    for (const file of fileArr) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name}: 5 MB sınırını aşıyor.`);
+        continue;
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+      const result = await uploadMediaImage(formData);
+      if (result.error) {
+        toast.error(`${file.name}: ${result.error}`);
+      } else if (result.data?.url) {
+        successCount++;
+        newUrls.push(result.data.url);
+      }
+    }
+
+    setUploading(false);
+    setUploadedUrls((prev) => [...newUrls, ...prev]);
+
+    if (successCount > 0) {
+      toast.success(`${successCount} görsel yüklendi.`);
+    }
+  }
+
+  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files.length > 0) {
+      void handleUploadFiles(e.target.files);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer.files.length > 0) {
+      void handleUploadFiles(e.dataTransfer.files);
+    }
+  }
 
   // Districts filtered by selected city
   const filteredDistricts = useMemo(() => {
@@ -501,6 +558,70 @@ export function GalleryManager({ initialImages, properties, cities, districts }:
 
   return (
     <div className="space-y-4">
+      {/* Upload Zone */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        onChange={handleFileInput}
+        className="hidden"
+      />
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        className={`flex items-center justify-center gap-4 rounded-xl border-2 border-dashed px-6 py-6 transition-colors ${
+          dragOver
+            ? "border-primary bg-primary/5"
+            : "border-muted-foreground/20 hover:border-muted-foreground/40"
+        }`}
+      >
+        {uploading ? (
+          <>
+            <Loader2 className="size-6 animate-spin text-primary" />
+            <span className="text-sm font-medium">Yükleniyor...</span>
+          </>
+        ) : (
+          <>
+            <Upload className="size-6 text-muted-foreground/50" />
+            <div className="text-sm">
+              <span className="font-medium">Görselleri sürükleyip bırakın</span>
+              <span className="text-muted-foreground"> veya </span>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="font-medium text-primary hover:underline"
+              >
+                dosya seçin
+              </button>
+            </div>
+            <span className="text-xs text-muted-foreground">JPEG, PNG, WebP — Maks. 5 MB</span>
+          </>
+        )}
+      </div>
+
+      {/* Recently uploaded images */}
+      {uploadedUrls.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-muted-foreground">
+              Son Yüklenenler ({uploadedUrls.length})
+            </p>
+            <Button variant="ghost" size="sm" onClick={() => setUploadedUrls([])}>
+              Temizle
+            </Button>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {uploadedUrls.map((url, i) => (
+              <div key={i} className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border">
+                <Image src={url} alt="" fill className="object-cover" sizes="80px" unoptimized />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Toolbar Row 1: Search + Filters */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Search */}
