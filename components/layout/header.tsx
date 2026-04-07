@@ -6,7 +6,7 @@ import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { NAV_LINKS } from "@/lib/constants";
+import { NAV_LINKS, isNavChildGroup } from "@/lib/constants";
 import type { NavItem } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -197,17 +197,38 @@ function DesktopDropdown({
 
       {isOpen && (
         <div role="menu" className="absolute left-0 top-full z-50 mt-1 min-w-[180px] animate-in fade-in slide-in-from-top-1 rounded-xl border bg-background/95 p-1.5 shadow-lg backdrop-blur">
-          {item.children!.map((child) => (
-            <Link
-              key={child.tKey}
-              href={child.href as never}
-              role="menuitem"
-              onClick={() => setIsOpen(false)}
-              className="block rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            >
-              {t(child.tKey)}
-            </Link>
-          ))}
+          {item.children!.map((child) =>
+            isNavChildGroup(child) ? (
+              <div key={child.groupTKey}>
+                <div className="mt-1.5 mb-1 border-t pt-1.5 px-3">
+                  <span className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                    {t(child.groupTKey)}
+                  </span>
+                </div>
+                {child.items.map((sub) => (
+                  <Link
+                    key={sub.tKey}
+                    href={sub.href as never}
+                    role="menuitem"
+                    onClick={() => setIsOpen(false)}
+                    className="block rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  >
+                    {t(sub.tKey)}
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <Link
+                key={child.tKey}
+                href={child.href as never}
+                role="menuitem"
+                onClick={() => setIsOpen(false)}
+                className="block rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                {t(child.tKey)}
+              </Link>
+            )
+          )}
         </div>
       )}
     </div>
@@ -245,16 +266,34 @@ function MobileDropdown({
       </button>
       {expanded && (
         <div className="ml-3 flex flex-col gap-0.5 border-l pl-2">
-          {item.children!.map((child) => (
-            <Link
-              key={child.tKey}
-              href={child.href as never}
-              onClick={onClose}
-              className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            >
-              {t(child.tKey)}
-            </Link>
-          ))}
+          {item.children!.map((child) =>
+            isNavChildGroup(child) ? (
+              <div key={child.groupTKey} className="mt-1">
+                <span className="px-3 text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                  {t(child.groupTKey)}
+                </span>
+                {child.items.map((sub) => (
+                  <Link
+                    key={sub.tKey}
+                    href={sub.href as never}
+                    onClick={onClose}
+                    className="block rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  >
+                    {t(sub.tKey)}
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <Link
+                key={child.tKey}
+                href={child.href as never}
+                onClick={onClose}
+                className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                {t(child.tKey)}
+              </Link>
+            )
+          )}
         </div>
       )}
     </div>

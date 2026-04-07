@@ -182,11 +182,17 @@ export const SORT_TKEYS: Record<string, string> = {
 };
 
 // Nav links with translation keys
+export type NavChildItem = { href: string; tKey: string };
+export type NavChildGroup = { groupTKey: string; items: NavChildItem[] };
 export type NavItem = {
   tKey: string;
   href?: string;
-  children?: { href: string; tKey: string }[];
+  children?: (NavChildItem | NavChildGroup)[];
 };
+
+export function isNavChildGroup(item: NavChildItem | NavChildGroup): item is NavChildGroup {
+  return "groupTKey" in item;
+}
 
 export const NAV_LINKS: NavItem[] = [
   {
@@ -195,18 +201,18 @@ export const NAV_LINKS: NavItem[] = [
       { href: "/emlak?islem=satilik", tKey: "nav.forSale" },
       { href: "/emlak?islem=kiralik", tKey: "nav.forRent" },
       { href: "/emlak?islem=gunluk", tKey: "nav.dailyRental" },
-    ],
-  },
-  {
-    tKey: "nav.categories",
-    children: [
-      { href: "/emlak?tip=villa", tKey: "nav.catVilla" },
-      { href: "/emlak?tip=apartment", tKey: "nav.catApartment" },
-      { href: "/emlak?tip=penthouse", tKey: "nav.catPenthouse" },
-      { href: "/emlak?tip=land", tKey: "nav.catLand" },
-      { href: "/emlak?tip=shop", tKey: "nav.catShop" },
-      { href: "/emlak?tip=office", tKey: "nav.catOffice" },
-      { href: "/emlak?tip=bungalow", tKey: "nav.catBungalow" },
+      {
+        groupTKey: "nav.categories",
+        items: [
+          { href: "/emlak?tip=villa", tKey: "nav.catVilla" },
+          { href: "/emlak?tip=apartment", tKey: "nav.catApartment" },
+          { href: "/emlak?tip=penthouse", tKey: "nav.catPenthouse" },
+          { href: "/emlak?tip=land", tKey: "nav.catLand" },
+          { href: "/emlak?tip=shop", tKey: "nav.catShop" },
+          { href: "/emlak?tip=office", tKey: "nav.catOffice" },
+          { href: "/emlak?tip=bungalow", tKey: "nav.catBungalow" },
+        ],
+      },
     ],
   },
   { href: "/vitrin", tKey: "nav.featured" },
