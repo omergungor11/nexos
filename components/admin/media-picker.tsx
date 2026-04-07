@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/image-compress";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -86,48 +87,58 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
     onClose();
   }
 
-  // Upload handler — direct client-side Supabase Storage upload
+  // Upload handler — compress to WebP + direct Supabase Storage upload
   async function handleUpload(file: File) {
     if (!file.type.startsWith("image/")) {
       toast.error("Sadece görsel dosyaları yüklenebilir.");
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("Dosya boyutu 10 MB sınırını aşıyor.");
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error("Dosya boyutu 25 MB sınırını aşıyor.");
       return;
     }
 
     setUploading(true);
 
-    const supabase = createClient();
-    const safeName = file.name
-      .toLowerCase()
-      .replace(/[^a-z0-9.]+/g, "-")
-      .replace(/^-|-$/g, "");
-    const storagePath = `media/${Date.now()}-${safeName}`;
+    try {
+      // Compress and convert to WebP
+      const compressed = await compressImage(file);
 
-    const { error: uploadError } = await supabase.storage
-      .from("property-images")
-      .upload(storagePath, file, {
-        contentType: file.type,
-        upsert: false,
-      });
+      const supabase = createClient();
+      const safeName = file.name
+        .toLowerCase()
+        .replace(/\.[^.]+$/, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+      const storagePath = `media/${Date.now()}-${safeName}.webp`;
 
-    if (uploadError) {
-      toast.error(`Yükleme hatası: ${uploadError.message}`);
+      const { error: uploadError } = await supabase.storage
+        .from("property-images")
+        .upload(storagePath, compressed, {
+          contentType: "image/webp",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        toast.error(`Yükleme hatası: ${uploadError.message}`);
+        setUploading(false);
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("property-images")
+        .getPublicUrl(storagePath);
+
+      toast.success("Görsel yüklendi.");
       setUploading(false);
-      return;
+      onSelect(publicUrl);
+      onClose();
+    } catch (err) {
+      console.error("Upload failed:", err);
+      toast.error("Görsel yüklenirken bir hata oluştu.");
+      setUploading(false);
     }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from("property-images")
-      .getPublicUrl(storagePath);
-
-    toast.success("Görsel yüklendi.");
-    setUploading(false);
-    onSelect(publicUrl);
-    onClose();
   }
 
   function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {

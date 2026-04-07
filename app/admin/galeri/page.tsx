@@ -88,12 +88,27 @@ export default async function AdminGaleriPage() {
     propertyStats.set(img.property_id, (propertyStats.get(img.property_id) ?? 0) + 1);
   }
 
+  // Fetch media/ folder from Storage (orphan images not linked to any property)
+  const { data: mediaFiles } = await supabase.storage
+    .from("property-images")
+    .list("media", { limit: 200, sortBy: { column: "created_at", order: "desc" } });
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const mediaImages = (mediaFiles ?? [])
+    .filter((f) => f.name && !f.name.endsWith("/"))
+    .map((f) => ({
+      name: f.name,
+      url: `${supabaseUrl}/storage/v1/object/public/property-images/media/${f.name}`,
+      created_at: f.created_at ?? new Date().toISOString(),
+    }));
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Galeri</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {images.length} görsel — {propertyStats.size} ilan
+          {images.length} ilan görseli — {propertyStats.size} ilan
+          {mediaImages.length > 0 && ` — ${mediaImages.length} genel görsel`}
         </p>
       </div>
 
@@ -102,6 +117,7 @@ export default async function AdminGaleriPage() {
         properties={properties.map((p) => ({ id: p.id, title: p.title }))}
         cities={cities}
         districts={districts}
+        mediaImages={mediaImages}
       />
     </div>
   );

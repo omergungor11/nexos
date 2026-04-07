@@ -54,6 +54,7 @@ import {
 } from "@/components/ui/dialog";
 import { deletePropertyImage, reorderPropertyImages } from "@/actions/images";
 import { createClient } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/image-compress";
 import type { GalleryImage, GalleryCity, GalleryDistrict } from "@/app/admin/galeri/page";
 
 // ---------------------------------------------------------------------------
@@ -319,14 +320,21 @@ function SortableImageGrid({
 // Main component
 // ---------------------------------------------------------------------------
 
+export type MediaFile = {
+  name: string;
+  url: string;
+  created_at: string;
+};
+
 interface GalleryManagerProps {
   initialImages: GalleryImage[];
   properties: { id: string; title: string }[];
   cities: GalleryCity[];
   districts: GalleryDistrict[];
+  mediaImages?: MediaFile[];
 }
 
-export function GalleryManager({ initialImages, properties, cities, districts }: GalleryManagerProps) {
+export function GalleryManager({ initialImages, properties, cities, districts, mediaImages = [] }: GalleryManagerProps) {
   const [images, setImages] = useState(initialImages);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [propertyFilter, setPropertyFilter] = useState("all");
@@ -343,7 +351,7 @@ export function GalleryManager({ initialImages, properties, cities, districts }:
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Upload handler — direct client-side Supabase Storage upload (no server action)
+  // Upload handler — compress to WebP + direct Supabase Storage upload
   async function handleUploadFiles(files: FileList | File[]) {
     const fileArr = Array.from(files).filter((f) => f.type.startsWith("image/"));
     if (fileArr.length === 0) {
@@ -357,35 +365,44 @@ export function GalleryManager({ initialImages, properties, cities, districts }:
     const supabase = createClient();
 
     for (const file of fileArr) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error(`${file.name}: 10 MB sınırını aşıyor.`);
+      if (file.size > 25 * 1024 * 1024) {
+        toast.error(`${file.name}: 25 MB sınırını aşıyor.`);
         continue;
       }
 
-      const safeName = file.name
-        .toLowerCase()
-        .replace(/[^a-z0-9.]+/g, "-")
-        .replace(/^-|-$/g, "");
-      const storagePath = `media/${Date.now()}-${safeName}`;
+      try {
+        // Compress and convert to WebP
+        const compressed = await compressImage(file);
 
-      const { error: uploadError } = await supabase.storage
-        .from("property-images")
-        .upload(storagePath, file, {
-          contentType: file.type,
-          upsert: false,
-        });
+        const safeName = file.name
+          .toLowerCase()
+          .replace(/\.[^.]+$/, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+        const storagePath = `media/${Date.now()}-${safeName}.webp`;
 
-      if (uploadError) {
-        toast.error(`${file.name}: ${uploadError.message}`);
-        continue;
+        const { error: uploadError } = await supabase.storage
+          .from("property-images")
+          .upload(storagePath, compressed, {
+            contentType: "image/webp",
+            upsert: false,
+          });
+
+        if (uploadError) {
+          toast.error(`${file.name}: ${uploadError.message}`);
+          continue;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from("property-images")
+          .getPublicUrl(storagePath);
+
+        successCount++;
+        newUrls.push(publicUrl);
+      } catch (err) {
+        console.error(`Upload failed for ${file.name}:`, err);
+        toast.error(`${file.name}: Sıkıştırma/yükleme hatası.`);
       }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("property-images")
-        .getPublicUrl(storagePath);
-
-      successCount++;
-      newUrls.push(publicUrl);
     }
 
     setUploading(false);
@@ -858,6 +875,65 @@ export function GalleryManager({ initialImages, properties, cities, districts }:
           >
             Daha Fazla Göster ({grouped.length - visibleCount} ilan kaldı)
           </Button>
+        </div>
+      )}
+
+      {/* Media images — not linked to any property */}
+      {(mediaImages.length > 0 || uploadedUrls.length > 0) && (
+        <div className="rounded-lg border">
+          <button
+            type="button"
+            className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50 transition-colors"
+            onClick={() => {
+              setExpandedGroups((prev) => {
+                const next = new Set(prev);
+                if (next.has("__media__")) next.delete("__media__");
+                else next.add("__media__");
+                return next;
+              });
+            }}
+          >
+            <div className="flex items-center gap-2">
+              {expandedGroups.has("__media__") ? (
+                <ChevronDown className="size-4 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="size-4 text-muted-foreground" />
+              )}
+              <h3 className="text-sm font-semibold">Diğer Görseller</h3>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                {mediaImages.length + uploadedUrls.length} görsel
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground">İlana bağlı olmayan görseller</span>
+          </button>
+
+          {expandedGroups.has("__media__") && (
+            <div className="px-4 pb-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                {/* Uploaded in this session */}
+                {uploadedUrls.map((url, i) => (
+                  <div
+                    key={`uploaded-${i}`}
+                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
+                  >
+                    <Image src={url} alt="" fill className="object-cover" sizes="150px" unoptimized />
+                    <div className="absolute top-1 left-1 rounded bg-green-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                      Yeni
+                    </div>
+                  </div>
+                ))}
+                {/* Existing media files from Storage */}
+                {mediaImages.map((file) => (
+                  <div
+                    key={file.name}
+                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
+                  >
+                    <Image src={file.url} alt={file.name} fill className="object-cover" sizes="150px" unoptimized />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
