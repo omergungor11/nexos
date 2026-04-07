@@ -637,23 +637,23 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
       </div>
 
       {/* Recently uploaded images */}
-      {/* Son Eklenen Görseller — DB'den son 20 + session yüklemeleri */}
+      {/* Son Eklenen Görseller — 2 satır grid */}
       <div className="space-y-2">
         <p className="text-sm font-medium">Son Eklenen Görseller</p>
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="grid grid-cols-10 gap-2">
           {/* Session uploads first */}
           {uploadedUrls.map((url, i) => (
-            <div key={`new-${i}`} className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border">
-              <Image src={url} alt="" fill className="object-cover" sizes="64px" unoptimized />
+            <div key={`new-${i}`} className="relative aspect-square overflow-hidden rounded-lg border">
+              <Image src={url} alt="" fill className="object-cover" sizes="80px" unoptimized />
               <div className="absolute top-0.5 left-0.5 rounded bg-green-600 px-1 py-0.5 text-[8px] font-bold text-white leading-none">
                 Yeni
               </div>
             </div>
           ))}
-          {/* Latest 20 from DB */}
-          {images.slice(0, 20 - uploadedUrls.length).map((img) => (
-            <div key={img.id} className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border">
-              <Image src={img.url} alt={img.alt_text ?? ""} fill className="object-cover" sizes="64px" unoptimized />
+          {/* Latest from DB to fill 2 rows (20 total) */}
+          {images.slice(0, Math.max(0, 20 - uploadedUrls.length)).map((img) => (
+            <div key={img.id} className="relative aspect-square overflow-hidden rounded-lg border">
+              <Image src={img.url} alt={img.alt_text ?? ""} fill className="object-cover" sizes="80px" unoptimized />
             </div>
           ))}
         </div>
