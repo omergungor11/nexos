@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { ImageIcon, Upload, Link2, Search, X, Check } from "lucide-react";
+import { ImageIcon, Upload, Link2, Search, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
+import { uploadMediaImage } from "@/actions/images";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -38,11 +39,14 @@ interface GalleryImage {
 // ---------------------------------------------------------------------------
 
 export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPickerProps) {
-  const [tab, setTab] = useState<"gallery" | "url">("gallery");
+  const [tab, setTab] = useState<"gallery" | "upload" | "url">("gallery");
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [search, setSearch] = useState("");
   const [urlInput, setUrlInput] = useState(currentUrl ?? "");
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -83,6 +87,55 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
     onClose();
   }
 
+  // Upload handler
+  async function handleUpload(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Sadece görsel dosyaları yüklenebilir.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Dosya boyutu 5 MB sınırını aşıyor.");
+      return;
+    }
+
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const result = await uploadMediaImage(formData);
+
+    if (result.error) {
+      toast.error(result.error);
+      setUploading(false);
+      return;
+    }
+
+    toast.success("Görsel yüklendi.");
+    setUploading(false);
+
+    // Select the uploaded image immediately
+    if (result.data?.url) {
+      onSelect(result.data.url);
+      onClose();
+    }
+  }
+
+  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) void handleUpload(file);
+    // Reset so same file can be selected again
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) void handleUpload(file);
+  }
+
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
@@ -100,6 +153,15 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
           >
             <ImageIcon className="size-3.5" />
             Medya Kütüphanesi
+          </Button>
+          <Button
+            variant={tab === "upload" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setTab("upload")}
+            className="gap-1.5"
+          >
+            <Upload className="size-3.5" />
+            Yükle
           </Button>
           <Button
             variant={tab === "url" ? "default" : "outline"}
@@ -134,6 +196,15 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
                 <div className="flex flex-col items-center justify-center py-12">
                   <ImageIcon className="size-10 text-muted-foreground/40" />
                   <p className="mt-2 text-sm text-muted-foreground">Görsel bulunamadı</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3 gap-1.5"
+                    onClick={() => setTab("upload")}
+                  >
+                    <Upload className="size-3.5" />
+                    Yeni Görsel Yükle
+                  </Button>
                 </div>
               ) : (
                 <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6">
@@ -161,6 +232,60 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
                     </button>
                   ))}
                 </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Upload tab */}
+        {tab === "upload" && (
+          <div className="flex-1 flex flex-col items-center justify-center py-6">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileInput}
+              className="hidden"
+            />
+
+            <div
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+              className={`flex w-full max-w-md flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-12 transition-colors ${
+                dragOver
+                  ? "border-primary bg-primary/5"
+                  : "border-muted-foreground/25 hover:border-muted-foreground/50"
+              }`}
+            >
+              {uploading ? (
+                <>
+                  <Loader2 className="size-10 animate-spin text-primary" />
+                  <p className="mt-3 text-sm font-medium">Yükleniyor...</p>
+                </>
+              ) : (
+                <>
+                  <Upload className="size-10 text-muted-foreground/50" />
+                  <p className="mt-3 text-sm font-medium">
+                    Görseli sürükleyip bırakın
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    veya
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-3 gap-1.5"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="size-3.5" />
+                    Dosya Seç
+                  </Button>
+                  <p className="mt-4 text-xs text-muted-foreground">
+                    JPEG, PNG veya WebP — Maks. 5 MB
+                  </p>
+                </>
               )}
             </div>
           </div>

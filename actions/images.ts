@@ -81,6 +81,64 @@ function isAllowedMimeType(mime: string): mime is AllowedMimeType {
 }
 
 // ---------------------------------------------------------------------------
+// uploadMediaImage (general purpose — no property_id required)
+// ---------------------------------------------------------------------------
+
+/**
+ * Uploads an image to Supabase Storage under a "media/" prefix.
+ * Returns the public URL. Does NOT create a property_images DB record.
+ * Use this for project covers, gallery images, logos, etc.
+ *
+ * FormData fields:
+ *   - file {File} — the image to upload
+ */
+export async function uploadMediaImage(
+  formData: FormData
+): Promise<ActionResult<{ url: string }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  const file = formData.get("file");
+
+  if (!(file instanceof File)) {
+    return { error: "Geçerli bir dosya gönderilmedi" };
+  }
+
+  if (!isAllowedMimeType(file.type)) {
+    return {
+      error: `Desteklenmeyen dosya türü: ${file.type}. İzin verilenler: JPEG, PNG, WebP`,
+    };
+  }
+
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    return { error: "Dosya boyutu 5 MB sınırını aşıyor" };
+  }
+
+  const safeName = sanitizeFilename(file.name);
+  const storagePath = `media/${Date.now()}-${safeName}`;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const { error: storageError } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .upload(storagePath, arrayBuffer, {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (storageError) {
+    return { error: `Depolama hatası: ${storageError.message}` };
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(storagePath);
+
+  return { data: { url: publicUrl } };
+}
+
+// ---------------------------------------------------------------------------
 // uploadPropertyImage
 // ---------------------------------------------------------------------------
 
