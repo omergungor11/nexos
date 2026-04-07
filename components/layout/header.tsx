@@ -66,14 +66,11 @@ export function Header() {
           <LanguageSwitcher />
           <a
             href="tel:+905488604030"
-            className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+            className="hidden items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground min-[1300px]:flex"
           >
             <Phone className="h-4 w-4" />
             +90 548 860 40 30
           </a>
-          <Link href="/iletisim" className={buttonVariants({ size: "sm" })}>
-            {t("nav.contactUs")}
-          </Link>
         </div>
 
         {/* Mobile Menu */}

@@ -18,6 +18,14 @@
     "regions": "Regions",
     "contact": "تماس",
     "contactUs": "تماس با ما",
+    "categories": "دسته‌بندی‌ها",
+    "catVilla": "ویلا",
+    "catApartment": "آپارتمان",
+    "catPenthouse": "پنت‌هاوس",
+    "catLand": "زمین",
+    "catShop": "مغازه",
+    "catOffice": "دفتر",
+    "catBungalow": "بنگلو",
     "menu": "منو"
   },
   "hero": {

@@ -18,6 +18,14 @@
     "regions": "Regions",
     "contact": "Контакты",
     "contactUs": "Свяжитесь с нами",
+    "categories": "Категории",
+    "catVilla": "Вилла",
+    "catApartment": "Квартира",
+    "catPenthouse": "Пентхаус",
+    "catLand": "Участок",
+    "catShop": "Магазин",
+    "catOffice": "Офис",
+    "catBungalow": "Бунгало",
     "menu": "Меню"
   },
   "hero": {

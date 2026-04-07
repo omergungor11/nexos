@@ -15,7 +15,15 @@
     "faq": "SSS",
     "contact": "İletişim",
     "contactUs": "Bize Ulaşın",
-    "menu": "Menü"
+    "menu": "Menü",
+    "categories": "Kategoriler",
+    "catVilla": "Villa",
+    "catApartment": "Daire",
+    "catPenthouse": "Penthouse",
+    "catLand": "Arsa",
+    "catShop": "Dükkan",
+    "catOffice": "Ofis",
+    "catBungalow": "Bungalow"
   },
   "hero": {
     "title1": "Kuzey Kıbrıs'ta",

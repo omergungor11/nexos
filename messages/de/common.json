@@ -18,6 +18,14 @@
     "regions": "Regions",
     "contact": "Kontakt",
     "contactUs": "Kontaktieren Sie uns",
+    "categories": "Kategorien",
+    "catVilla": "Villa",
+    "catApartment": "Wohnung",
+    "catPenthouse": "Penthouse",
+    "catLand": "Grundstück",
+    "catShop": "Geschäft",
+    "catOffice": "Büro",
+    "catBungalow": "Bungalow",
     "menu": "Menü"
   },
   "hero": {

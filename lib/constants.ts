@@ -197,6 +197,18 @@ export const NAV_LINKS: NavItem[] = [
       { href: "/emlak?islem=gunluk", tKey: "nav.dailyRental" },
     ],
   },
+  {
+    tKey: "nav.categories",
+    children: [
+      { href: "/emlak?tip=villa", tKey: "nav.catVilla" },
+      { href: "/emlak?tip=apartment", tKey: "nav.catApartment" },
+      { href: "/emlak?tip=penthouse", tKey: "nav.catPenthouse" },
+      { href: "/emlak?tip=land", tKey: "nav.catLand" },
+      { href: "/emlak?tip=shop", tKey: "nav.catShop" },
+      { href: "/emlak?tip=office", tKey: "nav.catOffice" },
+      { href: "/emlak?tip=bungalow", tKey: "nav.catBungalow" },
+    ],
+  },
   { href: "/vitrin", tKey: "nav.featured" },
   { href: "/projeler", tKey: "nav.projects" },
   { href: "/harita", tKey: "nav.map" },
@@ -210,7 +222,6 @@ export const NAV_LINKS: NavItem[] = [
   },
   { href: "/blog", tKey: "nav.guide" },
   { href: "/sss", tKey: "nav.faq" },
-  { href: "/iletisim", tKey: "nav.contact" },
 ];
 
 // Legacy label accessors for components that don't have translation context (e.g. admin)
