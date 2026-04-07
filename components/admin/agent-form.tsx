@@ -222,6 +222,15 @@ export function AgentForm({ mode, agent }: AgentFormProps) {
               <img src={form.photo_url} alt="Önizleme" className="h-full w-full object-cover" />
             </div>
             <p className="text-xs text-muted-foreground">Profil fotoğrafı önizleme</p>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={() => setForm((prev) => ({ ...prev, photo_url: "" }))}
+            >
+              Kaldır
+            </Button>
           </div>
         )}
         {errors.photo_url && (
