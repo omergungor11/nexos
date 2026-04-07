@@ -176,6 +176,7 @@ export type Database = {
           phone: string | null;
           email: string | null;
           photo_url: string | null;
+          cover_image: string | null;
           bio: string | null;
           is_active: boolean;
           created_at: string;
@@ -190,6 +191,7 @@ export type Database = {
           phone?: string | null;
           email?: string | null;
           photo_url?: string | null;
+          cover_image?: string | null;
           bio?: string | null;
           is_active?: boolean;
           created_at?: string;
@@ -204,6 +206,7 @@ export type Database = {
           phone?: string | null;
           email?: string | null;
           photo_url?: string | null;
+          cover_image?: string | null;
           bio?: string | null;
           is_active?: boolean;
           created_at?: string;

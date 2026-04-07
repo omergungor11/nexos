@@ -17,6 +17,7 @@ export type AgentInput = {
   email?: string;
   bio?: string;
   photo_url?: string;
+  cover_image?: string;
   is_active?: boolean;
 };
 
@@ -137,11 +138,12 @@ export async function createAgent(
   const payload: TablesInsert<"agents"> = {
     name: data.name,
     slug,
-    title: data.title ?? null,
-    phone: data.phone ?? null,
-    email: data.email ?? null,
-    bio: data.bio ?? null,
-    photo_url: data.photo_url ?? null,
+    title: data.title || null,
+    phone: data.phone || null,
+    email: data.email || null,
+    bio: data.bio || null,
+    photo_url: data.photo_url || null,
+    cover_image: data.cover_image || null,
     is_active: data.is_active ?? true,
   };
 
@@ -179,11 +181,12 @@ export async function updateAgent(
     payload.name = data.name;
     payload.slug = await generateUniqueSlug(supabase, data.name, id);
   }
-  if (data.title !== undefined) payload.title = data.title;
-  if (data.phone !== undefined) payload.phone = data.phone;
-  if (data.email !== undefined) payload.email = data.email;
-  if (data.bio !== undefined) payload.bio = data.bio;
-  if (data.photo_url !== undefined) payload.photo_url = data.photo_url;
+  if (data.title !== undefined) payload.title = data.title || null;
+  if (data.phone !== undefined) payload.phone = data.phone || null;
+  if (data.email !== undefined) payload.email = data.email || null;
+  if (data.bio !== undefined) payload.bio = data.bio || null;
+  if (data.photo_url !== undefined) payload.photo_url = data.photo_url || null;
+  if (data.cover_image !== undefined) payload.cover_image = data.cover_image || null;
   if (data.is_active !== undefined) payload.is_active = data.is_active;
 
   const { data: agent, error } = await supabase

@@ -13,7 +13,7 @@ export default async function AdminDanismanlarPage() {
 
   const { data, error } = await supabase
     .from("agents")
-    .select("id, name, title, phone, email, photo_url, is_active, slug, created_at")
+    .select("id, name, title, phone, email, photo_url, cover_image, is_active, slug, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {

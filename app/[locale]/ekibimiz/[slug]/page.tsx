@@ -148,13 +148,29 @@ export default async function AgentProfilePage({ params }: PageProps) {
       </div>
 
       {/* Agent info card */}
-      <Card className="mb-12">
+      <Card className="mb-12 overflow-hidden">
+        {/* Cover image */}
+        {agent.cover_image ? (
+          <div className="relative h-48 sm:h-56">
+            <Image
+              src={agent.cover_image}
+              alt={`${agent.name} kapak`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1200px) 100vw, 1200px"
+              priority
+            />
+          </div>
+        ) : (
+          <div className="h-32 bg-gradient-to-br from-primary/20 to-primary/5" />
+        )}
+
         <CardContent className="p-6 sm:p-8">
-          <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+          <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start -mt-16 sm:-mt-20">
             {/* Photo */}
             <div className="shrink-0">
               {agent.photo_url ? (
-                <div className="relative h-36 w-36 overflow-hidden rounded-full ring-4 ring-primary/10">
+                <div className="relative h-36 w-36 overflow-hidden rounded-full border-4 border-background ring-4 ring-primary/10">
                   <Image
                     src={agent.photo_url}
                     alt={agent.name}
@@ -165,7 +181,7 @@ export default async function AgentProfilePage({ params }: PageProps) {
                   />
                 </div>
               ) : (
-                <Avatar className="h-36 w-36">
+                <Avatar className="h-36 w-36 border-4 border-background">
                   <AvatarFallback className="text-3xl">
                     {getInitials(agent.name)}
                   </AvatarFallback>
@@ -174,7 +190,7 @@ export default async function AgentProfilePage({ params }: PageProps) {
             </div>
 
             {/* Info */}
-            <div className="flex-1 text-center sm:text-left">
+            <div className="flex-1 text-center sm:text-left sm:pt-8">
               <h1 className="text-2xl font-bold sm:text-3xl">{agent.name}</h1>
               {agent.title && (
                 <p className="mt-1 text-base text-muted-foreground">{agent.title}</p>

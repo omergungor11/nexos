@@ -19,7 +19,7 @@ export default async function AdminAgentEditPage({ params }: Props) {
 
   const { data: agent, error } = await supabase
     .from("agents")
-    .select("id, name, title, phone, email, bio, photo_url, is_active, slug, created_at")
+    .select("id, name, title, phone, email, bio, photo_url, cover_image, is_active, slug, created_at")
     .eq("id", id)
     .single();
 

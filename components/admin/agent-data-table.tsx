@@ -32,6 +32,7 @@ export type AdminAgentRow = {
   phone: string | null;
   email: string | null;
   photo_url: string | null;
+  cover_image: string | null;
   is_active: boolean;
   slug: string;
   created_at: string;
