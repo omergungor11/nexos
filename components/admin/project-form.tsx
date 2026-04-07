@@ -594,7 +594,11 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
                 }}
               >
                 <SelectTrigger id="city_id" className="h-9">
-                  <SelectValue placeholder="Seçiniz" />
+                  <SelectValue placeholder="Seçiniz">
+                    {form.city_id
+                      ? cities.find((c) => c.id.toString() === form.city_id)?.name ?? "Seçiniz"
+                      : "Seçiniz"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {cities.map((c) => (
@@ -612,7 +616,11 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
                 onValueChange={(v) => setForm((prev) => ({ ...prev, district_id: v ?? "" }))}
               >
                 <SelectTrigger id="district_id" className="h-9">
-                  <SelectValue placeholder="Seçiniz" />
+                  <SelectValue placeholder="Seçiniz">
+                    {form.district_id
+                      ? districts.find((d) => d.id.toString() === form.district_id)?.name ?? "Seçiniz"
+                      : "Seçiniz"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {districts.map((d) => (

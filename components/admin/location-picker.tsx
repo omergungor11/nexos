@@ -123,14 +123,33 @@ function LocationPickerInner({ lat, lng, onChange }: LocationPickerProps) {
     setSearching(true);
     setShowResults(true);
 
+    // North Cyprus bounding box for viewbox bias
+    const viewbox = "32.0,36.0,34.7,34.5";
+    const baseUrl = "https://nominatim.openstreetmap.org/search";
+    const params = `format=json&limit=5&accept-language=tr`;
+
+    // First try with viewbox bias (prefers North Cyprus results)
     fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&accept-language=tr`,
+      `${baseUrl}?${params}&q=${encodeURIComponent(q)}&viewbox=${viewbox}&bounded=0`,
       { headers: { "User-Agent": "NexosInvestment/1.0" } }
     )
       .then((res) => res.json())
       .then((data: NominatimResult[]) => {
-        setResults(data);
-        setSearching(false);
+        if (data.length > 0) {
+          setResults(data);
+          setSearching(false);
+        } else {
+          // Fallback: append "Cyprus" to broaden search
+          return fetch(
+            `${baseUrl}?${params}&q=${encodeURIComponent(q + ", Cyprus")}`,
+            { headers: { "User-Agent": "NexosInvestment/1.0" } }
+          )
+            .then((res2) => res2.json())
+            .then((data2: NominatimResult[]) => {
+              setResults(data2);
+              setSearching(false);
+            });
+        }
       })
       .catch(() => {
         setResults([]);
