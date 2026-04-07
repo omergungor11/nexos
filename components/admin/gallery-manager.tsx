@@ -189,12 +189,15 @@ function ImageDetailDialog({
   target,
   open,
   onClose,
+  onDelete,
 }: {
   target: DetailTarget;
   open: boolean;
   onClose: () => void;
+  onDelete: (target: DetailTarget) => void;
 }) {
   const url = target.type === "property" ? target.image.url : target.url;
+  const [deleting, setDeleting] = useState(false);
   const [imgMeta, setImgMeta] = useState<{ width: number; height: number; size: string } | null>(null);
 
   // Load image dimensions + estimate file size
@@ -335,7 +338,21 @@ function ImageDetailDialog({
             </div>
           </div>
         </div>
-        <div className="flex justify-end pt-2">
+        <div className="flex items-center justify-between pt-2 border-t">
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={deleting}
+            onClick={() => {
+              if (!confirm("Bu görsel kalıcı olarak silinecek. Emin misiniz?")) return;
+              setDeleting(true);
+              onDelete(target);
+            }}
+            className="gap-1.5"
+          >
+            <Trash2 className="size-3.5" />
+            {deleting ? "Siliniyor..." : "Görseli Sil"}
+          </Button>
           <DialogClose render={<Button variant="outline" />}>
             Kapat
           </DialogClose>
@@ -1044,6 +1061,39 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
           target={detailTarget}
           open={!!detailTarget}
           onClose={() => setDetailTarget(null)}
+          onDelete={async (t) => {
+            if (t.type === "property") {
+              const result = await deletePropertyImage(t.image.id);
+              if (result.error) {
+                toast.error(result.error);
+              } else {
+                setImages((prev) => prev.filter((img) => img.id !== t.image.id));
+                toast.success("Görsel silindi.");
+                setDetailTarget(null);
+              }
+            } else {
+              // Media file — delete from Storage directly
+              const bucketPrefix = "/storage/v1/object/public/property-images/";
+              const idx = t.url.indexOf(bucketPrefix);
+              const storagePath = idx >= 0 ? t.url.slice(idx + bucketPrefix.length) : null;
+
+              if (storagePath) {
+                const supabase = createClient();
+                const { error } = await supabase.storage
+                  .from("property-images")
+                  .remove([storagePath]);
+                if (error) {
+                  toast.error(`Silme hatası: ${error.message}`);
+                } else {
+                  setUploadedUrls((prev) => prev.filter((u) => u !== t.url));
+                  toast.success("Görsel silindi.");
+                  setDetailTarget(null);
+                }
+              } else {
+                toast.error("Dosya yolu bulunamadı.");
+              }
+            }
+          }}
         />
       )}
     </div>
