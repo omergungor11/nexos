@@ -11,7 +11,13 @@ export const metadata = {
   title: "İlanlar — Admin",
 };
 
-export default async function AdminIlanlarPage() {
+interface Props {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export default async function AdminIlanlarPage({ searchParams }: Props) {
+  const sp = await searchParams;
+  const initialType = typeof sp.type === "string" ? sp.type : undefined;
   const supabase = await createClient();
 
   const [{ data, error }, { data: agentsData }] = await Promise.all([
@@ -66,7 +72,7 @@ export default async function AdminIlanlarPage() {
       </div>
 
       {/* Data table */}
-      <PropertyDataTable initialData={properties} agents={agents} />
+      <PropertyDataTable initialData={properties} agents={agents} initialTypeFilter={initialType} />
     </div>
   );
 }

@@ -17,6 +17,7 @@ import {
   Menu,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   BarChart3,
   Activity,
   ImageIcon,
@@ -37,7 +38,20 @@ import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { CommandPalette } from "@/components/admin/command-palette";
 import { useAdminShortcuts } from "@/hooks/use-admin-shortcuts";
 
-const NAV_ITEMS = [
+type NavChild = {
+  href: string;
+  label: string;
+};
+
+type NavItem = {
+  href: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact: boolean;
+  children?: NavChild[];
+};
+
+const NAV_ITEMS: NavItem[] = [
   {
     href: "/admin",
     label: "Dashboard",
@@ -49,6 +63,14 @@ const NAV_ITEMS = [
     label: "İlanlar",
     icon: Building2,
     exact: false,
+    children: [
+      { href: "/admin/ilanlar?type=villa", label: "Villa" },
+      { href: "/admin/ilanlar?type=apartment", label: "Daire" },
+      { href: "/admin/ilanlar?type=penthouse", label: "Penthouse" },
+      { href: "/admin/ilanlar?type=residential_land", label: "Arsa" },
+      { href: "/admin/ilanlar?type=shop", label: "Dükkan" },
+      { href: "/admin/ilanlar?type=office", label: "Ofis" },
+    ],
   },
   {
     href: "/admin/projeler",
@@ -134,7 +156,7 @@ const NAV_ITEMS = [
     icon: Settings,
     exact: false,
   },
-] as const;
+];
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -225,6 +247,9 @@ export function AdminLayout({
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href, item.exact);
+            const hasChildren = item.children && item.children.length > 0;
+            const childOpen = hasChildren && active && !isCollapsed;
+
             return (
               <li key={item.href}>
                 <Link
@@ -249,10 +274,41 @@ export function AdminLayout({
                     )}
                   />
                   {!isCollapsed && item.label}
-                  {!isCollapsed && active && (
+                  {!isCollapsed && active && !hasChildren && (
                     <ChevronRight className="ml-auto size-3.5 text-sidebar-accent-foreground/60" />
                   )}
+                  {!isCollapsed && hasChildren && (
+                    <ChevronDown className={cn(
+                      "ml-auto size-3.5 transition-transform",
+                      active ? "text-sidebar-accent-foreground/60" : "text-sidebar-foreground/30"
+                    )} />
+                  )}
                 </Link>
+
+                {/* Sub-menu children */}
+                {childOpen && item.children && (
+                  <ul className="mt-1 ml-4 space-y-0.5 border-l border-sidebar-border pl-3">
+                    {item.children.map((child) => {
+                      const childActive = pathname === child.href || pathname.startsWith(child.href.split("?")[0]) && new URLSearchParams(child.href.split("?")[1]).get("type") === new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("type");
+                      return (
+                        <li key={child.href}>
+                          <Link
+                            href={child.href}
+                            onClick={() => setSidebarOpen(false)}
+                            className={cn(
+                              "block rounded-md px-2.5 py-1.5 text-xs transition-colors",
+                              childActive
+                                ? "bg-sidebar-accent/60 font-medium text-sidebar-accent-foreground"
+                                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+                            )}
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </li>
             );
           })}

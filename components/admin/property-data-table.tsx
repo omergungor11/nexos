@@ -227,14 +227,16 @@ function DeleteDialog({
 export function PropertyDataTable({
   initialData,
   agents = [],
+  initialTypeFilter,
 }: {
   initialData: AdminPropertyRow[];
   agents?: Agent[];
+  initialTypeFilter?: string;
 }) {
   const [rows, setRows] = useState<AdminPropertyRow[]>(initialData);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>(initialTypeFilter ?? "all");
   const [transactionFilter, setTransactionFilter] = useState<string>("all");
   const [sortKey, setSortKey] = useState<SortKey | null>("created_at");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
