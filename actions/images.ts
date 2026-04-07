@@ -198,7 +198,17 @@ export async function uploadPropertyImage(
   // --- Build storage path ---
 
   const safeName = sanitizeFilename(file.name);
-  const storagePath = `${propertyId}/${Date.now()}-${safeName}`;
+
+  // Fetch listing_number and slug for structured path
+  const { data: prop } = await supabase
+    .from("properties")
+    .select("listing_number, slug")
+    .eq("id", propertyId)
+    .single();
+
+  const storagePath = prop?.listing_number && prop?.slug
+    ? `properties/${prop.listing_number}-${prop.slug}/${Date.now()}-${safeName}`
+    : `${propertyId}/${Date.now()}-${safeName}`;
 
   // --- Upload to Supabase Storage ---
 
