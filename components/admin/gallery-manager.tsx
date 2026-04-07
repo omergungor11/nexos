@@ -345,7 +345,7 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
   const [detailImage, setDetailImage] = useState<GalleryImage | null>(null);
   const [isPending, startTransition] = useTransition();
   const [visibleCount, setVisibleCount] = useState(60);
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(["__media__"]));
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
@@ -637,25 +637,27 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
       </div>
 
       {/* Recently uploaded images */}
-      {uploadedUrls.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-muted-foreground">
-              Son Yüklenenler ({uploadedUrls.length})
-            </p>
-            <Button variant="ghost" size="sm" onClick={() => setUploadedUrls([])}>
-              Temizle
-            </Button>
-          </div>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {uploadedUrls.map((url, i) => (
-              <div key={i} className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border">
-                <Image src={url} alt="" fill className="object-cover" sizes="80px" unoptimized />
+      {/* Son Eklenen Görseller — DB'den son 20 + session yüklemeleri */}
+      <div className="space-y-2">
+        <p className="text-sm font-medium">Son Eklenen Görseller</p>
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {/* Session uploads first */}
+          {uploadedUrls.map((url, i) => (
+            <div key={`new-${i}`} className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border">
+              <Image src={url} alt="" fill className="object-cover" sizes="64px" unoptimized />
+              <div className="absolute top-0.5 left-0.5 rounded bg-green-600 px-1 py-0.5 text-[8px] font-bold text-white leading-none">
+                Yeni
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+          {/* Latest 20 from DB */}
+          {images.slice(0, 20 - uploadedUrls.length).map((img) => (
+            <div key={img.id} className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border">
+              <Image src={img.url} alt={img.alt_text ?? ""} fill className="object-cover" sizes="64px" unoptimized />
+            </div>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Toolbar Row 1: Search + Filters */}
       <div className="flex flex-wrap items-center gap-3">
@@ -803,6 +805,63 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
         </div>
       </div>
 
+      {/* Diğer Görseller — not linked to any property, always on top */}
+      {(mediaImages.length > 0 || uploadedUrls.length > 0) && (
+        <div className="rounded-lg border border-primary/20 bg-primary/5">
+          <button
+            type="button"
+            className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-primary/10 transition-colors"
+            onClick={() => {
+              setExpandedGroups((prev) => {
+                const next = new Set(prev);
+                if (next.has("__media__")) next.delete("__media__");
+                else next.add("__media__");
+                return next;
+              });
+            }}
+          >
+            <div className="flex items-center gap-2">
+              {expandedGroups.has("__media__") ? (
+                <ChevronDown className="size-4 text-primary" />
+              ) : (
+                <ChevronRight className="size-4 text-primary" />
+              )}
+              <h3 className="text-sm font-semibold text-primary">Diğer Görseller</h3>
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                {mediaImages.length + uploadedUrls.length}
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground">İlana bağlı olmayan görseller</span>
+          </button>
+
+          {expandedGroups.has("__media__") && (
+            <div className="px-4 pb-4">
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8">
+                {uploadedUrls.map((url, i) => (
+                  <div
+                    key={`uploaded-${i}`}
+                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
+                  >
+                    <Image src={url} alt="" fill className="object-cover" sizes="100px" unoptimized />
+                    <div className="absolute top-1 left-1 rounded bg-green-600 px-1 py-0.5 text-[9px] font-bold text-white leading-none">
+                      Yeni
+                    </div>
+                  </div>
+                ))}
+                {mediaImages.map((file) => (
+                  <div
+                    key={file.name}
+                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
+                  >
+                    <Image src={file.url} alt={file.name} fill className="object-cover" sizes="100px" unoptimized />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Gallery grouped by property */}
       {grouped.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
@@ -875,65 +934,6 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
           >
             Daha Fazla Göster ({grouped.length - visibleCount} ilan kaldı)
           </Button>
-        </div>
-      )}
-
-      {/* Media images — not linked to any property */}
-      {(mediaImages.length > 0 || uploadedUrls.length > 0) && (
-        <div className="rounded-lg border">
-          <button
-            type="button"
-            className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50 transition-colors"
-            onClick={() => {
-              setExpandedGroups((prev) => {
-                const next = new Set(prev);
-                if (next.has("__media__")) next.delete("__media__");
-                else next.add("__media__");
-                return next;
-              });
-            }}
-          >
-            <div className="flex items-center gap-2">
-              {expandedGroups.has("__media__") ? (
-                <ChevronDown className="size-4 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="size-4 text-muted-foreground" />
-              )}
-              <h3 className="text-sm font-semibold">Diğer Görseller</h3>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                {mediaImages.length + uploadedUrls.length} görsel
-              </span>
-            </div>
-            <span className="text-xs text-muted-foreground">İlana bağlı olmayan görseller</span>
-          </button>
-
-          {expandedGroups.has("__media__") && (
-            <div className="px-4 pb-4">
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {/* Uploaded in this session */}
-                {uploadedUrls.map((url, i) => (
-                  <div
-                    key={`uploaded-${i}`}
-                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
-                  >
-                    <Image src={url} alt="" fill className="object-cover" sizes="150px" unoptimized />
-                    <div className="absolute top-1 left-1 rounded bg-green-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                      Yeni
-                    </div>
-                  </div>
-                ))}
-                {/* Existing media files from Storage */}
-                {mediaImages.map((file) => (
-                  <div
-                    key={file.name}
-                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
-                  >
-                    <Image src={file.url} alt={file.name} fill className="object-cover" sizes="150px" unoptimized />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
