@@ -14,7 +14,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
-import { uploadMediaImage } from "@/actions/images";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -87,39 +86,48 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
     onClose();
   }
 
-  // Upload handler
+  // Upload handler — direct client-side Supabase Storage upload
   async function handleUpload(file: File) {
     if (!file.type.startsWith("image/")) {
       toast.error("Sadece görsel dosyaları yüklenebilir.");
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Dosya boyutu 5 MB sınırını aşıyor.");
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Dosya boyutu 10 MB sınırını aşıyor.");
       return;
     }
 
     setUploading(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
+    const supabase = createClient();
+    const safeName = file.name
+      .toLowerCase()
+      .replace(/[^a-z0-9.]+/g, "-")
+      .replace(/^-|-$/g, "");
+    const storagePath = `media/${Date.now()}-${safeName}`;
 
-    const result = await uploadMediaImage(formData);
+    const { error: uploadError } = await supabase.storage
+      .from("property-images")
+      .upload(storagePath, file, {
+        contentType: file.type,
+        upsert: false,
+      });
 
-    if (result.error) {
-      toast.error(result.error);
+    if (uploadError) {
+      toast.error(`Yükleme hatası: ${uploadError.message}`);
       setUploading(false);
       return;
     }
 
+    const { data: { publicUrl } } = supabase.storage
+      .from("property-images")
+      .getPublicUrl(storagePath);
+
     toast.success("Görsel yüklendi.");
     setUploading(false);
-
-    // Select the uploaded image immediately
-    if (result.data?.url) {
-      onSelect(result.data.url);
-      onClose();
-    }
+    onSelect(publicUrl);
+    onClose();
   }
 
   function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {

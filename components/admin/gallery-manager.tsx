@@ -52,7 +52,8 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import { deletePropertyImage, reorderPropertyImages, uploadMediaImage } from "@/actions/images";
+import { deletePropertyImage, reorderPropertyImages } from "@/actions/images";
+import { createClient } from "@/lib/supabase/client";
 import type { GalleryImage, GalleryCity, GalleryDistrict } from "@/app/admin/galeri/page";
 
 // ---------------------------------------------------------------------------
@@ -342,7 +343,7 @@ export function GalleryManager({ initialImages, properties, cities, districts }:
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Upload handler
+  // Upload handler — direct client-side Supabase Storage upload (no server action)
   async function handleUploadFiles(files: FileList | File[]) {
     const fileArr = Array.from(files).filter((f) => f.type.startsWith("image/"));
     if (fileArr.length === 0) {
@@ -353,21 +354,38 @@ export function GalleryManager({ initialImages, properties, cities, districts }:
     setUploading(true);
     let successCount = 0;
     const newUrls: string[] = [];
+    const supabase = createClient();
 
     for (const file of fileArr) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(`${file.name}: 5 MB sınırını aşıyor.`);
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name}: 10 MB sınırını aşıyor.`);
         continue;
       }
-      const formData = new FormData();
-      formData.append("file", file);
-      const result = await uploadMediaImage(formData);
-      if (result.error) {
-        toast.error(`${file.name}: ${result.error}`);
-      } else if (result.data?.url) {
-        successCount++;
-        newUrls.push(result.data.url);
+
+      const safeName = file.name
+        .toLowerCase()
+        .replace(/[^a-z0-9.]+/g, "-")
+        .replace(/^-|-$/g, "");
+      const storagePath = `media/${Date.now()}-${safeName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("property-images")
+        .upload(storagePath, file, {
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        toast.error(`${file.name}: ${uploadError.message}`);
+        continue;
       }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("property-images")
+        .getPublicUrl(storagePath);
+
+      successCount++;
+      newUrls.push(publicUrl);
     }
 
     setUploading(false);
