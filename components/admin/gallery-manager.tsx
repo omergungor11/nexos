@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo, useRef } from "react";
+import { useState, useEffect, useTransition, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -180,15 +180,52 @@ function SortableImageCard({
 // Image Detail Dialog
 // ---------------------------------------------------------------------------
 
+// Detail info for property images or standalone media URLs
+type DetailTarget =
+  | { type: "property"; image: GalleryImage }
+  | { type: "media"; url: string; name?: string; created_at?: string };
+
 function ImageDetailDialog({
-  image,
+  target,
   open,
   onClose,
 }: {
-  image: GalleryImage;
+  target: DetailTarget;
   open: boolean;
   onClose: () => void;
 }) {
+  const url = target.type === "property" ? target.image.url : target.url;
+  const [imgMeta, setImgMeta] = useState<{ width: number; height: number; size: string } | null>(null);
+
+  // Load image dimensions + estimate file size
+  useEffect(() => {
+    if (!open || !url) return;
+    setImgMeta(null);
+    const img = new window.Image();
+    img.onload = () => {
+      setImgMeta({ width: img.naturalWidth, height: img.naturalHeight, size: "" });
+    };
+    img.src = url;
+
+    // Try HEAD request for file size
+    fetch(url, { method: "HEAD" })
+      .then((res) => {
+        const len = res.headers.get("content-length");
+        const type = res.headers.get("content-type");
+        if (len) {
+          const bytes = parseInt(len, 10);
+          const sizeStr = bytes > 1024 * 1024
+            ? `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+            : `${(bytes / 1024).toFixed(0)} KB`;
+          setImgMeta((prev) => prev ? { ...prev, size: sizeStr, ...(type ? {} : {}) } : prev);
+        }
+      })
+      .catch(() => {});
+  }, [open, url]);
+
+  // Extract filename from URL
+  const fileName = url.split("/").pop()?.split("?")[0] ?? "—";
+
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-2xl">
@@ -196,52 +233,105 @@ function ImageDetailDialog({
           <DialogTitle>Görsel Detayı</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          {/* Preview */}
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
             <Image
-              src={image.url}
-              alt={image.alt_text || "Görsel"}
+              src={url}
+              alt={target.type === "property" ? (target.image.alt_text || "Görsel") : "Görsel"}
               fill
               className="object-contain"
               sizes="(max-width: 768px) 100vw, 600px"
+              unoptimized
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-xs font-medium uppercase text-muted-foreground">İlan</p>
-              <Link
-                href={`/admin/ilanlar/${image.property_id}/duzenle`}
-                className="mt-0.5 block font-medium text-primary hover:underline"
-              >
-                {image.property_title}
-              </Link>
+          {/* Metadata grid */}
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            {/* File name */}
+            <div className="col-span-2">
+              <p className="text-xs font-medium uppercase text-muted-foreground">Dosya Adı</p>
+              <p className="mt-0.5 font-mono text-xs break-all">{fileName}</p>
             </div>
+
+            {/* Dimensions */}
+            {imgMeta && (
+              <div>
+                <p className="text-xs font-medium uppercase text-muted-foreground">Çözünürlük</p>
+                <p className="mt-0.5">{imgMeta.width} × {imgMeta.height} px</p>
+              </div>
+            )}
+
+            {/* File size */}
+            {imgMeta?.size && (
+              <div>
+                <p className="text-xs font-medium uppercase text-muted-foreground">Dosya Boyutu</p>
+                <p className="mt-0.5">{imgMeta.size}</p>
+              </div>
+            )}
+
+            {/* Property info (only for property images) */}
+            {target.type === "property" && (
+              <>
+                <div>
+                  <p className="text-xs font-medium uppercase text-muted-foreground">İlan</p>
+                  <Link
+                    href={`/admin/ilanlar/${target.image.property_id}/duzenle`}
+                    className="mt-0.5 block font-medium text-primary hover:underline"
+                  >
+                    {target.image.property_title}
+                  </Link>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase text-muted-foreground">Sıra</p>
+                  <p className="mt-0.5">{target.image.sort_order}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase text-muted-foreground">Kapak Görseli</p>
+                  <p className="mt-0.5">{target.image.is_cover ? "Evet" : "Hayır"}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase text-muted-foreground">Alt Metin</p>
+                  <p className="mt-0.5 text-muted-foreground">{target.image.alt_text || "Belirtilmemiş"}</p>
+                </div>
+              </>
+            )}
+
+            {/* Created date */}
             <div>
               <p className="text-xs font-medium uppercase text-muted-foreground">Yükleme Tarihi</p>
-              <p className="mt-0.5">{formatDate(image.created_at)}</p>
+              <p className="mt-0.5">
+                {target.type === "property"
+                  ? formatDate(target.image.created_at)
+                  : target.created_at
+                    ? formatDate(target.created_at)
+                    : "—"}
+              </p>
             </div>
-            <div>
-              <p className="text-xs font-medium uppercase text-muted-foreground">Sıra</p>
-              <p className="mt-0.5">{image.sort_order}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium uppercase text-muted-foreground">Kapak</p>
-              <p className="mt-0.5">{image.is_cover ? "Evet ⭐" : "Hayır"}</p>
-            </div>
-            <div className="col-span-2">
-              <p className="text-xs font-medium uppercase text-muted-foreground">Alt Metin</p>
-              <p className="mt-0.5 text-muted-foreground">{image.alt_text || "Belirtilmemiş"}</p>
-            </div>
+
+            {/* URL */}
             <div className="col-span-2">
               <p className="text-xs font-medium uppercase text-muted-foreground">URL</p>
-              <a
-                href={image.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-0.5 block truncate text-xs text-primary hover:underline"
-              >
-                {image.url}
-              </a>
+              <div className="mt-0.5 flex items-center gap-2">
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block flex-1 truncate text-xs text-primary hover:underline"
+                >
+                  {url}
+                </a>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => {
+                    navigator.clipboard.writeText(url);
+                    toast.success("URL kopyalandı.");
+                  }}
+                  title="URL Kopyala"
+                >
+                  <ExternalLink className="size-3.5" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -342,7 +432,7 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
   const [cityFilter, setCityFilter] = useState("all");
   const [districtFilter, setDistrictFilter] = useState("all");
   const [search, setSearch] = useState("");
-  const [detailImage, setDetailImage] = useState<GalleryImage | null>(null);
+  const [detailTarget, setDetailTarget] = useState<DetailTarget | null>(null);
   const [isPending, startTransition] = useTransition();
   const [visibleCount, setVisibleCount] = useState(60);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(["__media__"]));
@@ -636,25 +726,32 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
         )}
       </div>
 
-      {/* Recently uploaded images */}
-      {/* Son Eklenen Görseller — 2 satır grid */}
+      {/* Son Eklenen Görseller — 2 satır grid, tıklanabilir */}
       <div className="space-y-2">
         <p className="text-sm font-medium">Son Eklenen Görseller</p>
         <div className="grid grid-cols-10 gap-2">
-          {/* Session uploads first */}
           {uploadedUrls.map((url, i) => (
-            <div key={`new-${i}`} className="relative aspect-square overflow-hidden rounded-lg border">
+            <button
+              key={`new-${i}`}
+              type="button"
+              onClick={() => setDetailTarget({ type: "media", url })}
+              className="relative aspect-square overflow-hidden rounded-lg border hover:ring-2 hover:ring-primary transition-all cursor-pointer"
+            >
               <Image src={url} alt="" fill className="object-cover" sizes="80px" unoptimized />
               <div className="absolute top-0.5 left-0.5 rounded bg-green-600 px-1 py-0.5 text-[8px] font-bold text-white leading-none">
                 Yeni
               </div>
-            </div>
+            </button>
           ))}
-          {/* Latest from DB to fill 2 rows (20 total) */}
           {images.slice(0, Math.max(0, 20 - uploadedUrls.length)).map((img) => (
-            <div key={img.id} className="relative aspect-square overflow-hidden rounded-lg border">
+            <button
+              key={img.id}
+              type="button"
+              onClick={() => setDetailTarget({ type: "property", image: img })}
+              className="relative aspect-square overflow-hidden rounded-lg border hover:ring-2 hover:ring-primary transition-all cursor-pointer"
+            >
               <Image src={img.url} alt={img.alt_text ?? ""} fill className="object-cover" sizes="80px" unoptimized />
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -838,23 +935,27 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
             <div className="px-4 pb-4">
               <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8">
                 {uploadedUrls.map((url, i) => (
-                  <div
+                  <button
                     key={`uploaded-${i}`}
-                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
+                    type="button"
+                    onClick={() => setDetailTarget({ type: "media", url })}
+                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted hover:ring-2 hover:ring-primary transition-all cursor-pointer"
                   >
                     <Image src={url} alt="" fill className="object-cover" sizes="100px" unoptimized />
                     <div className="absolute top-1 left-1 rounded bg-green-600 px-1 py-0.5 text-[9px] font-bold text-white leading-none">
                       Yeni
                     </div>
-                  </div>
+                  </button>
                 ))}
                 {mediaImages.map((file) => (
-                  <div
+                  <button
                     key={file.name}
-                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
+                    type="button"
+                    onClick={() => setDetailTarget({ type: "media", url: file.url, name: file.name, created_at: file.created_at })}
+                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted hover:ring-2 hover:ring-primary transition-all cursor-pointer"
                   >
                     <Image src={file.url} alt={file.name} fill className="object-cover" sizes="100px" unoptimized />
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -914,7 +1015,7 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
                       images={group.images}
                       selectedIds={selectedIds}
                       onToggleSelect={toggleSelect}
-                      onShowDetail={setDetailImage}
+                      onShowDetail={(img) => setDetailTarget({ type: "property", image: img })}
                       onReorder={handleReorder}
                     />
                   </div>
@@ -938,11 +1039,11 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
       )}
 
       {/* Detail dialog */}
-      {detailImage && (
+      {detailTarget && (
         <ImageDetailDialog
-          image={detailImage}
-          open={!!detailImage}
-          onClose={() => setDetailImage(null)}
+          target={detailTarget}
+          open={!!detailTarget}
+          onClose={() => setDetailTarget(null)}
         />
       )}
     </div>
