@@ -63,14 +63,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "İlanlar",
     icon: Building2,
     exact: false,
-    children: [
-      { href: "/admin/ilanlar?type=villa", label: "Villa" },
-      { href: "/admin/ilanlar?type=apartment", label: "Daire" },
-      { href: "/admin/ilanlar?type=penthouse", label: "Penthouse" },
-      { href: "/admin/ilanlar?type=residential_land", label: "Arsa" },
-      { href: "/admin/ilanlar?type=shop", label: "Dükkan" },
-      { href: "/admin/ilanlar?type=office", label: "Ofis" },
-    ],
   },
   {
     href: "/admin/projeler",
