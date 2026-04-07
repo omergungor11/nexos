@@ -7,9 +7,10 @@ import "leaflet/dist/leaflet.css";
 import { Search, MapPin, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 // ---------------------------------------------------------------------------
-// Fix Leaflet default marker icon (same pattern as full-screen-map-inner)
+// Fix Leaflet default marker icon
 // ---------------------------------------------------------------------------
 const defaultIcon = L.icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -22,7 +23,6 @@ const defaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = defaultIcon;
 
-// North Cyprus center
 const DEFAULT_CENTER: [number, number] = [35.24, 33.66];
 const DEFAULT_ZOOM = 13;
 
@@ -36,22 +36,20 @@ interface LocationPickerProps {
   onChange: (coords: { lat: number; lng: number }) => void;
 }
 
-interface NominatimResult {
-  place_id: number;
-  display_name: string;
-  lat: string;
-  lon: string;
+interface LocationResult {
+  id: number;
+  name: string;
+  type: "city" | "district";
+  cityName?: string;
+  lat: number | null;
+  lng: number | null;
 }
 
 // ---------------------------------------------------------------------------
-// Inner map component — handles click + drag events
+// Map sub-components
 // ---------------------------------------------------------------------------
 
-function MapClickHandler({
-  onChange,
-}: {
-  onChange: (lat: number, lng: number) => void;
-}) {
+function MapClickHandler({ onChange }: { onChange: (lat: number, lng: number) => void }) {
   useMapEvents({
     click(e) {
       onChange(e.latlng.lat, e.latlng.lng);
@@ -76,20 +74,90 @@ function MapCenterUpdater({ center }: { center: [number, number] | null }) {
 }
 
 // ---------------------------------------------------------------------------
+// Location search hook — searches cities & districts from DB
+// ---------------------------------------------------------------------------
+
+function useLocationSearch() {
+  const [allLocations, setAllLocations] = useState<LocationResult[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  // Load all cities + districts once
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const supabase = createClient();
+
+      const [citiesRes, districtsRes] = await Promise.all([
+        supabase
+          .from("cities")
+          .select("id, name, lat, lng")
+          .eq("is_active", true)
+          .order("name"),
+        supabase
+          .from("districts")
+          .select("id, name, lat, lng, city:cities(name)")
+          .eq("is_active", true)
+          .order("name"),
+      ]);
+
+      if (cancelled) return;
+
+      const cities: LocationResult[] = (citiesRes.data ?? []).map((c) => ({
+        id: c.id,
+        name: c.name,
+        type: "city" as const,
+        lat: c.lat,
+        lng: c.lng,
+      }));
+
+      const districts: LocationResult[] = (districtsRes.data ?? []).map((d) => {
+        const city = d.city as unknown as { name: string } | null;
+        return {
+          id: d.id,
+          name: d.name,
+          type: "district" as const,
+          cityName: city?.name ?? undefined,
+          lat: d.lat,
+          lng: d.lng,
+        };
+      });
+
+      setAllLocations([...cities, ...districts]);
+      setLoaded(true);
+    }
+    void load();
+    return () => { cancelled = true; };
+  }, []);
+
+  function search(query: string): LocationResult[] {
+    if (!query.trim()) return [];
+    const q = query.toLowerCase().trim();
+    return allLocations
+      .filter((loc) => {
+        const nameMatch = loc.name.toLowerCase().includes(q);
+        const cityMatch = loc.cityName?.toLowerCase().includes(q);
+        return nameMatch || cityMatch;
+      })
+      .slice(0, 8);
+  }
+
+  return { search, loaded };
+}
+
+// ---------------------------------------------------------------------------
 // Main LocationPicker (inner, requires window)
 // ---------------------------------------------------------------------------
 
 function LocationPickerInner({ lat, lng, onChange }: LocationPickerProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState<NominatimResult[]>([]);
-  const [searching, setSearching] = useState(false);
+  const [results, setResults] = useState<LocationResult[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [markerPos, setMarkerPos] = useState<[number, number] | null>(
     lat != null && lng != null ? [lat, lng] : null
   );
   const [flyTo, setFlyTo] = useState<[number, number] | null>(null);
-  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const { search, loaded } = useLocationSearch();
 
   // Sync external lat/lng changes
   useEffect(() => {
@@ -116,66 +184,30 @@ function LocationPickerInner({ lat, lng, onChange }: LocationPickerProps) {
     [onChange]
   );
 
-  function handleSearch() {
-    const q = searchQuery.trim();
-    if (!q) return;
-
-    setSearching(true);
-    setShowResults(true);
-
-    // North Cyprus bounding box for viewbox bias
-    const viewbox = "32.0,36.0,34.7,34.5";
-    const baseUrl = "https://nominatim.openstreetmap.org/search";
-    const params = `format=json&limit=5&accept-language=tr`;
-
-    // First try with viewbox bias (prefers North Cyprus results)
-    fetch(
-      `${baseUrl}?${params}&q=${encodeURIComponent(q)}&viewbox=${viewbox}&bounded=0`,
-      { headers: { "User-Agent": "NexosInvestment/1.0" } }
-    )
-      .then((res) => res.json())
-      .then((data: NominatimResult[]) => {
-        if (data.length > 0) {
-          setResults(data);
-          setSearching(false);
-        } else {
-          // Fallback: append "Cyprus" to broaden search
-          return fetch(
-            `${baseUrl}?${params}&q=${encodeURIComponent(q + ", Cyprus")}`,
-            { headers: { "User-Agent": "NexosInvestment/1.0" } }
-          )
-            .then((res2) => res2.json())
-            .then((data2: NominatimResult[]) => {
-              setResults(data2);
-              setSearching(false);
-            });
-        }
-      })
-      .catch(() => {
-        setResults([]);
-        setSearching(false);
-      });
-  }
-
   function handleSearchInput(value: string) {
     setSearchQuery(value);
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    if (value.trim().length >= 3) {
-      searchTimeout.current = setTimeout(handleSearch, 400);
+    if (value.trim().length >= 2) {
+      const found = search(value);
+      setResults(found);
+      setShowResults(true);
     } else {
       setResults([]);
       setShowResults(false);
     }
   }
 
-  function selectResult(result: NominatimResult) {
-    const newLat = parseFloat(result.lat);
-    const newLng = parseFloat(result.lon);
-    setMarkerPos([newLat, newLng]);
-    setFlyTo([newLat, newLng]);
-    onChange({ lat: newLat, lng: newLng });
+  function selectResult(result: LocationResult) {
+    if (result.lat != null && result.lng != null) {
+      setMarkerPos([result.lat, result.lng]);
+      setFlyTo([result.lat, result.lng]);
+      onChange({ lat: result.lat, lng: result.lng });
+    }
     setShowResults(false);
-    setSearchQuery(result.display_name.split(",").slice(0, 2).join(","));
+    setSearchQuery(
+      result.type === "district" && result.cityName
+        ? `${result.name}, ${result.cityName}`
+        : result.name
+    );
   }
 
   // Close results on outside click
@@ -189,44 +221,24 @@ function LocationPickerInner({ lat, lng, onChange }: LocationPickerProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const center: [number, number] =
-    markerPos ?? DEFAULT_CENTER;
+  const center: [number, number] = markerPos ?? DEFAULT_CENTER;
 
   return (
     <div className="space-y-2">
       {/* Search bar */}
       <div className="relative" ref={resultsRef}>
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => handleSearchInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSearch();
-                }
-              }}
-              placeholder="Konum ara... (ör: Girne, Alsancak)"
-              className="pl-9 h-9"
-            />
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleSearch}
-            disabled={searching || !searchQuery.trim()}
-            className="gap-1.5 shrink-0"
-          >
-            {searching ? (
-              <Loader2 className="size-3.5 animate-spin" />
-            ) : (
-              <MapPin className="size-3.5" />
-            )}
-            Ara
-          </Button>
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => handleSearchInput(e.target.value)}
+            placeholder={loaded ? "Şehir veya ilçe ara... (ör: Girne, Long Beach)" : "Konumlar yükleniyor..."}
+            className="pl-9 h-9"
+            disabled={!loaded}
+          />
+          {!loaded && (
+            <Loader2 className="absolute right-2.5 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+          )}
         </div>
 
         {/* Search results dropdown */}
@@ -234,19 +246,30 @@ function LocationPickerInner({ lat, lng, onChange }: LocationPickerProps) {
           <div className="absolute z-[1100] mt-1 w-full rounded-lg border bg-background shadow-lg">
             {results.map((r) => (
               <button
-                key={r.place_id}
+                key={`${r.type}-${r.id}`}
                 type="button"
                 onClick={() => selectResult(r)}
-                className="flex w-full items-start gap-2 px-3 py-2 text-left text-sm hover:bg-muted/50 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm hover:bg-muted/50 transition-colors first:rounded-t-lg last:rounded-b-lg"
               >
-                <MapPin className="size-4 shrink-0 mt-0.5 text-muted-foreground" />
-                <span className="line-clamp-2">{r.display_name}</span>
+                <MapPin className="size-4 shrink-0 text-muted-foreground" />
+                <div className="min-w-0 flex-1">
+                  <span className="font-medium">{r.name}</span>
+                  {r.type === "district" && r.cityName && (
+                    <span className="ml-1.5 text-muted-foreground">— {r.cityName}</span>
+                  )}
+                </div>
+                <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                  {r.type === "city" ? "Şehir" : "İlçe"}
+                </span>
+                {r.lat == null && (
+                  <span className="shrink-0 text-[10px] text-amber-500">Koordinat yok</span>
+                )}
               </button>
             ))}
           </div>
         )}
 
-        {showResults && !searching && results.length === 0 && searchQuery.trim().length >= 3 && (
+        {showResults && results.length === 0 && searchQuery.trim().length >= 2 && (
           <div className="absolute z-[1100] mt-1 w-full rounded-lg border bg-background px-3 py-3 text-center text-sm text-muted-foreground shadow-lg">
             Sonuç bulunamadı
           </div>
@@ -282,7 +305,7 @@ function LocationPickerInner({ lat, lng, onChange }: LocationPickerProps) {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Haritaya tıklayarak veya arama yaparak konum seçin. Pin&apos;i sürükleyerek hassas ayar yapın.
+        Şehir/ilçe arayarak veya haritaya tıklayarak konum seçin. Pin&apos;i sürükleyerek hassas ayar yapın.
       </p>
     </div>
   );
