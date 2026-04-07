@@ -175,6 +175,12 @@ export function Footer() {
             >
               {t("terms")}
             </Link>
+            <Link
+              href={"/kvkk" as never}
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              KVKK
+            </Link>
           </div>
         </div>
       </div>
