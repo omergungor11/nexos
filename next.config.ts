@@ -23,6 +23,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
   },
 
@@ -54,7 +66,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://unpkg.com https://*.tile.openstreetmap.org https://api.qrserver.com",
               "font-src 'self'",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com",
-              "frame-src 'self' https://www.youtube-nocookie.com https://my.matterport.com",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://my.matterport.com",
               "object-src 'none'",
               "base-uri 'self'",
             ].join("; "),
