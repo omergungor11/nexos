@@ -85,6 +85,8 @@ import {
   type PropertyCategory,
 } from "@/lib/constants";
 
+import { LocationPicker } from "@/components/admin/location-picker";
+
 import type {
   TransactionType,
   PropertyType,
@@ -1547,11 +1549,24 @@ export function PropertyForm({
             />
           </Field>
 
+          {/* Interactive map picker */}
+          <LocationPicker
+            lat={form.lat ? Number(form.lat) : null}
+            lng={form.lng ? Number(form.lng) : null}
+            onChange={({ lat: newLat, lng: newLng }) => {
+              setForm((prev) => ({
+                ...prev,
+                lat: newLat.toFixed(6),
+                lng: newLng.toFixed(6),
+              }));
+            }}
+          />
+
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Field
               label="Enlem (Lat)"
               htmlFor="lat"
-              hint="Harita koordinatı — ondalıklı sayı"
+              hint="Haritadan seçebilir veya manuel girebilirsiniz."
               icon={Globe}
             >
               <Input
@@ -1561,14 +1576,14 @@ export function PropertyForm({
                 step="any"
                 value={form.lat}
                 onChange={handleChange}
-                placeholder="41.0082"
+                placeholder="35.2345"
               />
             </Field>
 
             <Field
               label="Boylam (Lng)"
               htmlFor="lng"
-              hint="Harita koordinatı — ondalıklı sayı"
+              hint="Haritadan seçebilir veya manuel girebilirsiniz."
               icon={Globe}
             >
               <Input
@@ -1578,7 +1593,7 @@ export function PropertyForm({
                 step="any"
                 value={form.lng}
                 onChange={handleChange}
-                placeholder="28.9784"
+                placeholder="33.6789"
               />
             </Field>
           </div>

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Image from "next/image";
 import {
   ImageIcon,
   Info,
@@ -12,6 +13,9 @@ import {
   Film,
   ListChecks,
   Settings2,
+  X,
+  GripVertical,
+  Plus,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +35,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MediaPicker } from "@/components/admin/media-picker";
+import { LocationPicker } from "@/components/admin/location-picker";
+
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import {
   createProject,
@@ -68,14 +89,51 @@ type FormState = {
   total_units: string;
   cover_image: string;
   video_url: string;
-  gallery_images: string;
-  features: string;
   status: string;
   is_featured: boolean;
   is_active: boolean;
 };
 
 type DistrictOption = { id: number; name: string };
+
+// ---------------------------------------------------------------------------
+// Predefined project features
+// ---------------------------------------------------------------------------
+
+const PREDEFINED_FEATURES = [
+  "Yüzme Havuzu",
+  "Çocuk Havuzu",
+  "Fitness Salonu",
+  "SPA & Wellness",
+  "Sauna",
+  "Türk Hamamı",
+  "24 Saat Güvenlik",
+  "Kapalı Otopark",
+  "Açık Otopark",
+  "Çocuk Oyun Alanı",
+  "Basketbol Sahası",
+  "Tenis Kortu",
+  "Yürüyüş Parkuru",
+  "Bisiklet Yolu",
+  "BBQ Alanı",
+  "Peyzaj & Bahçe",
+  "Jeneratör",
+  "Su Deposu",
+  "Asansör",
+  "Engelli Erişimi",
+  "Kapıcı / Resepsiyon",
+  "Toplantı Salonu",
+  "Kafeterya",
+  "Market / Mağaza",
+  "Denize Sıfır",
+  "Deniz Manzarası",
+  "Dağ Manzarası",
+  "Klima (Merkezi)",
+  "Yerden Isıtma",
+  "Akıllı Ev Sistemi",
+  "Güneş Enerjisi",
+  "EV Şarj İstasyonu",
+];
 
 // ---------------------------------------------------------------------------
 // Tab configuration
@@ -127,6 +185,71 @@ function Field({
 }
 
 // ---------------------------------------------------------------------------
+// Sortable gallery thumbnail
+// ---------------------------------------------------------------------------
+
+function SortableGalleryItem({
+  url,
+  onRemove,
+}: {
+  url: string;
+  onRemove: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: url });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="group relative aspect-square w-28 shrink-0 overflow-hidden rounded-lg border bg-muted"
+    >
+      <Image
+        src={url}
+        alt=""
+        fill
+        className="object-cover"
+        sizes="112px"
+        unoptimized
+      />
+      {/* Drag handle */}
+      <button
+        type="button"
+        className="absolute top-1 left-1 rounded bg-black/50 p-0.5 text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-grab active:cursor-grabbing"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="size-3.5" />
+      </button>
+      {/* Remove button */}
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute top-1 right-1 rounded-full bg-black/50 p-0.5 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-destructive"
+      >
+        <X className="size-3.5" />
+      </button>
+      {/* Order badge */}
+      <div className="absolute bottom-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white">
+        {/* index rendered by parent */}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main form component
 // ---------------------------------------------------------------------------
 
@@ -136,8 +259,20 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
   const [activeTab, setActiveTab] = useState("temel");
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
-  const [mediaPickerTarget, setMediaPickerTarget] = useState<"cover" | "logo">("cover");
+  const [mediaPickerTarget, setMediaPickerTarget] = useState<"cover" | "logo" | "gallery">("cover");
   const [districts, setDistricts] = useState<DistrictOption[]>([]);
+
+  // Gallery images as array
+  const [galleryImages, setGalleryImages] = useState<string[]>(
+    () => (project?.gallery_images ?? []) as string[]
+  );
+
+  // Features as Set
+  const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(() => {
+    const initial = (project?.features ?? []) as string[];
+    return new Set(initial);
+  });
+  const [customFeature, setCustomFeature] = useState("");
 
   const [form, setForm] = useState<FormState>({
     title: project?.title ?? "",
@@ -156,12 +291,15 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
     total_units: project?.total_units?.toString() ?? "",
     cover_image: project?.cover_image ?? "",
     video_url: project?.video_url ?? "",
-    gallery_images: (project?.gallery_images ?? []).join(", "),
-    features: (project?.features ?? []).join(", "),
     status: project?.status ?? "selling",
     is_featured: project?.is_featured ?? false,
     is_active: project?.is_active ?? true,
   });
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
 
   // Tabs with errors
   const tabFieldMap: Record<string, (keyof FormState)[]> = {
@@ -210,7 +348,6 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
     if (!form.title.trim()) next.title = "Proje adı zorunludur.";
     setErrors(next);
 
-    // Jump to first tab with error
     if (Object.keys(next).length > 0) {
       for (const [tab, fields] of Object.entries(tabFieldMap)) {
         if (fields.some((f) => next[f])) {
@@ -226,16 +363,6 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!validate()) return;
-
-    const galleryArr = form.gallery_images
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    const featuresArr = form.features
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
 
     const payload: ProjectInput = {
       title: form.title.trim(),
@@ -254,8 +381,8 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
       total_units: form.total_units ? Number(form.total_units) : undefined,
       cover_image: form.cover_image.trim() || undefined,
       video_url: form.video_url.trim() || undefined,
-      gallery_images: galleryArr.length > 0 ? galleryArr : undefined,
-      features: featuresArr.length > 0 ? featuresArr : undefined,
+      gallery_images: galleryImages.length > 0 ? galleryImages : undefined,
+      features: selectedFeatures.size > 0 ? Array.from(selectedFeatures) : undefined,
       status: form.status,
       is_featured: form.is_featured,
       is_active: form.is_active,
@@ -282,17 +409,52 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
     });
   }
 
-  function openMediaPicker(target: "cover" | "logo") {
+  // Media picker
+  function openMediaPicker(target: "cover" | "logo" | "gallery") {
     setMediaPickerTarget(target);
     setMediaPickerOpen(true);
   }
 
-  function handleMediaSelect(url: string) {
+  const handleMediaSelect = useCallback((url: string) => {
     if (mediaPickerTarget === "cover") {
       setForm((prev) => ({ ...prev, cover_image: url }));
-    } else {
+    } else if (mediaPickerTarget === "logo") {
       setForm((prev) => ({ ...prev, developer_logo: url }));
+    } else {
+      setGalleryImages((prev) => (prev.includes(url) ? prev : [...prev, url]));
     }
+  }, [mediaPickerTarget]);
+
+  // Gallery DnD
+  function handleGalleryDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setGalleryImages((prev) => {
+      const oldIndex = prev.indexOf(active.id as string);
+      const newIndex = prev.indexOf(over.id as string);
+      return arrayMove(prev, oldIndex, newIndex);
+    });
+  }
+
+  function removeGalleryImage(url: string) {
+    setGalleryImages((prev) => prev.filter((u) => u !== url));
+  }
+
+  // Features toggle
+  function toggleFeature(feature: string) {
+    setSelectedFeatures((prev) => {
+      const next = new Set(prev);
+      if (next.has(feature)) next.delete(feature);
+      else next.add(feature);
+      return next;
+    });
+  }
+
+  function addCustomFeature() {
+    const val = customFeature.trim();
+    if (!val) return;
+    setSelectedFeatures((prev) => new Set(prev).add(val));
+    setCustomFeature("");
   }
 
   const textareaClass =
@@ -404,7 +566,7 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
                 className="gap-1.5 shrink-0"
               >
                 <ImageIcon className="size-4" />
-                Galeri
+                Galeriden Seç
               </Button>
             </div>
             {form.developer_logo && /^https?:\/\/.+/.test(form.developer_logo) && (
@@ -416,7 +578,6 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
                 />
               </div>
             )}
-            <p className="text-xs text-muted-foreground">URL girin veya medya kütüphanesinden seçin.</p>
           </div>
         </TabsContent>
 
@@ -474,8 +635,21 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
             />
           </Field>
 
+          {/* Interactive map picker */}
+          <LocationPicker
+            lat={form.lat ? Number(form.lat) : null}
+            lng={form.lng ? Number(form.lng) : null}
+            onChange={({ lat: newLat, lng: newLng }) => {
+              setForm((prev) => ({
+                ...prev,
+                lat: newLat.toFixed(6),
+                lng: newLng.toFixed(6),
+              }));
+            }}
+          />
+
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <Field label="Enlem (Lat)" htmlFor="lat" hint="Haritada pin için gerekli.">
+            <Field label="Enlem (Lat)" htmlFor="lat" hint="Haritadan seçebilir veya manuel girebilirsiniz.">
               <Input
                 id="lat"
                 name="lat"
@@ -550,7 +724,7 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
         {/* ================================================================ */}
         {/* TAB: Medya                                                       */}
         {/* ================================================================ */}
-        <TabsContent value="medya" className="mt-6 space-y-5">
+        <TabsContent value="medya" className="mt-6 space-y-6">
           {/* Cover image */}
           <div className="space-y-1.5">
             <label htmlFor="cover_image" className="text-sm font-medium leading-none">
@@ -573,7 +747,7 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
                 className="gap-1.5 shrink-0"
               >
                 <ImageIcon className="size-4" />
-                Galeri
+                Galeriden Seç
               </Button>
             </div>
             {form.cover_image && /^https?:\/\/.+/.test(form.cover_image) && (
@@ -585,7 +759,6 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
                 />
               </div>
             )}
-            <p className="text-xs text-muted-foreground">URL girin veya medya kütüphanesinden seçin.</p>
           </div>
 
           <Field label="Video URL" htmlFor="video_url" hint="YouTube linki yapıştırın.">
@@ -599,62 +772,156 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
             />
           </Field>
 
-          <Field
-            label="Galeri Görselleri"
-            htmlFor="gallery_images"
-            hint="URL'leri virgülle ayırarak girin. Her URL bir galeri görseli olarak gösterilir."
-          >
-            <textarea
-              id="gallery_images"
-              name="gallery_images"
-              value={form.gallery_images}
-              onChange={handleChange}
-              rows={4}
-              placeholder="https://img1.jpg, https://img2.jpg, ..."
-              className={textareaClass}
-            />
-          </Field>
+          {/* Gallery images with DnD */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium leading-none">
+                Galeri Görselleri
+                {galleryImages.length > 0 && (
+                  <span className="ml-2 text-xs text-muted-foreground font-normal">
+                    ({galleryImages.length} görsel)
+                  </span>
+                )}
+              </label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => openMediaPicker("gallery")}
+                className="gap-1.5"
+              >
+                <Plus className="size-3.5" />
+                Galeriden Ekle
+              </Button>
+            </div>
+
+            {galleryImages.length > 0 ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleGalleryDragEnd}
+              >
+                <SortableContext
+                  items={galleryImages}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {galleryImages.map((url) => (
+                      <SortableGalleryItem
+                        key={url}
+                        url={url}
+                        onRemove={() => removeGalleryImage(url)}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 text-muted-foreground">
+                <ImageIcon className="size-8 mb-2 opacity-40" />
+                <p className="text-sm">Henüz galeri görseli eklenmemiş</p>
+                <p className="text-xs mt-1">Yukarıdaki butonu kullanarak görsel ekleyin</p>
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Sürükleyerek sıralayabilir, X ile kaldırabilirsiniz.
+            </p>
+          </div>
         </TabsContent>
 
         {/* ================================================================ */}
         {/* TAB: Özellikler                                                  */}
         {/* ================================================================ */}
         <TabsContent value="ozellikler" className="mt-6 space-y-5">
-          <Field
-            label="Proje Özellikleri"
-            htmlFor="features"
-            hint="Virgülle ayırarak girin. Proje detay sayfasında liste olarak gösterilir."
-          >
-            <textarea
-              id="features"
-              name="features"
-              value={form.features}
-              onChange={handleChange}
-              rows={5}
-              placeholder="Yüzme Havuzu, Fitness Salonu, 24 Saat Güvenlik, Çocuk Oyun Alanı, Sauna, Türk Hamamı"
-              className={textareaClass}
-            />
-          </Field>
+          <div className="space-y-3">
+            <p className="text-sm font-medium">Proje Özellikleri</p>
+            <p className="text-xs text-muted-foreground">
+              Projenin sahip olduğu özellikleri seçin. Özel bir özellik eklemek için alttaki alanı kullanın.
+            </p>
 
-          {/* Feature preview */}
-          {form.features.trim() && (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+              {PREDEFINED_FEATURES.map((feature) => (
+                <label
+                  key={feature}
+                  className={`flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-muted/50 ${
+                    selectedFeatures.has(feature)
+                      ? "border-primary bg-primary/5"
+                      : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedFeatures.has(feature)}
+                    onChange={() => toggleFeature(feature)}
+                    className="size-4 rounded accent-primary"
+                  />
+                  {feature}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Custom feature input */}
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Özel Özellik Ekle</p>
+            <div className="flex gap-2">
+              <Input
+                value={customFeature}
+                onChange={(e) => setCustomFeature(e.target.value)}
+                placeholder="Örn: Özel plaj alanı"
+                className="max-w-xs"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addCustomFeature();
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addCustomFeature}
+                disabled={!customFeature.trim()}
+                className="gap-1.5"
+              >
+                <Plus className="size-3.5" />
+                Ekle
+              </Button>
+            </div>
+          </div>
+
+          {/* Custom features that are not in predefined list */}
+          {Array.from(selectedFeatures).filter((f) => !PREDEFINED_FEATURES.includes(f)).length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Önizleme</p>
+              <p className="text-sm font-medium text-muted-foreground">Özel Eklenenler</p>
               <div className="flex flex-wrap gap-2">
-                {form.features
-                  .split(",")
-                  .map((f) => f.trim())
-                  .filter(Boolean)
-                  .map((feature, i) => (
+                {Array.from(selectedFeatures)
+                  .filter((f) => !PREDEFINED_FEATURES.includes(f))
+                  .map((feature) => (
                     <span
-                      key={i}
-                      className="rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium"
+                      key={feature}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-medium"
                     >
                       {feature}
+                      <button
+                        type="button"
+                        onClick={() => toggleFeature(feature)}
+                        className="rounded-full hover:bg-destructive/20 p-0.5"
+                      >
+                        <X className="size-3" />
+                      </button>
                     </span>
                   ))}
               </div>
             </div>
+          )}
+
+          {/* Selected count */}
+          {selectedFeatures.size > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {selectedFeatures.size} özellik seçili
+            </p>
           )}
         </TabsContent>
 
@@ -736,7 +1003,13 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
         open={mediaPickerOpen}
         onClose={() => setMediaPickerOpen(false)}
         onSelect={handleMediaSelect}
-        currentUrl={mediaPickerTarget === "cover" ? form.cover_image : form.developer_logo}
+        currentUrl={
+          mediaPickerTarget === "cover"
+            ? form.cover_image
+            : mediaPickerTarget === "logo"
+              ? form.developer_logo
+              : undefined
+        }
       />
     </form>
   );
