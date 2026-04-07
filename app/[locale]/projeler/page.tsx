@@ -2,7 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { MapPin, Building2, Users } from "lucide-react";
+import { MapPin, Building2, Users, ChevronRight, Home } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getProjects } from "@/lib/queries/projects";
@@ -74,6 +74,18 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <div className="border-b bg-muted/30">
+        <div className="container mx-auto flex items-center gap-1.5 px-4 py-3 text-sm text-muted-foreground">
+          <Link href="/" className="flex items-center gap-1 hover:text-foreground transition-colors">
+            <Home className="size-3.5" />
+            Anasayfa
+          </Link>
+          <ChevronRight className="size-3" />
+          <span className="font-medium text-foreground">Projeler</span>
+        </div>
+      </div>
+
       {/* Hero Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20">
         <div className="absolute inset-0 opacity-10">
