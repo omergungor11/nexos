@@ -61,7 +61,12 @@ const DEFAULT_ZOOM = 10;
 // ---------------------------------------------------------------------------
 export default function AdminMapPreview({ properties }: AdminMapPreviewProps) {
   return (
-    <div className="h-[350px] w-full overflow-hidden rounded-lg border">
+    <div className="relative h-[350px] w-full overflow-hidden rounded-lg border">
+      {properties.length === 0 && (
+        <div className="absolute top-2 left-2 z-[500] rounded bg-amber-100 px-2 py-1 text-xs text-amber-800">
+          Haritada gösterilecek ilan yok
+        </div>
+      )}
       <MapContainer
         center={DEFAULT_CENTER}
         zoom={DEFAULT_ZOOM}
@@ -76,7 +81,7 @@ export default function AdminMapPreview({ properties }: AdminMapPreviewProps) {
         />
         <MarkerClusterGroup chunkedLoading iconCreateFunction={createClusterIcon}>
           {properties.map((p) => (
-            <Marker key={p.id} position={[p.lat, p.lng]}>
+            <Marker key={p.id} position={[p.lat, p.lng]} icon={defaultIcon}>
               <Tooltip>{p.title}</Tooltip>
             </Marker>
           ))}
