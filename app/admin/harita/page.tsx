@@ -17,8 +17,8 @@ export default async function AdminHaritaPage() {
       `
       id, title, slug, price, currency, type, transaction_type,
       is_active, show_on_map, lat, lng,
-      city:cities(name),
-      district:districts(name),
+      city:cities(name, lat, lng),
+      district:districts(name, lat, lng),
       images:property_images(url, is_cover)
     `
     )

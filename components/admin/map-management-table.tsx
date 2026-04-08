@@ -54,8 +54,8 @@ export type MapManagementRow = {
   show_on_map: boolean;
   lat: number | null;
   lng: number | null;
-  city: { name: string } | null;
-  district: { name: string } | null;
+  city: { name: string; lat?: number | null; lng?: number | null } | null;
+  district: { name: string; lat?: number | null; lng?: number | null } | null;
   images: PropertyImage[];
 };
 
@@ -78,16 +78,30 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
+  // Resolve coordinates with city/district fallback (same as public map)
+  function resolveCoords(r: MapManagementRow): { lat: number; lng: number } | null {
+    const lat = r.lat ?? r.district?.lat ?? r.city?.lat;
+    const lng = r.lng ?? r.district?.lng ?? r.city?.lng;
+    if (lat == null || lng == null) return null;
+    return { lat, lng };
+  }
+
   // Stats
   const onMapCount = rows.filter((r) => r.show_on_map).length;
-  const hasCoords = rows.filter((r) => r.lat != null && r.lng != null).length;
+  const hasCoords = rows.filter((r) => resolveCoords(r) != null).length;
 
-  // Map markers (show_on_map + has coordinates)
+  // Map markers (show_on_map + has resolved coordinates)
   const mapMarkers = useMemo(
     () =>
       rows
-        .filter((r) => r.show_on_map && r.lat != null && r.lng != null)
-        .map((r) => ({ id: r.id, lat: r.lat!, lng: r.lng!, title: r.title })),
+        .filter((r) => r.show_on_map)
+        .map((r) => {
+          const coords = resolveCoords(r);
+          if (!coords) return null;
+          return { id: r.id, lat: coords.lat, lng: coords.lng, title: r.title };
+        })
+        .filter((m): m is NonNullable<typeof m> => m != null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [rows]
   );
 
