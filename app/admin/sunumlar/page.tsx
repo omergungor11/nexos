@@ -19,6 +19,8 @@ type RawRow = {
   total_floors: number | null;
   year_built: number | null;
   description: string | null;
+  lat: number | null;
+  lng: number | null;
   city: { name: string } | null;
   district: { name: string } | null;
   images: { url: string; is_cover: boolean; sort_order: number | null }[] | null;
@@ -30,7 +32,7 @@ export default async function SunumlarPage() {
   const { data, error } = await supabase
     .from("properties")
     .select(
-      "id, title, price, currency, type, transaction_type, area_sqm, rooms, living_rooms, bathrooms, floor, total_floors, year_built, description, city:cities(name), district:districts(name), images:property_images(url, is_cover, sort_order)"
+      "id, title, price, currency, type, transaction_type, area_sqm, rooms, living_rooms, bathrooms, floor, total_floors, year_built, description, lat, lng, city:cities(name), district:districts(name), images:property_images(url, is_cover, sort_order)"
     )
     .eq("is_active", true)
     .order("created_at", { ascending: false });
@@ -70,6 +72,8 @@ export default async function SunumlarPage() {
       total_floors: row.total_floors,
       year_built: row.year_built,
       description: row.description,
+      lat: row.lat,
+      lng: row.lng,
       city_name: row.city?.name ?? "",
       district_name: row.district?.name ?? null,
       images: sortedImages,

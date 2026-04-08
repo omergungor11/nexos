@@ -58,6 +58,8 @@ export interface PropertyForPresentation {
   total_floors: number | null;
   year_built: number | null;
   description: string | null;
+  lat: number | null;
+  lng: number | null;
   city_name: string;
   district_name: string | null;
   images: string[];
@@ -72,6 +74,7 @@ type PresentationTheme = "dark" | "light" | "gold" | "minimal";
 type SlideType =
   | "cover"
   | "gallery"
+  | "photo"
   | "details"
   | "features"
   | "description"
@@ -98,6 +101,7 @@ interface SlideProps {
   property: PropertyForPresentation;
   theme: ThemeColors;
   note?: string;
+  photoIndex?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -106,32 +110,32 @@ interface SlideProps {
 
 const THEMES: Record<PresentationTheme, ThemeColors> = {
   dark: {
-    bg: "#0a0a0a",
-    cardBg: "#161616",
-    text: "#f5f0eb",
-    accent: "#c9a96e",
-    muted: "#6b6b6b",
+    bg: "#0f172a",
+    cardBg: "#1e293b",
+    text: "#f8fafc",
+    accent: "#ffca3e",
+    muted: "#94a3b8",
   },
   light: {
-    bg: "#faf8f5",
-    cardBg: "#ffffff",
-    text: "#1a1a1a",
-    accent: "#1a1a1a",
-    muted: "#8c8c8c",
+    bg: "#ffffff",
+    cardBg: "#f1f5f9",
+    text: "#0f172a",
+    accent: "#ffca3e",
+    muted: "#64748b",
   },
   gold: {
-    bg: "#1a150d",
-    cardBg: "#241e14",
-    text: "#f5edd6",
-    accent: "#d4a853",
-    muted: "#9a8a6a",
+    bg: "#1a1207",
+    cardBg: "#2a1f0e",
+    text: "#fef9e7",
+    accent: "#ffca3e",
+    muted: "#c4a352",
   },
   minimal: {
-    bg: "#ffffff",
-    cardBg: "#f7f7f7",
-    text: "#111111",
-    accent: "#111111",
-    muted: "#999999",
+    bg: "#fafafa",
+    cardBg: "#ffffff",
+    text: "#171717",
+    accent: "#ffca3e",
+    muted: "#737373",
   },
 };
 
@@ -143,15 +147,16 @@ const THEME_LABELS: Record<PresentationTheme, string> = {
 };
 
 const THEME_PREVIEW_COLORS: Record<PresentationTheme, string> = {
-  dark: "#0a0a0a",
-  light: "#faf8f5",
-  gold: "#1a150d",
-  minimal: "#ffffff",
+  dark: "#0f172a",
+  light: "#f1f5f9",
+  gold: "#1a1207",
+  minimal: "#fafafa",
 };
 
 const SLIDE_DEFINITIONS: SlideDefinition[] = [
   { type: "cover", label: "Kapak" },
   { type: "gallery", label: "Galeri" },
+  { type: "photo", label: "Fotoğraflar" },
   { type: "details", label: "Detaylar" },
   { type: "features", label: "Özellikler" },
   { type: "description", label: "Açıklama" },
@@ -264,13 +269,14 @@ function CoverSlide({ property, theme, note }: SlideProps) {
 
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-10 pt-8">
-        <div className="flex items-center gap-2">
-          <div
-            className="size-8 rounded flex items-center justify-center font-black text-sm"
-            style={{ backgroundColor: theme.accent, color: "#0f172a" }}
-          >
-            N
-          </div>
+        <div className="flex items-center gap-2.5">
+          <Image
+            src="/logo-square.jpeg"
+            alt="Nexos"
+            width={36}
+            height={36}
+            className="rounded"
+          />
           <span className="font-semibold text-lg tracking-wide" style={{ color: theme.text }}>
             NEXOS
           </span>
@@ -295,15 +301,13 @@ function CoverSlide({ property, theme, note }: SlideProps) {
           className="font-black leading-tight mb-3"
           style={{
             color: theme.text,
-            fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
-            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(1.3rem, 2.8vw, 2rem)",
           }}
         >
           {property.title}
         </h1>
-        <div className="w-16 h-0.5 mb-4" style={{ backgroundColor: theme.accent }} />
         <div className="flex flex-wrap items-center gap-4">
-          <span className="text-3xl font-black" style={{ color: theme.accent, fontFamily: "'Playfair Display', serif" }}>
+          <span className="text-2xl font-black" style={{ color: theme.accent }}>
             {formatPrice(property.price, property.currency)}
           </span>
           {location && (
@@ -346,7 +350,7 @@ function GallerySlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+        <h2 className="text-xl font-black" style={{ color: theme.text }}>
           Fotoğraf Galerisi
         </h2>
       </div>
@@ -418,6 +422,67 @@ function GallerySlide({ property, theme, note }: SlideProps) {
   );
 }
 
+/** Slide — Full Page Photo */
+function PhotoSlide({ property, theme, note, photoIndex = 0 }: SlideProps) {
+  const img = property.images[photoIndex];
+
+  return (
+    <div
+      className="relative flex flex-col h-full overflow-hidden"
+      style={{ backgroundColor: theme.bg }}
+    >
+      {img ? (
+        <>
+          <Image
+            src={img}
+            alt={`${property.title} — ${photoIndex + 1}`}
+            fill
+            className="object-cover"
+          />
+          {/* Subtle bottom gradient for text */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to top, ${theme.bg}cc 0%, transparent 25%)`,
+            }}
+          />
+        </>
+      ) : (
+        <div className="flex-1 flex items-center justify-center">
+          <Building2 className="size-16" style={{ color: `${theme.muted}44` }} />
+        </div>
+      )}
+
+      {/* Bottom info bar */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 flex items-end justify-between px-8 pb-6">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: `${theme.text}99` }}>
+            {property.title}
+          </p>
+          <p className="text-lg font-black" style={{ color: theme.text }}>
+            {formatPrice(property.price, property.currency)}
+          </p>
+        </div>
+        <div
+          className="rounded-full px-3 py-1 text-xs font-bold"
+          style={{ backgroundColor: `${theme.bg}aa`, color: theme.text }}
+        >
+          {photoIndex + 1} / {property.images.length}
+        </div>
+      </div>
+
+      {note && (
+        <div
+          className="absolute top-4 right-4 z-10 text-xs px-2 py-1 rounded-md max-w-[200px] text-right"
+          style={{ backgroundColor: `${theme.accent}22`, color: theme.accent }}
+        >
+          {note}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Slide 3 — Details */
 function DetailsSlide({ property, theme, note }: SlideProps) {
   type DetailItem = { icon: React.ElementType; label: string; value: string };
@@ -467,7 +532,7 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+        <h2 className="text-xl font-black" style={{ color: theme.text }}>
           Mülk Detayları
         </h2>
       </div>
@@ -554,7 +619,7 @@ function FeaturesSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
           <Sparkles className="size-5" style={{ color: theme.accent }} />
           Öne Çıkan Özellikler
         </h2>
@@ -615,7 +680,7 @@ function DescriptionSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+        <h2 className="text-xl font-black" style={{ color: theme.text }}>
           Açıklama
         </h2>
       </div>
@@ -671,15 +736,16 @@ function DescriptionSlide({ property, theme, note }: SlideProps) {
   );
 }
 
-/** Slide 6 — Location */
+/** Slide 6 — Location with real map */
 function LocationSlide({ property, theme, note }: SlideProps) {
   const location = [property.district_name, property.city_name]
     .filter(Boolean)
     .join(", ");
+  const hasCoords = property.lat != null && property.lng != null;
 
   return (
     <div
-      className="flex flex-col h-full px-8 py-6 gap-5"
+      className="flex flex-col h-full px-8 py-6 gap-4"
       style={{ backgroundColor: theme.bg }}
     >
       <div>
@@ -689,83 +755,66 @@ function LocationSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
           <MapPin className="size-5" style={{ color: theme.accent }} />
-          Konum Bilgisi
+          Konum
         </h2>
       </div>
 
-      {/* Map placeholder */}
-      <div
-        className="flex-1 rounded-2xl overflow-hidden relative flex items-center justify-center"
-        style={{ backgroundColor: theme.cardBg }}
-      >
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `linear-gradient(${theme.muted} 1px, transparent 1px), linear-gradient(90deg, ${theme.muted} 1px, transparent 1px)`,
-          backgroundSize: "32px 32px",
-        }} />
-        <div className="relative flex flex-col items-center gap-3 text-center">
+      {/* Map embed */}
+      <div className="flex-1 rounded-2xl overflow-hidden relative min-h-0">
+        {hasCoords ? (
+          <iframe
+            src={`https://www.openstreetmap.org/export/embed.html?bbox=${property.lng! - 0.015},${property.lat! - 0.01},${property.lng! + 0.015},${property.lat! + 0.01}&layer=mapnik&marker=${property.lat},${property.lng}`}
+            className="absolute inset-0 w-full h-full border-0"
+            loading="lazy"
+          />
+        ) : (
           <div
-            className="size-14 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: `${theme.accent}22` }}
+            className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+            style={{ backgroundColor: theme.cardBg }}
           >
-            <MapPin className="size-7" style={{ color: theme.accent }} />
-          </div>
-          <div>
-            {property.district_name && (
-              <p className="text-lg font-black" style={{ color: theme.text }}>
-                {property.district_name}
-              </p>
-            )}
-            <p className="font-semibold" style={{ color: theme.muted }}>
-              {property.city_name}
+            <div
+              className="size-14 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: `${theme.accent}22` }}
+            >
+              <MapPin className="size-7" style={{ color: theme.accent }} />
+            </div>
+            <p className="text-sm font-medium" style={{ color: theme.muted }}>
+              Koordinat bilgisi mevcut değil
             </p>
           </div>
-        </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      {/* Location info bar */}
+      <div className="flex items-center gap-4">
         <div
-          className="rounded-xl px-4 py-3"
+          className="flex-1 rounded-xl px-4 py-3"
           style={{ backgroundColor: theme.cardBg }}
         >
-          <p className="text-xs font-medium mb-1" style={{ color: theme.muted }}>
-            İl
-          </p>
+          <p className="text-xs font-medium mb-0.5" style={{ color: theme.muted }}>Konum</p>
           <p className="font-bold text-sm" style={{ color: theme.text }}>
-            {property.city_name || "—"}
+            {location || "—"}
           </p>
         </div>
-        <div
-          className="rounded-xl px-4 py-3"
-          style={{ backgroundColor: theme.cardBg }}
-        >
-          <p className="text-xs font-medium mb-1" style={{ color: theme.muted }}>
-            İlçe
-          </p>
-          <p className="font-bold text-sm" style={{ color: theme.text }}>
-            {property.district_name || "—"}
-          </p>
-        </div>
+        {hasCoords && (
+          <div
+            className="rounded-xl px-4 py-3"
+            style={{ backgroundColor: `${theme.accent}1a` }}
+          >
+            <p className="text-xs font-medium mb-0.5" style={{ color: theme.muted }}>Koordinat</p>
+            <p className="font-bold text-xs font-mono" style={{ color: theme.accent }}>
+              {property.lat!.toFixed(4)}, {property.lng!.toFixed(4)}
+            </p>
+          </div>
+        )}
       </div>
 
       {note && (
         <p className="text-xs text-right" style={{ color: theme.muted }}>
           {note}
         </p>
-      )}
-
-      {location && (
-        <div
-          className="flex items-center gap-2 rounded-xl px-4 py-2.5"
-          style={{ backgroundColor: `${theme.accent}1a` }}
-        >
-          <MapPin className="size-3.5 shrink-0" style={{ color: theme.accent }} />
-          <span className="text-sm font-medium" style={{ color: theme.text }}>
-            {location}
-          </span>
-        </div>
       )}
     </div>
   );
@@ -790,7 +839,7 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
           <Sparkles className="size-5" style={{ color: theme.accent }} />
           Yatırım Analizi
         </h2>
@@ -804,7 +853,7 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
           <p className="text-xs font-medium" style={{ color: theme.muted }}>
             Satış Fiyatı
           </p>
-          <p className="text-xl font-black" style={{ color: theme.accent, fontFamily: "'Playfair Display', serif" }}>
+          <p className="text-xl font-black" style={{ color: theme.accent }}>
             {formatPrice(property.price, property.currency)}
           </p>
         </div>
@@ -815,7 +864,7 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
           <p className="text-xs font-medium" style={{ color: theme.muted }}>
             İşlem Türü
           </p>
-          <p className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+          <p className="text-xl font-black" style={{ color: theme.text }}>
             {labelForTransaction(property.transaction_type)}
           </p>
         </div>
@@ -845,7 +894,7 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
           <p className="text-xs font-medium" style={{ color: theme.muted }}>
             m² Fiyatı
           </p>
-          <p className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+          <p className="text-xl font-black" style={{ color: theme.text }}>
             {pricePerSqm
               ? formatPrice(pricePerSqm, property.currency)
               : "—"}
@@ -879,12 +928,13 @@ function ContactSlide({ theme, note }: { theme: ThemeColors; note?: string }) {
       className="flex flex-col items-center justify-center h-full px-8 py-10 gap-5 text-center"
       style={{ backgroundColor: theme.bg }}
     >
-      <div
-        className="size-20 rounded-2xl flex items-center justify-center font-black text-3xl"
-        style={{ backgroundColor: theme.accent, color: "#0f172a" }}
-      >
-        N
-      </div>
+      <Image
+        src="/logo-square.jpeg"
+        alt="Nexos Investment"
+        width={80}
+        height={80}
+        className="rounded-2xl"
+      />
 
       <div>
         <p
@@ -951,17 +1001,21 @@ function SlideRenderer({
   slideType,
   theme,
   note,
+  photoIndex,
 }: {
   property: PropertyForPresentation;
   slideType: SlideType;
   theme: ThemeColors;
   note?: string;
+  photoIndex?: number;
 }) {
   switch (slideType) {
     case "cover":
       return <CoverSlide property={property} theme={theme} note={note} />;
     case "gallery":
       return <GallerySlide property={property} theme={theme} note={note} />;
+    case "photo":
+      return <PhotoSlide property={property} theme={theme} note={note} photoIndex={photoIndex} />;
     case "details":
       return <DetailsSlide property={property} theme={theme} note={note} />;
     case "features":
@@ -995,7 +1049,7 @@ function buildPrintHTML(
     height: 210mm;
     background: ${theme.bg};
     color: ${theme.text};
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
     page-break-after: always;
     overflow: hidden;
     position: relative;
@@ -1148,9 +1202,6 @@ function buildPrintHTML(
 <head>
   <meta charset="UTF-8" />
   <title>Sunum — Nexos Investment</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: ${theme.bg}; }
@@ -1265,6 +1316,7 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
   const [enabledSlides, setEnabledSlides] = useState<Set<SlideType>>(
     new Set(DEFAULT_ENABLED_SLIDES)
   );
+  const [selectedPhotoIndices, setSelectedPhotoIndices] = useState<Set<number>>(new Set());
 
   // UI state
   const [fullscreen, setFullscreen] = useState(false);
@@ -1297,10 +1349,30 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
 
   const activeProperty = selectedProperties[propertyIndex] ?? null;
 
-  const activeSlides = useMemo(
-    () => SLIDE_DEFINITIONS.filter((s) => enabledSlides.has(s.type)),
-    [enabledSlides]
-  );
+  // Expand "photo" slides: one entry per selected photo index
+  const activeSlides = useMemo(() => {
+    const result: (SlideDefinition & { photoIndex?: number })[] = [];
+    for (const s of SLIDE_DEFINITIONS) {
+      if (!enabledSlides.has(s.type)) continue;
+      if (s.type === "photo") {
+        const indices = Array.from(selectedPhotoIndices).sort((a, b) => a - b);
+        if (indices.length === 0 && activeProperty) {
+          // Default: show first 3 images if none selected
+          const count = Math.min(3, activeProperty.images.length);
+          for (let i = 0; i < count; i++) {
+            result.push({ ...s, label: `Fotoğraf ${i + 1}`, photoIndex: i });
+          }
+        } else {
+          for (const idx of indices) {
+            result.push({ ...s, label: `Fotoğraf ${idx + 1}`, photoIndex: idx });
+          }
+        }
+      } else {
+        result.push(s);
+      }
+    }
+    return result;
+  }, [enabledSlides, selectedPhotoIndices, activeProperty]);
 
   const totalSlides = activeSlides.length;
   const currentSlide = activeSlides[slideIndex];
@@ -1710,6 +1782,55 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                   })}
                 </div>
               </div>
+
+              {/* Photo selection — only when photo slide is enabled */}
+              {enabledSlides.has("photo") && activeProperty && activeProperty.images.length > 0 && (
+                <div className="flex flex-col gap-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Fotoğraf Seçimi ({selectedPhotoIndices.size}/{activeProperty.images.length})
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {activeProperty.images.map((img, idx) => {
+                      const selected = selectedPhotoIndices.has(idx);
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            setSelectedPhotoIndices((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(idx)) next.delete(idx);
+                              else next.add(idx);
+                              return next;
+                            });
+                          }}
+                          className={`relative size-10 rounded overflow-hidden border-2 transition-all ${
+                            selected
+                              ? "border-primary ring-1 ring-primary"
+                              : "border-transparent hover:border-muted-foreground/40"
+                          }`}
+                        >
+                          <Image
+                            src={img}
+                            alt={`Fotoğraf ${idx + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="40px"
+                            unoptimized
+                          />
+                          {selected && (
+                            <div className="absolute inset-0 bg-primary/30 flex items-center justify-center">
+                              <span className="text-white text-[9px] font-bold">{Array.from(selectedPhotoIndices).sort((a, b) => a - b).indexOf(idx) + 1}</span>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    Sunumda gösterilecek fotoğrafları seçin. Seçim yapılmazsa ilk 3 fotoğraf gösterilir.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -1741,6 +1862,7 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                   slideType={currentSlide.type}
                   theme={themeColors}
                   note={currentNote}
+                  photoIndex={currentSlide.photoIndex}
                 />
               </div>
 
