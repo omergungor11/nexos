@@ -9,6 +9,8 @@ import {
   MapPinOffIcon,
   SearchIcon,
   ExternalLinkIcon,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -28,6 +30,8 @@ import {
   PROPERTY_TYPE_LABELS,
   TRANSACTION_TYPE_LABELS,
 } from "@/lib/constants";
+
+import { AdminMapPreviewWrapper } from "./admin-map-preview-wrapper";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -71,10 +75,21 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
   const [search, setSearch] = useState("");
   const [mapFilter, setMapFilter] = useState<MapFilter>("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   // Stats
   const onMapCount = rows.filter((r) => r.show_on_map).length;
   const hasCoords = rows.filter((r) => r.lat != null && r.lng != null).length;
+
+  // Map markers (show_on_map + has coordinates)
+  const mapMarkers = useMemo(
+    () =>
+      rows
+        .filter((r) => r.show_on_map && r.lat != null && r.lng != null)
+        .map((r) => ({ id: r.id, lat: r.lat!, lng: r.lng!, title: r.title })),
+    [rows]
+  );
 
   // Filtered rows
   const filtered = useMemo(() => {
@@ -91,6 +106,11 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
       return true;
     });
   }, [rows, search, mapFilter]);
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   function handleToggleShowOnMap(id: string, current: boolean) {
     startTransition(async () => {
@@ -136,16 +156,41 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
   }
 
   function toggleSelectAll() {
-    if (selectedIds.size === filtered.length) {
-      setSelectedIds(new Set());
+    const pageIds = paginated.map((r) => r.id);
+    const allSelected = pageIds.every((id) => selectedIds.has(id));
+    if (allSelected) {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        pageIds.forEach((id) => next.delete(id));
+        return next;
+      });
     } else {
-      setSelectedIds(new Set(filtered.map((r) => r.id)));
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        pageIds.forEach((id) => next.add(id));
+        return next;
+      });
     }
   }
 
   function getCoverImage(images: PropertyImage[]): string {
     return images.find((img) => img.is_cover)?.url ?? images[0]?.url ?? "/placeholder-property.svg";
   }
+
+  // Page buttons
+  function getPageNumbers(): (number | "...")[] {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const pages: (number | "...")[] = [1];
+    if (safePage > 3) pages.push("...");
+    for (let i = Math.max(2, safePage - 1); i <= Math.min(totalPages - 1, safePage + 1); i++) {
+      pages.push(i);
+    }
+    if (safePage < totalPages - 2) pages.push("...");
+    pages.push(totalPages);
+    return pages;
+  }
+
+  const allPageSelected = paginated.length > 0 && paginated.every((r) => selectedIds.has(r.id));
 
   return (
     <div className="space-y-4">
@@ -163,6 +208,9 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
         </Badge>
       </div>
 
+      {/* Map preview */}
+      <AdminMapPreviewWrapper properties={mapMarkers} />
+
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
@@ -170,13 +218,13 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
           <Input
             placeholder="İlan, şehir veya ilçe ara..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="pl-9 h-9"
           />
         </div>
         <Select
           value={mapFilter}
-          onValueChange={(v) => setMapFilter((v ?? "all") as MapFilter)}
+          onValueChange={(v) => { setMapFilter((v ?? "all") as MapFilter); setPage(1); }}
         >
           <SelectTrigger className="w-[180px] h-9">
             <SelectValue placeholder="Harita durumu" />
@@ -226,7 +274,7 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
               <th className="px-3 py-2.5 text-left w-10">
                 <input
                   type="checkbox"
-                  checked={selectedIds.size === filtered.length && filtered.length > 0}
+                  checked={allPageSelected}
                   onChange={toggleSelectAll}
                   className="size-4 rounded border-gray-300"
                 />
@@ -241,7 +289,7 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((row) => (
+            {paginated.map((row) => (
               <tr
                 key={row.id}
                 className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
@@ -363,6 +411,66 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {filtered.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+          <div className="flex items-center gap-3">
+            <Select
+              value={String(pageSize)}
+              onValueChange={(v) => { setPageSize(Number(v)); setPage(1); }}
+            >
+              <SelectTrigger className="w-[110px] h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10 / sayfa</SelectItem>
+                <SelectItem value="20">20 / sayfa</SelectItem>
+                <SelectItem value="50">50 / sayfa</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="text-xs text-muted-foreground">
+              Sayfa {safePage} / {totalPages} — toplam {filtered.length} ilan
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0"
+              disabled={safePage <= 1}
+              onClick={() => setPage(safePage - 1)}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            {getPageNumbers().map((p, i) =>
+              p === "..." ? (
+                <span key={`dots-${i}`} className="px-1.5 text-xs text-muted-foreground">...</span>
+              ) : (
+                <Button
+                  key={p}
+                  variant={p === safePage ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 w-8 p-0 text-xs"
+                  onClick={() => setPage(p)}
+                >
+                  {p}
+                </Button>
+              )
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0"
+              disabled={safePage >= totalPages}
+              onClick={() => setPage(safePage + 1)}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

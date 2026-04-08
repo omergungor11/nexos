@@ -12,7 +12,7 @@ import type { MapProject } from "./map-project-popup";
 const FullScreenMapInner = dynamic(() => import("./full-screen-map-inner"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-[calc(100vh-4rem)] w-full items-center justify-center bg-muted">
+    <div className="flex h-[calc(100vh-6rem)] w-full items-center justify-center bg-muted">
       <div className="flex flex-col items-center gap-3 text-muted-foreground">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         <p className="text-sm">Harita yükleniyor…</p>

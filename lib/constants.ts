@@ -228,6 +228,7 @@ export const NAV_LINKS: NavItem[] = [
   },
   { href: "/blog", tKey: "nav.guide" },
   { href: "/sss", tKey: "nav.faq" },
+  { href: "/iletisim", tKey: "nav.contact" },
 ];
 
 // Legacy label accessors for components that don't have translation context (e.g. admin)

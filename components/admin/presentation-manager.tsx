@@ -106,32 +106,32 @@ interface SlideProps {
 
 const THEMES: Record<PresentationTheme, ThemeColors> = {
   dark: {
-    bg: "#0f172a",
-    cardBg: "#1e293b",
-    text: "#f8fafc",
-    accent: "#ffca3e",
-    muted: "#94a3b8",
+    bg: "#0a0a0a",
+    cardBg: "#161616",
+    text: "#f5f0eb",
+    accent: "#c9a96e",
+    muted: "#6b6b6b",
   },
   light: {
-    bg: "#ffffff",
-    cardBg: "#f1f5f9",
-    text: "#0f172a",
-    accent: "#ffca3e",
-    muted: "#64748b",
+    bg: "#faf8f5",
+    cardBg: "#ffffff",
+    text: "#1a1a1a",
+    accent: "#1a1a1a",
+    muted: "#8c8c8c",
   },
   gold: {
-    bg: "#1a1207",
-    cardBg: "#2a1f0e",
-    text: "#fef9e7",
-    accent: "#ffca3e",
-    muted: "#c4a352",
+    bg: "#1a150d",
+    cardBg: "#241e14",
+    text: "#f5edd6",
+    accent: "#d4a853",
+    muted: "#9a8a6a",
   },
   minimal: {
-    bg: "#fafafa",
-    cardBg: "#ffffff",
-    text: "#171717",
-    accent: "#ffca3e",
-    muted: "#737373",
+    bg: "#ffffff",
+    cardBg: "#f7f7f7",
+    text: "#111111",
+    accent: "#111111",
+    muted: "#999999",
   },
 };
 
@@ -143,10 +143,10 @@ const THEME_LABELS: Record<PresentationTheme, string> = {
 };
 
 const THEME_PREVIEW_COLORS: Record<PresentationTheme, string> = {
-  dark: "#0f172a",
-  light: "#f1f5f9",
-  gold: "#1a1207",
-  minimal: "#fafafa",
+  dark: "#0a0a0a",
+  light: "#faf8f5",
+  gold: "#1a150d",
+  minimal: "#ffffff",
 };
 
 const SLIDE_DEFINITIONS: SlideDefinition[] = [
@@ -249,7 +249,7 @@ function CoverSlide({ property, theme, note }: SlideProps) {
           <div
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(to top, ${theme.bg} 0%, ${theme.bg}99 45%, transparent 100%)`,
+              background: `linear-gradient(to top, ${theme.bg} 0%, ${theme.bg}e6 15%, ${theme.bg}80 30%, transparent 50%)`,
             }}
           />
         </div>
@@ -292,16 +292,18 @@ function CoverSlide({ property, theme, note }: SlideProps) {
           {labelForType(property.type)}
         </p>
         <h1
-          className="font-black leading-tight mb-4"
+          className="font-black leading-tight mb-3"
           style={{
             color: theme.text,
-            fontSize: "clamp(1.3rem, 2.8vw, 2rem)",
+            fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+            fontFamily: "'Playfair Display', serif",
           }}
         >
           {property.title}
         </h1>
+        <div className="w-16 h-0.5 mb-4" style={{ backgroundColor: theme.accent }} />
         <div className="flex flex-wrap items-center gap-4">
-          <span className="text-2xl font-black" style={{ color: theme.accent }}>
+          <span className="text-3xl font-black" style={{ color: theme.accent, fontFamily: "'Playfair Display', serif" }}>
             {formatPrice(property.price, property.currency)}
           </span>
           {location && (
@@ -344,36 +346,60 @@ function GallerySlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text }}>
+        <h2 className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
           Fotoğraf Galerisi
         </h2>
       </div>
 
       {galleryImages.length > 0 ? (
-        <div className="flex-1 grid grid-cols-2 gap-3 min-h-0">
-          {[0, 1, 2, 3].map((idx) => {
-            const url = galleryImages[idx];
-            return (
-              <div
-                key={idx}
-                className="relative rounded-xl overflow-hidden"
-                style={{ backgroundColor: theme.cardBg }}
-              >
-                {url ? (
-                  <Image
-                    src={url}
-                    alt={`${property.title} — ${idx + 2}`}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Building2 className="size-8" style={{ color: `${theme.muted}55` }} />
-                  </div>
-                )}
+        <div className="flex-1 grid grid-cols-3 grid-rows-2 gap-3 min-h-0">
+          {/* Hero image — 2 cols, 2 rows */}
+          <div
+            className="col-span-2 row-span-2 relative rounded-xl overflow-hidden"
+            style={{ backgroundColor: theme.cardBg }}
+          >
+            {galleryImages[0] ? (
+              <Image
+                src={galleryImages[0]}
+                alt={`${property.title} — 2`}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Building2 className="size-8" style={{ color: `${theme.muted}55` }} />
               </div>
-            );
-          })}
+            )}
+            {property.images.length > 5 && (
+              <div
+                className="absolute bottom-3 right-3 rounded-full px-3 py-1 text-xs font-bold"
+                style={{ backgroundColor: `${theme.bg}cc`, color: theme.text }}
+              >
+                +{property.images.length - 5} fotoğraf
+              </div>
+            )}
+          </div>
+          {/* 2 supporting images stacked */}
+          {[1, 2].map((idx) => (
+            <div
+              key={idx}
+              className="relative rounded-xl overflow-hidden"
+              style={{ backgroundColor: theme.cardBg }}
+            >
+              {galleryImages[idx] ? (
+                <Image
+                  src={galleryImages[idx]}
+                  alt={`${property.title} — ${idx + 2}`}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Building2 className="size-8" style={{ color: `${theme.muted}55` }} />
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center rounded-xl" style={{ backgroundColor: theme.cardBg }}>
@@ -441,7 +467,7 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text }}>
+        <h2 className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
           Mülk Detayları
         </h2>
       </div>
@@ -528,7 +554,7 @@ function FeaturesSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
+        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
           <Sparkles className="size-5" style={{ color: theme.accent }} />
           Öne Çıkan Özellikler
         </h2>
@@ -589,7 +615,7 @@ function DescriptionSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text }}>
+        <h2 className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
           Açıklama
         </h2>
       </div>
@@ -663,7 +689,7 @@ function LocationSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
+        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
           <MapPin className="size-5" style={{ color: theme.accent }} />
           Konum Bilgisi
         </h2>
@@ -747,8 +773,6 @@ function LocationSlide({ property, theme, note }: SlideProps) {
 
 /** Slide 7 — Investment */
 function InvestmentSlide({ property, theme, note }: SlideProps) {
-  const monthlyRent = estimateMonthlyRent(property.price);
-  const annualYield = estimateAnnualYield(property.price);
   const pricePerSqm =
     property.area_sqm && property.area_sqm > 0
       ? Math.round(property.price / property.area_sqm)
@@ -766,9 +790,9 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
+        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
           <Sparkles className="size-5" style={{ color: theme.accent }} />
-          Yatırım Getirisi
+          Yatırım Analizi
         </h2>
       </div>
 
@@ -780,7 +804,7 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
           <p className="text-xs font-medium" style={{ color: theme.muted }}>
             Satış Fiyatı
           </p>
-          <p className="text-xl font-black" style={{ color: theme.accent }}>
+          <p className="text-xl font-black" style={{ color: theme.accent, fontFamily: "'Playfair Display', serif" }}>
             {formatPrice(property.price, property.currency)}
           </p>
         </div>
@@ -789,22 +813,30 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
           style={{ backgroundColor: theme.cardBg }}
         >
           <p className="text-xs font-medium" style={{ color: theme.muted }}>
-            Tahmini Kira (Aylık)
+            İşlem Türü
           </p>
-          <p className="text-xl font-black" style={{ color: theme.text }}>
-            {formatPrice(monthlyRent, property.currency)}
+          <p className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
+            {labelForTransaction(property.transaction_type)}
           </p>
         </div>
         <div
-          className="rounded-2xl p-5 flex flex-col gap-1"
+          className="rounded-2xl p-5 flex flex-col gap-2 col-span-2"
           style={{ backgroundColor: `${theme.accent}1a` }}
         >
           <p className="text-xs font-medium" style={{ color: theme.muted }}>
-            Yıllık Getiri Oranı
+            Kuzey Kıbrıs Yatırım Avantajları
           </p>
-          <p className="text-2xl font-black" style={{ color: theme.accent }}>
-            %{annualYield}
-          </p>
+          <div className="flex flex-wrap gap-3">
+            {["Yüksek Kira Getirisi", "Düşük Vergi Oranları", "Yükselen Piyasa", "Turizm Potansiyeli", "AB Yakınlığı"].map((item) => (
+              <span
+                key={item}
+                className="text-xs font-medium px-3 py-1.5 rounded-full"
+                style={{ backgroundColor: `${theme.accent}22`, color: theme.accent }}
+              >
+                {item}
+              </span>
+            ))}
+          </div>
         </div>
         <div
           className="rounded-2xl p-5 flex flex-col gap-1"
@@ -813,7 +845,7 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
           <p className="text-xs font-medium" style={{ color: theme.muted }}>
             m² Fiyatı
           </p>
-          <p className="text-xl font-black" style={{ color: theme.text }}>
+          <p className="text-xl font-black" style={{ color: theme.text, fontFamily: "'Playfair Display', serif" }}>
             {pricePerSqm
               ? formatPrice(pricePerSqm, property.currency)
               : "—"}
@@ -960,10 +992,10 @@ function buildPrintHTML(
 
   const slideStyle = `
     width: 297mm;
-    height: 167mm;
+    height: 210mm;
     background: ${theme.bg};
     color: ${theme.text};
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     page-break-after: always;
     overflow: hidden;
     position: relative;
@@ -1115,7 +1147,10 @@ function buildPrintHTML(
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Sunum</title>
+  <title>Sunum — Nexos Investment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: ${theme.bg}; }

@@ -144,12 +144,12 @@ export default function FullScreenMapInner({
   const [panelOpen, setPanelOpen] = useState(false);
 
   return (
-    <div className="relative h-[calc(100vh-4rem)] w-full overflow-hidden">
+    <div className="relative h-[calc(100vh-6rem)] w-full overflow-hidden">
       {/* Count badge — clickable */}
       {(properties.length > 0 || projects.length > 0) && (
         <button
           onClick={() => setPanelOpen(!panelOpen)}
-          className="absolute top-3 right-3 z-[1000] flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold shadow-md backdrop-blur-sm transition-colors hover:bg-white"
+          className="absolute top-3 right-3 z-[400] flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold shadow-md backdrop-blur-sm transition-colors hover:bg-white"
         >
           <List className="h-3.5 w-3.5 text-gray-500" />
           {properties.length > 0 && <span>{properties.length} ilan</span>}
@@ -161,7 +161,7 @@ export default function FullScreenMapInner({
 
       {/* Side panel — property list */}
       <div
-        className={`absolute top-0 right-0 z-[999] h-full w-80 transform bg-white shadow-2xl transition-transform duration-300 ease-in-out sm:w-96 ${
+        className={`absolute top-0 right-0 z-[400] h-full w-80 transform bg-white shadow-2xl transition-transform duration-300 ease-in-out sm:w-96 ${
           panelOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -330,7 +330,7 @@ export default function FullScreenMapInner({
 
       {/* Empty state overlay */}
       {properties.length === 0 && projects.length === 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[999] flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 z-[400] flex items-center justify-center">
           <div className="rounded-xl bg-white/90 px-6 py-4 text-center shadow-lg backdrop-blur-sm">
             <p className="font-semibold text-gray-900">
               Haritada gösterilecek ilan bulunamadı

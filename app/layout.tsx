@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Playfair_Display, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -12,6 +12,18 @@ import type { Locale } from "@/i18n/config";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "latin-ext", "cyrillic"],
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
+  subsets: ["latin", "latin-ext"],
   display: "swap",
 });
 
@@ -57,7 +69,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={localeDirection[locale as Locale] ?? "ltr"} suppressHydrationWarning>
-      <body className={`${inter.variable} ${inter.className} antialiased`}>
+      <body className={`${inter.variable} ${playfair.variable} ${spaceGrotesk.variable} ${inter.className} antialiased`}>
         <Providers>
           {children}
         </Providers>
