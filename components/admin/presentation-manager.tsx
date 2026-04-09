@@ -901,15 +901,15 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
     >
       <div>
         <p
-          className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
+          className="text-xs font-bold uppercase tracking-widest mb-1"
           style={{ color: theme.accent }}
         >
           Yatırım Fırsatı
         </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text }}>
+        <h2 className="text-2xl font-black" style={{ color: theme.text }}>
           Neden Kuzey Kıbrıs&apos;ta Gayrimenkul?
         </h2>
-        <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>
+        <p className="text-xs mt-1" style={{ color: theme.muted }}>
           Akdeniz&apos;in yükselen yıldızı — veriler ile kanıtlanmış avantajlar
         </p>
       </div>
@@ -919,16 +919,16 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
         {kpis.map((k, i) => (
           <div
             key={i}
-            className="rounded-lg px-3 py-2 text-center"
+            className="rounded-lg px-3 py-2.5 text-center"
             style={{ backgroundColor: `${theme.accent}15`, borderLeft: `2px solid ${theme.accent}` }}
           >
-            <p className="text-lg font-black leading-none" style={{ color: theme.accent }}>
+            <p className="text-2xl font-black leading-none" style={{ color: theme.accent }}>
               {k.value}
             </p>
-            <p className="text-[9px] font-bold uppercase tracking-wide mt-1" style={{ color: theme.text }}>
+            <p className="text-[11px] font-bold uppercase tracking-wide mt-1.5" style={{ color: theme.text }}>
               {k.label}
             </p>
-            <p className="text-[8px] mt-0.5" style={{ color: theme.muted }}>
+            <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>
               {k.sub}
             </p>
           </div>
@@ -936,26 +936,26 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
       </div>
 
       {/* Reasons grid */}
-      <div className="flex-1 grid grid-cols-2 gap-2 min-h-0">
+      <div className="flex-1 grid grid-cols-2 gap-2.5 min-h-0">
         {reasons.map((r, i) => {
           const Icon = r.icon;
           return (
             <div
               key={i}
-              className="rounded-lg px-3 py-2 flex gap-2.5 items-start"
+              className="rounded-lg px-3.5 py-2.5 flex gap-3 items-start"
               style={{ backgroundColor: theme.cardBg }}
             >
               <div
-                className="size-7 rounded-md shrink-0 flex items-center justify-center"
+                className="size-9 rounded-md shrink-0 flex items-center justify-center"
                 style={{ backgroundColor: `${theme.accent}22` }}
               >
-                <Icon className="size-3.5" style={{ color: theme.accent }} />
+                <Icon className="size-4" style={{ color: theme.accent }} />
               </div>
               <div className="min-w-0">
-                <p className="text-[11px] font-black leading-tight mb-0.5" style={{ color: theme.text }}>
+                <p className="text-sm font-black leading-tight mb-1" style={{ color: theme.text }}>
                   {r.title}
                 </p>
-                <p className="text-[10px] leading-snug" style={{ color: `${theme.text}99` }}>
+                <p className="text-[12px] leading-snug" style={{ color: `${theme.text}b3` }}>
                   {r.text}
                 </p>
               </div>
@@ -966,16 +966,16 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
 
       {/* Bottom callout */}
       <div
-        className="rounded-lg px-4 py-2 text-center"
+        className="rounded-lg px-4 py-2.5 text-center"
         style={{ backgroundColor: theme.accent }}
       >
-        <p className="text-[11px] font-black" style={{ color: "#0f172a" }}>
+        <p className="text-sm font-black" style={{ color: "#0f172a" }}>
           Avrupa&apos;da 20 yıl, Kuzey Kıbrıs&apos;ta 7-10 yılda kendini amorti eden yatırım
         </p>
       </div>
 
       {note && (
-        <p className="text-[10px] text-right" style={{ color: theme.muted }}>
+        <p className="text-xs text-right" style={{ color: theme.muted }}>
           {note}
         </p>
       )}
