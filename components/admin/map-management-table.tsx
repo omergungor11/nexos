@@ -78,11 +78,18 @@ type UnifiedRow =
   | ({ kind: "project" } & MapManagementProject);
 
 type MapFilter = "all" | "on_map" | "off_map";
+type KindFilter = "all" | "property" | "project";
 
 const FILTER_LABELS: Record<MapFilter, string> = {
   all: "Tümü",
   on_map: "Haritada",
   off_map: "Haritada Değil",
+};
+
+const KIND_LABELS: Record<KindFilter, string> = {
+  all: "Tüm kayıtlar",
+  property: "Sadece ilanlar",
+  project: "Sadece projeler",
 };
 
 // ---------------------------------------------------------------------------
@@ -103,6 +110,9 @@ export function MapManagementTable({
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [mapFilter, setMapFilter] = useState<MapFilter>("all");
+  const [kindFilter, setKindFilter] = useState<KindFilter>("all");
+  const [txFilter, setTxFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -147,6 +157,23 @@ export function MapManagementTable({
   // Filtered rows
   const filtered = useMemo(() => {
     return unifiedRows.filter((row) => {
+      // Kind filter
+      if (kindFilter === "property" && row.kind !== "property") return false;
+      if (kindFilter === "project" && row.kind !== "project") return false;
+
+      // Transaction type filter (properties only — hides projects if active)
+      if (txFilter !== "all") {
+        if (row.kind !== "property") return false;
+        if (row.transaction_type !== txFilter) return false;
+      }
+
+      // Property type filter (properties only — hides projects if active)
+      if (typeFilter !== "all") {
+        if (row.kind !== "property") return false;
+        if (row.type !== typeFilter) return false;
+      }
+
+      // Search
       if (search) {
         const q = search.toLowerCase();
         const matchTitle = row.title.toLowerCase().includes(q);
@@ -155,6 +182,8 @@ export function MapManagementTable({
           row.kind === "property" && row.district?.name?.toLowerCase().includes(q);
         if (!matchTitle && !matchCity && !matchDistrict) return false;
       }
+
+      // Map status filter
       const onMap =
         row.kind === "property" ? row.show_on_map : isProjectOnMap(row);
       if (mapFilter === "on_map" && !onMap) return false;
@@ -162,7 +191,7 @@ export function MapManagementTable({
       return true;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unifiedRows, search, mapFilter]);
+  }, [unifiedRows, search, mapFilter, kindFilter, txFilter, typeFilter]);
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -300,14 +329,73 @@ export function MapManagementTable({
             className="pl-9 h-9"
           />
         </div>
+
+        {/* Kind filter */}
+        <Select
+          value={kindFilter}
+          onValueChange={(v) => { setKindFilter((v ?? "all") as KindFilter); setPage(1); }}
+        >
+          <SelectTrigger className="w-[160px] h-9">
+            <SelectValue>{KIND_LABELS[kindFilter]}</SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tüm kayıtlar</SelectItem>
+            <SelectItem value="property">Sadece ilanlar</SelectItem>
+            <SelectItem value="project">Sadece projeler</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Transaction filter */}
+        <Select
+          value={txFilter}
+          onValueChange={(v) => { setTxFilter(v ?? "all"); setPage(1); }}
+        >
+          <SelectTrigger className="w-[140px] h-9">
+            <SelectValue>
+              {txFilter === "all"
+                ? "İşlem: Tümü"
+                : TRANSACTION_TYPE_LABELS[txFilter] ?? txFilter}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">İşlem: Tümü</SelectItem>
+            {Object.entries(TRANSACTION_TYPE_LABELS).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Property type filter */}
+        <Select
+          value={typeFilter}
+          onValueChange={(v) => { setTypeFilter(v ?? "all"); setPage(1); }}
+        >
+          <SelectTrigger className="w-[180px] h-9">
+            <SelectValue>
+              {typeFilter === "all"
+                ? "Tip: Tümü"
+                : PROPERTY_TYPE_LABELS[typeFilter] ?? typeFilter}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className="max-h-[300px]">
+            <SelectItem value="all">Tip: Tümü</SelectItem>
+            {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Map status filter */}
         <Select
           value={mapFilter}
           onValueChange={(v) => { setMapFilter((v ?? "all") as MapFilter); setPage(1); }}
         >
-          <SelectTrigger className="w-[180px] h-9">
-            <SelectValue placeholder="Harita durumu">
-              {FILTER_LABELS[mapFilter]}
-            </SelectValue>
+          <SelectTrigger className="w-[170px] h-9">
+            <SelectValue>{`Harita: ${FILTER_LABELS[mapFilter]}`}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tümü</SelectItem>
@@ -315,6 +403,25 @@ export function MapManagementTable({
             <SelectItem value="off_map">Haritada Değil</SelectItem>
           </SelectContent>
         </Select>
+
+        {/* Reset filters */}
+        {(search || kindFilter !== "all" || txFilter !== "all" || typeFilter !== "all" || mapFilter !== "all") && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9"
+            onClick={() => {
+              setSearch("");
+              setKindFilter("all");
+              setTxFilter("all");
+              setTypeFilter("all");
+              setMapFilter("all");
+              setPage(1);
+            }}
+          >
+            Filtreleri Temizle
+          </Button>
+        )}
       </div>
 
       {/* Bulk actions */}
