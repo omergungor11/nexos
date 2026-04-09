@@ -125,33 +125,32 @@ function ContactItem({ contact }: { contact: ActivityContact }) {
     CONTACT_STATUS_COLORS[contact.status] ?? "bg-muted text-muted-foreground";
 
   return (
-    <li className="flex items-start gap-3 px-4 py-3">
-      <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-amber-100">
-        <MessageSquare className="size-3.5 text-amber-600" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-foreground">
-          {contact.name}
-          <span
-            className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor}`}
-          >
-            {statusLabel}
-          </span>
-        </p>
-        {contact.property?.[0] ? (
-          <Link
-            href={`/emlak/${contact.property[0].slug}`}
-            className="truncate text-xs text-muted-foreground hover:text-primary"
-          >
-            {contact.property[0].title}
-          </Link>
-        ) : (
-          <p className="text-xs text-muted-foreground">Genel talep</p>
-        )}
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          {formatShortDate(contact.created_at)}
-        </p>
-      </div>
+    <li>
+      <Link
+        href="/admin/talepler"
+        className="flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors"
+      >
+        <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-amber-100">
+          <MessageSquare className="size-3.5 text-amber-600" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-foreground">
+            {contact.name}
+            <span
+              className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor}`}
+            >
+              {statusLabel}
+            </span>
+          </p>
+          <p className="truncate text-xs text-muted-foreground">
+            {contact.property?.[0] ? contact.property[0].title : "Genel talep"}
+          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {formatShortDate(contact.created_at)}
+          </p>
+        </div>
+        <ArrowRight className="mt-2 size-3.5 shrink-0 text-muted-foreground/50" />
+      </Link>
     </li>
   );
 }
@@ -160,33 +159,34 @@ function ContactItem({ contact }: { contact: ActivityContact }) {
 
 function PropertyItem({ property }: { property: ActivityProperty }) {
   return (
-    <li className="flex items-start gap-3 px-4 py-3">
-      <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-100">
-        <Building2 className="size-3.5 text-blue-600" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-foreground">
-          <Link
-            href={`/emlak/${property.slug}`}
-            className="hover:text-primary"
-          >
+    <li>
+      <Link
+        href={`/admin/ilanlar/${property.id}/duzenle`}
+        className="flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors"
+      >
+        <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-100">
+          <Building2 className="size-3.5 text-blue-600" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-foreground">
             {property.title}
-          </Link>
-          <span
-            className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-              property.is_active
-                ? "bg-green-100 text-green-700"
-                : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {property.is_active ? "Aktif" : "Pasif"}
-          </span>
-        </p>
-        <p className="text-xs text-muted-foreground">Yeni ilan eklendi</p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          {formatShortDate(property.created_at)}
-        </p>
-      </div>
+            <span
+              className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                property.is_active
+                  ? "bg-green-100 text-green-700"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              {property.is_active ? "Aktif" : "Pasif"}
+            </span>
+          </p>
+          <p className="text-xs text-muted-foreground">Yeni ilan eklendi</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {formatShortDate(property.created_at)}
+          </p>
+        </div>
+        <ArrowRight className="mt-2 size-3.5 shrink-0 text-muted-foreground/50" />
+      </Link>
     </li>
   );
 }
