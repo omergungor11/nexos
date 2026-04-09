@@ -1,6 +1,60 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-04-09
+
+### Yapılanlar — Harita & Admin
+- **Harita yönetimi**: Admin sidebar'a "Harita" sayfası eklendi, `show_on_map` boolean kolonu (migration 032), toggle/bulk toggle, harita preview, pagination
+- **Proje pinleri**: Harita sayfasında projeler için mor labeled pin (yazılı + link + görsel), MapProjectPopup componenti, harita sayfası artık hem ilanlar hem projeleri gösteriyor
+- **Admin Projeler**: CRUD sayfaları, ProjectDataTable, ProjectForm (tab'lı — Temel/Geliştirici/Konum/Fiyat/Medya/Özellikler/Durum), server actions (create/update/delete/toggleStatus/toggleFeatured)
+- **LocationPicker**: Reusable interaktif harita komponenti (Leaflet + Nominatim→kendi DB arama), tıkla-yerleştir, sürüklenebilir pin, Kuzey Kıbrıs viewbox
+- **Şehir/ilçe Select fix**: Proje formunda Select trigger'da ID yerine isim gösteriliyor (base-ui workaround)
+- **Geçitkale ilçesi** İskele'ye eklendi (migration 033)
+
+### Yapılanlar — Galeri & Upload
+- **MediaPicker Yükle tab'ı**: Sürükle-bırak upload, çoklu dosya, max 10MB
+- **Client-side WebP compression**: `lib/image-compress.ts` — Canvas API ile 2048px max, %82 kalite
+- **Upload düzeltme**: Server action yerine client-side Supabase Storage (1MB body limit sorunu çözüldü)
+- **Admin galeri sayfası**: Upload zone üstte, "Son Eklenen Görseller" 10×2 grid, "Diğer Görseller" (media/ klasörü) her zaman üstte açık
+- **Görsel detay popup**: Dosya adı, çözünürlük, boyut, URL kopyala, silme butonu, tüm bölümlerde tıklanabilir
+- **Harici görseller**: next/image catch-all remotePattern, YouTube embed CSP düzeltildi
+
+### Yapılanlar — Legal & Content
+- **Yasal sayfalar**: Migration 034 — Gizlilik Politikası, Kullanım Şartları, KVKK (tam içerikli), footer'a 3 link
+- **Breadcrumb**: Projeler sayfasına "Anasayfa > Projeler" eklendi
+- **Nav kategoriler**: Public nav'a Kategoriler dropdown (Villa/Daire/Penthouse/Arsa/Dükkan/Ofis/Bungalow), 5 dil i18n
+- **Header cleanup**: İletişime Geçin butonu kaldırıldı, telefon 1300px altında gizli
+
+### Yapılanlar — Sunumlar (Ana İş)
+- **Logo**: N placeholder yerine `/logo-square.jpeg` (cover + contact slide)
+- **Photo slaytları**: Tek sayfa tam ekran görsel, Settings panelde thumbnail grid ile seçim, custom banner text
+- **Drag-and-drop sıralama**: `@dnd-kit` ile slayt tab'ları sürükleyerek sıralanabilir, her fotoğraf bağımsız
+- **Konum slaytı**: OpenStreetMap → Google Maps iframe, city/district lat/lng fallback
+- **Neden Kıbrıs? slaytı**: Detaylı araştırma verileriyle (KPI row: %8-9 ROI, %6-9 yield, 7-10yr payback, 320+ sun days; 6 sebep: turizm 1.8M, Ercan 5.29M, Girne fiyatları); font boyutları artırıldı
+- **Yatırım slaytı**: 5 yıllık projeksiyon (%7.5 yield + %8.5 appreciation), aylık/yıllık/5yr kira, bugün vs 5yr değer, property görseli arkaplan
+- **Açıklama slaytı**: Custom description textarea, pull-quote layout (ilk cümle italic, altın çizgi), görsel arkaplan
+- **Detaylar + Özellikler birleşti**: Tek "Detaylar" slaytı, her alan kendi ikonu ile (Maximize2/BedDouble/Bath/Layers/CalendarDays/Home/Building2/Sparkles)
+
+### Migration'lar (Supabase Dashboard SQL Editor'de çalıştırılacak)
+- ✅ `032_show_on_map.sql` — properties.show_on_map boolean
+- ✅ `033_gecitkale_district.sql` — İskele'ye Geçitkale ilçesi
+- ✅ `034_legal_pages.sql` — Gizlilik/Kullanım/KVKK yasal sayfaları
+
+### Sıradakiler / İyileştirmeler
+- PDF export kalitesini iyileştirme (şu an browser print dialog — Puppeteer veya @react-pdf/renderer geçişi)
+- PNG export gerçekten çalışır hale getirme (html-to-image library)
+- Presentation manager 2000+ satır — component'lara ayırma refactor'u
+- Sunumlara floor plan slaytı ve QR kod (contact slide) eklenebilir
+
+### Dikkat Edilecekler
+- Base-ui Select: edit modda seçili value ID gösteriyorsa, SelectValue children'ına `.find(...)?.name ?? fallback` pattern kullan
+- Upload: server action body limit 1MB — client-side Supabase Storage kullan
+- next.config.ts CSP frame-src: youtube.com, openstreetmap.org, maps.google.com izinli
+- Fotoğraf slaytı state: `photo-{idx}` key formatı, slideOrder string[] tutuyor
+- LocationPicker: Nominatim yerine kendi `cities`/`districts` tablolarından arama (daha hızlı, daha alakalı)
+
+---
+
 ## 2026-03-16
 
 ### Yapılanlar
