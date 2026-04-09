@@ -91,7 +91,6 @@ type SlideType =
   | "gallery"
   | "photo"
   | "details"
-  | "features"
   | "description"
   | "location"
   | "why_cyprus"
@@ -176,7 +175,6 @@ const SLIDE_DEFINITIONS: SlideDefinition[] = [
   { type: "gallery", label: "Galeri" },
   { type: "photo", label: "Fotoğraflar" },
   { type: "details", label: "Detaylar" },
-  { type: "features", label: "Özellikler" },
   { type: "description", label: "Açıklama" },
   { type: "location", label: "Konum" },
   { type: "why_cyprus", label: "Neden Kıbrıs?" },
@@ -521,148 +519,45 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
 function DetailsSlide({ property, theme, note }: SlideProps) {
   type DetailItem = { icon: React.ElementType; label: string; value: string };
 
-  const items: DetailItem[] = [
-    { icon: Home, label: "Gayrimenkul Tipi", value: labelForType(property.type) },
-    ...(property.rooms !== null
-      ? [
-          {
-            icon: BedDouble,
-            label: "Oda Sayısı",
-            value: `${(property.living_rooms ?? 0) + property.rooms}+${property.rooms}`,
-          },
-        ]
-      : []),
-    ...(property.bathrooms !== null
-      ? [{ icon: Bath, label: "Banyo", value: `${property.bathrooms}` }]
-      : []),
-    ...(property.area_sqm !== null
-      ? [{ icon: Maximize2, label: "Brüt Alan", value: `${property.area_sqm} m²` }]
-      : []),
-    ...(property.floor !== null
-      ? [
-          {
-            icon: Layers,
-            label: "Kat",
-            value: property.total_floors
-              ? `${property.floor} / ${property.total_floors}`
-              : `${property.floor}. Kat`,
-          },
-        ]
-      : []),
-    ...(property.year_built !== null
-      ? [{ icon: CalendarDays, label: "Yapım Yılı", value: `${property.year_built}` }]
-      : []),
-  ];
+  const items: DetailItem[] = [];
 
-  return (
-    <div
-      className="flex flex-col h-full px-8 py-6 gap-4"
-      style={{ backgroundColor: theme.bg }}
-    >
-      <div>
-        <p
-          className="text-xs font-bold uppercase tracking-widest mb-0.5"
-          style={{ color: theme.muted }}
-        >
-          {property.title}
-        </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text }}>
-          Mülk Detayları
-        </h2>
-      </div>
-
-      <div className="flex-1 grid grid-cols-2 gap-3 content-start">
-        {items.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.label}
-              className="flex items-start gap-3 rounded-xl p-4"
-              style={{ backgroundColor: theme.cardBg }}
-            >
-              <div
-                className="size-9 rounded-lg flex items-center justify-center shrink-0"
-                style={{ backgroundColor: `${theme.accent}22` }}
-              >
-                <Icon className="size-4" style={{ color: theme.accent }} />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs mb-0.5" style={{ color: theme.muted }}>
-                  {item.label}
-                </p>
-                <p className="font-bold text-sm truncate" style={{ color: theme.text }}>
-                  {item.value}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div
-        className="flex items-center justify-between rounded-xl px-5 py-3"
-        style={{ backgroundColor: `${theme.accent}1a` }}
-      >
-        <span className="text-sm" style={{ color: theme.muted }}>
-          Fiyat
-        </span>
-        <span className="font-black text-lg" style={{ color: theme.accent }}>
-          {formatPrice(property.price, property.currency)}
-        </span>
-      </div>
-
-      {note && (
-        <p className="text-xs text-right" style={{ color: theme.muted }}>
-          {note}
-        </p>
-      )}
-    </div>
-  );
-}
-
-/** Slide 4 — Features */
-function FeaturesSlide({ property, theme, note }: SlideProps) {
-  type Feature = { icon: React.ElementType; label: string; value: string };
-
-  const features: Feature[] = [];
-
-  if (property.area_sqm) {
-    features.push({ icon: Maximize2, label: "Brüt Alan", value: `${property.area_sqm} m²` });
+  if (property.area_sqm !== null) {
+    items.push({ icon: Maximize2, label: "Brüt Alan", value: `${property.area_sqm} m²` });
   }
-  if (property.rooms) {
-    features.push({
+  if (property.rooms !== null) {
+    items.push({
       icon: BedDouble,
       label: "Oda Sayısı",
       value: `${(property.living_rooms ?? 0) + property.rooms}+${property.rooms}`,
     });
   }
-  if (property.bathrooms) {
-    features.push({ icon: Bath, label: "Banyo", value: `${property.bathrooms}` });
+  if (property.bathrooms !== null) {
+    items.push({ icon: Bath, label: "Banyo", value: `${property.bathrooms}` });
   }
-  if (property.floor !== null && property.total_floors) {
-    features.push({
+  if (property.floor !== null) {
+    items.push({
       icon: Layers,
       label: "Kat",
-      value: `${property.floor} / ${property.total_floors}`,
+      value: property.total_floors
+        ? `${property.floor} / ${property.total_floors}`
+        : `${property.floor}. Kat`,
     });
-  } else if (property.floor !== null) {
-    features.push({ icon: Layers, label: "Kat", value: `${property.floor}. Kat` });
   }
-  if (property.year_built) {
-    features.push({ icon: CalendarDays, label: "Yapım Yılı", value: `${property.year_built}` });
+  if (property.year_built !== null) {
+    items.push({ icon: CalendarDays, label: "Yapım Yılı", value: `${property.year_built}` });
   }
-  features.push({
+  items.push({
     icon: Home,
     label: "Gayrimenkul Tipi",
     value: labelForType(property.type),
   });
-  features.push({
+  items.push({
     icon: Building2,
     label: "Konum",
     value:
       [property.district_name, property.city_name].filter(Boolean).join(", ") || "—",
   });
-  features.push({
+  items.push({
     icon: Sparkles,
     label: "İşlem Türü",
     value: labelForTransaction(property.transaction_type),
@@ -682,16 +577,16 @@ function FeaturesSlide({ property, theme, note }: SlideProps) {
         </p>
         <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
           <Sparkles className="size-5" style={{ color: theme.accent }} />
-          Mülk Özellikleri
+          Mülk Detayları
         </h2>
       </div>
 
       <div className="flex-1 grid grid-cols-2 gap-2.5 content-start">
-        {features.map((feat, i) => {
-          const Icon = feat.icon;
+        {items.map((item) => {
+          const Icon = item.icon;
           return (
             <div
-              key={i}
+              key={item.label}
               className="flex items-center gap-3 rounded-xl px-4 py-3"
               style={{ backgroundColor: theme.cardBg }}
             >
@@ -703,10 +598,10 @@ function FeaturesSlide({ property, theme, note }: SlideProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-medium uppercase tracking-wide" style={{ color: theme.muted }}>
-                  {feat.label}
+                  {item.label}
                 </p>
                 <p className="text-sm font-black truncate" style={{ color: theme.text }}>
-                  {feat.value}
+                  {item.value}
                 </p>
               </div>
             </div>
@@ -714,7 +609,6 @@ function FeaturesSlide({ property, theme, note }: SlideProps) {
         })}
       </div>
 
-      {/* Price footer */}
       <div
         className="flex items-center justify-between rounded-xl px-5 py-3"
         style={{ backgroundColor: `${theme.accent}1a`, borderLeft: `3px solid ${theme.accent}` }}
@@ -1361,8 +1255,6 @@ function SlideRenderer({
       return <PhotoSlide property={property} theme={theme} note={note} photoIndex={photoIndex} bannerText={bannerText} />;
     case "details":
       return <DetailsSlide property={property} theme={theme} note={note} />;
-    case "features":
-      return <FeaturesSlide property={property} theme={theme} note={note} />;
     case "description":
       return <DescriptionSlide property={property} theme={theme} note={note} customDescription={customDescription} />;
     case "location":
