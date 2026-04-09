@@ -5,6 +5,7 @@ import {
 } from "@/components/admin/map-management-table";
 import { FullScreenMap } from "@/components/property/full-screen-map";
 import type { MapProperty } from "@/components/property/map-property-popup";
+import type { MapProject } from "@/components/property/map-project-popup";
 
 export const metadata = {
   title: "Harita Yönetimi — Admin",
@@ -78,11 +79,47 @@ async function getMapPreviewProperties(): Promise<MapProperty[]> {
     .filter((p): p is NonNullable<typeof p> => p !== null);
 }
 
+// ---------------------------------------------------------------------------
+// Fetch active projects with coordinates for map pins.
+// ---------------------------------------------------------------------------
+async function getMapPreviewProjects(): Promise<MapProject[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("projects")
+    .select(
+      "id, slug, title, cover_image, starting_price, currency, developer, status, lat, lng, city:cities(name)"
+    )
+    .eq("is_active", true)
+    .not("lat", "is", null)
+    .not("lng", "is", null);
+
+  if (error || !data) return [];
+
+  return data.map((row) => {
+    const projCity = row.city as unknown as { name: string } | null;
+    return {
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      cover_image: row.cover_image,
+      starting_price: row.starting_price,
+      currency: row.currency ?? "GBP",
+      developer: row.developer,
+      status: row.status ?? "selling",
+      lat: row.lat as number,
+      lng: row.lng as number,
+      city: projCity?.name ?? null,
+    };
+  });
+}
+
 export default async function AdminHaritaPage() {
   const supabase = await createClient();
 
-  const [mapPreview, tableResult] = await Promise.all([
+  const [mapPreview, mapProjects, tableResult] = await Promise.all([
     getMapPreviewProperties(),
+    getMapPreviewProjects(),
     supabase
       .from("properties")
       .select(
@@ -119,7 +156,7 @@ export default async function AdminHaritaPage() {
       </div>
 
       {/* Map preview — same component used on public /harita page */}
-      <FullScreenMap properties={mapPreview} />
+      <FullScreenMap properties={mapPreview} projects={mapProjects} />
 
       <MapManagementTable initialData={properties} />
     </div>
