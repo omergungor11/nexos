@@ -11,6 +11,7 @@ import {
   ExternalLinkIcon,
   ChevronLeft,
   ChevronRight,
+  Building2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -57,7 +58,32 @@ export type MapManagementRow = {
   images: PropertyImage[];
 };
 
+export type MapManagementProject = {
+  id: string;
+  title: string;
+  slug: string;
+  starting_price: number | null;
+  currency: string;
+  status: string;
+  developer: string | null;
+  is_active: boolean;
+  lat: number | null;
+  lng: number | null;
+  city: { name: string; lat?: number | null; lng?: number | null } | null;
+  cover_image: string | null;
+};
+
+type UnifiedRow =
+  | ({ kind: "property" } & MapManagementRow)
+  | ({ kind: "project" } & MapManagementProject);
+
 type MapFilter = "all" | "on_map" | "off_map";
+
+const FILTER_LABELS: Record<MapFilter, string> = {
+  all: "Tümü",
+  on_map: "Haritada",
+  off_map: "Haritada Değil",
+};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -65,10 +91,15 @@ type MapFilter = "all" | "on_map" | "off_map";
 
 interface MapManagementTableProps {
   initialData: MapManagementRow[];
+  initialProjects?: MapManagementProject[];
 }
 
-export function MapManagementTable({ initialData }: MapManagementTableProps) {
+export function MapManagementTable({
+  initialData,
+  initialProjects = [],
+}: MapManagementTableProps) {
   const [rows, setRows] = useState(initialData);
+  const [projects] = useState(initialProjects);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [mapFilter, setMapFilter] = useState<MapFilter>("all");
@@ -77,32 +108,61 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
   const [pageSize, setPageSize] = useState(20);
 
   // Resolve coordinates with city/district fallback (same as public map)
-  function resolveCoords(r: MapManagementRow): { lat: number; lng: number } | null {
+  function resolvePropertyCoords(r: MapManagementRow): { lat: number; lng: number } | null {
     const lat = r.lat ?? r.district?.lat ?? r.city?.lat;
     const lng = r.lng ?? r.district?.lng ?? r.city?.lng;
     if (lat == null || lng == null) return null;
     return { lat, lng };
   }
 
-  // Stats
-  const onMapCount = rows.filter((r) => r.show_on_map).length;
-  const hasCoords = rows.filter((r) => resolveCoords(r) != null).length;
+  function resolveProjectCoords(p: MapManagementProject): { lat: number; lng: number } | null {
+    const lat = p.lat ?? p.city?.lat;
+    const lng = p.lng ?? p.city?.lng;
+    if (lat == null || lng == null) return null;
+    return { lat, lng };
+  }
+
+  // Unified rows for the table (properties + projects)
+  const unifiedRows = useMemo<UnifiedRow[]>(
+    () => [
+      ...rows.map((r) => ({ kind: "property" as const, ...r })),
+      ...projects.map((p) => ({ kind: "project" as const, ...p })),
+    ],
+    [rows, projects]
+  );
+
+  // Project is "on map" if active + has coordinates (no toggle)
+  function isProjectOnMap(p: MapManagementProject): boolean {
+    return p.is_active && resolveProjectCoords(p) != null;
+  }
+
+  // Stats (count properties + projects)
+  const onMapCount =
+    rows.filter((r) => r.show_on_map).length +
+    projects.filter((p) => isProjectOnMap(p)).length;
+  const hasCoords =
+    rows.filter((r) => resolvePropertyCoords(r) != null).length +
+    projects.filter((p) => resolveProjectCoords(p) != null).length;
 
   // Filtered rows
   const filtered = useMemo(() => {
-    return rows.filter((row) => {
+    return unifiedRows.filter((row) => {
       if (search) {
         const q = search.toLowerCase();
         const matchTitle = row.title.toLowerCase().includes(q);
         const matchCity = row.city?.name?.toLowerCase().includes(q);
-        const matchDistrict = row.district?.name?.toLowerCase().includes(q);
+        const matchDistrict =
+          row.kind === "property" && row.district?.name?.toLowerCase().includes(q);
         if (!matchTitle && !matchCity && !matchDistrict) return false;
       }
-      if (mapFilter === "on_map" && !row.show_on_map) return false;
-      if (mapFilter === "off_map" && row.show_on_map) return false;
+      const onMap =
+        row.kind === "property" ? row.show_on_map : isProjectOnMap(row);
+      if (mapFilter === "on_map" && !onMap) return false;
+      if (mapFilter === "off_map" && onMap) return false;
       return true;
     });
-  }, [rows, search, mapFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unifiedRows, search, mapFilter]);
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -124,7 +184,10 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
   }
 
   function handleBulkToggle(showOnMap: boolean) {
-    const ids = Array.from(selectedIds);
+    // Only properties can be toggled (projects are readonly)
+    const ids = Array.from(selectedIds).filter((id) =>
+      rows.some((r) => r.id === id)
+    );
     if (ids.length === 0) return;
 
     startTransition(async () => {
@@ -153,8 +216,11 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
   }
 
   function toggleSelectAll() {
-    const pageIds = paginated.map((r) => r.id);
-    const allSelected = pageIds.every((id) => selectedIds.has(id));
+    // Only property IDs can be selected
+    const pageIds = paginated
+      .filter((r) => r.kind === "property")
+      .map((r) => r.id);
+    const allSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
     if (allSelected) {
       setSelectedIds((prev) => {
         const next = new Set(prev);
@@ -170,8 +236,15 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
     }
   }
 
-  function getCoverImage(images: PropertyImage[]): string {
-    return images.find((img) => img.is_cover)?.url ?? images[0]?.url ?? "/placeholder-property.svg";
+  function getCoverImage(row: UnifiedRow): string {
+    if (row.kind === "project") {
+      return row.cover_image ?? "/placeholder-property.svg";
+    }
+    return (
+      row.images.find((img) => img.is_cover)?.url ??
+      row.images[0]?.url ??
+      "/placeholder-property.svg"
+    );
   }
 
   // Page buttons
@@ -187,7 +260,11 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
     return pages;
   }
 
-  const allPageSelected = paginated.length > 0 && paginated.every((r) => selectedIds.has(r.id));
+  const pagePropertyIds = paginated.filter((r) => r.kind === "property").map((r) => r.id);
+  const allPageSelected =
+    pagePropertyIds.length > 0 && pagePropertyIds.every((id) => selectedIds.has(id));
+
+  const totalCount = rows.length + projects.length;
 
   return (
     <div className="space-y-4">
@@ -195,13 +272,20 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
       <div className="flex flex-wrap items-center gap-3">
         <Badge variant="secondary" className="gap-1.5">
           <MapPinIcon className="size-3.5 text-green-600" />
-          {onMapCount} ilan haritada
+          {onMapCount} haritada
         </Badge>
         <Badge variant="outline" className="gap-1.5">
-          {hasCoords} ilanın koordinatı var
+          {hasCoords} koordinatlı
         </Badge>
         <Badge variant="outline" className="gap-1.5">
-          {rows.length} toplam ilan
+          {rows.length} ilan
+        </Badge>
+        <Badge variant="outline" className="gap-1.5">
+          <Building2 className="size-3.5 text-violet-600" />
+          {projects.length} proje
+        </Badge>
+        <Badge variant="outline" className="gap-1.5">
+          {totalCount} toplam
         </Badge>
       </div>
 
@@ -210,7 +294,7 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="İlan, şehir veya ilçe ara..."
+            placeholder="İlan, proje, şehir veya ilçe ara..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="pl-9 h-9"
@@ -221,7 +305,9 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
           onValueChange={(v) => { setMapFilter((v ?? "all") as MapFilter); setPage(1); }}
         >
           <SelectTrigger className="w-[180px] h-9">
-            <SelectValue placeholder="Harita durumu" />
+            <SelectValue placeholder="Harita durumu">
+              {FILTER_LABELS[mapFilter]}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tümü</SelectItem>
@@ -273,7 +359,7 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
                   className="size-4 rounded border-gray-300"
                 />
               </th>
-              <th className="px-3 py-2.5 text-left">İlan</th>
+              <th className="px-3 py-2.5 text-left">Başlık</th>
               <th className="px-3 py-2.5 text-left">Konum</th>
               <th className="px-3 py-2.5 text-left">Fiyat</th>
               <th className="px-3 py-2.5 text-center">Koordinat</th>
@@ -283,119 +369,156 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
             </tr>
           </thead>
           <tbody>
-            {paginated.map((row) => (
-              <tr
-                key={row.id}
-                className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
-              >
-                {/* Checkbox */}
-                <td className="px-3 py-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.has(row.id)}
-                    onChange={() => toggleSelect(row.id)}
-                    className="size-4 rounded border-gray-300"
-                  />
-                </td>
+            {paginated.map((row) => {
+              const isProject = row.kind === "project";
+              const onMap = isProject ? isProjectOnMap(row) : row.show_on_map;
+              const price = isProject ? row.starting_price : row.price;
+              const editHref = isProject
+                ? `/admin/projeler/${row.id}/duzenle`
+                : `/admin/ilanlar/${row.id}/duzenle`;
 
-                {/* Property info */}
-                <td className="px-3 py-2">
-                  <div className="flex items-center gap-3">
-                    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded">
-                      <Image
-                        src={getCoverImage(row.images)}
-                        alt={row.title}
-                        fill
-                        className="object-cover"
-                        sizes="56px"
-                        unoptimized
+              return (
+                <tr
+                  key={`${row.kind}-${row.id}`}
+                  className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
+                >
+                  {/* Checkbox (only for properties) */}
+                  <td className="px-3 py-2">
+                    {isProject ? (
+                      <div className="size-4" aria-hidden />
+                    ) : (
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(row.id)}
+                        onChange={() => toggleSelect(row.id)}
+                        className="size-4 rounded border-gray-300"
                       />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-sm">{row.title}</p>
-                      <div className="flex gap-1 mt-0.5">
-                        <span className="text-[10px] text-muted-foreground">
-                          {TRANSACTION_TYPE_LABELS[row.transaction_type] ?? row.transaction_type}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">·</span>
-                        <span className="text-[10px] text-muted-foreground">
-                          {PROPERTY_TYPE_LABELS[row.type] ?? row.type}
-                        </span>
+                    )}
+                  </td>
+
+                  {/* Info */}
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-3">
+                      <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded">
+                        <Image
+                          src={getCoverImage(row)}
+                          alt={row.title}
+                          fill
+                          className="object-cover"
+                          sizes="56px"
+                          unoptimized
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-sm">{row.title}</p>
+                        <div className="flex gap-1 mt-0.5">
+                          {isProject ? (
+                            <Badge variant="outline" className="h-4 px-1 text-[10px] text-violet-700 border-violet-300">
+                              Proje
+                            </Badge>
+                          ) : (
+                            <>
+                              <span className="text-[10px] text-muted-foreground">
+                                {TRANSACTION_TYPE_LABELS[row.transaction_type] ?? row.transaction_type}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground">·</span>
+                              <span className="text-[10px] text-muted-foreground">
+                                {PROPERTY_TYPE_LABELS[row.type] ?? row.type}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                {/* Location */}
-                <td className="px-3 py-2">
-                  <span className="text-sm">
-                    {row.city?.name ?? "—"}
-                    {row.district?.name ? `, ${row.district.name}` : ""}
-                  </span>
-                </td>
+                  {/* Location */}
+                  <td className="px-3 py-2">
+                    <span className="text-sm">
+                      {row.city?.name ?? "—"}
+                      {!isProject && row.district?.name ? `, ${row.district.name}` : ""}
+                    </span>
+                  </td>
 
-                {/* Price */}
-                <td className="px-3 py-2">
-                  <span className="text-sm font-medium">
-                    {formatPrice(row.price, row.currency)}
-                  </span>
-                </td>
+                  {/* Price */}
+                  <td className="px-3 py-2">
+                    <span className="text-sm font-medium">
+                      {price != null ? formatPrice(price, row.currency) : "—"}
+                    </span>
+                  </td>
 
-                {/* Coordinates */}
-                <td className="px-3 py-2 text-center">
-                  {row.lat != null && row.lng != null ? (
-                    <Badge variant="secondary" className="text-[10px]">
-                      {row.lat.toFixed(4)}, {row.lng.toFixed(4)}
-                    </Badge>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">Yok</span>
-                  )}
-                </td>
-
-                {/* Active status */}
-                <td className="px-3 py-2 text-center">
-                  <Badge
-                    variant={row.is_active ? "default" : "secondary"}
-                    className="text-[10px]"
-                  >
-                    {row.is_active ? "Aktif" : "Pasif"}
-                  </Badge>
-                </td>
-
-                {/* Map toggle */}
-                <td className="px-3 py-2 text-center">
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={row.show_on_map ? "Haritadan kaldır" : "Haritaya ekle"}
-                    onClick={() => handleToggleShowOnMap(row.id, row.show_on_map)}
-                    disabled={isPending}
-                    title={
-                      row.show_on_map
-                        ? "Haritada — kaldırmak için tıkla"
-                        : "Haritada değil — eklemek için tıkla"
-                    }
-                  >
-                    {row.show_on_map ? (
-                      <MapPinIcon className="size-4 fill-green-500 text-green-600" />
+                  {/* Coordinates */}
+                  <td className="px-3 py-2 text-center">
+                    {row.lat != null && row.lng != null ? (
+                      <Badge variant="secondary" className="text-[10px]">
+                        {row.lat.toFixed(4)}, {row.lng.toFixed(4)}
+                      </Badge>
                     ) : (
-                      <MapPinOffIcon className="size-4 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">Yok</span>
                     )}
-                  </Button>
-                </td>
+                  </td>
 
-                {/* External link */}
-                <td className="px-3 py-2 text-center">
-                  <Link
-                    href={`/admin/ilanlar/${row.id}/duzenle`}
-                    className="inline-flex items-center justify-center size-7 rounded-md hover:bg-muted transition-colors"
-                    title="Düzenle"
-                  >
-                    <ExternalLinkIcon className="size-3.5 text-muted-foreground" />
-                  </Link>
-                </td>
-              </tr>
-            ))}
+                  {/* Active status */}
+                  <td className="px-3 py-2 text-center">
+                    <Badge
+                      variant={row.is_active ? "default" : "secondary"}
+                      className="text-[10px]"
+                    >
+                      {row.is_active ? "Aktif" : "Pasif"}
+                    </Badge>
+                  </td>
+
+                  {/* Map toggle / status */}
+                  <td className="px-3 py-2 text-center">
+                    {isProject ? (
+                      <span
+                        title={
+                          onMap
+                            ? "Haritada (aktif + koordinat)"
+                            : "Haritada değil"
+                        }
+                      >
+                        {onMap ? (
+                          <MapPinIcon className="inline size-4 fill-green-500 text-green-600" />
+                        ) : (
+                          <MapPinOffIcon className="inline size-4 text-muted-foreground" />
+                        )}
+                      </span>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={row.show_on_map ? "Haritadan kaldır" : "Haritaya ekle"}
+                        onClick={() => handleToggleShowOnMap(row.id, row.show_on_map)}
+                        disabled={isPending}
+                        title={
+                          row.show_on_map
+                            ? "Haritada — kaldırmak için tıkla"
+                            : "Haritada değil — eklemek için tıkla"
+                        }
+                      >
+                        {row.show_on_map ? (
+                          <MapPinIcon className="size-4 fill-green-500 text-green-600" />
+                        ) : (
+                          <MapPinOffIcon className="size-4 text-muted-foreground" />
+                        )}
+                      </Button>
+                    )}
+                  </td>
+
+                  {/* External link */}
+                  <td className="px-3 py-2 text-center">
+                    <Link
+                      href={editHref}
+                      className="inline-flex items-center justify-center size-7 rounded-md hover:bg-muted transition-colors"
+                      title="Düzenle"
+                    >
+                      <ExternalLinkIcon className="size-3.5 text-muted-foreground" />
+                    </Link>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
@@ -415,7 +538,7 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
               onValueChange={(v) => { setPageSize(Number(v)); setPage(1); }}
             >
               <SelectTrigger className="w-[110px] h-8 text-xs">
-                <SelectValue />
+                <SelectValue>{pageSize} / sayfa</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="10">10 / sayfa</SelectItem>
@@ -424,7 +547,7 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
               </SelectContent>
             </Select>
             <span className="text-xs text-muted-foreground">
-              Sayfa {safePage} / {totalPages} — toplam {filtered.length} ilan
+              Sayfa {safePage} / {totalPages} — toplam {filtered.length} kayıt
             </span>
           </div>
 

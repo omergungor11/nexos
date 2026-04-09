@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   MapManagementTable,
   type MapManagementRow,
+  type MapManagementProject,
 } from "@/components/admin/map-management-table";
 import { FullScreenMap } from "@/components/property/full-screen-map";
 import type { MapProperty } from "@/components/property/map-property-popup";
@@ -117,7 +118,7 @@ async function getMapPreviewProjects(): Promise<MapProject[]> {
 export default async function AdminHaritaPage() {
   const supabase = await createClient();
 
-  const [mapPreview, mapProjects, tableResult] = await Promise.all([
+  const [mapPreview, mapProjects, tableResult, projectsResult] = await Promise.all([
     getMapPreviewProperties(),
     getMapPreviewProjects(),
     supabase
@@ -129,6 +130,16 @@ export default async function AdminHaritaPage() {
         city:cities(name, lat, lng),
         district:districts(name, lat, lng),
         images:property_images(url, is_cover)
+      `
+      )
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("projects")
+      .select(
+        `
+        id, title, slug, starting_price, currency, status, developer,
+        is_active, lat, lng, cover_image,
+        city:cities(name, lat, lng)
       `
       )
       .order("created_at", { ascending: false }),
@@ -145,20 +156,24 @@ export default async function AdminHaritaPage() {
   }
 
   const properties = (tableResult.data ?? []) as unknown as MapManagementRow[];
+  const tableProjects = (projectsResult.data ?? []) as unknown as MapManagementProject[];
 
   return (
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-xl font-semibold">Harita Yönetimi</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Haritada gösterilecek ilanları yönetin.
+          Haritada gösterilecek ilan ve projeleri yönetin.
         </p>
       </div>
 
       {/* Map preview — same component used on public /harita page */}
       <FullScreenMap properties={mapPreview} projects={mapProjects} />
 
-      <MapManagementTable initialData={properties} />
+      <MapManagementTable
+        initialData={properties}
+        initialProjects={tableProjects}
+      />
     </div>
   );
 }
