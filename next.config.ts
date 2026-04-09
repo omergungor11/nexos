@@ -66,7 +66,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://unpkg.com https://*.tile.openstreetmap.org https://api.qrserver.com",
               "font-src 'self'",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com",
-              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://my.matterport.com https://www.openstreetmap.org",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://my.matterport.com https://www.openstreetmap.org https://maps.google.com https://www.google.com",
               "object-src 'none'",
               "base-uri 'self'",
             ].join("; "),

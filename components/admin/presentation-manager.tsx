@@ -119,6 +119,7 @@ interface SlideProps {
   note?: string;
   photoIndex?: number;
   bannerText?: string;
+  customDescription?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -621,73 +622,113 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
 
 /** Slide 4 — Features */
 function FeaturesSlide({ property, theme, note }: SlideProps) {
-  const features: string[] = [];
+  type Feature = { icon: React.ElementType; label: string; value: string };
 
-  if (property.area_sqm) features.push(`${property.area_sqm} m² brüt alan`);
-  if (property.rooms) features.push(`${(property.living_rooms ?? 0) + property.rooms}+${property.rooms} oda`);
-  if (property.bathrooms) features.push(`${property.bathrooms} banyo`);
-  if (property.year_built) features.push(`${property.year_built} yılında inşa edildi`);
-  if (property.floor && property.total_floors) features.push(`${property.floor}/${property.total_floors}. kat`);
-  if (property.district_name) features.push(`${property.district_name} konumunda`);
-  if (property.city_name) features.push(`${property.city_name} ili`);
+  const features: Feature[] = [];
 
-  const typeLabel = labelForType(property.type);
-  if (typeLabel) features.push(typeLabel);
-
-  const txLabel = labelForTransaction(property.transaction_type);
-  if (txLabel) features.push(`${txLabel} statüsünde`);
-
-  // Pad to at least 6
-  while (features.length < 6) features.push("—");
+  if (property.area_sqm) {
+    features.push({ icon: Maximize2, label: "Brüt Alan", value: `${property.area_sqm} m²` });
+  }
+  if (property.rooms) {
+    features.push({
+      icon: BedDouble,
+      label: "Oda Sayısı",
+      value: `${(property.living_rooms ?? 0) + property.rooms}+${property.rooms}`,
+    });
+  }
+  if (property.bathrooms) {
+    features.push({ icon: Bath, label: "Banyo", value: `${property.bathrooms}` });
+  }
+  if (property.floor !== null && property.total_floors) {
+    features.push({
+      icon: Layers,
+      label: "Kat",
+      value: `${property.floor} / ${property.total_floors}`,
+    });
+  } else if (property.floor !== null) {
+    features.push({ icon: Layers, label: "Kat", value: `${property.floor}. Kat` });
+  }
+  if (property.year_built) {
+    features.push({ icon: CalendarDays, label: "Yapım Yılı", value: `${property.year_built}` });
+  }
+  features.push({
+    icon: Home,
+    label: "Gayrimenkul Tipi",
+    value: labelForType(property.type),
+  });
+  features.push({
+    icon: Building2,
+    label: "Konum",
+    value:
+      [property.district_name, property.city_name].filter(Boolean).join(", ") || "—",
+  });
+  features.push({
+    icon: Sparkles,
+    label: "İşlem Türü",
+    value: labelForTransaction(property.transaction_type),
+  });
 
   return (
     <div
-      className="flex flex-col h-full px-8 py-6 gap-5"
+      className="flex flex-col h-full px-8 py-5 gap-3"
       style={{ backgroundColor: theme.bg }}
     >
       <div>
         <p
-          className="text-xs font-bold uppercase tracking-widest mb-0.5"
-          style={{ color: theme.muted }}
+          className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
+          style={{ color: theme.accent }}
         >
           {property.title}
         </p>
         <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
           <Sparkles className="size-5" style={{ color: theme.accent }} />
-          Öne Çıkan Özellikler
+          Mülk Özellikleri
         </h2>
       </div>
 
-      <div className="flex-1 grid grid-cols-2 gap-3 content-start">
-        {features.map((feat, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-3 rounded-xl px-4 py-3"
-            style={{ backgroundColor: theme.cardBg }}
-          >
+      <div className="flex-1 grid grid-cols-2 gap-2.5 content-start">
+        {features.map((feat, i) => {
+          const Icon = feat.icon;
+          return (
             <div
-              className="size-5 rounded-full flex items-center justify-center shrink-0"
-              style={{ backgroundColor: theme.accent }}
+              key={i}
+              className="flex items-center gap-3 rounded-xl px-4 py-3"
+              style={{ backgroundColor: theme.cardBg }}
             >
-              <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                <path
-                  d="M1 4l2.5 2.5L9 1"
-                  stroke="#0f172a"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <div
+                className="size-10 rounded-lg flex items-center justify-center shrink-0"
+                style={{ backgroundColor: `${theme.accent}22` }}
+              >
+                <Icon className="size-5" style={{ color: theme.accent }} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-medium uppercase tracking-wide" style={{ color: theme.muted }}>
+                  {feat.label}
+                </p>
+                <p className="text-sm font-black truncate" style={{ color: theme.text }}>
+                  {feat.value}
+                </p>
+              </div>
             </div>
-            <span className="text-sm font-medium" style={{ color: theme.text }}>
-              {feat}
-            </span>
-          </div>
-        ))}
+          );
+        })}
+      </div>
+
+      {/* Price footer */}
+      <div
+        className="flex items-center justify-between rounded-xl px-5 py-3"
+        style={{ backgroundColor: `${theme.accent}1a`, borderLeft: `3px solid ${theme.accent}` }}
+      >
+        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>
+          Fiyat
+        </span>
+        <span className="text-xl font-black" style={{ color: theme.accent }}>
+          {formatPrice(property.price, property.currency)}
+        </span>
       </div>
 
       {note && (
-        <p className="text-xs text-right" style={{ color: theme.muted }}>
+        <p className="text-[10px] text-right" style={{ color: theme.muted }}>
           {note}
         </p>
       )}
@@ -696,75 +737,131 @@ function FeaturesSlide({ property, theme, note }: SlideProps) {
 }
 
 /** Slide 5 — Description */
-function DescriptionSlide({ property, theme, note }: SlideProps) {
+function DescriptionSlide({ property, theme, note, customDescription }: SlideProps) {
   const location = [property.district_name, property.city_name]
     .filter(Boolean)
     .join(", ");
 
+  // Use custom description if provided, otherwise fall back to DB description
+  const descriptionText = customDescription?.trim() || property.description;
+  const bgImage = property.images[0];
+
+  // Extract first sentence as pull-quote
+  const firstSentence = descriptionText
+    ? (descriptionText.match(/^[^.!?]+[.!?]/)?.[0] ?? descriptionText.slice(0, 120))
+    : null;
+  const restText = descriptionText && firstSentence
+    ? descriptionText.slice(firstSentence.length).trim()
+    : null;
+
   return (
     <div
-      className="flex flex-col h-full px-8 py-6 gap-4"
+      className="relative flex flex-col h-full overflow-hidden"
       style={{ backgroundColor: theme.bg }}
     >
-      <div>
-        <p
-          className="text-xs font-bold uppercase tracking-widest mb-0.5"
-          style={{ color: theme.muted }}
-        >
-          {property.title}
-        </p>
-        <h2 className="text-xl font-black" style={{ color: theme.text }}>
-          Açıklama
-        </h2>
-      </div>
-
-      {location && (
-        <div className="flex items-center gap-2">
-          <MapPin className="size-4 shrink-0" style={{ color: theme.accent }} />
-          <span className="text-sm" style={{ color: theme.muted }}>
-            {location}
-          </span>
-        </div>
+      {/* Background image with heavy overlay for editorial feel */}
+      {bgImage && (
+        <>
+          <div className="absolute inset-0">
+            <Image src={bgImage} alt="" fill className="object-cover" />
+          </div>
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(135deg, ${theme.bg}f0 0%, ${theme.bg}f0 50%, ${theme.bg}cc 100%)`,
+            }}
+          />
+        </>
       )}
 
-      <div
-        className="flex-1 rounded-xl p-5 overflow-auto"
-        style={{ backgroundColor: theme.cardBg }}
-      >
-        {property.description ? (
+      <div className="relative flex flex-col h-full px-10 py-7 gap-4">
+        {/* Header */}
+        <div>
           <p
-            className="text-sm leading-relaxed whitespace-pre-line"
-            style={{ color: `${theme.text}cc` }}
+            className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
+            style={{ color: theme.accent }}
           >
-            {property.description}
+            {property.title}
           </p>
-        ) : (
-          <p className="text-sm" style={{ color: theme.muted }}>
-            Açıklama bulunmamaktadır.
+          <h2 className="text-2xl font-black" style={{ color: theme.text }}>
+            Mülk Hakkında
+          </h2>
+          {location && (
+            <p className="flex items-center gap-1.5 text-xs mt-1" style={{ color: theme.muted }}>
+              <MapPin className="size-3" />
+              {location}
+            </p>
+          )}
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden">
+          {descriptionText ? (
+            <>
+              {/* Pull-quote: first sentence in larger italic */}
+              {firstSentence && (
+                <div className="relative pl-5">
+                  <div
+                    className="absolute left-0 top-1 bottom-1 w-0.5 rounded"
+                    style={{ backgroundColor: theme.accent }}
+                  />
+                  <p
+                    className="text-base italic leading-snug font-medium"
+                    style={{ color: theme.text }}
+                  >
+                    {firstSentence}
+                  </p>
+                </div>
+              )}
+              {/* Rest of description */}
+              {restText && (
+                <div
+                  className="flex-1 overflow-auto rounded-lg px-4 py-3"
+                  style={{ backgroundColor: `${theme.cardBg}aa` }}
+                >
+                  <p
+                    className="text-xs leading-relaxed whitespace-pre-line"
+                    style={{ color: `${theme.text}d0` }}
+                  >
+                    {restText}
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div
+              className="flex-1 flex items-center justify-center rounded-xl"
+              style={{ backgroundColor: `${theme.cardBg}aa` }}
+            >
+              <p className="text-sm" style={{ color: theme.muted }}>
+                Açıklama bulunmamaktadır. Ayarlar panelinden özel metin ekleyebilirsiniz.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div
+          className="flex items-center gap-3 rounded-xl px-5 py-3"
+          style={{ backgroundColor: `${theme.accent}1a`, borderLeft: `3px solid ${theme.accent}` }}
+        >
+          <span
+            className="text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+            style={{ backgroundColor: theme.accent, color: "#0f172a" }}
+          >
+            {labelForTransaction(property.transaction_type)}
+          </span>
+          <span className="font-black text-lg" style={{ color: theme.text }}>
+            {formatPrice(property.price, property.currency)}
+          </span>
+        </div>
+
+        {note && (
+          <p className="text-[10px] text-right" style={{ color: theme.muted }}>
+            {note}
           </p>
         )}
       </div>
-
-      <div
-        className="flex items-center gap-3 rounded-xl px-5 py-3"
-        style={{ backgroundColor: `${theme.accent}1a` }}
-      >
-        <span
-          className="text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
-          style={{ backgroundColor: theme.accent, color: "#0f172a" }}
-        >
-          {labelForTransaction(property.transaction_type)}
-        </span>
-        <span className="font-black text-base" style={{ color: theme.text }}>
-          {formatPrice(property.price, property.currency)}
-        </span>
-      </div>
-
-      {note && (
-        <p className="text-xs text-right" style={{ color: theme.muted }}>
-          {note}
-        </p>
-      )}
     </div>
   );
 }
@@ -794,13 +891,14 @@ function LocationSlide({ property, theme, note }: SlideProps) {
         </h2>
       </div>
 
-      {/* Map embed */}
+      {/* Map embed — Google Maps (no API key required) */}
       <div className="flex-1 rounded-2xl overflow-hidden relative min-h-0">
         {hasCoords ? (
           <iframe
-            src={`https://www.openstreetmap.org/export/embed.html?bbox=${property.lng! - 0.015},${property.lat! - 0.01},${property.lng! + 0.015},${property.lat! + 0.01}&layer=mapnik&marker=${property.lat},${property.lng}`}
+            src={`https://maps.google.com/maps?q=${property.lat},${property.lng}&z=14&output=embed`}
             className="absolute inset-0 w-full h-full border-0"
             loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
           />
         ) : (
           <div
@@ -816,6 +914,11 @@ function LocationSlide({ property, theme, note }: SlideProps) {
             <p className="text-sm font-medium" style={{ color: theme.muted }}>
               Koordinat bilgisi mevcut değil
             </p>
+            {location && (
+              <p className="text-xs" style={{ color: theme.muted }}>
+                {location}
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -855,79 +958,110 @@ function LocationSlide({ property, theme, note }: SlideProps) {
 
 /** Slide — Why Buy Real Estate in Cyprus */
 function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) {
+  // Key numeric KPIs (top row)
+  const kpis = [
+    { value: "%8-9", label: "Yıllık Değer Artışı", sub: "5 yıllık ortalama" },
+    { value: "%6-9", label: "Kira Getirisi", sub: "Net yıllık" },
+    { value: "7-10", label: "Yıl Geri Ödeme", sub: "Avrupa: 15-20 yıl" },
+    { value: "320+", label: "Güneşli Gün", sub: "Yılda" },
+  ];
+
+  // Detailed reasons with concrete data
   const reasons = [
     {
       icon: Sparkles,
-      title: "Yüksek Yatırım Getirisi",
-      text: "Yıllık %6-10 kira getirisi, %15-25 sermaye değer artışı. Akdeniz'in en kârlı gayrimenkul pazarlarından biri.",
+      title: "Güçlü Toplam Getiri",
+      text: "%14-18 yıllık toplam getiri (kira + değer artışı). Avrupa ortalaması: %5-10. Son 5 yılda Girne villaları %40'ın üzerinde değer kazandı.",
     },
     {
       icon: Globe,
-      title: "Avantajlı Vergi Sistemi",
-      text: "Düşük emlak vergileri, KDV muafiyeti seçenekleri ve çifte vergilendirme anlaşmaları ile yatırımcı dostu politikalar.",
-    },
-    {
-      icon: Home,
-      title: "Yabancıya Mülk Satışı",
-      text: "Yabancılar için kolaylaştırılmış mülk edinme süreci. Türk, İngiliz, Rus ve AB vatandaşları için açık pazar.",
-    },
-    {
-      icon: MapPin,
-      title: "Stratejik Konum",
-      text: "Avrupa, Ortadoğu ve Afrika'nın kesişiminde. Türkiye'ye 45 dakika, AB ülkelerine kolay erişim.",
-    },
-    {
-      icon: CalendarDays,
-      title: "365 Gün Turizm Potansiyeli",
-      text: "Yıllık 4 milyon turist, yüksek doluluk oranları. Kısa dönem kiralama ile ek gelir fırsatı.",
+      title: "Düşük Vergi Yükü",
+      text: "%0 yıllık emlak vergisi, %0 miras vergisi. Yeni gayrimenkulde %5 KDV (birincil konut), transfer ücreti net %1.5-4.",
     },
     {
       icon: Building2,
-      title: "Gelişen Altyapı",
-      text: "Yeni havalimanı, modern yollar, uluslararası üniversiteler ve marinalar. Hızlı gelişen modern şehirler.",
+      title: "Yükselen Turizm",
+      text: "2024'te 1.8M+ ziyaretçi, %18.6 büyüme. Ercan Havalimanı 2025'te 5.29M yolcu taşıdı (%19 artış). Kısa dönem kira talebi yüksek.",
+    },
+    {
+      icon: Home,
+      title: "Yabancıya Açık Pazar",
+      text: "Türk, İngiliz, Rus, AB vatandaşları satın alabilir. 3 daire veya 1 villa + 1338m² arsa hakkı. Onay süreci 6-12 ay, pratikte standart prosedür.",
+    },
+    {
+      icon: MapPin,
+      title: "Stratejik Lokasyon",
+      text: "İstanbul 1.5 saat, Londra 4.5 saat uçuş. Avrupa, Ortadoğu ve Afrika'nın kesişim noktası. 3 modern havalimanına yakınlık.",
+    },
+    {
+      icon: CalendarDays,
+      title: "Uygun Giriş Fiyatları",
+      text: "Girne dairelerde £135K-£265K, İskele'de £60K'dan başlayan fiyatlar. 12-50 ay taksit seçenekleri. Avrupa'nın %25 altında yaşam maliyeti.",
     },
   ];
 
   return (
     <div
-      className="flex flex-col h-full px-8 py-6 gap-4"
+      className="flex flex-col h-full px-8 py-5 gap-3"
       style={{ backgroundColor: theme.bg }}
     >
       <div>
         <p
-          className="text-xs font-bold uppercase tracking-widest mb-0.5"
+          className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
           style={{ color: theme.accent }}
         >
           Yatırım Fırsatı
         </p>
-        <h2 className="text-2xl font-black" style={{ color: theme.text }}>
-          Neden Kıbrıs&apos;ta Gayrimenkul Satın Almalısınız?
+        <h2 className="text-xl font-black" style={{ color: theme.text }}>
+          Neden Kuzey Kıbrıs&apos;ta Gayrimenkul?
         </h2>
-        <p className="text-xs mt-1" style={{ color: theme.muted }}>
-          Akdeniz&apos;in yükselen yıldızı — yatırımcılar için 6 önemli sebep
+        <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>
+          Akdeniz&apos;in yükselen yıldızı — veriler ile kanıtlanmış avantajlar
         </p>
       </div>
 
-      <div className="flex-1 grid grid-cols-2 gap-3 min-h-0">
+      {/* KPI row */}
+      <div className="grid grid-cols-4 gap-2">
+        {kpis.map((k, i) => (
+          <div
+            key={i}
+            className="rounded-lg px-3 py-2 text-center"
+            style={{ backgroundColor: `${theme.accent}15`, borderLeft: `2px solid ${theme.accent}` }}
+          >
+            <p className="text-lg font-black leading-none" style={{ color: theme.accent }}>
+              {k.value}
+            </p>
+            <p className="text-[9px] font-bold uppercase tracking-wide mt-1" style={{ color: theme.text }}>
+              {k.label}
+            </p>
+            <p className="text-[8px] mt-0.5" style={{ color: theme.muted }}>
+              {k.sub}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Reasons grid */}
+      <div className="flex-1 grid grid-cols-2 gap-2 min-h-0">
         {reasons.map((r, i) => {
           const Icon = r.icon;
           return (
             <div
               key={i}
-              className="rounded-xl px-4 py-3 flex gap-3 items-start"
+              className="rounded-lg px-3 py-2 flex gap-2.5 items-start"
               style={{ backgroundColor: theme.cardBg }}
             >
               <div
-                className="size-9 rounded-lg shrink-0 flex items-center justify-center"
+                className="size-7 rounded-md shrink-0 flex items-center justify-center"
                 style={{ backgroundColor: `${theme.accent}22` }}
               >
-                <Icon className="size-4" style={{ color: theme.accent }} />
+                <Icon className="size-3.5" style={{ color: theme.accent }} />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-black leading-tight mb-1" style={{ color: theme.text }}>
+                <p className="text-[11px] font-black leading-tight mb-0.5" style={{ color: theme.text }}>
                   {r.title}
                 </p>
-                <p className="text-[11px] leading-snug" style={{ color: `${theme.text}99` }}>
+                <p className="text-[10px] leading-snug" style={{ color: `${theme.text}99` }}>
                   {r.text}
                 </p>
               </div>
@@ -936,8 +1070,18 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
         })}
       </div>
 
+      {/* Bottom callout */}
+      <div
+        className="rounded-lg px-4 py-2 text-center"
+        style={{ backgroundColor: theme.accent }}
+      >
+        <p className="text-[11px] font-black" style={{ color: "#0f172a" }}>
+          Avrupa&apos;da 20 yıl, Kuzey Kıbrıs&apos;ta 7-10 yılda kendini amorti eden yatırım
+        </p>
+      </div>
+
       {note && (
-        <p className="text-xs text-right" style={{ color: theme.muted }}>
+        <p className="text-[10px] text-right" style={{ color: theme.muted }}>
           {note}
         </p>
       )}
@@ -952,15 +1096,34 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
       ? Math.round(property.price / property.area_sqm)
       : null;
 
+  // Market-based calculations (Northern Cyprus averages)
+  const yieldRate = 0.075; // 7.5% average annual rental yield
+  const appreciationRate = 0.085; // 8.5% average annual appreciation
+  const annualRent = Math.round(property.price * yieldRate);
+  const monthlyRent = Math.round(annualRent / 12);
+  const fiveYearAppreciation = Math.round(property.price * Math.pow(1 + appreciationRate, 5) - property.price);
+  const totalFiveYearReturn = annualRent * 5 + fiveYearAppreciation;
+  const roiPercent = Math.round((totalFiveYearReturn / property.price) * 100);
+
+  // Use cover image as background
+  const bgImage = property.images[0];
+
   return (
     <div
-      className="flex flex-col h-full px-8 py-6 gap-5"
+      className="flex flex-col h-full px-7 py-5 gap-3 relative"
       style={{ backgroundColor: theme.bg }}
     >
-      <div>
+      {/* Subtle background image */}
+      {bgImage && (
+        <div className="absolute inset-0 opacity-[0.08]">
+          <Image src={bgImage} alt="" fill className="object-cover" />
+        </div>
+      )}
+
+      <div className="relative">
         <p
-          className="text-xs font-bold uppercase tracking-widest mb-0.5"
-          style={{ color: theme.muted }}
+          className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
+          style={{ color: theme.accent }}
         >
           {property.title}
         </p>
@@ -968,77 +1131,128 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
           <Sparkles className="size-5" style={{ color: theme.accent }} />
           Yatırım Analizi
         </h2>
+        <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>
+          Kuzey Kıbrıs piyasa ortalamalarına dayalı 5 yıllık projeksiyon
+        </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      {/* Top row: Price + Price/m² + ROI */}
+      <div className="grid grid-cols-3 gap-2 relative">
         <div
-          className="rounded-2xl p-5 flex flex-col gap-1"
+          className="rounded-xl p-3 flex flex-col gap-0.5"
           style={{ backgroundColor: theme.cardBg }}
         >
-          <p className="text-xs font-medium" style={{ color: theme.muted }}>
+          <p className="text-[10px] font-medium" style={{ color: theme.muted }}>
             Satış Fiyatı
           </p>
-          <p className="text-xl font-black" style={{ color: theme.accent }}>
+          <p className="text-base font-black leading-tight" style={{ color: theme.accent }}>
             {formatPrice(property.price, property.currency)}
           </p>
         </div>
         <div
-          className="rounded-2xl p-5 flex flex-col gap-1"
+          className="rounded-xl p-3 flex flex-col gap-0.5"
           style={{ backgroundColor: theme.cardBg }}
         >
-          <p className="text-xs font-medium" style={{ color: theme.muted }}>
-            İşlem Türü
-          </p>
-          <p className="text-xl font-black" style={{ color: theme.text }}>
-            {labelForTransaction(property.transaction_type)}
-          </p>
-        </div>
-        <div
-          className="rounded-2xl p-5 flex flex-col gap-2 col-span-2"
-          style={{ backgroundColor: `${theme.accent}1a` }}
-        >
-          <p className="text-xs font-medium" style={{ color: theme.muted }}>
-            Kuzey Kıbrıs Yatırım Avantajları
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {["Yüksek Kira Getirisi", "Düşük Vergi Oranları", "Yükselen Piyasa", "Turizm Potansiyeli", "AB Yakınlığı"].map((item) => (
-              <span
-                key={item}
-                className="text-xs font-medium px-3 py-1.5 rounded-full"
-                style={{ backgroundColor: `${theme.accent}22`, color: theme.accent }}
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div
-          className="rounded-2xl p-5 flex flex-col gap-1"
-          style={{ backgroundColor: theme.cardBg }}
-        >
-          <p className="text-xs font-medium" style={{ color: theme.muted }}>
+          <p className="text-[10px] font-medium" style={{ color: theme.muted }}>
             m² Fiyatı
           </p>
-          <p className="text-xl font-black" style={{ color: theme.text }}>
-            {pricePerSqm
-              ? formatPrice(pricePerSqm, property.currency)
-              : "—"}
+          <p className="text-base font-black leading-tight" style={{ color: theme.text }}>
+            {pricePerSqm ? formatPrice(pricePerSqm, property.currency) : "—"}
+          </p>
+        </div>
+        <div
+          className="rounded-xl p-3 flex flex-col gap-0.5"
+          style={{ backgroundColor: `${theme.accent}22`, borderLeft: `2px solid ${theme.accent}` }}
+        >
+          <p className="text-[10px] font-medium" style={{ color: theme.muted }}>
+            5 Yıl Toplam Getiri
+          </p>
+          <p className="text-base font-black leading-tight" style={{ color: theme.accent }}>
+            %{roiPercent}
           </p>
         </div>
       </div>
 
+      {/* Middle row: Rental income projection */}
       <div
-        className="rounded-xl p-4"
+        className="rounded-xl p-3 relative"
         style={{ backgroundColor: theme.cardBg }}
       >
-        <p className="text-xs leading-relaxed" style={{ color: theme.muted }}>
-          * Tahmini kira değerleri piyasa ortalamasına göre hesaplanmıştır. Gerçek getiri bölgeye ve
-          mülk özelliklerine göre değişiklik gösterebilir.
+        <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: theme.accent }}>
+          Kira Geliri Projeksiyonu (%7.5 ortalama)
         </p>
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <p className="text-[9px] font-medium mb-0.5" style={{ color: theme.muted }}>Aylık Kira</p>
+            <p className="text-sm font-black" style={{ color: theme.text }}>
+              {formatPrice(monthlyRent, property.currency)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[9px] font-medium mb-0.5" style={{ color: theme.muted }}>Yıllık Kira</p>
+            <p className="text-sm font-black" style={{ color: theme.text }}>
+              {formatPrice(annualRent, property.currency)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[9px] font-medium mb-0.5" style={{ color: theme.muted }}>5 Yıllık Kira</p>
+            <p className="text-sm font-black" style={{ color: theme.text }}>
+              {formatPrice(annualRent * 5, property.currency)}
+            </p>
+          </div>
+        </div>
       </div>
 
+      {/* Value appreciation */}
+      <div
+        className="rounded-xl p-3 relative"
+        style={{ backgroundColor: theme.cardBg }}
+      >
+        <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: theme.accent }}>
+          Değer Artışı Projeksiyonu (%8.5 yıllık ortalama)
+        </p>
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <p className="text-[9px] font-medium mb-0.5" style={{ color: theme.muted }}>Bugün</p>
+            <p className="text-sm font-black" style={{ color: theme.text }}>
+              {formatPrice(property.price, property.currency)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[9px] font-medium mb-0.5" style={{ color: theme.muted }}>5 Yıl Sonra</p>
+            <p className="text-sm font-black" style={{ color: theme.accent }}>
+              {formatPrice(Math.round(property.price + fiveYearAppreciation), property.currency)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[9px] font-medium mb-0.5" style={{ color: theme.muted }}>Artış</p>
+            <p className="text-sm font-black" style={{ color: theme.accent }}>
+              +{formatPrice(fiveYearAppreciation, property.currency)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom: advantages + disclaimer */}
+      <div className="relative flex items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-1.5 flex-1">
+          {["Yüksek Kira Getirisi", "Düşük Vergi", "Yükselen Piyasa", "Turizm Potansiyeli"].map((item) => (
+            <span
+              key={item}
+              className="text-[9px] font-medium px-2 py-0.5 rounded-full"
+              style={{ backgroundColor: `${theme.accent}22`, color: theme.accent }}
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+      <p className="text-[8px] relative" style={{ color: theme.muted }}>
+        * Projeksiyonlar Kuzey Kıbrıs gayrimenkul pazar ortalamalarına dayanmaktadır ve gelecekteki getiri garantisi değildir.
+      </p>
+
       {note && (
-        <p className="text-xs text-right" style={{ color: theme.muted }}>
+        <p className="text-[10px] text-right relative" style={{ color: theme.muted }}>
           {note}
         </p>
       )}
@@ -1128,6 +1342,7 @@ function SlideRenderer({
   note,
   photoIndex,
   bannerText,
+  customDescription,
 }: {
   property: PropertyForPresentation;
   slideType: SlideType;
@@ -1135,6 +1350,7 @@ function SlideRenderer({
   note?: string;
   photoIndex?: number;
   bannerText?: string;
+  customDescription?: string;
 }) {
   switch (slideType) {
     case "cover":
@@ -1148,7 +1364,7 @@ function SlideRenderer({
     case "features":
       return <FeaturesSlide property={property} theme={theme} note={note} />;
     case "description":
-      return <DescriptionSlide property={property} theme={theme} note={note} />;
+      return <DescriptionSlide property={property} theme={theme} note={note} customDescription={customDescription} />;
     case "location":
       return <LocationSlide property={property} theme={theme} note={note} />;
     case "why_cyprus":
@@ -1504,6 +1720,7 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
 
   // Photo banners: keyed by "photo-{photoIndex}"
   const [photoBanners, setPhotoBanners] = useState<Record<string, string>>({});
+  const [customDescriptions, setCustomDescriptions] = useState<Record<string, string>>({});
 
   // UI state
   const [fullscreen, setFullscreen] = useState(false);
@@ -2097,6 +2314,34 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                   )}
                 </div>
               )}
+
+              {/* Custom description — only when description slide is enabled */}
+              {enabledSlides.has("description") && activeProperty && (
+                <div className="flex flex-col gap-1.5 w-full">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Açıklama Metni (opsiyonel)
+                  </p>
+                  <textarea
+                    value={customDescriptions[activeProperty.id] ?? ""}
+                    onChange={(e) =>
+                      setCustomDescriptions((prev) => ({
+                        ...prev,
+                        [activeProperty.id]: e.target.value,
+                      }))
+                    }
+                    placeholder={
+                      activeProperty.description
+                        ? "Otomatik açıklamanın yerine özel metin yazın..."
+                        : "Bu mülk için özel bir açıklama yazın..."
+                    }
+                    rows={3}
+                    className="w-full max-w-2xl rounded-md border border-input bg-transparent px-3 py-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-y"
+                  />
+                  <p className="text-[10px] text-muted-foreground">
+                    Boş bırakılırsa mülk veritabanındaki açıklama kullanılır.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -2132,6 +2377,11 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                   bannerText={
                     currentSlide.type === "photo" && currentSlide.photoIndex !== undefined
                       ? photoBanners[`photo-${currentSlide.photoIndex}`]
+                      : undefined
+                  }
+                  customDescription={
+                    currentSlide.type === "description"
+                      ? customDescriptions[activeProperty.id]
                       : undefined
                   }
                 />
