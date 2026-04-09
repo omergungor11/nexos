@@ -1497,8 +1497,8 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
   );
   const [selectedPhotoIndices, setSelectedPhotoIndices] = useState<Set<number>>(new Set());
 
-  // Slide ordering (drag-and-drop)
-  const [slideOrder, setSlideOrder] = useState<SlideType[]>(
+  // Slide ordering (drag-and-drop) — stores unique IDs, photo slides use "photo-{idx}"
+  const [slideOrder, setSlideOrder] = useState<string[]>(
     SLIDE_DEFINITIONS.map((s) => s.type)
   );
 
@@ -1536,37 +1536,52 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
 
   const activeProperty = selectedProperties[propertyIndex] ?? null;
 
-  // Expand "photo" slides: one entry per selected photo index, respecting slideOrder
-  const activeSlides = useMemo(() => {
-    // Build a lookup from type to SlideDefinition
-    const defByType = new Map(SLIDE_DEFINITIONS.map((s) => [s.type, s]));
-    // Use slideOrder to determine iteration order; fall back for any unknown types
-    const orderedDefs = slideOrder
-      .map((t) => defByType.get(t))
-      .filter((s): s is SlideDefinition => s !== undefined);
+  // Build the full list of slide items with unique IDs, then sync slideOrder
+  type SlideItem = SlideDefinition & { id: string; photoIndex?: number };
 
-    const result: (SlideDefinition & { photoIndex?: number })[] = [];
-    for (const s of orderedDefs) {
-      if (!enabledSlides.has(s.type)) continue;
+  const allSlideItems = useMemo<SlideItem[]>(() => {
+    const items: SlideItem[] = [];
+    for (const s of SLIDE_DEFINITIONS) {
       if (s.type === "photo") {
         const indices = Array.from(selectedPhotoIndices).sort((a, b) => a - b);
-        if (indices.length === 0 && activeProperty) {
-          // Default: show first 3 images if none selected
-          const count = Math.min(3, activeProperty.images.length);
-          for (let i = 0; i < count; i++) {
-            result.push({ ...s, label: `Fotoğraf ${i + 1}`, photoIndex: i });
-          }
-        } else {
-          for (const idx of indices) {
-            result.push({ ...s, label: `Fotoğraf ${idx + 1}`, photoIndex: idx });
-          }
+        const effectiveIndices =
+          indices.length === 0 && activeProperty
+            ? Array.from({ length: Math.min(3, activeProperty.images.length) }, (_, i) => i)
+            : indices;
+        for (const idx of effectiveIndices) {
+          items.push({
+            ...s,
+            id: `photo-${idx}`,
+            label: `Fotoğraf ${idx + 1}`,
+            photoIndex: idx,
+          });
         }
       } else {
-        result.push(s);
+        items.push({ ...s, id: s.type });
       }
     }
-    return result;
-  }, [enabledSlides, selectedPhotoIndices, activeProperty, slideOrder]);
+    return items;
+  }, [selectedPhotoIndices, activeProperty]);
+
+  // Sync slideOrder with allSlideItems: remove missing, append new
+  useEffect(() => {
+    setSlideOrder((prev) => {
+      const allIds = new Set(allSlideItems.map((s) => s.id));
+      const filtered = prev.filter((id) => allIds.has(id));
+      const missing = allSlideItems
+        .filter((s) => !prev.includes(s.id))
+        .map((s) => s.id);
+      return [...filtered, ...missing];
+    });
+  }, [allSlideItems]);
+
+  // activeSlides: ordered by slideOrder, filtered by enabledSlides
+  const activeSlides = useMemo(() => {
+    const itemById = new Map(allSlideItems.map((s) => [s.id, s]));
+    return slideOrder
+      .map((id) => itemById.get(id))
+      .filter((s): s is SlideItem => s !== undefined && enabledSlides.has(s.type));
+  }, [slideOrder, allSlideItems, enabledSlides]);
 
   const totalSlides = activeSlides.length;
   const currentSlide = activeSlides[slideIndex];
@@ -1714,8 +1729,8 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     setSlideOrder((prev) => {
-      const oldIndex = prev.indexOf(active.id as SlideType);
-      const newIndex = prev.indexOf(over.id as SlideType);
+      const oldIndex = prev.indexOf(String(active.id));
+      const newIndex = prev.indexOf(String(over.id));
       if (oldIndex === -1 || newIndex === -1) return prev;
       return arrayMove(prev, oldIndex, newIndex);
     });
@@ -1862,14 +1877,14 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                 onDragEnd={handleTabDragEnd}
               >
                 <SortableContext
-                  items={slideOrder}
+                  items={activeSlides.map((s) => s.id)}
                   strategy={horizontalListSortingStrategy}
                 >
                   <div className="hidden lg:flex items-center gap-0.5 flex-wrap">
                     {activeSlides.map((s, i) => (
                       <SortableTab
-                        key={`${s.type}-${s.photoIndex ?? 0}`}
-                        id={s.type}
+                        key={s.id}
+                        id={s.id}
                         label={s.label}
                         isActive={i === slideIndex}
                         onClick={() => setSlideIndex(i)}
@@ -2227,14 +2242,14 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
             onDragEnd={handleTabDragEnd}
           >
             <SortableContext
-              items={slideOrder}
+              items={activeSlides.map((s) => s.id)}
               strategy={horizontalListSortingStrategy}
             >
               <div className="flex lg:hidden items-center justify-center gap-0.5 pt-2 pb-1 flex-wrap">
                 {activeSlides.map((s, i) => (
                   <SortableTab
-                    key={`${s.type}-${s.photoIndex ?? 0}`}
-                    id={s.type}
+                    key={s.id}
+                    id={s.id}
                     label={s.label}
                     isActive={i === slideIndex}
                     onClick={() => setSlideIndex(i)}
