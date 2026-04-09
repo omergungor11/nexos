@@ -3,6 +3,21 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  horizontalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   ChevronLeft,
   ChevronRight,
   Download,
@@ -79,6 +94,7 @@ type SlideType =
   | "features"
   | "description"
   | "location"
+  | "why_cyprus"
   | "investment"
   | "contact";
 
@@ -102,6 +118,7 @@ interface SlideProps {
   theme: ThemeColors;
   note?: string;
   photoIndex?: number;
+  bannerText?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -161,6 +178,7 @@ const SLIDE_DEFINITIONS: SlideDefinition[] = [
   { type: "features", label: "Özellikler" },
   { type: "description", label: "Açıklama" },
   { type: "location", label: "Konum" },
+  { type: "why_cyprus", label: "Neden Kıbrıs?" },
   { type: "investment", label: "Yatırım" },
   { type: "contact", label: "İletişim" },
 ];
@@ -423,7 +441,7 @@ function GallerySlide({ property, theme, note }: SlideProps) {
 }
 
 /** Slide — Full Page Photo */
-function PhotoSlide({ property, theme, note, photoIndex = 0 }: SlideProps) {
+function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: SlideProps) {
   const img = property.images[photoIndex];
 
   return (
@@ -450,6 +468,21 @@ function PhotoSlide({ property, theme, note, photoIndex = 0 }: SlideProps) {
       ) : (
         <div className="flex-1 flex items-center justify-center">
           <Building2 className="size-16" style={{ color: `${theme.muted}44` }} />
+        </div>
+      )}
+
+      {/* Custom banner text — shown above the price bar */}
+      {bannerText && (
+        <div
+          className="absolute left-0 right-0 z-10 flex items-center justify-center px-8 py-2"
+          style={{
+            bottom: "72px",
+            backgroundColor: `${theme.bg}cc`,
+          }}
+        >
+          <p className="text-sm font-medium text-center" style={{ color: theme.text }}>
+            {bannerText}
+          </p>
         </div>
       )}
 
@@ -820,6 +853,98 @@ function LocationSlide({ property, theme, note }: SlideProps) {
   );
 }
 
+/** Slide — Why Buy Real Estate in Cyprus */
+function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) {
+  const reasons = [
+    {
+      icon: Sparkles,
+      title: "Yüksek Yatırım Getirisi",
+      text: "Yıllık %6-10 kira getirisi, %15-25 sermaye değer artışı. Akdeniz'in en kârlı gayrimenkul pazarlarından biri.",
+    },
+    {
+      icon: Globe,
+      title: "Avantajlı Vergi Sistemi",
+      text: "Düşük emlak vergileri, KDV muafiyeti seçenekleri ve çifte vergilendirme anlaşmaları ile yatırımcı dostu politikalar.",
+    },
+    {
+      icon: Home,
+      title: "Yabancıya Mülk Satışı",
+      text: "Yabancılar için kolaylaştırılmış mülk edinme süreci. Türk, İngiliz, Rus ve AB vatandaşları için açık pazar.",
+    },
+    {
+      icon: MapPin,
+      title: "Stratejik Konum",
+      text: "Avrupa, Ortadoğu ve Afrika'nın kesişiminde. Türkiye'ye 45 dakika, AB ülkelerine kolay erişim.",
+    },
+    {
+      icon: CalendarDays,
+      title: "365 Gün Turizm Potansiyeli",
+      text: "Yıllık 4 milyon turist, yüksek doluluk oranları. Kısa dönem kiralama ile ek gelir fırsatı.",
+    },
+    {
+      icon: Building2,
+      title: "Gelişen Altyapı",
+      text: "Yeni havalimanı, modern yollar, uluslararası üniversiteler ve marinalar. Hızlı gelişen modern şehirler.",
+    },
+  ];
+
+  return (
+    <div
+      className="flex flex-col h-full px-8 py-6 gap-4"
+      style={{ backgroundColor: theme.bg }}
+    >
+      <div>
+        <p
+          className="text-xs font-bold uppercase tracking-widest mb-0.5"
+          style={{ color: theme.accent }}
+        >
+          Yatırım Fırsatı
+        </p>
+        <h2 className="text-2xl font-black" style={{ color: theme.text }}>
+          Neden Kıbrıs&apos;ta Gayrimenkul Satın Almalısınız?
+        </h2>
+        <p className="text-xs mt-1" style={{ color: theme.muted }}>
+          Akdeniz&apos;in yükselen yıldızı — yatırımcılar için 6 önemli sebep
+        </p>
+      </div>
+
+      <div className="flex-1 grid grid-cols-2 gap-3 min-h-0">
+        {reasons.map((r, i) => {
+          const Icon = r.icon;
+          return (
+            <div
+              key={i}
+              className="rounded-xl px-4 py-3 flex gap-3 items-start"
+              style={{ backgroundColor: theme.cardBg }}
+            >
+              <div
+                className="size-9 rounded-lg shrink-0 flex items-center justify-center"
+                style={{ backgroundColor: `${theme.accent}22` }}
+              >
+                <Icon className="size-4" style={{ color: theme.accent }} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-black leading-tight mb-1" style={{ color: theme.text }}>
+                  {r.title}
+                </p>
+                <p className="text-[11px] leading-snug" style={{ color: `${theme.text}99` }}>
+                  {r.text}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {note && (
+        <p className="text-xs text-right" style={{ color: theme.muted }}>
+          {note}
+        </p>
+      )}
+    </div>
+  );
+}
+
 /** Slide 7 — Investment */
 function InvestmentSlide({ property, theme, note }: SlideProps) {
   const pricePerSqm =
@@ -1002,12 +1127,14 @@ function SlideRenderer({
   theme,
   note,
   photoIndex,
+  bannerText,
 }: {
   property: PropertyForPresentation;
   slideType: SlideType;
   theme: ThemeColors;
   note?: string;
   photoIndex?: number;
+  bannerText?: string;
 }) {
   switch (slideType) {
     case "cover":
@@ -1015,7 +1142,7 @@ function SlideRenderer({
     case "gallery":
       return <GallerySlide property={property} theme={theme} note={note} />;
     case "photo":
-      return <PhotoSlide property={property} theme={theme} note={note} photoIndex={photoIndex} />;
+      return <PhotoSlide property={property} theme={theme} note={note} photoIndex={photoIndex} bannerText={bannerText} />;
     case "details":
       return <DetailsSlide property={property} theme={theme} note={note} />;
     case "features":
@@ -1024,6 +1151,8 @@ function SlideRenderer({
       return <DescriptionSlide property={property} theme={theme} note={note} />;
     case "location":
       return <LocationSlide property={property} theme={theme} note={note} />;
+    case "why_cyprus":
+      return <WhyCyprusSlide theme={theme} note={note} />;
     case "investment":
       return <InvestmentSlide property={property} theme={theme} note={note} />;
     case "contact":
@@ -1223,6 +1352,56 @@ function buildPrintHTML(
 
 type TransitionPhase = "idle" | "exit" | "enter";
 
+// ---------------------------------------------------------------------------
+// Sortable Tab Item (for drag-and-drop slide reordering)
+// ---------------------------------------------------------------------------
+
+function SortableTab({
+  id,
+  label,
+  isActive,
+  onClick,
+}: {
+  id: string;
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: isDragging ? "grabbing" : "grab",
+    touchAction: "none",
+  };
+
+  return (
+    <button
+      ref={setNodeRef}
+      style={style}
+      onClick={onClick}
+      {...attributes}
+      {...listeners}
+      className={`text-xs px-2 py-0.5 rounded-md transition-colors select-none ${
+        isActive
+          ? "bg-primary text-primary-foreground font-medium"
+          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
 function useSlideTransition(
   transition: TransitionType,
   onSlideChange: (direction: "next" | "prev") => void
@@ -1318,6 +1497,14 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
   );
   const [selectedPhotoIndices, setSelectedPhotoIndices] = useState<Set<number>>(new Set());
 
+  // Slide ordering (drag-and-drop)
+  const [slideOrder, setSlideOrder] = useState<SlideType[]>(
+    SLIDE_DEFINITIONS.map((s) => s.type)
+  );
+
+  // Photo banners: keyed by "photo-{photoIndex}"
+  const [photoBanners, setPhotoBanners] = useState<Record<string, string>>({});
+
   // UI state
   const [fullscreen, setFullscreen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -1349,10 +1536,17 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
 
   const activeProperty = selectedProperties[propertyIndex] ?? null;
 
-  // Expand "photo" slides: one entry per selected photo index
+  // Expand "photo" slides: one entry per selected photo index, respecting slideOrder
   const activeSlides = useMemo(() => {
+    // Build a lookup from type to SlideDefinition
+    const defByType = new Map(SLIDE_DEFINITIONS.map((s) => [s.type, s]));
+    // Use slideOrder to determine iteration order; fall back for any unknown types
+    const orderedDefs = slideOrder
+      .map((t) => defByType.get(t))
+      .filter((s): s is SlideDefinition => s !== undefined);
+
     const result: (SlideDefinition & { photoIndex?: number })[] = [];
-    for (const s of SLIDE_DEFINITIONS) {
+    for (const s of orderedDefs) {
       if (!enabledSlides.has(s.type)) continue;
       if (s.type === "photo") {
         const indices = Array.from(selectedPhotoIndices).sort((a, b) => a - b);
@@ -1372,7 +1566,7 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
       }
     }
     return result;
-  }, [enabledSlides, selectedPhotoIndices, activeProperty]);
+  }, [enabledSlides, selectedPhotoIndices, activeProperty, slideOrder]);
 
   const totalSlides = activeSlides.length;
   const currentSlide = activeSlides[slideIndex];
@@ -1511,6 +1705,22 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
     setNoteInput("");
   }
 
+  // DnD sensors for slide tab reordering
+  const dndSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
+
+  function handleTabDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setSlideOrder((prev) => {
+      const oldIndex = prev.indexOf(active.id as SlideType);
+      const newIndex = prev.indexOf(over.id as SlideType);
+      if (oldIndex === -1 || newIndex === -1) return prev;
+      return arrayMove(prev, oldIndex, newIndex);
+    });
+  }
+
   // Viewer container classes
   const viewerWrapClass = fullscreen
     ? "fixed inset-0 z-50 flex flex-col bg-[#0f172a]"
@@ -1645,22 +1855,29 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                 {activeProperty.title}
               </span>
 
-              {/* Slide tabs — hidden on small screens */}
-              <div className="hidden lg:flex items-center gap-0.5 flex-wrap">
-                {activeSlides.map((s, i) => (
-                  <button
-                    key={s.type}
-                    onClick={() => setSlideIndex(i)}
-                    className={`text-xs px-2 py-0.5 rounded-md transition-colors ${
-                      i === slideIndex
-                        ? "bg-primary text-primary-foreground font-medium"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
+              {/* Slide tabs — hidden on small screens, drag-and-drop reorderable */}
+              <DndContext
+                sensors={dndSensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleTabDragEnd}
+              >
+                <SortableContext
+                  items={slideOrder}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <div className="hidden lg:flex items-center gap-0.5 flex-wrap">
+                    {activeSlides.map((s, i) => (
+                      <SortableTab
+                        key={`${s.type}-${s.photoIndex ?? 0}`}
+                        id={s.type}
+                        label={s.label}
+                        isActive={i === slideIndex}
+                        onClick={() => setSlideIndex(i)}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             </div>
 
             {/* Right: controls */}
@@ -1829,6 +2046,40 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                   <p className="text-[10px] text-muted-foreground">
                     Sunumda gösterilecek fotoğrafları seçin. Seçim yapılmazsa ilk 3 fotoğraf gösterilir.
                   </p>
+
+                  {/* Banner text inputs for selected photos */}
+                  {selectedPhotoIndices.size > 0 && (
+                    <div className="mt-2 space-y-1.5 max-w-md">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Fotoğraf Banner Metni (opsiyonel)
+                      </p>
+                      {Array.from(selectedPhotoIndices).sort((a, b) => a - b).map((idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <div className="relative size-8 shrink-0 rounded overflow-hidden border">
+                            <Image
+                              src={activeProperty.images[idx]}
+                              alt=""
+                              fill
+                              className="object-cover"
+                              sizes="32px"
+                              unoptimized
+                            />
+                          </div>
+                          <Input
+                            value={photoBanners[`photo-${idx}`] ?? ""}
+                            onChange={(e) =>
+                              setPhotoBanners((prev) => ({
+                                ...prev,
+                                [`photo-${idx}`]: e.target.value,
+                              }))
+                            }
+                            placeholder={`Fotoğraf ${idx + 1} için banner (ör: Deniz Manzarası)`}
+                            className="h-7 text-xs"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1863,6 +2114,11 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                   theme={themeColors}
                   note={currentNote}
                   photoIndex={currentSlide.photoIndex}
+                  bannerText={
+                    currentSlide.type === "photo" && currentSlide.photoIndex !== undefined
+                      ? photoBanners[`photo-${currentSlide.photoIndex}`]
+                      : undefined
+                  }
                 />
               </div>
 
@@ -1964,22 +2220,29 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
             </div>
           )}
 
-          {/* Mobile slide tabs */}
-          <div className="flex lg:hidden items-center justify-center gap-0.5 pt-2 pb-1 flex-wrap">
-            {activeSlides.map((s, i) => (
-              <button
-                key={s.type}
-                onClick={() => setSlideIndex(i)}
-                className={`text-xs px-2 py-0.5 rounded-md transition-colors ${
-                  i === slideIndex
-                    ? "bg-primary text-primary-foreground font-medium"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
+          {/* Mobile slide tabs — drag-and-drop reorderable */}
+          <DndContext
+            sensors={dndSensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleTabDragEnd}
+          >
+            <SortableContext
+              items={slideOrder}
+              strategy={horizontalListSortingStrategy}
+            >
+              <div className="flex lg:hidden items-center justify-center gap-0.5 pt-2 pb-1 flex-wrap">
+                {activeSlides.map((s, i) => (
+                  <SortableTab
+                    key={`${s.type}-${s.photoIndex ?? 0}`}
+                    id={s.type}
+                    label={s.label}
+                    isActive={i === slideIndex}
+                    onClick={() => setSlideIndex(i)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
 
           {/* Export buttons */}
           {!fullscreen && (

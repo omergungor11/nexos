@@ -31,8 +31,6 @@ import {
   TRANSACTION_TYPE_LABELS,
 } from "@/lib/constants";
 
-import { AdminMapPreviewWrapper } from "./admin-map-preview-wrapper";
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -89,21 +87,6 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
   // Stats
   const onMapCount = rows.filter((r) => r.show_on_map).length;
   const hasCoords = rows.filter((r) => resolveCoords(r) != null).length;
-
-  // Map markers (show_on_map + has resolved coordinates)
-  const mapMarkers = useMemo(
-    () =>
-      rows
-        .filter((r) => r.show_on_map)
-        .map((r) => {
-          const coords = resolveCoords(r);
-          if (!coords) return null;
-          return { id: r.id, lat: coords.lat, lng: coords.lng, title: r.title };
-        })
-        .filter((m): m is NonNullable<typeof m> => m != null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rows]
-  );
 
   // Filtered rows
   const filtered = useMemo(() => {
@@ -221,9 +204,6 @@ export function MapManagementTable({ initialData }: MapManagementTableProps) {
           {rows.length} toplam ilan
         </Badge>
       </div>
-
-      {/* Map preview */}
-      <AdminMapPreviewWrapper properties={mapMarkers} />
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
