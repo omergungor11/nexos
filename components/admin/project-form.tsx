@@ -7,7 +7,6 @@ import Image from "next/image";
 import {
   ImageIcon,
   Info,
-  Building2,
   MapPin,
   Banknote,
   Film,
@@ -76,8 +75,6 @@ type FormState = {
   title: string;
   short_description: string;
   description: string;
-  developer: string;
-  developer_logo: string;
   completion_date: string;
   location: string;
   city_id: string;
@@ -141,7 +138,6 @@ const PREDEFINED_FEATURES = [
 
 const TABS = [
   { value: "temel", label: "Temel Bilgiler", icon: Info },
-  { value: "gelistirici", label: "Geliştirici", icon: Building2 },
   { value: "konum", label: "Konum", icon: MapPin },
   { value: "fiyat", label: "Fiyat & Birimler", icon: Banknote },
   { value: "medya", label: "Medya", icon: Film },
@@ -259,7 +255,7 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
   const [activeTab, setActiveTab] = useState("temel");
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
-  const [mediaPickerTarget, setMediaPickerTarget] = useState<"cover" | "logo" | "gallery">("cover");
+  const [mediaPickerTarget, setMediaPickerTarget] = useState<"cover" | "gallery">("cover");
   const [districts, setDistricts] = useState<DistrictOption[]>([]);
 
   // Gallery images as array
@@ -278,8 +274,6 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
     title: project?.title ?? "",
     short_description: project?.short_description ?? "",
     description: project?.description ?? "",
-    developer: project?.developer ?? "",
-    developer_logo: project?.developer_logo ?? "",
     completion_date: project?.completion_date ?? "",
     location: project?.location ?? "",
     city_id: project?.city_id?.toString() ?? "",
@@ -368,8 +362,6 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
       title: form.title.trim(),
       short_description: form.short_description.trim() || undefined,
       description: form.description.trim() || undefined,
-      developer: form.developer.trim() || undefined,
-      developer_logo: form.developer_logo.trim() || undefined,
       completion_date: form.completion_date.trim() || undefined,
       location: form.location.trim() || undefined,
       city_id: form.city_id ? Number(form.city_id) : undefined,
@@ -410,7 +402,7 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
   }
 
   // Media picker
-  function openMediaPicker(target: "cover" | "logo" | "gallery") {
+  function openMediaPicker(target: "cover" | "gallery") {
     setMediaPickerTarget(target);
     setMediaPickerOpen(true);
   }
@@ -418,8 +410,6 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
   const handleMediaSelect = useCallback((url: string) => {
     if (mediaPickerTarget === "cover") {
       setForm((prev) => ({ ...prev, cover_image: url }));
-    } else if (mediaPickerTarget === "logo") {
-      setForm((prev) => ({ ...prev, developer_logo: url }));
     } else {
       setGalleryImages((prev) => (prev.includes(url) ? prev : [...prev, url]));
     }
@@ -516,69 +506,16 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
               className={textareaClass}
             />
           </Field>
-        </TabsContent>
 
-        {/* ================================================================ */}
-        {/* TAB: Geliştirici                                                 */}
-        {/* ================================================================ */}
-        <TabsContent value="gelistirici" className="mt-6 space-y-5">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <Field label="Geliştirici Firma" htmlFor="developer">
-              <Input
-                id="developer"
-                name="developer"
-                value={form.developer}
-                onChange={handleChange}
-                placeholder="ABC İnşaat"
-              />
-            </Field>
-
-            <Field label="Teslim Tarihi" htmlFor="completion_date">
-              <Input
-                id="completion_date"
-                name="completion_date"
-                value={form.completion_date}
-                onChange={handleChange}
-                placeholder="2026 Q3"
-              />
-            </Field>
-          </div>
-
-          {/* Developer logo */}
-          <div className="space-y-1.5">
-            <label htmlFor="developer_logo" className="text-sm font-medium leading-none">
-              Geliştirici Logosu
-            </label>
-            <div className="flex gap-2">
-              <Input
-                id="developer_logo"
-                name="developer_logo"
-                type="url"
-                value={form.developer_logo}
-                onChange={handleChange}
-                placeholder="https://..."
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => openMediaPicker("logo")}
-                className="gap-1.5 shrink-0"
-              >
-                <ImageIcon className="size-4" />
-                Galeriden Seç
-              </Button>
-            </div>
-            {form.developer_logo && /^https?:\/\/.+/.test(form.developer_logo) && (
-              <div className="mt-2">
-                <img
-                  src={form.developer_logo}
-                  alt="Logo önizleme"
-                  className="h-12 object-contain rounded border bg-white p-1.5"
-                />
-              </div>
-            )}
-          </div>
+          <Field label="Teslim Tarihi" htmlFor="completion_date" hint="Örn. 2026 Q3">
+            <Input
+              id="completion_date"
+              name="completion_date"
+              value={form.completion_date}
+              onChange={handleChange}
+              placeholder="2026 Q3"
+            />
+          </Field>
         </TabsContent>
 
         {/* ================================================================ */}
@@ -1011,13 +948,7 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
         open={mediaPickerOpen}
         onClose={() => setMediaPickerOpen(false)}
         onSelect={handleMediaSelect}
-        currentUrl={
-          mediaPickerTarget === "cover"
-            ? form.cover_image
-            : mediaPickerTarget === "logo"
-              ? form.developer_logo
-              : undefined
-        }
+        currentUrl={mediaPickerTarget === "cover" ? form.cover_image : undefined}
       />
     </form>
   );

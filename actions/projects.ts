@@ -17,8 +17,6 @@ export type ProjectInput = {
   location?: string;
   city_id?: number;
   district_id?: number;
-  developer?: string;
-  developer_logo?: string;
   completion_date?: string;
   total_units?: number;
   starting_price?: number;
@@ -148,8 +146,6 @@ export async function createProject(
     location: data.location ?? null,
     city_id: data.city_id ?? null,
     district_id: data.district_id ?? null,
-    developer: data.developer ?? null,
-    developer_logo: data.developer_logo ?? null,
     completion_date: data.completion_date ?? null,
     total_units: data.total_units ?? null,
     starting_price: data.starting_price ?? null,
@@ -205,8 +201,6 @@ export async function updateProject(
   if (data.location !== undefined) payload.location = data.location;
   if (data.city_id !== undefined) payload.city_id = data.city_id;
   if (data.district_id !== undefined) payload.district_id = data.district_id;
-  if (data.developer !== undefined) payload.developer = data.developer;
-  if (data.developer_logo !== undefined) payload.developer_logo = data.developer_logo;
   if (data.completion_date !== undefined) payload.completion_date = data.completion_date;
   if (data.total_units !== undefined) payload.total_units = data.total_units;
   if (data.starting_price !== undefined) payload.starting_price = data.starting_price;

@@ -7,7 +7,6 @@ import {
   MapPin,
   Building2,
   Calendar,
-  Users,
   Phone,
   Mail,
   CheckCircle2,
@@ -71,8 +70,6 @@ export default async function ProjectDetailPage({ params }: Props) {
   const galleryImages = (p.gallery_images as string[] | null) ?? [];
   const features = (p.features as string[] | null) ?? [];
   const status = (p.status as ProjectStatus) ?? "selling";
-  const developer = p.developer as string | null;
-  const developerLogo = p.developer_logo as string | null;
   const completionDate = p.completion_date as string | null;
   const totalUnits = p.total_units as number | null;
   const startingPrice = p.starting_price as number | null;
@@ -120,11 +117,6 @@ export default async function ProjectDetailPage({ params }: Props) {
               <Badge className={`text-sm px-3 py-1 ${STATUS_CLASSES[status]}`}>
                 {STATUS_LABELS[status]}
               </Badge>
-              {developer && (
-                <span className="rounded-full bg-white/20 px-4 py-1.5 text-sm text-white backdrop-blur-sm">
-                  {developer}
-                </span>
-              )}
             </div>
             <h1 className="text-3xl font-bold text-white sm:text-5xl lg:text-6xl">
               {title}
@@ -151,7 +143,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           {[
             { icon: Building2, label: "Toplam Ünite", value: totalUnits ? `${totalUnits} Ünite` : "—" },
             { icon: Home, label: "Başlangıç Fiyatı", value: formatPrice(startingPrice, currency) },
-            { icon: Users, label: "Geliştirici", value: developer ?? "—" },
+            { icon: MapPin, label: "Konum", value: city?.name ?? "—" },
             { icon: Calendar, label: "Teslim Tarihi", value: completionDate ?? "—" },
           ].map((stat) => (
             <div key={stat.label} className="flex items-center gap-3 px-4 py-5 sm:px-6">
@@ -171,22 +163,13 @@ export default async function ProjectDetailPage({ params }: Props) {
       {(description || shortDesc) && (
         <section className="container mx-auto px-4 py-16">
           <div className="mx-auto max-w-4xl">
-            <div className="flex items-start gap-6">
-              {developerLogo && (
-                <div className="hidden shrink-0 sm:block">
-                  <Image src={developerLogo} alt={developer ?? ""} width={80} height={80} className="rounded-xl" />
-                </div>
-              )}
-              <div>
-                <h2 className="text-2xl font-bold sm:text-3xl">Proje Hakkında</h2>
-                {shortDesc && <p className="mt-3 text-lg text-muted-foreground">{shortDesc}</p>}
-                {description && (
-                  <div className="mt-6 whitespace-pre-line leading-relaxed text-muted-foreground">
-                    {description}
-                  </div>
-                )}
+            <h2 className="text-2xl font-bold sm:text-3xl">Proje Hakkında</h2>
+            {shortDesc && <p className="mt-3 text-lg text-muted-foreground">{shortDesc}</p>}
+            {description && (
+              <div className="mt-6 whitespace-pre-line leading-relaxed text-muted-foreground">
+                {description}
               </div>
-            </div>
+            )}
           </div>
         </section>
       )}

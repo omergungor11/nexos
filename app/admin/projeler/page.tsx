@@ -15,7 +15,7 @@ export default async function AdminProjelerPage() {
     .from("projects")
     .select(
       `
-      id, title, slug, cover_image, developer,
+      id, title, slug, cover_image,
       starting_price, currency, total_units, status,
       is_featured, is_active, created_at,
       city:cities(name),

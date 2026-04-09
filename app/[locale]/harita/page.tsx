@@ -86,7 +86,7 @@ async function getMapProjects(): Promise<MapProject[]> {
 
   const { data, error } = await supabase
     .from("projects")
-    .select("id, slug, title, cover_image, starting_price, currency, developer, status, lat, lng, city:cities(name)")
+    .select("id, slug, title, cover_image, starting_price, currency, status, lat, lng, city:cities(name)")
     .eq("is_active", true)
     .not("lat", "is", null)
     .not("lng", "is", null);
@@ -105,7 +105,6 @@ async function getMapProjects(): Promise<MapProject[]> {
       cover_image: row.cover_image,
       starting_price: row.starting_price,
       currency: row.currency ?? "GBP",
-      developer: row.developer,
       status: row.status ?? "selling",
       lat: row.lat as number,
       lng: row.lng as number,

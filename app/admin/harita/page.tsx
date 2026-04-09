@@ -89,7 +89,7 @@ async function getMapPreviewProjects(): Promise<MapProject[]> {
   const { data, error } = await supabase
     .from("projects")
     .select(
-      "id, slug, title, cover_image, starting_price, currency, developer, status, lat, lng, city:cities(name)"
+      "id, slug, title, cover_image, starting_price, currency, status, lat, lng, city:cities(name)"
     )
     .eq("is_active", true)
     .not("lat", "is", null)
@@ -106,7 +106,6 @@ async function getMapPreviewProjects(): Promise<MapProject[]> {
       cover_image: row.cover_image,
       starting_price: row.starting_price,
       currency: row.currency ?? "GBP",
-      developer: row.developer,
       status: row.status ?? "selling",
       lat: row.lat as number,
       lng: row.lng as number,
@@ -137,7 +136,7 @@ export default async function AdminHaritaPage() {
       .from("projects")
       .select(
         `
-        id, title, slug, starting_price, currency, status, developer,
+        id, title, slug, starting_price, currency, status,
         is_active, lat, lng, cover_image,
         city:cities(name, lat, lng)
       `

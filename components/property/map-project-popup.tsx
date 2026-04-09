@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Building2 } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { formatPrice } from "@/lib/format";
 
 export interface MapProject {
@@ -10,7 +10,6 @@ export interface MapProject {
   cover_image: string | null;
   starting_price: number | null;
   currency: string;
-  developer: string | null;
   status: string;
   lat: number;
   lng: number;
@@ -70,10 +69,10 @@ export function MapProjectPopup({ project }: MapProjectPopupProps) {
           {project.title}
         </h3>
 
-        {project.developer && (
+        {project.city && (
           <div className="mt-1 flex items-center gap-1 text-[11px] text-gray-500">
-            <Building2 className="h-3 w-3" />
-            {project.developer}
+            <MapPin className="h-3 w-3" />
+            {project.city}
           </div>
         )}
 

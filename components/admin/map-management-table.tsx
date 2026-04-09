@@ -65,7 +65,6 @@ export type MapManagementProject = {
   starting_price: number | null;
   currency: string;
   status: string;
-  developer: string | null;
   is_active: boolean;
   lat: number | null;
   lng: number | null;

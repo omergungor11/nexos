@@ -228,11 +228,6 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
                                 {project.total_units} Ünite
                               </span>
                             )}
-                            {project.developer && (
-                              <span className="text-xs text-muted-foreground">
-                                {project.developer}
-                              </span>
-                            )}
                           </div>
                         </div>
                       </div>

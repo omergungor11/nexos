@@ -42,7 +42,6 @@ export type AdminProjectRow = {
   title: string;
   slug: string;
   cover_image: string | null;
-  developer: string | null;
   starting_price: number | null;
   currency: string;
   total_units: number | null;
@@ -199,7 +198,6 @@ export function ProjectDataTable({
             <tr>
               <th className={thClass}>Görsel</th>
               <th className={thClass}>Başlık</th>
-              <th className={thClass}>Geliştirici</th>
               <th className={thClass}>Konum</th>
               <th className={thClass}>Durum</th>
               <th className={thClass}>Fiyat</th>
@@ -253,11 +251,6 @@ export function ProjectDataTable({
                     >
                       {row.title}
                     </Link>
-                  </td>
-
-                  {/* Developer */}
-                  <td className="px-3 py-2 text-muted-foreground">
-                    {row.developer ?? "—"}
                   </td>
 
                   {/* Location */}
