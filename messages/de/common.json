@@ -13,9 +13,6 @@
     "team": "Unser Team",
     "about": "Über uns",
     "faq": "FAQ",
-    "propertyRequest": "Property Request",
-    "penthouse": "Penthouse",
-    "regions": "Regions",
     "contact": "Kontakt",
     "contactUs": "Kontaktieren Sie uns",
     "categories": "Kategorien",
@@ -47,7 +44,8 @@
     "noResults": "Keine Ergebnisse für \"{query}\" gefunden",
     "viewAll": "Alle Ergebnisse anzeigen",
     "searchAll": "Alle Inserate durchsuchen",
-    "searching": "Suche läuft..."
+    "searching": "Suche läuft...",
+    "dailyRental": "Tagesmiete"
   },
   "stats": {
     "activeListings": "Aktive Inserate",
@@ -139,7 +137,8 @@
     "shop": "Geschäft",
     "warehouse": "Lager",
     "sale": "Zum Verkauf",
-    "rent": "Zur Miete"
+    "rent": "Zur Miete",
+    "dailyRental": "Tagesmiete"
   },
   "propertyCategories": {
     "residential": "Wohnimmobilien",
@@ -170,7 +169,8 @@
     "workplace": "Geschäftslokal",
     "warehouse": "Lager",
     "business_transfer": "Geschäftsübernahme",
-    "office": "Büro"
+    "office": "Büro",
+    "penthouse": "Penthouse"
   },
   "sort": {
     "newest": "Neueste",
@@ -201,7 +201,11 @@
     "location": "Yenibogazici, Famagusta, Nordzypern",
     "rights": "Alle Rechte vorbehalten.",
     "privacy": "Datenschutzrichtlinie",
-    "terms": "Nutzungsbedingungen"
+    "terms": "Nutzungsbedingungen",
+    "dailyRental": "Tagesmiete",
+    "penthouse": "Penthouse",
+    "propertyRequest": "Immobilienanfrage",
+    "regions": "Regionen"
   },
   "cookie": {
     "message": "Diese Website verwendet Cookies, um Ihre Erfahrung zu verbessern.",
@@ -303,5 +307,75 @@
     "call": "Anrufen",
     "email": "E-Mail",
     "noMembers": "Noch keine Teammitglieder hinzugefügt."
+  },
+  "map": {
+    "title": "Karte",
+    "description": "Alle Inserate auf einer interaktiven Karte anzeigen. Immobilien nach Standort suchen."
+  },
+  "projects": {
+    "title": "Projekte",
+    "metaTitle": "Projekte | Nexos Investment",
+    "description": "Großprojekte in Nordzypern — Wohnkomplexe, Villenanlagen und Ferienanlagen.",
+    "breadcrumbHome": "Startseite",
+    "breadcrumbProjects": "Projekte",
+    "region": "Nordzypern",
+    "heading": "Unsere Projekte",
+    "heroDesc": "Großprojekte in den wertvollsten Lagen Nordzyperns. Von Wohnkomplexen bis zu Villenanlagen, von Ferienresorts bis zu Residenzen.",
+    "statusAll": "Alle",
+    "statusSelling": "Zum Verkauf",
+    "statusUnderConstruction": "Im Bau",
+    "statusCompleted": "Fertiggestellt",
+    "statusUpcoming": "Demnächst",
+    "startingPrice": "Startpreis",
+    "getPrice": "Preis anfragen",
+    "units": "{count} Einheiten",
+    "featured": "Empfohlen",
+    "noProjects": "Noch keine Projekte hinzugefügt.",
+    "noProjectsFiltered": "Keine Projekte in dieser Kategorie gefunden.",
+    "showAll": "Alle Projekte anzeigen",
+    "totalUnits": "Gesamteinheiten",
+    "location": "Standort",
+    "deliveryDate": "Liefertermin",
+    "aboutProject": "Über das Projekt",
+    "gallery": "Galerie",
+    "features": "Ausstattung",
+    "projectDetails": "Projekt ansehen",
+    "backToProjects": "Projekte"
+  },
+  "blog": {
+    "title": "Ratgeber",
+    "metaTitle": "Ratgeber",
+    "description": "Nordzypern Immobilienratgeber — Investitionstipps, Grundbuchinformationen und Immobilientrends.",
+    "subtitle": "Ratgeber und Investitionstipps aus der Immobilienwelt Nordzyperns",
+    "allCategories": "Alle",
+    "categoryPosts": "Beiträge in der Kategorie \"{name}\"",
+    "noPostsCategory": "In dieser Kategorie wurden noch keine Beiträge veröffentlicht.",
+    "noPosts": "Noch keine Ratgeberartikel veröffentlicht.",
+    "backToGuide": "Ratgeber"
+  },
+  "auth": {
+    "loginTitle": "Anmelden",
+    "loginDescription": "Melden Sie sich bei Ihrem Nexos Investment Konto an.",
+    "registerTitle": "Registrieren",
+    "registerDescription": "Erstellen Sie ein kostenloses Nexos Investment Konto. Speichern Sie Ihre Lieblingsinserate und kontaktieren Sie unsere Berater."
+  },
+  "propertyRequest": {
+    "metaTitle": "Immobilienanfrage | Nexos Investment",
+    "metaDescription": "Teilen Sie uns mit, wonach Sie suchen. Unsere Berater finden die besten Optionen für Sie.",
+    "heading": "Immobilienanfrage erstellen",
+    "description": "Teilen Sie uns die Merkmale der gesuchten Immobilie mit. Unsere Berater präsentieren Ihnen die passendsten Optionen aus unserem Portfolio.",
+    "howItWorks": "Wie funktioniert es?",
+    "howItWorksDesc": "Füllen Sie das Formular aus, unsere Berater werden passende Inserate identifizieren und Sie kontaktieren.",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "address": "Adresse",
+    "addressValue": "Yeniboğaziçi, Gazimağusa, Nordzypern",
+    "formTitle": "Beschreiben Sie die gesuchte Immobilie"
+  },
+  "agentDetail": {
+    "backToTeam": "Zurück zum Team",
+    "listings": "{name} — Inserate",
+    "listingCount": "({count} Inserate)",
+    "noListings": "Keine aktiven Inserate für diesen Berater."
   }
 }

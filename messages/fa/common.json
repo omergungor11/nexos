@@ -13,9 +13,6 @@
     "team": "تیم ما",
     "about": "درباره ما",
     "faq": "FAQ",
-    "propertyRequest": "Property Request",
-    "penthouse": "Penthouse",
-    "regions": "Regions",
     "contact": "تماس",
     "contactUs": "تماس با ما",
     "categories": "دسته‌بندی‌ها",
@@ -47,7 +44,8 @@
     "noResults": "نتیجه‌ای برای \"{query}\" یافت نشد",
     "viewAll": "مشاهده همه نتایج",
     "searchAll": "جستجوی تمام آگهی‌ها",
-    "searching": "در حال جستجو..."
+    "searching": "در حال جستجو...",
+    "dailyRental": "اجاره روزانه"
   },
   "stats": {
     "activeListings": "آگهی‌های فعال",
@@ -139,7 +137,8 @@
     "shop": "مغازه",
     "warehouse": "انبار",
     "sale": "فروشی",
-    "rent": "اجاره‌ای"
+    "rent": "اجاره‌ای",
+    "dailyRental": "اجاره روزانه"
   },
   "propertyCategories": {
     "residential": "مسکونی",
@@ -170,7 +169,8 @@
     "workplace": "محل کار",
     "warehouse": "انبار",
     "business_transfer": "واگذاری کسب‌وکار",
-    "office": "دفتر"
+    "office": "دفتر",
+    "penthouse": "پنت‌هاوس"
   },
   "sort": {
     "newest": "جدیدترین",
@@ -201,7 +201,11 @@
     "location": "ینی‌بوغازیچی، فاماگوستا، قبرس شمالی",
     "rights": "تمامی حقوق محفوظ است.",
     "privacy": "سیاست حفظ حریم خصوصی",
-    "terms": "شرایط استفاده"
+    "terms": "شرایط استفاده",
+    "dailyRental": "اجاره روزانه",
+    "penthouse": "پنت‌هاوس",
+    "propertyRequest": "درخواست ملک",
+    "regions": "مناطق"
   },
   "cookie": {
     "message": "این وب‌سایت برای بهبود تجربه شما از کوکی استفاده می‌کند.",
@@ -303,5 +307,75 @@
     "call": "تماس",
     "email": "ایمیل",
     "noMembers": "هنوز عضوی به تیم اضافه نشده است."
+  },
+  "map": {
+    "title": "نقشه",
+    "description": "مشاهده تمام آگهی‌ها روی نقشه تعاملی. جستجوی ملک بر اساس موقعیت."
+  },
+  "projects": {
+    "title": "پروژه‌ها",
+    "metaTitle": "پروژه‌ها | Nexos Investment",
+    "description": "پروژه‌های مسکونی بزرگ در قبرس شمالی — مجتمع‌های آپارتمانی، مجموعه ویلایی و پروژه‌های تفریحی.",
+    "breadcrumbHome": "صفحه اصلی",
+    "breadcrumbProjects": "پروژه‌ها",
+    "region": "قبرس شمالی",
+    "heading": "پروژه‌های ما",
+    "heroDesc": "پروژه‌های مسکونی بزرگ در ارزشمندترین مناطق قبرس شمالی. از مجتمع‌های آپارتمانی تا مجموعه‌های ویلایی، از تفرجگاه‌ها تا رزیدنس‌ها.",
+    "statusAll": "همه",
+    "statusSelling": "در حال فروش",
+    "statusUnderConstruction": "در حال ساخت",
+    "statusCompleted": "تکمیل شده",
+    "statusUpcoming": "به زودی",
+    "startingPrice": "قیمت شروع",
+    "getPrice": "استعلام قیمت",
+    "units": "{count} واحد",
+    "featured": "ویژه",
+    "noProjects": "هنوز پروژه‌ای اضافه نشده است.",
+    "noProjectsFiltered": "پروژه‌ای در این دسته‌بندی یافت نشد.",
+    "showAll": "نمایش تمام پروژه‌ها",
+    "totalUnits": "مجموع واحدها",
+    "location": "موقعیت",
+    "deliveryDate": "تاریخ تحویل",
+    "aboutProject": "درباره پروژه",
+    "gallery": "گالری",
+    "features": "امکانات",
+    "projectDetails": "مشاهده پروژه",
+    "backToProjects": "پروژه‌ها"
+  },
+  "blog": {
+    "title": "راهنما",
+    "metaTitle": "راهنما",
+    "description": "راهنمای املاک قبرس شمالی — نکات سرمایه‌گذاری، اطلاعات سند مالکیت و روندهای بازار.",
+    "subtitle": "راهنماها و نکات سرمایه‌گذاری از دنیای املاک قبرس شمالی",
+    "allCategories": "همه",
+    "categoryPosts": "مطالب دسته‌بندی \"{name}\"",
+    "noPostsCategory": "هنوز مطلبی در این دسته‌بندی منتشر نشده است.",
+    "noPosts": "هنوز مقاله راهنمایی منتشر نشده است.",
+    "backToGuide": "راهنما"
+  },
+  "auth": {
+    "loginTitle": "ورود",
+    "loginDescription": "وارد حساب کاربری Nexos Investment خود شوید.",
+    "registerTitle": "ثبت‌نام",
+    "registerDescription": "یک حساب رایگان Nexos Investment بسازید. آگهی‌های مورد علاقه‌تان را ذخیره کنید و با مشاوران ما در تماس باشید."
+  },
+  "propertyRequest": {
+    "metaTitle": "درخواست ملک | Nexos Investment",
+    "metaDescription": "به ما بگویید دنبال چه هستید. مشاوران متخصص ما بهترین گزینه‌ها را برایتان پیدا می‌کنند.",
+    "heading": "ایجاد درخواست ملک",
+    "description": "ویژگی‌های ملک مورد نظرتان را به ما بگویید. مشاوران ما مناسب‌ترین گزینه‌ها را از پرتفوی خود به شما ارائه خواهند داد.",
+    "howItWorks": "چگونه کار می‌کند؟",
+    "howItWorksDesc": "فرم را پر کنید، مشاوران ما آگهی‌های مناسب را شناسایی کرده و با شما تماس خواهند گرفت.",
+    "phone": "تلفن",
+    "email": "ایمیل",
+    "address": "آدرس",
+    "addressValue": "ینی‌بوغازیچی، گازیمغوسا، قبرس شمالی",
+    "formTitle": "ملک مورد نظر خود را توصیف کنید"
+  },
+  "agentDetail": {
+    "backToTeam": "بازگشت به تیم",
+    "listings": "{name} — آگهی‌ها",
+    "listingCount": "({count} آگهی)",
+    "noListings": "هیچ آگهی فعالی برای این مشاور وجود ندارد."
   }
 }

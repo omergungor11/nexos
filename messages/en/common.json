@@ -13,9 +13,6 @@
     "team": "Our Team",
     "about": "About Us",
     "faq": "FAQ",
-    "propertyRequest": "Property Request",
-    "penthouse": "Penthouse",
-    "regions": "Regions",
     "contact": "Contact",
     "contactUs": "Contact Us",
     "categories": "Categories",
@@ -47,7 +44,8 @@
     "noResults": "No results found for \"{query}\"",
     "viewAll": "View all results",
     "searchAll": "Search all listings",
-    "searching": "Searching..."
+    "searching": "Searching...",
+    "dailyRental": "Daily Rental"
   },
   "stats": {
     "activeListings": "Active Listings",
@@ -139,7 +137,8 @@
     "shop": "Shop",
     "warehouse": "Warehouse",
     "sale": "For Sale",
-    "rent": "For Rent"
+    "rent": "For Rent",
+    "dailyRental": "Daily Rental"
   },
   "propertyCategories": {
     "residential": "Residential",
@@ -170,7 +169,8 @@
     "workplace": "Workplace",
     "warehouse": "Warehouse",
     "business_transfer": "Business for Transfer",
-    "office": "Office"
+    "office": "Office",
+    "penthouse": "Penthouse"
   },
   "sort": {
     "newest": "Newest",
@@ -201,7 +201,11 @@
     "location": "Yenibogazici, Famagusta, North Cyprus",
     "rights": "All rights reserved.",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Use"
+    "terms": "Terms of Use",
+    "dailyRental": "Daily Rental",
+    "penthouse": "Penthouse",
+    "propertyRequest": "Property Request",
+    "regions": "Regions"
   },
   "cookie": {
     "message": "This website uses cookies to improve your experience.",
@@ -303,5 +307,75 @@
     "call": "Call",
     "email": "Email",
     "noMembers": "No team members added yet."
+  },
+  "map": {
+    "title": "Map",
+    "description": "View all listings on an interactive map. Search properties by location."
+  },
+  "projects": {
+    "title": "Projects",
+    "metaTitle": "Projects | Nexos Investment",
+    "description": "Large-scale residential projects in Northern Cyprus — apartment complexes, villa estates and holiday resorts.",
+    "breadcrumbHome": "Home",
+    "breadcrumbProjects": "Projects",
+    "region": "Northern Cyprus",
+    "heading": "Our Projects",
+    "heroDesc": "Large-scale residential projects in the most valuable locations of Northern Cyprus. From apartment complexes to villa estates, from holiday resorts to residences.",
+    "statusAll": "All",
+    "statusSelling": "For Sale",
+    "statusUnderConstruction": "Under Construction",
+    "statusCompleted": "Completed",
+    "statusUpcoming": "Coming Soon",
+    "startingPrice": "Starting Price",
+    "getPrice": "Get pricing",
+    "units": "{count} Units",
+    "featured": "Featured",
+    "noProjects": "No projects added yet.",
+    "noProjectsFiltered": "No projects found in this category.",
+    "showAll": "Show all projects",
+    "totalUnits": "Total Units",
+    "location": "Location",
+    "deliveryDate": "Delivery Date",
+    "aboutProject": "About the Project",
+    "gallery": "Gallery",
+    "features": "Features",
+    "projectDetails": "View Project",
+    "backToProjects": "Projects"
+  },
+  "blog": {
+    "title": "Guide",
+    "metaTitle": "Guide",
+    "description": "Northern Cyprus real estate guide — investment tips, title deed information and property trends.",
+    "subtitle": "Guides and investment tips from the Northern Cyprus real estate world",
+    "allCategories": "All",
+    "categoryPosts": "Posts in \"{name}\" category",
+    "noPostsCategory": "No posts published in this category yet.",
+    "noPosts": "No guide articles published yet.",
+    "backToGuide": "Guide"
+  },
+  "auth": {
+    "loginTitle": "Sign In",
+    "loginDescription": "Sign in to your Nexos Investment account.",
+    "registerTitle": "Sign Up",
+    "registerDescription": "Create a free Nexos Investment account. Save your favorite listings and connect with our consultants."
+  },
+  "propertyRequest": {
+    "metaTitle": "Property Request | Nexos Investment",
+    "metaDescription": "Tell us what you're looking for. Our expert consultants will find the best options for you.",
+    "heading": "Create a Property Request",
+    "description": "Tell us the features of the property you are looking for. Our expert consultants will present you the most suitable options from our portfolio.",
+    "howItWorks": "How It Works?",
+    "howItWorksDesc": "Fill out the form, our consultants will identify suitable listings and contact you.",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "addressValue": "Yeniboğaziçi, Gazimağusa, Northern Cyprus",
+    "formTitle": "Describe the Property You're Looking For"
+  },
+  "agentDetail": {
+    "backToTeam": "Back to Team",
+    "listings": "{name} — Listings",
+    "listingCount": "({count} listings)",
+    "noListings": "No active listings for this consultant."
   }
 }

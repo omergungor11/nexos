@@ -307,5 +307,75 @@
     "call": "Ara",
     "email": "E-posta",
     "noMembers": "Henüz ekip üyesi eklenmemiş."
+  },
+  "map": {
+    "title": "Harita",
+    "description": "Tüm ilanları interaktif harita üzerinde görüntüleyin. Konuma göre emlak arayın."
+  },
+  "projects": {
+    "title": "Projeler",
+    "metaTitle": "Projeler | Nexos Investment",
+    "description": "Kuzey Kıbrıs'ta büyük ölçekli konut projeleri — daire kompleksleri, villa siteleri ve tatil projeleri.",
+    "breadcrumbHome": "Anasayfa",
+    "breadcrumbProjects": "Projeler",
+    "region": "Kuzey Kıbrıs",
+    "heading": "Projelerimiz",
+    "heroDesc": "Kuzey Kıbrıs'ın en değerli lokasyonlarında büyük ölçekli konut projeleri. Daire komplekslerinden villa sitelerine, tatil köylerinden rezidanslara.",
+    "statusAll": "Tümü",
+    "statusSelling": "Satışta",
+    "statusUnderConstruction": "Yapım Aşamasında",
+    "statusCompleted": "Tamamlandı",
+    "statusUpcoming": "Yakında",
+    "startingPrice": "Başlangıç Fiyatı",
+    "getPrice": "Fiyat bilgisi alın",
+    "units": "{count} Ünite",
+    "featured": "Öne Çıkan",
+    "noProjects": "Henüz proje eklenmemiş.",
+    "noProjectsFiltered": "Bu kategoride henüz proje bulunmamaktadır.",
+    "showAll": "Tüm projeleri göster",
+    "totalUnits": "Toplam Ünite",
+    "location": "Konum",
+    "deliveryDate": "Teslim Tarihi",
+    "aboutProject": "Proje Hakkında",
+    "gallery": "Galeri",
+    "features": "Özellikler",
+    "projectDetails": "Projeyi İncele",
+    "backToProjects": "Projeler"
+  },
+  "blog": {
+    "title": "Rehber",
+    "metaTitle": "Rehber",
+    "description": "Kuzey Kıbrıs gayrimenkul rehberi — yatırım ipuçları, tapu bilgileri ve emlak trendleri.",
+    "subtitle": "Kuzey Kıbrıs gayrimenkul dünyasından rehberler ve yatırım ipuçları",
+    "allCategories": "Tümü",
+    "categoryPosts": "\"{name}\" kategorisindeki yazılar",
+    "noPostsCategory": "Bu kategoride henüz yazı yayınlanmamış.",
+    "noPosts": "Henüz rehber yazısı yayınlanmamış.",
+    "backToGuide": "Rehber"
+  },
+  "auth": {
+    "loginTitle": "Giriş Yap",
+    "loginDescription": "Nexos Investment hesabınıza giriş yapın.",
+    "registerTitle": "Kayıt Ol",
+    "registerDescription": "Nexos Investment'a ücretsiz kayıt olun. Favori ilanlarınızı kaydedin, danışmanlarımızla iletişime geçin."
+  },
+  "propertyRequest": {
+    "metaTitle": "Emlak Talebi | Nexos Investment",
+    "metaDescription": "Aradığınız gayrimenkulü bize bildirin. Uzman danışmanlarımız sizin için en uygun seçenekleri belirlesin.",
+    "heading": "Emlak Talebi Oluşturun",
+    "description": "Aradığınız gayrimenkulün özelliklerini bize bildirin. Uzman danışmanlarımız portföyümüzden size en uygun seçenekleri sunacak.",
+    "howItWorks": "Nasıl Çalışır?",
+    "howItWorksDesc": "Formu doldurun, danışmanlarımız uygun ilanları belirleyerek sizinle iletişime geçsin.",
+    "phone": "Telefon",
+    "email": "E-posta",
+    "address": "Adres",
+    "addressValue": "Yeniboğaziçi, Gazimağusa, Kuzey Kıbrıs",
+    "formTitle": "Aradığınız Gayrimenkulü Tanımlayın"
+  },
+  "agentDetail": {
+    "backToTeam": "Ekibimize Dön",
+    "listings": "{name} — İlanları",
+    "listingCount": "({count} ilan)",
+    "noListings": "Bu danışmana ait aktif ilan bulunmuyor."
   }
 }
