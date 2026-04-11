@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = post.seo_title || post.title;
   const description = post.seo_description || post.excerpt || undefined;
-  const ogSubtitle = post.excerpt || "Nexos Investment Rehber";
+  const ogSubtitle = post.excerpt || "Nexos Investment";
   const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(ogSubtitle)}&type=blog`;
 
   return {
@@ -44,6 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "blog" });
   const { data: post } = await getBlogPostBySlug(slug);
 
   if (!post) notFound();
@@ -80,7 +81,7 @@ export default async function BlogPostPage({ params }: Props) {
         className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        Rehber
+        {t("backToGuide")}
       </Link>
 
       <h1 className="text-3xl font-bold leading-tight sm:text-4xl">

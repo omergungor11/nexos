@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -122,6 +122,7 @@ function normalizeProperties(
 export default async function AgentProfilePage({ params }: PageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "agentDetail" });
 
   const { data: agentData } = await getAgentBySlug(slug);
 
@@ -143,7 +144,7 @@ export default async function AgentProfilePage({ params }: PageProps) {
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
-          Ekibimize Dön
+          {t("backToTeam")}
         </Link>
       </div>
 
@@ -242,10 +243,10 @@ export default async function AgentProfilePage({ params }: PageProps) {
       {/* Agent's property listings */}
       <section>
         <h2 className="mb-6 text-xl font-semibold">
-          {agent.name} — İlanları
+          {t("listings", { name: agent.name })}
           {properties.length > 0 && (
             <span className="ml-2 text-base font-normal text-muted-foreground">
-              ({properties.length} ilan)
+              {t("listingCount", { count: properties.length })}
             </span>
           )}
         </h2>
@@ -258,7 +259,7 @@ export default async function AgentProfilePage({ params }: PageProps) {
           </div>
         ) : (
           <div className="rounded-xl border border-dashed py-16 text-center text-muted-foreground">
-            Bu danışmana ait aktif ilan bulunmuyor.
+            {t("noListings")}
           </div>
         )}
       </section>

@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -26,11 +26,11 @@ interface Props {
 
 type ProjectStatus = "upcoming" | "under_construction" | "completed" | "selling";
 
-const STATUS_LABELS: Record<ProjectStatus, string> = {
-  selling: "Satışta",
-  under_construction: "Yapım Aşamasında",
-  completed: "Tamamlandı",
-  upcoming: "Yakında",
+const STATUS_TKEYS: Record<ProjectStatus, string> = {
+  selling: "statusSelling",
+  under_construction: "statusUnderConstruction",
+  completed: "statusCompleted",
+  upcoming: "statusUpcoming",
 };
 
 const STATUS_CLASSES: Record<ProjectStatus, string> = {
@@ -40,8 +40,8 @@ const STATUS_CLASSES: Record<ProjectStatus, string> = {
   upcoming: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-400",
 };
 
-function formatPrice(price: number | null, currency: string | null): string {
-  if (!price) return "Fiyat bilgisi alın";
+function formatPrice(price: number | null, currency: string | null, fallback = "—"): string {
+  if (!price) return fallback;
   const sym = currency === "GBP" ? "£" : currency === "EUR" ? "€" : currency === "TRY" ? "₺" : "$";
   return `${sym}${price.toLocaleString("tr-TR")}`;
 }
@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data: project } = await getProjectBySlug(slug);
   if (!project) return {};
   return {
-    title: `${project.title} | Projeler`,
+    title: `${project.title}`,
     description: project.short_description ?? project.description?.slice(0, 160) ?? undefined,
   };
 }
@@ -59,6 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProjectDetailPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "projects" });
   const { data: project } = await getProjectBySlug(slug);
   if (!project) notFound();
 
@@ -106,7 +107,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             className="inline-flex items-center gap-1.5 rounded-full bg-black/40 px-4 py-2 text-sm text-white backdrop-blur-sm transition-colors hover:bg-black/60"
           >
             <ArrowLeft className="size-4" />
-            Projeler
+            {t("backToProjects")}
           </Link>
         </div>
 
@@ -115,7 +116,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           <div className="container mx-auto">
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <Badge className={`text-sm px-3 py-1 ${STATUS_CLASSES[status]}`}>
-                {STATUS_LABELS[status]}
+                {t(STATUS_TKEYS[status])}
               </Badge>
             </div>
             <h1 className="text-3xl font-bold text-white sm:text-5xl lg:text-6xl">
@@ -141,10 +142,10 @@ export default async function ProjectDetailPage({ params }: Props) {
       <section className="border-b bg-muted/30">
         <div className="container mx-auto grid grid-cols-2 divide-x sm:grid-cols-4">
           {[
-            { icon: Building2, label: "Toplam Ünite", value: totalUnits ? `${totalUnits} Ünite` : "—" },
-            { icon: Home, label: "Başlangıç Fiyatı", value: formatPrice(startingPrice, currency) },
-            { icon: MapPin, label: "Konum", value: city?.name ?? "—" },
-            { icon: Calendar, label: "Teslim Tarihi", value: completionDate ?? "—" },
+            { icon: Building2, label: t("totalUnits"), value: totalUnits ? t("units", { count: totalUnits }) : "—" },
+            { icon: Home, label: t("startingPrice"), value: formatPrice(startingPrice, currency, t("getPrice")) },
+            { icon: MapPin, label: t("location"), value: city?.name ?? "—" },
+            { icon: Calendar, label: t("deliveryDate"), value: completionDate ?? "—" },
           ].map((stat) => (
             <div key={stat.label} className="flex items-center gap-3 px-4 py-5 sm:px-6">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
@@ -163,7 +164,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       {(description || shortDesc) && (
         <section className="container mx-auto px-4 py-16">
           <div className="mx-auto max-w-4xl">
-            <h2 className="text-2xl font-bold sm:text-3xl">Proje Hakkında</h2>
+            <h2 className="text-2xl font-bold sm:text-3xl">{t("aboutProject")}</h2>
             {shortDesc && <p className="mt-3 text-lg text-muted-foreground">{shortDesc}</p>}
             {description && (
               <div className="mt-6 whitespace-pre-line leading-relaxed text-muted-foreground">
@@ -178,7 +179,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       {galleryImages.length > 0 && (
         <section className="bg-muted/20 py-16">
           <div className="container mx-auto px-4">
-            <h2 className="mb-8 text-2xl font-bold sm:text-3xl">Galeri</h2>
+            <h2 className="mb-8 text-2xl font-bold sm:text-3xl">{t("gallery")}</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {galleryImages.map((img, i) => (
                 <a
@@ -228,7 +229,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       {features.length > 0 && (
         <section className={videoUrl ? "bg-muted/20 py-16" : "container mx-auto px-4 py-16"}>
           <div className={videoUrl ? "container mx-auto px-4" : ""}>
-            <h2 className="mb-8 text-2xl font-bold sm:text-3xl">Proje Özellikleri</h2>
+            <h2 className="mb-8 text-2xl font-bold sm:text-3xl">{t("features")}</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {features.map((feature) => (
                 <div key={feature} className="flex items-center gap-3 rounded-xl border bg-card p-4 transition-shadow hover:shadow-md">

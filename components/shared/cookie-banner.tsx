@@ -26,8 +26,8 @@ export function CookieBanner() {
 
   return (
     <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 animate-in fade-in slide-in-from-bottom-3 duration-300">
-      <div className="flex items-center gap-3 rounded-full border bg-background/95 px-4 py-2 shadow-lg backdrop-blur-md">
-        <p className="text-xs text-muted-foreground">
+      <div className="flex flex-col items-center gap-2 rounded-2xl border bg-background/95 px-4 py-3 shadow-lg backdrop-blur-md sm:flex-row sm:rounded-full sm:gap-3 sm:py-2">
+        <p className="text-center text-xs text-muted-foreground sm:text-left">
           {t("message")}
         </p>
         <button

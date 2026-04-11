@@ -1,12 +1,12 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { RegisterForm } from "./register-form";
 
-export const metadata: Metadata = {
-  title: "Kayıt Ol",
-  description:
-    "Nexos Investment'a ücretsiz kayıt olun. Favori ilanlarınızı kaydedin, danışmanlarımızla iletişime geçin.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "auth" });
+  return { title: t("registerTitle"), description: t("registerDescription") };
+}
 
 export default async function KayitPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

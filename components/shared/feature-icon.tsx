@@ -23,6 +23,7 @@ import {
   Bus,
   Anchor,
   Mountain,
+  Snowflake,
   CheckCircle,
   type LucideIcon,
 } from "lucide-react";
@@ -53,6 +54,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Bus,
   Anchor,
   Mountain,
+  Snowflake,
 };
 
 export function FeatureIcon({

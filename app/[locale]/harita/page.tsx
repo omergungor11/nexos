@@ -1,15 +1,15 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { FullScreenMap } from "@/components/property/full-screen-map";
 import type { MapProperty } from "@/components/property/map-property-popup";
 import type { MapProject } from "@/components/property/map-project-popup";
 
-export const metadata: Metadata = {
-  title: "Harita",
-  description:
-    "Tüm ilanları interaktif harita üzerinde görüntüleyin. Konuma göre emlak arayın.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "map" });
+  return { title: t("title"), description: t("description") };
+}
 
 // ---------------------------------------------------------------------------
 // Fetch only the columns needed for the map markers — keeps the payload lean.

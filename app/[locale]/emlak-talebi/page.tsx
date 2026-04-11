@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { ClipboardList, Phone, Mail, MapPin } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,11 +10,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  void locale;
+  const t = await getTranslations({ locale, namespace: "propertyRequest" });
   return {
-    title: "Emlak Talebi | Nexos Investment",
-    description:
-      "Aradığınız gayrimenkulü bize bildirin. Uzman danışmanlarımız sizin için en uygun seçenekleri belirlesin.",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
   };
 }
 
@@ -25,6 +24,7 @@ export default async function EmlakTalebiPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "propertyRequest" });
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -33,10 +33,9 @@ export default async function EmlakTalebiPage({
         <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
           <ClipboardList className="h-7 w-7 text-primary" />
         </div>
-        <h1 className="text-3xl font-bold">Emlak Talebi Oluşturun</h1>
+        <h1 className="text-3xl font-bold">{t("heading")}</h1>
         <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-          Aradığınız gayrimenkulün özelliklerini bize bildirin. Uzman
-          danışmanlarımız portföyümüzden size en uygun seçenekleri sunacak.
+          {t("description")}
         </p>
       </div>
 
@@ -49,10 +48,9 @@ export default async function EmlakTalebiPage({
                 <ClipboardList className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium">Nasıl Çalışır?</p>
+                <p className="font-medium">{t("howItWorks")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Formu doldurun, danışmanlarımız uygun ilanları belirleyerek
-                  sizinle iletişime geçsin.
+                  {t("howItWorksDesc")}
                 </p>
               </div>
             </CardContent>
@@ -64,7 +62,7 @@ export default async function EmlakTalebiPage({
                 <Phone className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium">Telefon</p>
+                <p className="font-medium">{t("phone")}</p>
                 <a
                   href="tel:+905488604030"
                   className="mt-1 text-sm text-muted-foreground hover:text-foreground"
@@ -81,7 +79,7 @@ export default async function EmlakTalebiPage({
                 <Mail className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium">E-posta</p>
+                <p className="font-medium">{t("email")}</p>
                 <a
                   href="mailto:info@nexosinvestment.com"
                   className="mt-1 text-sm text-muted-foreground hover:text-foreground"
@@ -98,9 +96,9 @@ export default async function EmlakTalebiPage({
                 <MapPin className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium">Adres</p>
+                <p className="font-medium">{t("address")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Yeniboğaziçi, Gazimağusa, Kuzey Kıbrıs
+                  {t("addressValue")}
                 </p>
               </div>
             </CardContent>
@@ -111,7 +109,7 @@ export default async function EmlakTalebiPage({
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Aradığınız Gayrimenkulü Tanımlayın</CardTitle>
+              <CardTitle>{t("formTitle")}</CardTitle>
             </CardHeader>
             <CardContent>
               <PropertyRequestForm />

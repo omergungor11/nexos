@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -6,20 +6,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getBlogPosts, getBlogCategories } from "@/lib/queries/content";
 import { formatRelativeDate } from "@/lib/format";
 
-export const metadata: Metadata = {
-  title: "Rehber",
-  description:
-    "Kuzey Kıbrıs gayrimenkul rehberi — yatırım ipuçları, tapu bilgileri ve emlak trendleri.",
-};
-
 interface Props {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "blog" });
+  return { title: t("metaTitle"), description: t("description") };
+}
+
 export default async function BlogPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "blog" });
   const sp = await searchParams;
   const page = Number(sp.sayfa) || 1;
   const categorySlug = typeof sp.kategori === "string" ? sp.kategori : undefined;
@@ -34,9 +35,9 @@ export default async function BlogPage({ params, searchParams }: Props) {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold">Rehber</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <p className="mt-2 text-muted-foreground">
-          Kuzey Kıbrıs gayrimenkul dünyasından rehberler ve yatırım ipuçları
+          {t("subtitle")}
         </p>
       </div>
 
@@ -51,7 +52,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
                 : "border-input hover:bg-muted"
             }`}
           >
-            Tümü
+            {t("allCategories")}
           </Link>
           {categories.map((cat) => (
             <Link
@@ -71,7 +72,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
       {activeCategory && (
         <p className="mb-6 text-center text-sm text-muted-foreground">
-          &ldquo;{activeCategory.name}&rdquo; kategorisindeki yazılar
+          {t("categoryPosts", { name: activeCategory.name })}
         </p>
       )}
 
@@ -123,9 +124,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
         </div>
       ) : (
         <div className="py-16 text-center text-muted-foreground">
-          {categorySlug
-            ? "Bu kategoride henüz yazı yayınlanmamış."
-            : "Henüz rehber yazısı yayınlanmamış."}
+          {categorySlug ? t("noPostsCategory") : t("noPosts")}
         </div>
       )}
     </div>

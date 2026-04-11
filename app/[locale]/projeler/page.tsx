@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -7,35 +7,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getProjects } from "@/lib/queries/projects";
 
-export const metadata: Metadata = {
-  title: "Projeler | Nexos Investment",
-  description:
-    "Kuzey Kıbrıs'ta büyük ölçekli konut projeleri — daire kompleksleri, villa siteleri ve tatil projeleri.",
-};
-
 interface Props {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "projects" });
+  return { title: t("metaTitle"), description: t("description") };
+}
+
 type ProjectStatus = "upcoming" | "under_construction" | "completed" | "selling";
-
-const STATUS_LABELS: Record<ProjectStatus, string> = {
-  selling: "Satışta",
-  under_construction: "Yapım Aşamasında",
-  completed: "Tamamlandı",
-  upcoming: "Yakında",
-};
-
-const STATUS_VARIANTS: Record<
-  ProjectStatus,
-  "default" | "secondary" | "destructive" | "outline"
-> = {
-  selling: "default",
-  under_construction: "secondary",
-  completed: "outline",
-  upcoming: "secondary",
-};
 
 const STATUS_CLASSES: Record<ProjectStatus, string> = {
   selling: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
@@ -44,16 +27,15 @@ const STATUS_CLASSES: Record<ProjectStatus, string> = {
   upcoming: "bg-violet-100 text-violet-800 border-violet-200 dark:bg-violet-900/30 dark:text-violet-400 dark:border-violet-800",
 };
 
-const STATUS_FILTER_OPTIONS: Array<{ value: ProjectStatus | "all"; label: string }> = [
-  { value: "all", label: "Tümü" },
-  { value: "selling", label: "Satışta" },
-  { value: "under_construction", label: "Yapım Aşamasında" },
-  { value: "completed", label: "Tamamlandı" },
-  { value: "upcoming", label: "Yakında" },
-];
+const STATUS_TKEYS: Record<ProjectStatus, string> = {
+  selling: "statusSelling",
+  under_construction: "statusUnderConstruction",
+  completed: "statusCompleted",
+  upcoming: "statusUpcoming",
+};
 
-function formatPrice(price: number | null, currency: string | null): string {
-  if (!price) return "Fiyat bilgisi alın";
+function formatPrice(price: number | null, currency: string | null, fallback: string): string {
+  if (!price) return fallback;
   const sym = currency === "GBP" ? "£" : currency === "EUR" ? "€" : "$";
   return `${sym}${price.toLocaleString("tr-TR")}`;
 }
@@ -61,6 +43,7 @@ function formatPrice(price: number | null, currency: string | null): string {
 export default async function ProjelerPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "projects" });
   const sp = await searchParams;
   const statusFilter =
     typeof sp.durum === "string" ? (sp.durum as ProjectStatus | "all") : "all";
@@ -72,6 +55,14 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
       ? (allProjects ?? [])
       : allProjects.filter((p) => p.status === statusFilter);
 
+  const filterOptions: Array<{ value: ProjectStatus | "all"; tKey: string }> = [
+    { value: "all", tKey: "statusAll" },
+    { value: "selling", tKey: "statusSelling" },
+    { value: "under_construction", tKey: "statusUnderConstruction" },
+    { value: "completed", tKey: "statusCompleted" },
+    { value: "upcoming", tKey: "statusUpcoming" },
+  ];
+
   return (
     <div>
       {/* Breadcrumb */}
@@ -79,10 +70,10 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
         <div className="container mx-auto flex items-center gap-1.5 px-4 py-3 text-sm text-muted-foreground">
           <Link href="/" className="flex items-center gap-1 hover:text-foreground transition-colors">
             <Home className="size-3.5" />
-            Anasayfa
+            {t("breadcrumbHome")}
           </Link>
           <ChevronRight className="size-3" />
-          <span className="font-medium text-foreground">Projeler</span>
+          <span className="font-medium text-foreground">{t("breadcrumbProjects")}</span>
         </div>
       </div>
 
@@ -94,15 +85,13 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
         <div className="container relative mx-auto px-4 text-center text-white">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
             <Building2 className="h-4 w-4" />
-            Kuzey Kıbrıs
+            {t("region")}
           </div>
           <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            Projelerimiz
+            {t("heading")}
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
-            Kuzey Kıbrıs&apos;ın en değerli lokasyonlarında büyük ölçekli konut
-            projeleri. Daire komplekslerinden villa sitelerine, tatil
-            köylerinden rezidanslara.
+            {t("heroDesc")}
           </p>
         </div>
       </div>
@@ -110,7 +99,7 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
       <div className="container mx-auto px-4 py-12">
         {/* Filter Tabs */}
         <div className="mb-10 flex flex-wrap justify-center gap-2">
-          {STATUS_FILTER_OPTIONS.map((opt) => (
+          {filterOptions.map((opt) => (
             <Link
               key={opt.value}
               href={
@@ -125,7 +114,7 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
                   : "border-input hover:bg-muted"
               }`}
             >
-              {opt.label}
+              {t(opt.tKey)}
             </Link>
           ))}
         </div>
@@ -172,18 +161,17 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
                           <Building2 className="h-12 w-12 text-slate-400" />
                         </div>
                       )}
-                      {/* Status Badge on image */}
                       <div className="absolute left-3 top-3">
                         <span
                           className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${STATUS_CLASSES[status]}`}
                         >
-                          {STATUS_LABELS[status]}
+                          {t(STATUS_TKEYS[status])}
                         </span>
                       </div>
                       {project.is_featured && (
                         <div className="absolute right-3 top-3">
                           <span className="inline-flex items-center rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-white">
-                            Öne Çıkan
+                            {t("featured")}
                           </span>
                         </div>
                       )}
@@ -212,12 +200,13 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
                         <div className="flex items-center justify-between gap-2">
                           <div>
                             <p className="text-xs text-muted-foreground">
-                              Başlangıç Fiyatı
+                              {t("startingPrice")}
                             </p>
                             <p className="text-base font-bold text-primary">
                               {formatPrice(
                                 project.starting_price,
-                                project.currency
+                                project.currency,
+                                t("getPrice")
                               )}
                             </p>
                           </div>
@@ -225,7 +214,7 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
                             {project.total_units != null && (
                               <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                 <Users className="h-3.5 w-3.5" />
-                                {project.total_units} Ünite
+                                {t("units", { count: project.total_units })}
                               </span>
                             )}
                           </div>
@@ -242,15 +231,15 @@ export default async function ProjelerPage({ params, searchParams }: Props) {
             <Building2 className="mx-auto mb-4 h-12 w-12 text-muted-foreground/40" />
             <p className="text-lg font-medium text-muted-foreground">
               {statusFilter === "all"
-                ? "Henüz proje eklenmemiş."
-                : `Bu kategoride henüz proje bulunmamaktadır.`}
+                ? t("noProjects")
+                : t("noProjectsFiltered")}
             </p>
             {statusFilter !== "all" && (
               <Link
                 href="/projeler"
                 className="mt-4 inline-block text-sm text-primary hover:underline"
               >
-                Tüm projeleri göster
+                {t("showAll")}
               </Link>
             )}
           </div>
