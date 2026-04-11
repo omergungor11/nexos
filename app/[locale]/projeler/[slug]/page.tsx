@@ -130,8 +130,8 @@ export default async function ProjectDetailPage({ params }: Props) {
             )}
             {startingPrice && (
               <p className="mt-4 text-3xl font-bold text-primary sm:text-4xl">
-                {formatPrice(startingPrice, currency)}
-                <span className="ml-2 text-base font-normal text-white/60">başlayan fiyatlarla</span>
+                {formatPrice(startingPrice, currency, t("getPrice"))}
+                <span className="ml-2 text-base font-normal text-white/60">{t("startingFrom")}</span>
               </p>
             )}
           </div>
@@ -209,7 +209,7 @@ export default async function ProjectDetailPage({ params }: Props) {
         <section className="container mx-auto px-4 py-16">
           <h2 className="mb-8 text-2xl font-bold sm:text-3xl">
             <Play className="mr-2 inline-block size-7 text-red-500" />
-            Proje Videosu
+            {t("projectVideo")}
           </h2>
           <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl shadow-lg">
             <div className="relative aspect-video">
@@ -245,7 +245,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       {/* Location */}
       {locationText && (
         <section className="container mx-auto px-4 py-16">
-          <h2 className="mb-8 text-2xl font-bold sm:text-3xl">Konum</h2>
+          <h2 className="mb-8 text-2xl font-bold sm:text-3xl">{t("location")}</h2>
           <Card>
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
@@ -261,7 +261,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                       rel="noopener noreferrer"
                       className="mt-1 inline-flex items-center gap-1 text-sm text-primary hover:underline"
                     >
-                      Google Maps&apos;te Görüntüle
+                      {t("viewOnGoogleMaps")}
                       <ChevronRight className="size-3" />
                     </a>
                   )}
@@ -275,9 +275,9 @@ export default async function ProjectDetailPage({ params }: Props) {
       {/* CTA */}
       <section className="bg-gradient-to-br from-gray-900 to-gray-800 py-16 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold sm:text-3xl">Bu Proje Hakkında Bilgi Alın</h2>
+          <h2 className="text-2xl font-bold sm:text-3xl">{t("ctaHeading")}</h2>
           <p className="mx-auto mt-3 max-w-xl text-gray-300">
-            Detaylı bilgi, fiyat listesi ve ödeme planı için bizimle iletişime geçin.
+            {t("ctaDescription")}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
@@ -285,7 +285,7 @@ export default async function ProjectDetailPage({ params }: Props) {
               className="inline-flex h-12 items-center gap-2 rounded-lg bg-primary px-8 text-sm font-medium text-white hover:bg-primary/90"
             >
               <Mail className="size-4" />
-              İletişime Geçin
+              {t("ctaContact")}
             </Link>
             <a
               href="https://wa.me/905488604030"

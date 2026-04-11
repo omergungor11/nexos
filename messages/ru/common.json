@@ -340,7 +340,13 @@
     "gallery": "Галерея",
     "features": "Характеристики",
     "projectDetails": "Смотреть проект",
-    "backToProjects": "Проекты"
+    "backToProjects": "Проекты",
+    "startingFrom": "от",
+    "projectVideo": "Видео проекта",
+    "viewOnGoogleMaps": "Посмотреть на Google Maps",
+    "ctaHeading": "Получите информацию об этом проекте",
+    "ctaDescription": "Свяжитесь с нами для получения подробной информации, прайс-листов и планов оплаты.",
+    "ctaContact": "Связаться с нами"
   },
   "blog": {
     "title": "Справочник",

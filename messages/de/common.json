@@ -340,7 +340,13 @@
     "gallery": "Galerie",
     "features": "Ausstattung",
     "projectDetails": "Projekt ansehen",
-    "backToProjects": "Projekte"
+    "backToProjects": "Projekte",
+    "startingFrom": "ab",
+    "projectVideo": "Projektvideo",
+    "viewOnGoogleMaps": "Auf Google Maps anzeigen",
+    "ctaHeading": "Informationen zu diesem Projekt erhalten",
+    "ctaDescription": "Kontaktieren Sie uns für detaillierte Informationen, Preislisten und Zahlungspläne.",
+    "ctaContact": "Kontakt aufnehmen"
   },
   "blog": {
     "title": "Ratgeber",

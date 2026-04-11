@@ -340,7 +340,13 @@
     "gallery": "گالری",
     "features": "امکانات",
     "projectDetails": "مشاهده پروژه",
-    "backToProjects": "پروژه‌ها"
+    "backToProjects": "پروژه‌ها",
+    "startingFrom": "شروع از",
+    "projectVideo": "ویدیوی پروژه",
+    "viewOnGoogleMaps": "مشاهده در Google Maps",
+    "ctaHeading": "درباره این پروژه اطلاعات بگیرید",
+    "ctaDescription": "برای اطلاعات بیشتر، لیست قیمت و برنامه پرداخت با ما تماس بگیرید.",
+    "ctaContact": "تماس بگیرید"
   },
   "blog": {
     "title": "راهنما",

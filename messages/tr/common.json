@@ -340,7 +340,13 @@
     "gallery": "Galeri",
     "features": "Özellikler",
     "projectDetails": "Projeyi İncele",
-    "backToProjects": "Projeler"
+    "backToProjects": "Projeler",
+    "startingFrom": "başlayan fiyatlarla",
+    "projectVideo": "Proje Videosu",
+    "viewOnGoogleMaps": "Google Maps'te Görüntüle",
+    "ctaHeading": "Bu Proje Hakkında Bilgi Alın",
+    "ctaDescription": "Detaylı bilgi, fiyat listesi ve ödeme planı için bizimle iletişime geçin.",
+    "ctaContact": "İletişime Geçin"
   },
   "blog": {
     "title": "Rehber",

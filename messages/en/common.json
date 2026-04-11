@@ -340,7 +340,13 @@
     "gallery": "Gallery",
     "features": "Features",
     "projectDetails": "View Project",
-    "backToProjects": "Projects"
+    "backToProjects": "Projects",
+    "startingFrom": "starting from",
+    "projectVideo": "Project Video",
+    "viewOnGoogleMaps": "View on Google Maps",
+    "ctaHeading": "Get Information About This Project",
+    "ctaDescription": "Contact us for detailed information, pricing and payment plans.",
+    "ctaContact": "Contact Us"
   },
   "blog": {
     "title": "Guide",
