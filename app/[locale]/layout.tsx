@@ -10,6 +10,7 @@ import { WhatsAppButton } from "@/components/shared/whatsapp-button";
 import { PhoneButton } from "@/components/shared/phone-button";
 import { CookieBanner } from "@/components/shared/cookie-banner";
 import { ScrollToTop } from "@/components/shared/scroll-to-top";
+import { AnimateUIProvider } from "@/components/shared/animate-context";
 
 type Props = {
   children: React.ReactNode;
@@ -46,6 +47,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider messages={messages}>
+      <AnimateUIProvider enabled={animateUI}>
       <HeaderComponent />
       <main className="min-h-[calc(100vh-4rem)]">{children}</main>
       <FooterComponent />
@@ -53,6 +55,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <WhatsAppButton />
       <ScrollToTop />
       <CookieBanner />
+      </AnimateUIProvider>
     </NextIntlClientProvider>
   );
 }

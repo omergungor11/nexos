@@ -27,7 +27,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroSearch } from "@/components/shared/hero-search";
 import { SectionHeader } from "@/components/shared/section-header";
-import { PropertyCard } from "@/components/property/property-card";
+import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Link } from "@/i18n/navigation";
 import { getFeaturedProperties, getRecentProperties, getDealProperties, getPropertyTypeCounts, getPropertyCityCounts } from "@/lib/queries/properties";
@@ -275,7 +275,7 @@ export default async function HomePage({ params }: Props) {
             </div>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {deals.map((property) => (
-                <PropertyCard key={property.id} property={mapListItem(property)} />
+                <SmartPropertyCard key={property.id} property={mapListItem(property)} />
               ))}
             </div>
           </div>
@@ -332,7 +332,7 @@ export default async function HomePage({ params }: Props) {
           />
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((property) => (
-              <PropertyCard key={property.id} property={mapListItem(property)} />
+              <SmartPropertyCard key={property.id} property={mapListItem(property)} />
             ))}
           </div>
         </section>
@@ -429,7 +429,7 @@ export default async function HomePage({ params }: Props) {
             />
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {recent.map((property) => (
-                <PropertyCard key={property.id} property={mapListItem(property)} />
+                <SmartPropertyCard key={property.id} property={mapListItem(property)} />
               ))}
             </div>
           </div>
