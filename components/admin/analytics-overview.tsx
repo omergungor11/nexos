@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AreaChartCard } from "@/components/admin/charts/area-chart-card";
+import { AnimatedCurveChart } from "@/components/admin/charts/animated-curve-chart";
 import { BarChartCard } from "@/components/admin/charts/bar-chart-card";
 import { PieChartCard } from "@/components/admin/charts/pie-chart-card";
 import { formatPrice } from "@/lib/format";
@@ -265,26 +265,30 @@ export function AnalyticsOverviewComponent({
         />
       </div>
 
-      {/* Charts — row 1: Views trend + Top properties */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <AreaChartCard
-          title="Günlük Görüntülenme"
-          description={`Son ${days} günün görüntülenme trendi`}
-          data={data.dailyViews as unknown as Array<Record<string, unknown>>}
-          dataKey="views"
-          xAxisKey="date"
-          color="#3b82f6"
-        />
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">En Çok Görüntülenen İlanlar</CardTitle>
-            <CardDescription>Toplam görüntülenme sayısına göre ilk 10</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <TopPropertiesTable data={data.topProperties} />
-          </CardContent>
-        </Card>
-      </div>
+      {/* Animated curve chart — full width */}
+      <AnimatedCurveChart
+        title="Günlük Görüntülenme Trendi"
+        description={`Son ${days} günün polinom eğrili görüntülenme grafiği`}
+        data={data.dailyViews as unknown as Array<Record<string, unknown>>}
+        dataKey="views"
+        xAxisKey="date"
+        color="#3b82f6"
+        gradientFrom="#3b82f6"
+        height={360}
+        unit="görüntülenme"
+        averageLabel="Günlük Ort"
+      />
+
+      {/* Top properties */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">En Çok Görüntülenen İlanlar</CardTitle>
+          <CardDescription>Toplam görüntülenme sayısına göre ilk 10</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TopPropertiesTable data={data.topProperties} />
+        </CardContent>
+      </Card>
 
       {/* Charts — row 2: Request status + Monthly listings */}
       <div className="grid gap-6 lg:grid-cols-2">
