@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import { Download, ImageIcon, Palette } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Download, ImageIcon, Palette, PenLine } from "lucide-react";
 import { SocialMediaPreview } from "@/components/admin/social-media-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import {
+  TEMPLATES as EDITOR_TEMPLATES,
+  buildPostTemplate,
+} from "@/lib/editor/templates/social-media-post-templates";
+import type { PropertyForEditor, EditorTemplate } from "@/lib/editor/fabric-editor-types";
+
+const FabricEditor = dynamic(
+  () => import("@/components/admin/editor/fabric-editor").then((m) => m.FabricEditor),
+  { ssr: false, loading: () => <div className="flex items-center justify-center py-20 text-sm text-muted-foreground">Editör yükleniyor...</div> }
+);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1016,6 +1027,9 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
   const [customPrice, setCustomPrice] = useState("");
   const [customDesc, setCustomDesc] = useState("");
 
+  const [editorMode, setEditorMode] = useState(false);
+  const [editorTemplate, setEditorTemplate] = useState<EditorTemplate | null>(null);
+
   const template = TEMPLATES.find((t) => t.id === templateId) ?? TEMPLATES[0];
 
   useEffect(() => {
@@ -1133,20 +1147,88 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         </div>
       </div>
 
-      <Button variant="outline" size="sm" onClick={() => void generateImage()} disabled={generating}>
-        {generating ? "Oluşturuluyor..." : "Yeniden Oluştur"}
-      </Button>
-
-      {/* Canvas + Preview side by side on large screens */}
-      <div className="grid gap-6 xl:grid-cols-2">
-        <div className="overflow-hidden rounded-lg border bg-muted">
-          <canvas ref={canvasRef} className="w-full" style={{ aspectRatio: "1080/1350" }} />
-        </div>
-
-        <div>
-          <SocialMediaPreview canvasRef={canvasRef} generated={generated} />
-        </div>
+      <div className="flex gap-2">
+        <Button variant="outline" size="sm" onClick={() => void generateImage()} disabled={generating}>
+          {generating ? "Oluşturuluyor..." : "Yeniden Oluştur"}
+        </Button>
+        {generated && !editorMode && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => {
+              if (!property) return;
+              const designT = EDITOR_TEMPLATES.find((t) => t.id === templateId) ?? EDITOR_TEMPLATES[0];
+              const propForEditor: PropertyForEditor = {
+                title: customTitle || property.title,
+                price: property.price,
+                currency: property.currency,
+                type: property.type,
+                transaction_type: property.transaction_type,
+                area_sqm: property.area_sqm,
+                rooms: property.rooms,
+                living_rooms: property.living_rooms,
+                city_name: property.city_name,
+                district_name: property.district_name,
+                cover_image: property.cover_image,
+                extra_images: property.extra_images,
+              };
+              const tmpl = buildPostTemplate(designT, propForEditor, customTitle || undefined, customPrice || undefined, customDesc || undefined);
+              setEditorTemplate(tmpl);
+              setEditorMode(true);
+            }}
+          >
+            <PenLine className="size-3.5" />
+            Editörde Düzenle
+          </Button>
+        )}
+        {editorMode && (
+          <Button variant="outline" size="sm" onClick={() => setEditorMode(false)}>
+            ← Önizlemeye Dön
+          </Button>
+        )}
       </div>
+
+      {editorMode && editorTemplate ? (
+        /* Fabric.js interactive editor */
+        <FabricEditor
+          width={1080}
+          height={1350}
+          template={editorTemplate}
+          propertyData={property ? {
+            title: customTitle || property.title,
+            price: property.price,
+            currency: property.currency,
+            type: property.type,
+            transaction_type: property.transaction_type,
+            area_sqm: property.area_sqm,
+            rooms: property.rooms,
+            living_rooms: property.living_rooms,
+            city_name: property.city_name,
+            district_name: property.district_name,
+            cover_image: property.cover_image,
+            extra_images: property.extra_images,
+          } : null}
+          onExport={(dataUrl) => {
+            const link = document.createElement("a");
+            link.download = `nexos-${property?.title?.replace(/\s+/g, "-").toLowerCase() ?? "post"}-edited.png`;
+            link.href = dataUrl;
+            link.click();
+            toast.success("Düzenlenmiş görsel indirildi.");
+          }}
+        />
+      ) : (
+        /* Original Canvas 2D preview + platform previews */
+        <div className="grid gap-6 xl:grid-cols-2">
+          <div className="overflow-hidden rounded-lg border bg-muted">
+            <canvas ref={canvasRef} className="w-full" style={{ aspectRatio: "1080/1350" }} />
+          </div>
+
+          <div>
+            <SocialMediaPreview canvasRef={canvasRef} generated={generated} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

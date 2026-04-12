@@ -3,8 +3,8 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Copy, Share2, Globe, Search, Smartphone } from "lucide-react";
-import { SocialMediaEditor } from "@/components/admin/social-media-editor";
-import { StoryEditor } from "@/components/admin/story-editor";
+import { SocialMediaImageGenerator } from "@/components/admin/social-media-image-generator";
+import { StoryGenerator } from "@/components/admin/story-generator";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -254,7 +254,7 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
 
           {/* Story panel */}
           <TabsContent value="story" className="mt-4">
-            <StoryEditor property={selectedProperty} />
+            <StoryGenerator property={selectedProperty} />
           </TabsContent>
         </Tabs>
       )}
@@ -293,7 +293,7 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
 
       {/* Instagram / Facebook image generator — hidden on story tab */}
       {platform !== "story" && (
-        <SocialMediaEditor property={selectedProperty} />
+        <SocialMediaImageGenerator property={selectedProperty} />
       )}
 
       {!selectedProperty && (
