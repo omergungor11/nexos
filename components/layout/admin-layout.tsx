@@ -28,6 +28,7 @@ import {
   PanelLeftOpen,
   Map,
   FolderKanban,
+  HelpCircle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -36,6 +37,8 @@ import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/admin/notification-bell";
 import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { CommandPalette } from "@/components/admin/command-palette";
+import { HelpMenu } from "@/components/admin/help-menu";
+import { OnboardingTour } from "@/components/admin/onboarding-tour";
 import { useAdminShortcuts } from "@/hooks/use-admin-shortcuts";
 
 type NavChild = {
@@ -146,6 +149,12 @@ const NAV_ITEMS: NavItem[] = [
     href: "/admin/ayarlar",
     label: "Ayarlar",
     icon: Settings,
+    exact: false,
+  },
+  {
+    href: "/admin/yardim",
+    label: "Yardım",
+    icon: HelpCircle,
     exact: false,
   },
 ];
@@ -344,6 +353,7 @@ export function AdminLayout({
     <div className="flex h-screen overflow-hidden">
       {/* Command Palette */}
       <CommandPalette />
+      <OnboardingTour autoStart />
 
       {/* Mobile overlay */}
       {sidebarOpen && (
@@ -395,6 +405,7 @@ export function AdminLayout({
           {/* Right side: notifications + avatar + logout shortcut on desktop */}
           <div className="flex items-center gap-3">
             <ThemeSwitcher />
+            <HelpMenu />
             <NotificationBell />
             <div className="hidden items-center gap-2 lg:flex">
               <Avatar size="sm">
