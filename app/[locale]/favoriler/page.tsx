@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { ArrowRight, Heart } from "lucide-react";
 import { getFavorites } from "@/actions/favorites";
 import { createClient } from "@/lib/supabase/server";
-import { PropertyCard } from "@/components/property/property-card";
+import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import type { PropertyListItem } from "@/types";
 
 export const metadata: Metadata = {
@@ -150,7 +150,7 @@ export default async function FavorilerPage({ params }: { params: Promise<{ loca
       {properties.length > 0 && (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <SmartPropertyCard key={property.id} property={property} />
           ))}
         </div>
       )}

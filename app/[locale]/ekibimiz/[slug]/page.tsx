@@ -6,7 +6,7 @@ import { Phone, Mail, MessageCircle, ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { PropertyCard } from "@/components/property/property-card";
+import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import { getAgentBySlug } from "@/lib/queries/content";
 import { getPropertiesByAgent } from "@/lib/queries/properties";
 import type { AgentRow, PropertyListItem } from "@/types";
@@ -254,7 +254,7 @@ export default async function AgentProfilePage({ params }: PageProps) {
         {properties.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {properties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
+              <SmartPropertyCard key={property.id} property={property} />
             ))}
           </div>
         ) : (

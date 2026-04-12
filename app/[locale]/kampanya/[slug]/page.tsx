@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { PropertyCard } from "@/components/property/property-card";
+import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import type { PropertyListItem } from "@/types";
 
 type Props = {
@@ -140,7 +140,7 @@ export default async function LandingPage({ params }: Props) {
             <h2 className="mb-8 text-center text-2xl font-bold">İlgili İlanlar</h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {properties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <SmartPropertyCard key={property.id} property={property} />
               ))}
             </div>
             {page.filter_params && (

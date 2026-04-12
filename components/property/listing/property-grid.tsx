@@ -1,4 +1,4 @@
-import { PropertyCard } from "@/components/property/property-card";
+import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import type { PropertyListItem } from "@/types";
 
 interface PropertyGridProps {
@@ -25,8 +25,8 @@ export function PropertyGrid({
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-      {properties.map((property) => (
-        <PropertyCard key={property.id} property={property} />
+      {properties.map((property, i) => (
+        <SmartPropertyCard key={property.id} property={property} index={i} />
       ))}
     </div>
   );

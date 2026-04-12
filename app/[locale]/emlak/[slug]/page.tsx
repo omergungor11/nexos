@@ -35,7 +35,7 @@ import {
   PROPERTY_STATUS_LABELS,
   HEATING_TYPE_LABELS,
 } from "@/lib/constants";
-import { PropertyCard } from "@/components/property/property-card";
+import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import { PropertyLightbox } from "@/components/property/property-lightbox";
 import { PropertyMap } from "@/components/property/property-map-wrapper";
 import { ShareButtons } from "@/components/property/share-buttons";
@@ -449,7 +449,7 @@ export default async function PropertyDetailPage({ params }: Props) {
           <h2 className="mb-6 text-xl font-bold">Benzer İlanlar</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {related.map((p: Record<string, unknown>) => (
-              <PropertyCard
+              <SmartPropertyCard
                 key={p.id as string}
                 property={mapRelatedItem(p)}
               />

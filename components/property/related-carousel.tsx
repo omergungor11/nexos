@@ -3,7 +3,7 @@
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback } from "react";
-import { PropertyCard } from "./property-card";
+import { SmartPropertyCard } from "./smart-property-card";
 import type { PropertyListItem } from "@/types";
 
 interface RelatedCarouselProps {
@@ -58,7 +58,7 @@ export function RelatedCarousel({ properties }: RelatedCarouselProps) {
               key={property.id}
               className="min-w-0 flex-[0_0_100%] sm:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)]"
             >
-              <PropertyCard property={property} />
+              <SmartPropertyCard property={property} />
             </div>
           ))}
         </div>

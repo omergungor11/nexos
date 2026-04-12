@@ -1,7 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { getFeaturedProperties } from "@/lib/queries/properties";
-import { PropertyCard } from "@/components/property/property-card";
+import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import type { PropertyListItem } from "@/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -37,7 +37,7 @@ export default async function VitrinPage({ params }: Props) {
       {properties.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <SmartPropertyCard key={property.id} property={property} />
           ))}
         </div>
       ) : (
