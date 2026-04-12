@@ -400,7 +400,27 @@ export function SettingsPage({ settings: initial }: SettingsPageProps) {
           </div>
         </SettingsSection>
 
-        <SaveButton isPending={isPending} onClick={() => saveKeys(["theme_default", "homepage_deals_visible", "homepage_featured_visible", "homepage_slider_visible", "homepage_blog_visible", "homepage_video_visible"])} />
+        <SettingsSection title="Animasyonlu Tema" description="Gelişmiş animasyonlar ve geçiş efektleri ile zenginleştirilmiş UI.">
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="flex items-center gap-3">
+              {isBool("animate_ui_enabled") ? (
+                <Eye className="size-4 text-emerald-500" />
+              ) : (
+                <EyeOff className="size-4 text-muted-foreground" />
+              )}
+              <div>
+                <span className="text-sm font-medium">Animate UI</span>
+                <p className="text-xs text-muted-foreground">Motion animasyonları, hover efektleri ve scroll-triggered geçişler</p>
+              </div>
+            </div>
+            <Switch
+              checked={isBool("animate_ui_enabled")}
+              onCheckedChange={(checked) => setBool("animate_ui_enabled", checked)}
+            />
+          </div>
+        </SettingsSection>
+
+        <SaveButton isPending={isPending} onClick={() => saveKeys(["theme_default", "homepage_deals_visible", "homepage_featured_visible", "homepage_slider_visible", "homepage_blog_visible", "homepage_video_visible", "animate_ui_enabled"])} />
       </TabsContent>
 
       {/* ─── Bildirimler ───────────────────────────────────────── */}

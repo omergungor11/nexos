@@ -5,6 +5,7 @@ import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { getSiteSettings } from "@/lib/queries/content";
 import { WhatsAppButton } from "@/components/shared/whatsapp-button";
 import { PhoneButton } from "@/components/shared/phone-button";
 import { CookieBanner } from "@/components/shared/cookie-banner";
@@ -28,13 +29,26 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   setRequestLocale(locale);
 
-  const messages = await getMessages();
+  const [messages, settings] = await Promise.all([
+    getMessages(),
+    getSiteSettings(),
+  ]);
+
+  const animateUI = settings.animate_ui_enabled === "true";
+
+  // Dynamic imports for animate variants (only loaded when enabled)
+  const HeaderComponent = animateUI
+    ? (await import("@/components/layout/header-animate")).HeaderAnimate
+    : Header;
+  const FooterComponent = animateUI
+    ? (await import("@/components/layout/footer-animate")).FooterAnimate
+    : Footer;
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <Header />
+      <HeaderComponent />
       <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-      <Footer />
+      <FooterComponent />
       <PhoneButton />
       <WhatsAppButton />
       <ScrollToTop />
