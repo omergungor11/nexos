@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
 import { BarChart3 } from "lucide-react";
-import { getAnalyticsOverview } from "@/actions/analytics";
-import { AnalyticsOverview } from "@/components/admin/analytics-overview";
+import {
+  getAnalyticsOverview,
+  getAnalyticsSummary,
+} from "@/actions/analytics";
+import { AnalyticsOverviewComponent } from "@/components/admin/analytics-overview";
 
 export const metadata: Metadata = {
-  title: "Analiz",
+  title: "Analiz — Admin",
 };
 
 export default async function AdminAnalizPage() {
-  const data = await getAnalyticsOverview(30);
+  const [overview, summary] = await Promise.all([
+    getAnalyticsOverview(30),
+    getAnalyticsSummary(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -25,7 +31,11 @@ export default async function AdminAnalizPage() {
         </div>
       </div>
 
-      <AnalyticsOverview initialData={data} initialDays={30} />
+      <AnalyticsOverviewComponent
+        initialData={overview}
+        summaryData={summary}
+        initialDays={30}
+      />
     </div>
   );
 }
