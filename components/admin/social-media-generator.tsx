@@ -182,13 +182,9 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
           onValueChange={handlePropertyChange}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="İlan seçmek için tıklayın...">
-              {selectedProperty
-                ? `${formatListingNumber(selectedProperty.listing_number)} — ${selectedProperty.title}`
-                : null}
-            </SelectValue>
+            <SelectValue placeholder="İlan seçmek için tıklayın..." />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent alignItemWithTrigger={false} align="start">
             <div className="sticky top-0 bg-popover p-2">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -209,12 +205,7 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
             ) : (
               filteredProperties.map((property) => (
                 <SelectItem key={property.id} value={property.id}>
-                  <span className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {formatListingNumber(property.listing_number)}
-                    </span>
-                    <span>{property.title}</span>
-                  </span>
+                  {formatListingNumber(property.listing_number)} — {property.title}
                 </SelectItem>
               ))
             )}
