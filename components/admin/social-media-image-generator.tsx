@@ -1179,9 +1179,10 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
 
       {editMode ? (
         /* Edit mode: canvas + side panel */
-        <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
-          {/* Canvas preview */}
-          <div className="overflow-hidden rounded-lg border bg-muted">
+        <div className="grid gap-4 lg:grid-cols-[auto_1fr]">
+          {/* Canvas preview — capped width so the 1080×1350 aspect doesn't
+              stretch vertically on wide screens (matches preview-mode size). */}
+          <div className="mx-auto w-full max-w-[420px] overflow-hidden rounded-lg border bg-muted lg:mx-0">
             <canvas ref={canvasRef} className="w-full" style={{ aspectRatio: "1080/1350" }} />
           </div>
 
