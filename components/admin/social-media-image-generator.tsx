@@ -80,14 +80,14 @@ const TEMPLATES: DesignTemplate[] = [
   // Classic layouts
   {
     id: "classic-gold", name: "Klasik Altın", layout: "classic",
-    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    bg: "#171717", cardBg: "#1e293b", accent: NEXOS_GOLD,
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
   },
   {
     id: "classic-white", name: "Klasik Beyaz", layout: "classic",
     bg: "#ffffff", cardBg: "#f1f5f9", accent: NEXOS_GOLD,
-    textPrimary: "#0f172a", textSecondary: "#ffca3e", textMuted: "#64748b",
+    textPrimary: "#171717", textSecondary: "#ffca3e", textMuted: "#64748b",
     gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
   },
   // Full image overlay
@@ -112,14 +112,14 @@ const TEMPLATES: DesignTemplate[] = [
   },
   {
     id: "showcase-dark", name: "Vitrin Koyu", layout: "showcase",
-    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    bg: "#171717", cardBg: "#1e293b", accent: NEXOS_GOLD,
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
   },
   // Magazine
   {
     id: "magazine-dark", name: "Dergi Koyu", layout: "magazine",
-    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    bg: "#171717", cardBg: "#1e293b", accent: NEXOS_GOLD,
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
   },
@@ -132,46 +132,46 @@ const TEMPLATES: DesignTemplate[] = [
   // Gallery
   {
     id: "gallery-gold", name: "Galeri Altın", layout: "gallery",
-    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    bg: "#171717", cardBg: "#1e293b", accent: NEXOS_GOLD,
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
   },
   // Hero Overlay
   {
     id: "herooverlay-gold", name: "Hero Overlay Altın", layout: "herooverlay",
-    bg: "#0f172a", cardBg: "rgba(255,255,255,0.95)", accent: NEXOS_GOLD,
-    textPrimary: "#0f172a", textSecondary: NEXOS_GOLD, textMuted: "#475569",
+    bg: "#171717", cardBg: "rgba(255,255,255,0.95)", accent: NEXOS_GOLD,
+    textPrimary: "#171717", textSecondary: NEXOS_GOLD, textMuted: "#475569",
     gradientOverlay: ["rgba(0,0,0,0)", "rgba(0,0,0,0.7)"],
   },
   {
     id: "herooverlay-dark", name: "Hero Overlay Koyu", layout: "herooverlay",
-    bg: "#0f172a", cardBg: "rgba(15,23,42,0.9)", accent: NEXOS_GOLD,
+    bg: "#171717", cardBg: "rgba(15,23,42,0.9)", accent: NEXOS_GOLD,
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(0,0,0,0)", "rgba(0,0,0,0.75)"],
   },
   // Poster
   {
     id: "poster-gold", name: "Poster Altın", layout: "poster",
-    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    bg: "#171717", cardBg: "#1e293b", accent: NEXOS_GOLD,
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(0,0,0,0)", "rgba(15,23,42,0.85)"],
   },
   {
     id: "poster-white", name: "Poster Beyaz", layout: "poster",
     bg: "#ffffff", cardBg: "#f1f5f9", accent: NEXOS_GOLD,
-    textPrimary: "#0f172a", textSecondary: NEXOS_GOLD, textMuted: "#64748b",
+    textPrimary: "#171717", textSecondary: NEXOS_GOLD, textMuted: "#64748b",
     gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
   },
   // Catalog
   {
     id: "catalog-gold", name: "Katalog Altın", layout: "catalog",
     bg: "#ffffff", cardBg: "#f8fafc", accent: NEXOS_GOLD,
-    textPrimary: "#0f172a", textSecondary: NEXOS_GOLD, textMuted: "#64748b",
+    textPrimary: "#171717", textSecondary: NEXOS_GOLD, textMuted: "#64748b",
     gradientOverlay: ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"],
   },
   {
     id: "catalog-dark", name: "Katalog Koyu", layout: "catalog",
-    bg: "#0f172a", cardBg: "#1e293b", accent: NEXOS_GOLD,
+    bg: "#171717", cardBg: "#1e293b", accent: NEXOS_GOLD,
     textPrimary: "#f8fafc", textSecondary: NEXOS_GOLD, textMuted: "#94a3b8",
     gradientOverlay: ["rgba(15,23,42,0)", "rgba(15,23,42,0.9)"],
   },

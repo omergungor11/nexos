@@ -128,7 +128,7 @@ interface SlideProps {
 
 const THEMES: Record<PresentationTheme, ThemeColors> = {
   dark: {
-    bg: "#0f172a",
+    bg: "#171717",
     cardBg: "#1e293b",
     text: "#f8fafc",
     accent: "#ffca3e",
@@ -137,7 +137,7 @@ const THEMES: Record<PresentationTheme, ThemeColors> = {
   light: {
     bg: "#ffffff",
     cardBg: "#f1f5f9",
-    text: "#0f172a",
+    text: "#171717",
     accent: "#ffca3e",
     muted: "#64748b",
   },
@@ -165,7 +165,7 @@ const THEME_LABELS: Record<PresentationTheme, string> = {
 };
 
 const THEME_PREVIEW_COLORS: Record<PresentationTheme, string> = {
-  dark: "#0f172a",
+  dark: "#171717",
   light: "#f1f5f9",
   gold: "#1a1207",
   minimal: "#fafafa",
@@ -311,7 +311,7 @@ function CoverSlide({ property, theme, note }: SlideProps) {
         </div>
         <span
           className="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
-          style={{ backgroundColor: theme.accent, color: "#0f172a" }}
+          style={{ backgroundColor: theme.accent, color: "#171717" }}
         >
           {labelForTransaction(property.transaction_type)}
         </span>
@@ -766,7 +766,7 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
         >
           <span
             className="text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
-            style={{ backgroundColor: theme.accent, color: "#0f172a" }}
+            style={{ backgroundColor: theme.accent, color: "#171717" }}
           >
             {labelForTransaction(property.transaction_type)}
           </span>
@@ -994,7 +994,7 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
         className="rounded-lg px-4 py-2.5 text-center"
         style={{ backgroundColor: theme.accent }}
       >
-        <p className="text-sm font-black" style={{ color: "#0f172a" }}>
+        <p className="text-sm font-black" style={{ color: "#171717" }}>
           Avrupa&apos;da 20 yıl, Kuzey Kıbrıs&apos;ta 7-10 yılda kendini amorti eden yatırım
         </p>
       </div>
@@ -1239,7 +1239,7 @@ function ContactSlide({ theme, note }: { theme: ThemeColors; note?: string }) {
 
       <div
         className="mt-1 px-8 py-3 rounded-xl font-bold text-sm"
-        style={{ backgroundColor: theme.accent, color: "#0f172a" }}
+        style={{ backgroundColor: theme.accent, color: "#171717" }}
       >
         Bir Görüşme Planlayın
       </div>
@@ -1338,10 +1338,10 @@ function buildPrintHTML(
           <div style="position:absolute;inset:0;background:linear-gradient(to top,${theme.bg} 0%,${theme.bg}99 45%,transparent 100%);"></div>
           <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:28px 36px;">
             <div style="display:flex;align-items:center;gap:8px;">
-              <div style="width:30px;height:30px;border-radius:6px;background:${accentColor};display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:900;font-size:14px;">N</div>
+              <div style="width:30px;height:30px;border-radius:6px;background:${accentColor};display:flex;align-items:center;justify-content:center;color:#171717;font-weight:900;font-size:14px;">N</div>
               <span style="color:${theme.text};font-weight:700;font-size:16px;letter-spacing:2px;">NEXOS</span>
             </div>
-            <span style="background:${accentColor};color:#0f172a;font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;">${labelForTransaction(property.transaction_type).toUpperCase()}</span>
+            <span style="background:${accentColor};color:#171717;font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;">${labelForTransaction(property.transaction_type).toUpperCase()}</span>
           </div>
           <div style="position:absolute;bottom:0;left:0;right:0;padding:0 36px 32px;">
             <p style="color:${accentColor};font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin:0 0 8px;">${labelForType(property.type)}</p>
@@ -1431,7 +1431,7 @@ function buildPrintHTML(
             </p>
           </div>
           <div style="background:${accentColor}1a;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;">
-            <span style="background:${accentColor};color:#0f172a;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;">${labelForTransaction(property.transaction_type).toUpperCase()}</span>
+            <span style="background:${accentColor};color:#171717;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;">${labelForTransaction(property.transaction_type).toUpperCase()}</span>
             <span style="color:${theme.text};font-size:16px;font-weight:900;">${formatPrice(property.price, property.currency, property.pricing_type)}</span>
           </div>
         </div>
@@ -1441,7 +1441,7 @@ function buildPrintHTML(
     if (enabledSlides.has("contact")) {
       slides.push(`
         <div style="${slideStyle.replace("page-break-after: always;", "")}display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;">
-          <div style="width:72px;height:72px;border-radius:16px;background:${accentColor};display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:900;font-size:28px;">N</div>
+          <div style="width:72px;height:72px;border-radius:16px;background:${accentColor};display:flex;align-items:center;justify-content:center;color:#171717;font-weight:900;font-size:28px;">N</div>
           <div>
             <p style="color:${theme.muted};font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin:0 0 4px;">Gayrimenkul Danışmanlığı</p>
             <h2 style="color:${theme.text};font-size:22px;font-weight:900;letter-spacing:1px;margin:0;">NEXOS INVESTMENT</h2>
@@ -1452,7 +1452,7 @@ function buildPrintHTML(
             <p style="color:${theme.muted};font-size:13px;margin:0;">🌐 nexosinvestment.com</p>
             <p style="color:${theme.muted};font-size:12px;margin:0;">info@nexosinvestment.com</p>
           </div>
-          <div style="background:${accentColor};color:#0f172a;font-size:13px;font-weight:700;padding:10px 28px;border-radius:10px;">Bir Görüşme Planlayın</div>
+          <div style="background:${accentColor};color:#171717;font-size:13px;font-weight:700;padding:10px 28px;border-radius:10px;">Bir Görüşme Planlayın</div>
         </div>
       `);
     }
@@ -1875,7 +1875,7 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
 
   // Viewer container classes
   const viewerWrapClass = fullscreen
-    ? "fixed inset-0 z-50 flex flex-col bg-[#0f172a]"
+    ? "fixed inset-0 z-50 flex flex-col bg-[#171717]"
     : "flex flex-col";
 
   return (

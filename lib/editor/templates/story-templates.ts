@@ -63,7 +63,7 @@ function buildKlasik(p: PropertyForEditor, title: string, price: string): Editor
   // Background
   objects.push({
     id: "bg", role: "background", type: "rect", left: 0, top: 0,
-    width: SW, height: SH, fill: "#0f172a", selectable: false, evented: false,
+    width: SW, height: SH, fill: "#171717", selectable: false, evented: false,
   });
 
   // Cover image (full bleed)
@@ -175,7 +175,7 @@ function buildVitrin(p: PropertyForEditor, title: string, price: string): Editor
 
   objects.push({
     id: "bg", role: "background", type: "rect", left: 0, top: 0,
-    width: SW, height: SH, fill: "#0f172a", selectable: false, evented: false,
+    width: SW, height: SH, fill: "#171717", selectable: false, evented: false,
   });
 
   // Logo top center
@@ -270,7 +270,7 @@ function buildGaleri(p: PropertyForEditor, title: string, price: string): Editor
 
   objects.push({
     id: "bg", role: "background", type: "rect", left: 0, top: 0,
-    width: SW, height: SH, fill: "#0f172a", selectable: false, evented: false,
+    width: SW, height: SH, fill: "#171717", selectable: false, evented: false,
   });
 
   // Logo
@@ -359,7 +359,7 @@ function buildKesit(p: PropertyForEditor, title: string, price: string): EditorO
 
   objects.push({
     id: "bg", role: "background", type: "rect", left: 0, top: 0,
-    width: SW, height: SH, fill: "#0f172a", selectable: false, evented: false,
+    width: SW, height: SH, fill: "#171717", selectable: false, evented: false,
   });
 
   // Top half: cover image
@@ -373,7 +373,7 @@ function buildKesit(p: PropertyForEditor, title: string, price: string): EditorO
       left: 0, top: SH * 0.3, width: SW, height: SH * 0.2,
       colorStops: [
         { offset: 0, color: "rgba(15,23,42,0)" },
-        { offset: 1, color: "#0f172a" },
+        { offset: 1, color: "#171717" },
       ],
       selectable: false, evented: false,
     });
@@ -461,7 +461,7 @@ function buildPanorama(p: PropertyForEditor, title: string, price: string): Edit
 
   objects.push({
     id: "bg", role: "background", type: "rect", left: 0, top: 0,
-    width: SW, height: SH, fill: "#0f172a", selectable: false, evented: false,
+    width: SW, height: SH, fill: "#171717", selectable: false, evented: false,
   });
 
   // Cover image full bleed
@@ -539,7 +539,7 @@ function buildCerceve(p: PropertyForEditor, title: string, price: string): Edito
 
   objects.push({
     id: "bg", role: "background", type: "rect", left: 0, top: 0,
-    width: SW, height: SH, fill: "#0f172a", selectable: false, evented: false,
+    width: SW, height: SH, fill: "#171717", selectable: false, evented: false,
   });
 
   // Frame accent border
@@ -759,11 +759,11 @@ export function buildStoryTemplate(
     config: {
       width: SW,
       height: SH,
-      backgroundColor: "#0f172a",
+      backgroundColor: "#171717",
     },
     objects,
     colors: {
-      bg: "#0f172a",
+      bg: "#171717",
       cardBg: "#1e293b",
       accent: ACCENT,
       textPrimary: "#f8fafc",

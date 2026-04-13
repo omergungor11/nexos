@@ -349,9 +349,9 @@ async function renderKlasik(
 ): Promise<void> {
   // Background
   if (property.cover_image) {
-    await drawCoverImg(ctx, property.cover_image, 0, 0, SW, SH, 0, "#0f172a");
+    await drawCoverImg(ctx, property.cover_image, 0, 0, SW, SH, 0, "#171717");
   } else {
-    ctx.fillStyle = "#0f172a";
+    ctx.fillStyle = "#171717";
     ctx.fillRect(0, 0, SW, SH);
   }
 
@@ -511,7 +511,7 @@ async function renderVitrin(
   const cardH = SH - cardY;
 
   // Dark solid card background first (full canvas)
-  ctx.fillStyle = "#0f172a";
+  ctx.fillStyle = "#171717";
   ctx.fillRect(0, 0, SW, SH);
 
   // Cover image top portion
@@ -558,7 +558,7 @@ async function renderVitrin(
   ctx.fillStyle = NEXOS_GOLD;
   rr(ctx, SW - SPAD - badgeW, 70, badgeW, badgeH, 14);
   ctx.fill();
-  ctx.fillStyle = "#0f172a";
+  ctx.fillStyle = "#171717";
   ctx.textBaseline = "middle";
   ctx.textAlign = "right";
   ctx.fillText(txLabel, SW - SPAD - 22, 70 + badgeH / 2);
@@ -1179,9 +1179,9 @@ async function renderSahne(
 ): Promise<void> {
   // Full-bleed background image
   if (property.cover_image) {
-    await drawCoverImg(ctx, property.cover_image, 0, 0, SW, SH, 0, "#0f172a");
+    await drawCoverImg(ctx, property.cover_image, 0, 0, SW, SH, 0, "#171717");
   } else {
-    ctx.fillStyle = "#0f172a"; ctx.fillRect(0, 0, SW, SH);
+    ctx.fillStyle = "#171717"; ctx.fillRect(0, 0, SW, SH);
   }
 
   // Top dark gradient (masthead)
