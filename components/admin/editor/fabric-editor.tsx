@@ -260,6 +260,8 @@ export function FabricEditor({
   const store = useEditorStore();
 
   // ---- Responsive scaling ----
+  // Scale to fit BOTH container width and height, so a tall canvas
+  // (1080×1350) doesn't overflow vertically on short viewports.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -267,14 +269,17 @@ export function FabricEditor({
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const availableWidth = entry.contentRect.width;
-        const newScale = Math.min(1, availableWidth / width);
+        const availableHeight = entry.contentRect.height;
+        const widthScale = availableWidth / width;
+        const heightScale = availableHeight > 0 ? availableHeight / height : 1;
+        const newScale = Math.min(1, widthScale, heightScale);
         setScale(newScale);
       }
     });
 
     observer.observe(container);
     return () => observer.disconnect();
-  }, [width]);
+  }, [width, height]);
 
   // ---- Load template ----
   useEffect(() => {
@@ -563,16 +568,17 @@ export function FabricEditor({
       />
 
       <div className="flex gap-3">
-        {/* Canvas container */}
+        {/* Canvas container — capped height so the 1080×1350 canvas fits the
+            viewport without scrolling the whole admin page. */}
         <div
           ref={containerRef}
-          className="flex-1 overflow-hidden rounded-lg border bg-muted/30"
+          className="flex flex-1 items-center justify-center overflow-hidden rounded-lg border bg-muted/30 p-2"
+          style={{ maxHeight: "calc(100vh - 280px)", minHeight: "420px" }}
         >
           <div
             style={{
               width: width * scale,
               height: height * scale,
-              margin: "0 auto",
             }}
           >
             <div

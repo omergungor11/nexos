@@ -10,7 +10,7 @@ export function formatListingPrice(
   currency: string = "TRY",
   pricingType: string | null | undefined = "fixed"
 ): string {
-  if (pricingType === "exchange") return "TAKAS";
+  if (pricingType === "exchange") return "TAKASA UYGUN";
   if (pricingType === "offer") return "TEKLİF";
   if (pricingType === "kat_karsiligi") return "KAT KARŞILIĞI";
   if (price == null || price <= 0) return "Fiyat Sorunuz";

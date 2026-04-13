@@ -1327,7 +1327,7 @@ export function PropertyForm({
           {form.pricing_type !== "fixed" && (
             <div className="rounded-md border border-dashed bg-muted/40 p-3 text-sm text-muted-foreground">
               {form.pricing_type === "exchange" &&
-                "Bu ilan takasa açık olarak yayınlanacak — fiyat yerine 'TAKAS' etiketi gösterilecek."}
+                "Bu ilan takasa açık olarak yayınlanacak — fiyat yerine 'TAKASA UYGUN' etiketi gösterilecek."}
               {form.pricing_type === "offer" &&
                 "Bu ilan teklife açık olarak yayınlanacak — fiyat yerine 'TEKLİF' etiketi gösterilecek."}
               {form.pricing_type === "kat_karsiligi" &&
