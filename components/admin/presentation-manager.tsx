@@ -61,7 +61,8 @@ import {
 export interface PropertyForPresentation {
   id: string;
   title: string;
-  price: number;
+  price: number | null;
+  pricing_type?: string | null;
   currency: string;
   type: string;
   transaction_type: string;
@@ -218,7 +219,15 @@ const TYPE_LABELS: Record<string, string> = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function formatPrice(price: number, currency: string): string {
+function formatPrice(
+  price: number | null | undefined,
+  currency: string,
+  pricingType?: string | null
+): string {
+  if (pricingType === "exchange") return "TAKASA UYGUN";
+  if (pricingType === "offer") return "TEKLİF";
+  if (pricingType === "kat_karsiligi") return "KAT KARŞILIĞI";
+  if (price == null || price <= 0) return "—";
   const symbol = CURRENCY_SYMBOLS[currency] ?? currency;
   return `${symbol}${price.toLocaleString("tr-TR")}`;
 }
@@ -232,11 +241,13 @@ function labelForTransaction(t: string): string {
 }
 
 // Estimate monthly rent as ~0.35% of price (rough Turkish market yield)
-function estimateMonthlyRent(price: number): number {
+function estimateMonthlyRent(price: number | null | undefined): number {
+  if (!price || price <= 0) return 0;
   return Math.round((price * 0.0035) / 100) * 100;
 }
 
-function estimateAnnualYield(price: number): string {
+function estimateAnnualYield(price: number | null | undefined): string {
+  if (!price || price <= 0) return "—";
   const monthly = estimateMonthlyRent(price);
   const annual = monthly * 12;
   const yield_ = (annual / price) * 100;
@@ -325,7 +336,7 @@ function CoverSlide({ property, theme, note }: SlideProps) {
         </h1>
         <div className="flex flex-wrap items-center gap-4">
           <span className="text-2xl font-black" style={{ color: theme.accent }}>
-            {formatPrice(property.price, property.currency)}
+            {formatPrice(property.price, property.currency, property.pricing_type)}
           </span>
           {location && (
             <span
@@ -492,7 +503,7 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
             {property.title}
           </p>
           <p className="text-lg font-black" style={{ color: theme.text }}>
-            {formatPrice(property.price, property.currency)}
+            {formatPrice(property.price, property.currency, property.pricing_type)}
           </p>
         </div>
         <div
@@ -617,7 +628,7 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
           Fiyat
         </span>
         <span className="text-xl font-black" style={{ color: theme.accent }}>
-          {formatPrice(property.price, property.currency)}
+          {formatPrice(property.price, property.currency, property.pricing_type)}
         </span>
       </div>
 
@@ -746,7 +757,7 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
             {labelForTransaction(property.transaction_type)}
           </span>
           <span className="font-black text-lg" style={{ color: theme.text }}>
-            {formatPrice(property.price, property.currency)}
+            {formatPrice(property.price, property.currency, property.pricing_type)}
           </span>
         </div>
 
@@ -985,19 +996,22 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
 
 /** Slide 7 — Investment */
 function InvestmentSlide({ property, theme, note }: SlideProps) {
+  const safePrice = property.price ?? 0;
   const pricePerSqm =
-    property.area_sqm && property.area_sqm > 0
-      ? Math.round(property.price / property.area_sqm)
+    property.area_sqm && property.area_sqm > 0 && safePrice > 0
+      ? Math.round(safePrice / property.area_sqm)
       : null;
 
   // Market-based calculations (Northern Cyprus averages)
   const yieldRate = 0.075; // 7.5% average annual rental yield
   const appreciationRate = 0.085; // 8.5% average annual appreciation
-  const annualRent = Math.round(property.price * yieldRate);
+  const annualRent = Math.round(safePrice * yieldRate);
   const monthlyRent = Math.round(annualRent / 12);
-  const fiveYearAppreciation = Math.round(property.price * Math.pow(1 + appreciationRate, 5) - property.price);
+  const fiveYearAppreciation = Math.round(safePrice * Math.pow(1 + appreciationRate, 5) - safePrice);
   const totalFiveYearReturn = annualRent * 5 + fiveYearAppreciation;
-  const roiPercent = Math.round((totalFiveYearReturn / property.price) * 100);
+  const roiPercent = safePrice > 0
+    ? Math.round((totalFiveYearReturn / safePrice) * 100)
+    : 0;
 
   // Use cover image as background
   const bgImage = property.images[0];
@@ -1040,7 +1054,7 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
             Satış Fiyatı
           </p>
           <p className="text-base font-black leading-tight" style={{ color: theme.accent }}>
-            {formatPrice(property.price, property.currency)}
+            {formatPrice(property.price, property.currency, property.pricing_type)}
           </p>
         </div>
         <div
@@ -1109,13 +1123,13 @@ function InvestmentSlide({ property, theme, note }: SlideProps) {
           <div>
             <p className="text-[9px] font-medium mb-0.5" style={{ color: theme.muted }}>Bugün</p>
             <p className="text-sm font-black" style={{ color: theme.text }}>
-              {formatPrice(property.price, property.currency)}
+              {formatPrice(property.price, property.currency, property.pricing_type)}
             </p>
           </div>
           <div>
             <p className="text-[9px] font-medium mb-0.5" style={{ color: theme.muted }}>5 Yıl Sonra</p>
             <p className="text-sm font-black" style={{ color: theme.accent }}>
-              {formatPrice(Math.round(property.price + fiveYearAppreciation), property.currency)}
+              {formatPrice(Math.round(safePrice + fiveYearAppreciation), property.currency)}
             </p>
           </div>
           <div>
@@ -1319,7 +1333,7 @@ function buildPrintHTML(
             <p style="color:${accentColor};font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin:0 0 8px;">${labelForType(property.type)}</p>
             <h1 style="color:${theme.text};font-size:28px;font-weight:900;margin:0 0 16px;line-height:1.2;">${property.title}</h1>
             <div style="display:flex;align-items:center;gap:20px;">
-              <span style="color:${accentColor};font-size:22px;font-weight:900;">${formatPrice(property.price, property.currency)}</span>
+              <span style="color:${accentColor};font-size:22px;font-weight:900;">${formatPrice(property.price, property.currency, property.pricing_type)}</span>
               ${location ? `<span style="color:${theme.text}99;font-size:12px;">📍 ${location}</span>` : ""}
             </div>
           </div>
@@ -1383,7 +1397,7 @@ function buildPrintHTML(
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;">${detailCards}</div>
           <div style="background:${accentColor}1a;border-radius:10px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
             <span style="color:${theme.muted};font-size:12px;">Fiyat</span>
-            <span style="color:${accentColor};font-size:18px;font-weight:900;">${formatPrice(property.price, property.currency)}</span>
+            <span style="color:${accentColor};font-size:18px;font-weight:900;">${formatPrice(property.price, property.currency, property.pricing_type)}</span>
           </div>
         </div>
       `);
@@ -1404,7 +1418,7 @@ function buildPrintHTML(
           </div>
           <div style="background:${accentColor}1a;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;">
             <span style="background:${accentColor};color:#0f172a;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;">${labelForTransaction(property.transaction_type).toUpperCase()}</span>
-            <span style="color:${theme.text};font-size:16px;font-weight:900;">${formatPrice(property.price, property.currency)}</span>
+            <span style="color:${theme.text};font-size:16px;font-weight:900;">${formatPrice(property.price, property.currency, property.pricing_type)}</span>
           </div>
         </div>
       `);

@@ -7,7 +7,8 @@ export const metadata: Metadata = { title: "Sunumlar — Admin" };
 type RawRow = {
   id: string;
   title: string;
-  price: number;
+  price: number | null;
+  pricing_type: string | null;
   currency: string;
   type: string;
   transaction_type: string;
@@ -32,7 +33,7 @@ export default async function SunumlarPage() {
   const { data, error } = await supabase
     .from("properties")
     .select(
-      "id, title, price, currency, type, transaction_type, area_sqm, rooms, living_rooms, bathrooms, floor, total_floors, year_built, description, lat, lng, city:cities(name, lat, lng), district:districts(name, lat, lng), images:property_images(url, is_cover, sort_order)"
+      "id, title, price, pricing_type, currency, type, transaction_type, area_sqm, rooms, living_rooms, bathrooms, floor, total_floors, year_built, description, lat, lng, city:cities(name, lat, lng), district:districts(name, lat, lng), images:property_images(url, is_cover, sort_order)"
     )
     .eq("is_active", true)
     .order("created_at", { ascending: false });
@@ -61,6 +62,7 @@ export default async function SunumlarPage() {
       id: row.id,
       title: row.title,
       price: row.price,
+      pricing_type: row.pricing_type,
       currency: row.currency,
       type: row.type,
       transaction_type: row.transaction_type,

@@ -359,15 +359,23 @@ export default async function PropertyDetailPage({ params }: Props) {
 
           <Separator />
 
-          {/* Description */}
+          {/* Description — supports both TipTap HTML (contains a tag) and
+              legacy newline-separated plain text. */}
           {property.description && (
             <div>
               <h2 className="mb-3 text-lg font-semibold">Açıklama</h2>
-              <div className="prose prose-sm max-w-none text-muted-foreground">
-                {property.description.split("\n").map((p: string, i: number) => (
-                  <p key={i}>{p}</p>
-                ))}
-              </div>
+              {/^\s*<[a-z]/i.test(property.description) ? (
+                <div
+                  className="rte-content text-sm text-muted-foreground"
+                  dangerouslySetInnerHTML={{ __html: property.description }}
+                />
+              ) : (
+                <div className="rte-content text-sm text-muted-foreground">
+                  {property.description.split("\n").map((p: string, i: number) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

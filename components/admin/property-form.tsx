@@ -86,6 +86,7 @@ import {
 } from "@/lib/constants";
 
 import { LocationPicker } from "@/components/admin/location-picker";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 import type {
   TransactionType,
@@ -1033,13 +1034,12 @@ export function PropertyForm({
           </Field>
 
           <Field label="Açıklama" htmlFor="description" icon={FileText}>
-            <Textarea
-              id="description"
-              name="description"
+            <RichTextEditor
               value={form.description}
-              onChange={handleChange}
+              onChange={(html) =>
+                setForm((prev) => ({ ...prev, description: html }))
+              }
               placeholder="İlan açıklaması..."
-              rows={6}
             />
           </Field>
 

@@ -131,4 +131,74 @@
     max-width: none !important;
     max-height: none !important;
   }
+
+  /* Rich-text content (TipTap editor + rendered detail page).
+     Tailwind v4 has no typography plugin here, so we hand-style the
+     generated HTML. Keep this list minimal. */
+  .rte-content p {
+    margin: 0 0 0.75em 0;
+    line-height: 1.65;
+  }
+  .rte-content p:last-child {
+    margin-bottom: 0;
+  }
+  .rte-content h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 1.25em 0 0.5em;
+    color: var(--foreground);
+  }
+  .rte-content h3 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    margin: 1em 0 0.4em;
+    color: var(--foreground);
+  }
+  .rte-content strong {
+    font-weight: 700;
+    color: var(--foreground);
+  }
+  .rte-content em {
+    font-style: italic;
+  }
+  .rte-content s {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  .rte-content ul,
+  .rte-content ol {
+    margin: 0.5em 0 0.75em 1.5em;
+    padding: 0;
+  }
+  .rte-content ul { list-style: disc; }
+  .rte-content ol { list-style: decimal; }
+  .rte-content li { margin: 0.15em 0; }
+  .rte-content li > p { margin: 0; }
+  .rte-content blockquote {
+    border-left: 3px solid var(--primary);
+    padding-left: 0.9em;
+    margin: 0.75em 0;
+    color: color-mix(in oklab, var(--muted-foreground) 90%, transparent);
+    font-style: italic;
+  }
+  .rte-content hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 1.25em 0;
+  }
+  .rte-content a {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+  .rte-content a:hover { text-decoration: none; }
+
+  /* Empty-state placeholder for TipTap's first paragraph */
+  .rte-content p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: var(--muted-foreground);
+    opacity: 0.55;
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
 }
