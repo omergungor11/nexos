@@ -11,10 +11,10 @@ export default async function SosyalMedyaPage() {
   const { data, error } = await supabase
     .from("properties")
     .select(
-      "id, title, price, currency, type, transaction_type, area_sqm, rooms, living_rooms, city:cities(name), district:districts(name), neighborhood:neighborhoods(name), images:property_images(url, is_cover)"
+      "id, listing_number, title, price, pricing_type, currency, type, transaction_type, area_sqm, rooms, living_rooms, city:cities(name), district:districts(name), neighborhood:neighborhoods(name), images:property_images(url, is_cover)"
     )
     .eq("is_active", true)
-    .order("title");
+    .order("listing_number", { ascending: false });
 
   if (error) {
     return (
@@ -26,8 +26,10 @@ export default async function SosyalMedyaPage() {
 
   type RawRow = {
     id: string;
+    listing_number: number;
     title: string;
-    price: number;
+    price: number | null;
+    pricing_type: string | null;
     currency: string;
     type: string;
     transaction_type: string;
@@ -46,8 +48,10 @@ export default async function SosyalMedyaPage() {
     const sortedImages = (row.images ?? []).sort((a, b) => (a.is_cover ? -1 : 0) - (b.is_cover ? -1 : 0));
     return {
       id: row.id,
+      listing_number: row.listing_number,
       title: row.title,
       price: row.price,
+      pricing_type: row.pricing_type,
       currency: row.currency,
       type: row.type,
       transaction_type: row.transaction_type,

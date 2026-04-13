@@ -1,5 +1,17 @@
-export const INSTAGRAM_CHAR_LIMIT = 2200;
-export const FACEBOOK_CHAR_LIMIT = 63206;
+// Social-media post templates for Nexos listings.
+// A single long-form Turkish post (emoji-rich, hashtag block at the bottom)
+// replaces the earlier Instagram/Facebook split — admins copy the same text
+// to both platforms.
+
+export const POST_CHAR_LIMIT = 2200; // Instagram's hard limit; Facebook is much higher.
+
+// Back-compat exports — some callers still import these names.
+export const INSTAGRAM_CHAR_LIMIT = POST_CHAR_LIMIT;
+export const FACEBOOK_CHAR_LIMIT = POST_CHAR_LIMIT;
+
+// ---------------------------------------------------------------------------
+// Labels
+// ---------------------------------------------------------------------------
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
   villa: "Villa",
@@ -8,8 +20,43 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
   penthouse: "Penthouse",
   bungalow: "Bungalow",
   detached: "Müstakil Ev",
+  residence: "Rezidans",
+  building: "Bina",
   residential_land: "Arsa",
+  mixed_land: "Arsa",
+  commercial_land: "Ticari Arsa",
+  industrial_land: "Sanayi Arsası",
+  tourism_land: "Turizm Arsası",
+  field: "Tarla",
+  olive_grove: "Zeytinlik",
   shop: "Dükkan",
+  hotel: "Hotel",
+  workplace: "İş Yeri",
+  warehouse: "Depo",
+  office: "Ofis",
+};
+
+const TYPE_EMOJIS: Record<string, string> = {
+  villa: "🏡",
+  apartment: "🏢",
+  twin_villa: "🏡",
+  penthouse: "🌆",
+  bungalow: "🏠",
+  detached: "🏠",
+  residence: "🏙️",
+  building: "🏗️",
+  residential_land: "🗺️",
+  mixed_land: "🗺️",
+  commercial_land: "🏪",
+  industrial_land: "🏭",
+  tourism_land: "🏖️",
+  field: "🌾",
+  olive_grove: "🌿",
+  shop: "🛍️",
+  hotel: "🏨",
+  workplace: "💼",
+  warehouse: "📦",
+  office: "🏢",
 };
 
 const TRANSACTION_TYPE_LABELS: Record<string, string> = {
@@ -25,9 +72,14 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   GBP: "£",
 };
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
 export interface PropertyForSocial {
   title: string;
-  price: number;
+  price: number | null;
+  pricing_type?: string | null;
   currency: string;
   type: string;
   transaction_type: string;
@@ -38,15 +90,18 @@ export interface PropertyForSocial {
   district_name: string | null;
 }
 
-function formatPrice(price: number, currency: string): string {
-  const symbol = CURRENCY_SYMBOLS[currency] ?? currency;
-  const formatted = new Intl.NumberFormat("tr-TR").format(price);
+// ---------------------------------------------------------------------------
+// Formatters
+// ---------------------------------------------------------------------------
 
-  // Place symbol before or after based on convention
-  if (currency === "TRY") {
-    return `${formatted} ${symbol}`;
-  }
-  return `${symbol}${formatted}`;
+function formatPriceLine(p: PropertyForSocial): string {
+  if (p.pricing_type === "exchange") return "TAKASA UYGUN";
+  if (p.pricing_type === "offer") return "TEKLİF BEKLEYİN";
+  if (p.pricing_type === "kat_karsiligi") return "KAT KARŞILIĞI";
+  if (p.price == null || p.price <= 0) return "Fiyat için bize ulaşın";
+  const symbol = CURRENCY_SYMBOLS[p.currency] ?? p.currency;
+  const formatted = new Intl.NumberFormat("tr-TR").format(p.price);
+  return p.currency === "TRY" ? `${formatted} ${symbol}` : `${symbol}${formatted}`;
 }
 
 function formatRooms(rooms: number | null, livingRooms: number | null): string | null {
@@ -56,110 +111,88 @@ function formatRooms(rooms: number | null, livingRooms: number | null): string |
 }
 
 function formatLocation(cityName: string, districtName: string | null): string {
-  if (districtName) {
-    return `${districtName}, ${cityName}`;
-  }
-  return cityName;
+  return districtName ? `${districtName}, ${cityName}` : cityName;
 }
 
 function getTypeLabel(type: string): string {
   return PROPERTY_TYPE_LABELS[type] ?? type;
 }
 
+function getTypeEmoji(type: string): string {
+  return TYPE_EMOJIS[type] ?? "🏠";
+}
+
 function getTransactionLabel(transactionType: string): string {
   return TRANSACTION_TYPE_LABELS[transactionType] ?? transactionType;
 }
 
-export function generateInstagramPost(property: PropertyForSocial): string {
+// ---------------------------------------------------------------------------
+// generatePost — long-form Turkish post, emoji bullets, hashtag block
+// ---------------------------------------------------------------------------
+
+export function generatePost(property: PropertyForSocial): string {
   const typeLabel = getTypeLabel(property.type);
+  const typeEmoji = getTypeEmoji(property.type);
   const txLabel = getTransactionLabel(property.transaction_type);
-  const location = formatLocation(property.city_name, property.district_name);
-  const priceStr = formatPrice(property.price, property.currency);
+  const locationName = property.district_name || property.city_name;
+  const fullLocation = formatLocation(property.city_name, property.district_name);
+  const priceStr = formatPriceLine(property);
   const roomStr = formatRooms(property.rooms, property.living_rooms);
-  const hashtags = generateHashtags(property)
-    .map((tag) => `#${tag}`)
-    .join(" ");
+  const hashtags = generateHashtags(property).map((t) => `#${t}`).join(" ");
 
+  // ----- Headline --------------------------------------------------------
   const lines: string[] = [];
-
-  lines.push(`🏠 ${property.title}`);
-  lines.push(`📍 ${location}`);
-  lines.push(`💰 ${txLabel} — ${priceStr}`);
-
-  if (property.area_sqm !== null) {
-    lines.push(`📐 ${property.area_sqm} m²`);
-  }
-
-  if (roomStr !== null) {
-    lines.push(`🛏️ ${roomStr}`);
-  }
-
+  lines.push(`${locationName}'da ${txLabel} ${typeLabel}: ${property.title} ${typeEmoji}✨`);
   lines.push("");
+
+  // ----- Hook ------------------------------------------------------------
   lines.push(
-    `${txLabel} ${typeLabel.toLowerCase()} arıyorsanız doğru yerdesiniz! Kuzey Kıbrıs'ın en güzel konumlarından biri olan ${location}'da bu eşsiz fırsatı kaçırmayın.`
+    `Kuzey Kıbrıs'ın yükselen değeri ${fullLocation}'da, her detayı düşünülmüş özel bir ${typeLabel.toLowerCase()} fırsatı sunuyoruz!`
   );
   lines.push("");
+
+  // ----- Highlights ------------------------------------------------------
+  lines.push("🚀 Öne Çıkan Özellikler:");
+  if (roomStr) lines.push(`✅ Oda: ${roomStr} düzenine sahip ferah yaşam alanı.`);
+  if (property.area_sqm) {
+    const formatted = new Intl.NumberFormat("tr-TR").format(property.area_sqm);
+    lines.push(`✅ Alan: ${formatted} m² kullanım alanı.`);
+  }
+  lines.push(`✅ Konum: ${fullLocation} — ulaşım ve yaşam kolaylığı.`);
+  lines.push(`✅ İşlem Türü: ${txLabel} — hemen devredilebilir durumda.`);
+  lines.push(`✅ Yatırım: Yüksek kira getirisi ve değer artışı potansiyeli.`);
+  lines.push("");
+
+  // ----- Opportunity -----------------------------------------------------
+  lines.push(`💎 Fırsat: ${priceStr}`);
+  lines.push("");
+
+  // ----- Call to action --------------------------------------------------
+  lines.push(
+    `📍 Modern yaşamı ${locationName}'ya taşımak ve bu karlı yatırımın bir parçası olmak için bizimle iletişime geçin.`
+  );
+  lines.push("📩 Detaylı bilgi, görseller ve randevu için DM üzerinden ulaşabilirsiniz.");
+  lines.push("");
+
+  // ----- Hashtags --------------------------------------------------------
   lines.push(hashtags);
 
   const post = lines.join("\n");
-
-  if (post.length > INSTAGRAM_CHAR_LIMIT) {
-    return post.slice(0, INSTAGRAM_CHAR_LIMIT);
-  }
-
-  return post;
+  return post.length > POST_CHAR_LIMIT ? post.slice(0, POST_CHAR_LIMIT) : post;
 }
 
-export function generateFacebookPost(property: PropertyForSocial): string {
-  const typeLabel = getTypeLabel(property.type);
-  const txLabel = getTransactionLabel(property.transaction_type);
-  const location = formatLocation(property.city_name, property.district_name);
-  const priceStr = formatPrice(property.price, property.currency);
-  const roomStr = formatRooms(property.rooms, property.living_rooms);
-  const hashtags = generateHashtags(property)
-    .map((tag) => `#${tag}`)
-    .join(" ");
+// Back-compat: keep the old names pointing at the new generator so any
+// lingering caller still works.
+export const generateInstagramPost = generatePost;
+export const generateFacebookPost = generatePost;
 
-  const lines: string[] = [];
-
-  lines.push(`🏠 ${txLabel} ${typeLabel} — ${property.title}`);
-  lines.push("");
-  lines.push("📋 DETAYLAR");
-  lines.push(`📍 Konum: ${location}`);
-  lines.push(`💰 Fiyat: ${priceStr}`);
-  lines.push(`🏷️ İlan Tipi: ${typeLabel} (${txLabel})`);
-
-  if (property.area_sqm !== null) {
-    lines.push(`📐 Alan: ${property.area_sqm} m²`);
-  }
-
-  if (roomStr !== null) {
-    lines.push(`🛏️ Oda Sayısı: ${roomStr}`);
-  }
-
-  lines.push("");
-  lines.push(
-    `Kuzey Kıbrıs'ın en prestijli bölgelerinden ${location}'da yer alan bu ${typeLabel.toLowerCase()}, hem yatırım hem de yaşam için mükemmel bir fırsat sunmaktadır. Geniş alanı, kaliteli yapısı ve eşsiz konumuyla bu ilan sizin için özel olarak seçilmiştir.`
-  );
-  lines.push("");
-  lines.push("📞 Detaylı bilgi ve görüntüleme randevusu için bize ulaşın!");
-  lines.push("✉️ Detaylı bilgi için bize ulaşın!");
-  lines.push("");
-  lines.push(hashtags);
-
-  const post = lines.join("\n");
-
-  if (post.length > FACEBOOK_CHAR_LIMIT) {
-    return post.slice(0, FACEBOOK_CHAR_LIMIT);
-  }
-
-  return post;
-}
+// ---------------------------------------------------------------------------
+// generateHashtags
+// ---------------------------------------------------------------------------
 
 export function generateHashtags(property: PropertyForSocial): string[] {
   const tags: string[] = [];
 
-  // Property type hashtags
   const typeTagMap: Record<string, string> = {
     villa: "Villa",
     apartment: "Daire",
@@ -169,7 +202,7 @@ export function generateHashtags(property: PropertyForSocial): string[] {
     detached: "MüstakilEv",
     residential_land: "Arsa",
     mixed_land: "Arsa",
-    commercial_land: "TicarıArsa",
+    commercial_land: "TicariArsa",
     industrial_land: "SanayiArsası",
     tourism_land: "TurizmArsası",
     field: "Tarla",
@@ -181,11 +214,8 @@ export function generateHashtags(property: PropertyForSocial): string[] {
     office: "Ofis",
   };
 
-  if (typeTagMap[property.type]) {
-    tags.push(typeTagMap[property.type]);
-  }
+  if (typeTagMap[property.type]) tags.push(typeTagMap[property.type]);
 
-  // City hashtags
   const cityTagMap: Record<string, string> = {
     Girne: "Girne",
     Kyrenia: "Girne",
@@ -200,36 +230,29 @@ export function generateHashtags(property: PropertyForSocial): string[] {
   };
 
   const cityTag = cityTagMap[property.city_name];
-  if (cityTag) {
-    tags.push(cityTag);
-  } else {
-    // Use city name directly, removing spaces
-    tags.push(property.city_name.replace(/\s+/g, ""));
-  }
+  tags.push(cityTag ?? property.city_name.replace(/\s+/g, ""));
 
-  // District hashtag if available
   if (property.district_name) {
     tags.push(property.district_name.replace(/\s+/g, ""));
   }
 
-  // Transaction type hashtags
   const txTagMap: Record<string, string> = {
     sale: "Satılık",
     rent: "Kiralık",
     daily_rental: "GünlükKiralık",
   };
+  if (txTagMap[property.transaction_type]) tags.push(txTagMap[property.transaction_type]);
 
-  if (txTagMap[property.transaction_type]) {
-    tags.push(txTagMap[property.transaction_type]);
-  }
+  if (property.pricing_type === "kat_karsiligi") tags.push("KatKarşılığı");
+  if (property.pricing_type === "exchange") tags.push("Takas");
 
-  // Generic hashtags
   tags.push(
+    "KıbrısEmlak",
     "KuzeyKıbrıs",
     "KKTC",
     "GayrimenkulYatırımı",
-    "NexosEmlak",
-    "Emlak"
+    "NorthCyprusInvestment",
+    "NexosEmlak"
   );
 
   return tags;

@@ -2,7 +2,14 @@
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Copy, Share2, Globe, Search, Smartphone } from "lucide-react";
+import {
+  Copy,
+  FileText,
+  ImageIcon,
+  Smartphone,
+  Film,
+  Search,
+} from "lucide-react";
 import { SocialMediaImageGenerator } from "@/components/admin/social-media-image-generator";
 import { StoryGenerator } from "@/components/admin/story-generator";
 
@@ -22,18 +29,17 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  generateInstagramPost,
-  generateFacebookPost,
+  generatePost,
   generateHashtags,
-  INSTAGRAM_CHAR_LIMIT,
-  FACEBOOK_CHAR_LIMIT,
-  type PropertyForSocial,
+  POST_CHAR_LIMIT,
 } from "@/lib/social-media-templates";
 
 interface PropertyOption {
   id: string;
+  listing_number: number;
   title: string;
-  price: number;
+  price: number | null;
+  pricing_type?: string | null;
   currency: string;
   type: string;
   transaction_type: string;
@@ -50,21 +56,10 @@ interface SocialMediaGeneratorProps {
   properties: PropertyOption[];
 }
 
-type Platform = "instagram" | "facebook" | "story";
+type Tab = "metin" | "gorsel" | "story" | "reels";
 
-function getCharLimit(platform: Platform): number {
-  if (platform === "instagram") return INSTAGRAM_CHAR_LIMIT;
-  if (platform === "facebook") return FACEBOOK_CHAR_LIMIT;
-  return 0;
-}
-
-function generatePostForPlatform(
-  platform: Platform,
-  property: PropertyForSocial
-): string {
-  if (platform === "instagram") return generateInstagramPost(property);
-  if (platform === "facebook") return generateFacebookPost(property);
-  return "";
+function formatListingNumber(n: number): string {
+  return `#${String(n ?? 0).padStart(4, "0")}`;
 }
 
 function getCharCountColor(count: number, limit: number): string {
@@ -78,7 +73,7 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(
     null
   );
-  const [platform, setPlatform] = useState<Platform>("instagram");
+  const [tab, setTab] = useState<Tab>("metin");
   const [postText, setPostText] = useState("");
   const [activeHashtags, setActiveHashtags] = useState<Set<string>>(new Set());
   const [allHashtags, setAllHashtags] = useState<string[]>([]);
@@ -89,44 +84,50 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
   const filteredProperties = useMemo(() => {
     if (!propertySearch.trim()) return properties;
     const q = propertySearch.toLowerCase();
-    return properties.filter((p) => p.title.toLowerCase().includes(q) || p.city_name.toLowerCase().includes(q));
+    return properties.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.city_name.toLowerCase().includes(q) ||
+        String(p.listing_number ?? "").includes(q)
+    );
   }, [properties, propertySearch]);
-  const charLimit = getCharLimit(platform);
+  const charLimit = POST_CHAR_LIMIT;
   const charCount = postText.length;
 
-  // Regenerate post when property or platform changes (not for story tab)
+  // Regenerate post when property changes (story/reels tabs skip text)
   const selectedPropertyRef = selectedProperty;
   useEffect(() => {
     const prop = selectedPropertyRef;
-    if (!prop || platform === "story") {
-      if (!prop) {
-        // Use timeout to avoid synchronous setState cascade
-        setTimeout(() => {
-          setPostText("");
-          setAllHashtags([]);
-          setActiveHashtags(new Set());
-        }, 0);
-      }
+    if (!prop) {
+      setTimeout(() => {
+        setPostText("");
+        setAllHashtags([]);
+        setActiveHashtags(new Set());
+      }, 0);
       return;
     }
 
     const tags = generateHashtags(prop);
-    const generated = generatePostForPlatform(platform, prop);
+    const generated = generatePost(prop);
     setTimeout(() => {
       setAllHashtags(tags);
       setActiveHashtags(new Set(tags));
       setPostText(generated);
     }, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPropertyRef, platform]);
+  }, [selectedPropertyRef]);
 
   const handlePropertyChange = useCallback((value: string | null) => {
     if (value) setSelectedPropertyId(value);
   }, []);
 
-  const handlePlatformChange = useCallback((value: string | null) => {
-    if (value === "instagram" || value === "facebook" || value === "story") {
-      setPlatform(value);
+  const handleTabChange = useCallback((value: string | null) => {
+    if (value === "metin" || value === "gorsel" || value === "story" || value === "reels") {
+      if (value === "reels") {
+        toast.info("Reels üreteci yakında eklenecek.");
+        return;
+      }
+      setTab(value);
     }
   }, []);
 
@@ -181,7 +182,11 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
           onValueChange={handlePropertyChange}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="İlan seçmek için tıklayın..." />
+            <SelectValue placeholder="İlan seçmek için tıklayın...">
+              {selectedProperty
+                ? `${formatListingNumber(selectedProperty.listing_number)} — ${selectedProperty.title}`
+                : null}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <div className="sticky top-0 bg-popover p-2">
@@ -191,7 +196,7 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
                   type="text"
                   value={propertySearch}
                   onChange={(e) => setPropertySearch(e.target.value)}
-                  placeholder="İlan ara..."
+                  placeholder="İlan no veya başlık ara..."
                   className="flex h-8 w-full rounded-md border border-input bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   onKeyDown={(e) => e.stopPropagation()}
                 />
@@ -204,7 +209,12 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
             ) : (
               filteredProperties.map((property) => (
                 <SelectItem key={property.id} value={property.id}>
-                  {property.title} — {property.city_name}
+                  <span className="flex items-center gap-2">
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {formatListingNumber(property.listing_number)}
+                    </span>
+                    <span>{property.title}</span>
+                  </span>
                 </SelectItem>
               ))
             )}
@@ -213,25 +223,35 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
       </div>
 
       {selectedProperty && (
-        <Tabs value={platform} onValueChange={handlePlatformChange}>
-          {/* Platform tabs */}
+        <Tabs value={tab} onValueChange={handleTabChange}>
           <TabsList className="w-full">
-            <TabsTrigger value="instagram" className="flex-1 gap-1.5">
-              <Share2 className="size-3.5" />
-              Instagram
+            <TabsTrigger value="metin" className="flex-1 gap-1.5">
+              <FileText className="size-3.5" />
+              Metin
             </TabsTrigger>
-            <TabsTrigger value="facebook" className="flex-1 gap-1.5">
-              <Globe className="size-3.5" />
-              Facebook
+            <TabsTrigger value="gorsel" className="flex-1 gap-1.5">
+              <ImageIcon className="size-3.5" />
+              Görsel
             </TabsTrigger>
             <TabsTrigger value="story" className="flex-1 gap-1.5">
               <Smartphone className="size-3.5" />
               Story
             </TabsTrigger>
+            <TabsTrigger
+              value="reels"
+              className="flex-1 gap-1.5 opacity-60"
+              title="Yakında eklenecek"
+            >
+              <Film className="size-3.5" />
+              Reels
+              <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium">
+                Yakında
+              </span>
+            </TabsTrigger>
           </TabsList>
 
-          {/* Instagram panel */}
-          <TabsContent value="instagram" className="mt-4 space-y-4">
+          {/* Metin */}
+          <TabsContent value="metin" className="mt-4 space-y-4">
             <PostEditor
               text={postText}
               onTextChange={setPostText}
@@ -239,61 +259,62 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
               charLimit={charLimit}
               onCopy={handleCopy}
             />
+
+            {allHashtags.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Hashtagler
+                  <span className="ml-1.5 text-xs font-normal">
+                    (etkinleştirmek veya devre dışı bırakmak için tıklayın)
+                  </span>
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {allHashtags.map((t) => {
+                    const isActive = activeHashtags.has(t);
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => toggleHashtag(t)}
+                        className={[
+                          "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
+                          isActive
+                            ? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20"
+                            : "border-border bg-muted/50 text-muted-foreground hover:bg-muted",
+                        ].join(" ")}
+                      >
+                        #{t}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </TabsContent>
 
-          {/* Facebook panel */}
-          <TabsContent value="facebook" className="mt-4 space-y-4">
-            <PostEditor
-              text={postText}
-              onTextChange={setPostText}
-              charCount={charCount}
-              charLimit={charLimit}
-              onCopy={handleCopy}
+          {/* Görsel */}
+          <TabsContent value="gorsel" className="mt-4">
+            <SocialMediaImageGenerator
+              property={{ ...selectedProperty, price: selectedProperty.price ?? 0 }}
             />
           </TabsContent>
 
-          {/* Story panel */}
+          {/* Story */}
           <TabsContent value="story" className="mt-4">
-            <StoryGenerator property={selectedProperty} />
+            <StoryGenerator
+              property={{ ...selectedProperty, price: selectedProperty.price ?? 0 }}
+            />
+          </TabsContent>
+
+          {/* Reels — placeholder */}
+          <TabsContent value="reels" className="mt-4">
+            <div className="flex min-h-64 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/20">
+              <Film className="size-10 text-muted-foreground/50" />
+              <p className="text-sm font-medium">Reels Üreteci</p>
+              <p className="text-xs text-muted-foreground">Yakında eklenecek.</p>
+            </div>
           </TabsContent>
         </Tabs>
-      )}
-
-      {/* Hashtag chips — shown below tabs so they persist across instagram/facebook */}
-      {selectedProperty && platform !== "story" && allHashtags.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">
-            Hashtagler
-            <span className="ml-1.5 text-xs font-normal">
-              (etkinleştirmek veya devre dışı bırakmak için tıklayın)
-            </span>
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {allHashtags.map((tag) => {
-              const isActive = activeHashtags.has(tag);
-              return (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => toggleHashtag(tag)}
-                  className={[
-                    "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
-                    isActive
-                      ? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20"
-                      : "border-border bg-muted/50 text-muted-foreground hover:bg-muted",
-                  ].join(" ")}
-                >
-                  #{tag}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Instagram / Facebook image generator — hidden on story tab */}
-      {platform !== "story" && (
-        <SocialMediaImageGenerator property={selectedProperty} />
       )}
 
       {!selectedProperty && (

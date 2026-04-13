@@ -178,8 +178,10 @@ export default async function AdminPropertyEditPage({ params }: Props) {
   const sortedImgs = [...rawImages].sort((a, b) => (a.is_cover ? -1 : 0) - (b.is_cover ? -1 : 0));
   const socialProperty = {
     id: property.id as string,
+    listing_number: (extra.listing_number as number | null) ?? 0,
     title: property.title as string,
-    price: property.price as number,
+    price: (property.price as number | null) ?? null,
+    pricing_type: (extra.pricing_type as string | null) ?? null,
     currency: property.currency as string,
     type: property.type as string,
     transaction_type: property.transaction_type as string,
@@ -187,7 +189,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
     rooms: property.rooms as number | null,
     living_rooms: property.living_rooms as number | null,
     city_name: cityName,
-    district_name: null as string | null, // will be filled if district_id exists
+    district_name: null as string | null,
     cover_image: sortedImgs[0]?.url ?? null,
     extra_images: sortedImgs.slice(1, 5).map((i) => i.url),
   };
