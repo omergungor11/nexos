@@ -258,7 +258,9 @@ export type Database = {
           title: string;
           slug: string;
           description: string | null;
-          price: number;
+          price: number | null;
+          pricing_type: "fixed" | "exchange" | "offer" | "kat_karsiligi";
+          price_per_donum: number | null;
           currency: CurrencyEnum;
           type: PropertyTypeEnum;
           status: PropertyStatusEnum;
@@ -315,7 +317,9 @@ export type Database = {
           title: string;
           slug: string;
           description?: string | null;
-          price: number;
+          price?: number | null;
+          pricing_type?: "fixed" | "exchange" | "offer" | "kat_karsiligi";
+          price_per_donum?: number | null;
           currency?: CurrencyEnum;
           type: PropertyTypeEnum;
           status?: PropertyStatusEnum;
@@ -372,7 +376,9 @@ export type Database = {
           title?: string;
           slug?: string;
           description?: string | null;
-          price?: number;
+          price?: number | null;
+          pricing_type?: "fixed" | "exchange" | "offer" | "kat_karsiligi";
+          price_per_donum?: number | null;
           currency?: CurrencyEnum;
           type?: PropertyTypeEnum;
           status?: PropertyStatusEnum;

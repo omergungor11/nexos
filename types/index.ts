@@ -83,6 +83,7 @@ export type PropertyListItem = Pick<
   city: Pick<CityRow, "id" | "name" | "slug">;
   district: Pick<DistrictRow, "id" | "name" | "slug"> | null;
   cover_image: string | null;
+  images?: Array<{ url: string; alt_text: string | null }>;
 };
 
 /** An agent record together with a summary list of their active properties. */

@@ -55,7 +55,7 @@ const SPEC_ROWS: SpecRow[] = [
     label: "Fiyat",
     render: (p) => (
       <span className="font-bold text-primary">
-        {formatPrice(p.price, p.currency)}
+        {formatPrice(p.price ?? 0, p.currency)}
       </span>
     ),
   },

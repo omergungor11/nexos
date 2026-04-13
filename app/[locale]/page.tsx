@@ -198,7 +198,7 @@ export default async function HomePage({ params }: Props) {
     return {
       image: cover?.url ?? "/images/hero-bg.jpg",
       title: item.title,
-      price: formatPrice(item.price, item.currency),
+      price: formatPrice(item.price ?? 0, item.currency),
       location,
       rooms: item.rooms != null ? formatRooms(item.rooms, item.living_rooms) : null,
       area: item.area_sqm ? formatArea(item.area_sqm) : null,

@@ -6,7 +6,7 @@ const PROPERTY_LIST_SELECT = `
   area_sqm, rooms, living_rooms, floor, is_featured, views_count, created_at, listing_number,
   city:cities(id, name, slug),
   district:districts(id, name, slug),
-  images:property_images(url, alt_text, is_cover)
+  images:property_images(url, alt_text, sort_order, is_cover)
 `;
 
 const PROPERTY_DETAIL_SELECT = `

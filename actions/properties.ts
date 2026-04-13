@@ -235,7 +235,9 @@ export async function createProperty(
   const payload: TablesInsert<"properties"> = {
     title: data.title,
     slug,
-    price: data.price,
+    price: data.pricing_type && data.pricing_type !== "fixed" ? null : data.price,
+    pricing_type: data.pricing_type ?? "fixed",
+    price_per_donum: data.price_per_donum ?? null,
     city_id: data.city_id,
     type: data.type as TablesInsert<"properties">["type"],
     transaction_type:
@@ -331,7 +333,21 @@ export async function updateProperty(
     payload.slug = await generateUniqueSlug(supabase, data.title, id);
   }
   if (data.description !== undefined) payload.description = data.description;
-  if (data.price !== undefined) payload.price = data.price;
+  if (data.pricing_type !== undefined) {
+    payload.pricing_type = data.pricing_type;
+    // Non-fixed pricing types don't have a numeric price
+    if (data.pricing_type !== "fixed") payload.price = null;
+  }
+  if (data.price_per_donum !== undefined) {
+    payload.price_per_donum = data.price_per_donum;
+  }
+  if (data.price !== undefined) {
+    // Respect pricing_type override above — only write a numeric price when
+    // this update is keeping (or setting) a fixed pricing type.
+    if (data.pricing_type === "fixed" || (data.pricing_type === undefined)) {
+      payload.price = data.price;
+    }
+  }
   if (data.currency !== undefined) payload.currency = data.currency;
   if (data.type !== undefined)
     payload.type = data.type as TablesUpdate<"properties">["type"];
@@ -489,7 +505,7 @@ export async function updatePropertyWorkflowStatus(
   if (status === "published") {
     const { data: prop, error: fetchError } = await supabase
       .from("properties")
-      .select("title, price, city_id")
+      .select("title, price, pricing_type, city_id")
       .eq("id", id)
       .single();
 
@@ -500,7 +516,10 @@ export async function updatePropertyWorkflowStatus(
     if (!prop.title || prop.title === "Taslak İlan") {
       return { error: "Yayınlamadan önce ilan başlığını girin" };
     }
-    if (!prop.price || prop.price <= 0) {
+    // Only fixed-price listings need a numeric price; exchange/offer/kat_karsiligi
+    // are intentionally priceless.
+    const pricingType = prop.pricing_type ?? "fixed";
+    if (pricingType === "fixed" && (!prop.price || prop.price <= 0)) {
       return { error: "Yayınlamadan önce geçerli bir fiyat girin" };
     }
     if (!prop.city_id) {
