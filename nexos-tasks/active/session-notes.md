@@ -1,6 +1,63 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-04-12
+
+### Yapılanlar — Çeviri
+- **9 sayfanın tam çevirisi**: harita, projeler (liste+detay), blog (liste+detay), giriş, kayıt, emlak-talebi, ekibimiz/[slug]
+- **5 dil**: TR, EN, DE, RU, FA — toplam ~90 yeni key/dil
+- **Eksik key düzeltme**: 7 missing key (footer/property/search/propertyTypes) + 3 extra nav key temizliği
+- **Proje detay sayfası**: CTA, video, konum, Google Maps link dahil tüm metinler çevrildi
+
+### Yapılanlar — Admin İyileştirmeler
+- **Analiz sayfası redesign**: KPI kartları (trend ikonları + renk çizgisi), top 10 ilan (progress bar listesi), 3 dağılım kartı (tip/işlem/şehir)
+- **Animasyonlu polinom grafik**: `AnimatedCurveChart` — natural curve, 1.8s giriş animasyonu, pulsating dot, gradient fill, ortalama referans çizgisi
+- **Admin sidebar kategorize**: 6 grup (Gayrimenkul/İçerik/Müşteri/Yönetim + Dashboard/Yardım)
+- **Help Center** (`/admin/yardim`): 6 kategori, ~20 rehber kartı, ipuçları bölümü
+- **Onboarding Tour**: 8 adımlı interaktif tur, ilk girişte otomatik, localStorage flag
+- **Help Menu**: Header'da "?" butonu, dropdown (Yardım Merkezi/Turu Başlat/⌘K)
+- **Geliştirici alanı kaldırıldı**: Projects tablosundan developer/developer_logo tamamen silindi (migration 035)
+- **Admin harita**: Projeler tabloya eklendi, filtreleme (tip/işlem/kayıt/harita durumu), pagination
+
+### Yapılanlar — Animate UI Tema Sistemi
+- **Faz 1**: Motion kütüphanesi kurulumu, `animate_ui_enabled` setting (migration 037), admin toggle
+- **Faz 2**: HeaderAnimate (slide-down, stagger nav, scroll glass, animated mobile), FooterAnimate (scroll reveal, stagger, spring social icons)
+- **Faz 3**: Animation primitives — ScrollReveal, StaggerChildren, HoverScale, TextReveal, CountUp
+- **Faz 4**: AnimateUIProvider context, SmartPropertyCard, PropertyCardAnimate
+- **Faz 5**: Tüm sayfalarda PropertyCard → SmartPropertyCard (property-grid, vitrin, favoriler, kampanya, ekibimiz, emlak detay, related-carousel)
+
+### Yapılanlar — Diğer
+- **Danışman form**: Kapak fotoğrafı + kaldır butonu + canlı profil kartı önizleme (migration 034)
+- **Görsel kaldırma fix**: Boş string → undefined sorunu çözüldü (create + update action'lar)
+- **İlan görsel path**: `properties/{listing_number}-{slug}/` yapısına geçildi
+- **Nav kategoriler**: İlanlar altına sub menü olarak taşındı (NavChildGroup tipi)
+- **Harita z-index fix**: Mobilde header üstüne çıkma sorunu düzeltildi
+- **Leaflet marker fix**: Tailwind preflight img reset override
+
+### Migration'lar
+- ✅ `034_agents_cover_image.sql` — agents.cover_image kolonu
+- ✅ `035_drop_projects_developer.sql` — developer/developer_logo kaldırıldı
+- ✅ `037_animate_ui_setting.sql` — animate_ui_enabled setting
+
+### Yarım Kalanlar
+- Animate UI: SSS animated accordion, proje/emlak detay section scroll reveal
+- Blog etiket CRUD admin UI yok
+- Sunum PDF/PNG export iyileştirmesi
+
+### Sıradakiler
+- Animate UI detay sayfaları (SSS accordion, proje detay section reveal)
+- Blog etiket yönetimi admin sayfası
+- E-posta bildirimi (Resend entegrasyonu)
+- Performance optimizasyonu (bundle size, lazy loading)
+
+### Dikkat Edilecekler
+- `animate_ui_enabled` Supabase'de `site_settings` tablosunda — toggle ile açılır
+- Motion kütüphanesi sadece animate aktifken yüklenir (dynamic import)
+- SmartPropertyCard `useAnimateUI` context'i kullanır — layout'taki AnimateUIProvider içinde olmalı
+- Leaflet marker fix: `globals.css`'te `.leaflet-container img { max-width: none !important }`
+
+---
+
 ## 2026-04-09
 
 ### Yapılanlar — Harita & Admin

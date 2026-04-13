@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import dynamic from "next/dynamic";
-import { Download, ImageIcon, Palette, PenLine } from "lucide-react";
+import { Download, ImageIcon, Palette, PenLine, Star, X } from "lucide-react";
 import { SocialMediaPreview } from "@/components/admin/social-media-preview";
+import { MediaPicker } from "@/components/admin/media-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,16 +14,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import {
-  TEMPLATES as EDITOR_TEMPLATES,
-  buildPostTemplate,
-} from "@/lib/editor/templates/social-media-post-templates";
-import type { PropertyForEditor, EditorTemplate } from "@/lib/editor/fabric-editor-types";
-
-const FabricEditor = dynamic(
-  () => import("@/components/admin/editor/fabric-editor").then((m) => m.FabricEditor),
-  { ssr: false, loading: () => <div className="flex items-center justify-center py-20 text-sm text-muted-foreground">Editör yükleniyor...</div> }
-);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -335,8 +325,8 @@ function drawBadge(ctx: CanvasRenderingContext2D, label: string, x: number, y: n
 // Draw detail items
 function drawDetails(ctx: CanvasRenderingContext2D, property: PropertyForImage, x: number, y: number, w: number, T: DesignTemplate) {
   const items: { icon: "pin" | "home" | "bed" | "ruler"; text: string }[] = [];
-  if (property.city_name) {
-    const loc = property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name;
+  const loc = property.district_name ?? property.city_name;
+  if (loc) {
     items.push({ icon: "pin", text: loc });
   }
   items.push({ icon: "home", text: TYPE_LABELS[property.type] ?? property.type });
@@ -451,15 +441,19 @@ async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate,
     ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
   }
 
-  // Overall 30% dark overlay for logo/text visibility
-  ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fillRect(0, 0, W, H);
+  // Top gradient (small, just for logo/badge visibility)
+  const topGrad = ctx.createLinearGradient(0, 0, 0, 320);
+  topGrad.addColorStop(0, "rgba(0,0,0,0.55)");
+  topGrad.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = topGrad; ctx.fillRect(0, 0, W, 320);
 
-  // Dark overlay gradient from bottom
-  const grad = ctx.createLinearGradient(0, H * 0.3, 0, H);
+  // Bottom gradient — darkens only toward text area, stronger at the very bottom
+  const grad = ctx.createLinearGradient(0, H * 0.45, 0, H);
   grad.addColorStop(0, "rgba(0,0,0,0)");
-  grad.addColorStop(0.4, "rgba(0,0,0,0.3)");
-  grad.addColorStop(1, "rgba(0,0,0,0.85)");
-  ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
+  grad.addColorStop(0.45, "rgba(0,0,0,0.5)");
+  grad.addColorStop(0.75, "rgba(0,0,0,0.82)");
+  grad.addColorStop(1, "rgba(0,0,0,0.95)");
+  ctx.fillStyle = grad; ctx.fillRect(0, H * 0.45, W, H * 0.55);
 
   // Top: logo + badge (same Y line)
   const topY = PAD + 40;
@@ -487,7 +481,8 @@ async function renderFullImage(ctx: CanvasRenderingContext2D, T: DesignTemplate,
 
   // Details in a row
   const items: string[] = [];
-  if (property.city_name) items.push(`📍 ${property.district_name ? property.district_name + ", " : ""}${property.city_name}`);
+  const fiLoc = property.district_name ?? property.city_name;
+  if (fiLoc) items.push(`📍 ${fiLoc}`);
   const roomStr = fmtRooms(property.rooms, property.living_rooms);
   if (roomStr) items.push(`🛏️ ${roomStr}`);
   if (property.area_sqm) items.push(`📐 ${property.area_sqm} m²`);
@@ -681,7 +676,8 @@ async function renderGallery(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   // Centered details as inline row
   const detailY = imgY + 2 * (cellH + gap) + 20;
   const detailItems: string[] = [];
-  if (property.city_name) detailItems.push(`📍 ${property.district_name ? property.district_name + ", " : ""}${property.city_name}`);
+  const galLoc = property.district_name ?? property.city_name;
+  if (galLoc) detailItems.push(`📍 ${galLoc}`);
   detailItems.push(`🏠 ${TYPE_LABELS[property.type] ?? property.type}`);
   const roomStr = fmtRooms(property.rooms, property.living_rooms);
   if (roomStr) detailItems.push(`🛏️ ${roomStr}`);
@@ -778,7 +774,8 @@ async function renderHeroOverlay(ctx: CanvasRenderingContext2D, T: DesignTemplat
   // Centered details with accent icons
   const detailY = cardY + cardH + 24;
   const detailItems: string[] = [];
-  if (property.city_name) detailItems.push(property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name);
+  const hoLoc = property.district_name ?? property.city_name;
+  if (hoLoc) detailItems.push(hoLoc);
   detailItems.push(TYPE_LABELS[property.type] ?? property.type);
   const rs = fmtRooms(property.rooms, property.living_rooms);
   if (rs) detailItems.push(`${rs} Oda`);
@@ -876,7 +873,8 @@ async function renderPoster(ctx: CanvasRenderingContext2D, T: DesignTemplate, pr
   // Detail items centered below price (gray text)
   const detailY2 = contentY + bh + 20;
   const posterItems: string[] = [];
-  if (property.city_name) posterItems.push(property.district_name ? `${property.district_name}, ${property.city_name}` : property.city_name);
+  const poLoc = property.district_name ?? property.city_name;
+  if (poLoc) posterItems.push(poLoc);
   posterItems.push(TYPE_LABELS[property.type] ?? property.type);
   const rs2 = fmtRooms(property.rooms, property.living_rooms);
   if (rs2) posterItems.push(`${rs2} Oda`);
@@ -955,9 +953,10 @@ async function renderCatalog(ctx: CanvasRenderingContext2D, T: DesignTemplate, p
   ly += 48;
 
   // Location
-  if (property.city_name) {
+  const catLoc = property.district_name ?? property.city_name;
+  if (catLoc) {
     ctx.fillStyle = T.textMuted; ctx.font = `500 26px ${FONT}`;
-    ctx.fillText(property.district_name ? `${property.district_name} Bölgesinde` : `${property.city_name} Bölgesinde`, PAD, ly);
+    ctx.fillText(`${catLoc} Bölgesinde`, PAD, ly);
     ly += 40;
   }
 
@@ -1026,9 +1025,10 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
   const [customTitle, setCustomTitle] = useState("");
   const [customPrice, setCustomPrice] = useState("");
   const [customDesc, setCustomDesc] = useState("");
-
-  const [editorMode, setEditorMode] = useState(false);
-  const [editorTemplate, setEditorTemplate] = useState<EditorTemplate | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [customImages, setCustomImages] = useState<string[]>([]);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+  const [editingImageIndex, setEditingImageIndex] = useState<number>(0);
 
   const template = TEMPLATES.find((t) => t.id === templateId) ?? TEMPLATES[0];
 
@@ -1037,6 +1037,10 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       setCustomTitle(property.title);
       setCustomPrice(fmtPrice(property.price, property.currency));
       setCustomDesc("Detaylı bilgi için bize ulaşın.");
+      setCustomImages([
+        property.cover_image ?? "",
+        ...(property.extra_images ?? []),
+      ].filter(Boolean));
     }
   }, [property]);
 
@@ -1054,15 +1058,22 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
       const price = customPrice || fmtPrice(property.price, property.currency);
       const desc = customDesc || "";
 
+      // Use custom images if available
+      const propWithImages: PropertyForImage = {
+        ...property,
+        cover_image: customImages[0] ?? property.cover_image,
+        extra_images: customImages.length > 1 ? customImages.slice(1) : property.extra_images,
+      };
+
       switch (T.layout) {
-        case "classic": await renderClassic(ctx, T, property, title, price, desc); break;
-        case "fullimage": await renderFullImage(ctx, T, property, title, price, desc); break;
-        case "showcase": await renderShowcase(ctx, T, property, title, price, desc); break;
-        case "magazine": await renderMagazine(ctx, T, property, title, price, desc); break;
-        case "gallery": await renderGallery(ctx, T, property, title, price, desc); break;
-        case "herooverlay": await renderHeroOverlay(ctx, T, property, title, price, desc); break;
-        case "poster": await renderPoster(ctx, T, property, title, price, desc); break;
-        case "catalog": await renderCatalog(ctx, T, property, title, price, desc); break;
+        case "classic": await renderClassic(ctx, T, propWithImages, title, price, desc); break;
+        case "fullimage": await renderFullImage(ctx, T, propWithImages, title, price, desc); break;
+        case "showcase": await renderShowcase(ctx, T, propWithImages, title, price, desc); break;
+        case "magazine": await renderMagazine(ctx, T, propWithImages, title, price, desc); break;
+        case "gallery": await renderGallery(ctx, T, propWithImages, title, price, desc); break;
+        case "herooverlay": await renderHeroOverlay(ctx, T, propWithImages, title, price, desc); break;
+        case "poster": await renderPoster(ctx, T, propWithImages, title, price, desc); break;
+        case "catalog": await renderCatalog(ctx, T, propWithImages, title, price, desc); break;
       }
 
       setGenerated(true);
@@ -1072,7 +1083,7 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
     } finally {
       setGenerating(false);
     }
-  }, [property, template, customTitle, customPrice, customDesc]);
+  }, [property, template, customTitle, customPrice, customDesc, customImages]);
 
   useEffect(() => {
     if (property) { setGenerated(false); void generateImage(); }
@@ -1108,23 +1119,30 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         )}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-muted-foreground">Başlık</label>
-          <Input value={customTitle} onChange={(e) => setCustomTitle(e.target.value)} placeholder="İlan başlığı" className="h-8 text-sm" />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-muted-foreground">Fiyat</label>
-          <Input value={customPrice} onChange={(e) => setCustomPrice(e.target.value)} placeholder="£285,000" className="h-8 text-sm" />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-muted-foreground">Açıklama</label>
-          <Input value={customDesc} onChange={(e) => setCustomDesc(e.target.value)} placeholder="Detaylı bilgi için bize ulaşın." className="h-8 text-sm" />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-muted-foreground">Tasarım</label>
+      {/* Toggle between preview and edit mode */}
+      <div className="flex items-center gap-2">
+        <Button
+          variant={editMode ? "outline" : "default"}
+          size="sm"
+          onClick={() => setEditMode(false)}
+          className="gap-1.5"
+        >
+          <ImageIcon className="size-3.5" />
+          Önizleme
+        </Button>
+        <Button
+          variant={editMode ? "default" : "outline"}
+          size="sm"
+          onClick={() => setEditMode(true)}
+          className="gap-1.5"
+        >
+          <PenLine className="size-3.5" />
+          Düzenle
+        </Button>
+        <div className="flex-1" />
+        <div className="space-y-0">
           <Select value={templateId} onValueChange={(v) => v && setTemplateId(String(v))}>
-            <SelectTrigger className="h-8 text-sm">
+            <SelectTrigger className="h-8 w-48 text-sm">
               <Palette className="size-3.5 mr-1.5" />
               <SelectValue />
             </SelectTrigger>
@@ -1147,87 +1165,107 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Button variant="outline" size="sm" onClick={() => void generateImage()} disabled={generating}>
-          {generating ? "Oluşturuluyor..." : "Yeniden Oluştur"}
-        </Button>
-        {generated && !editorMode && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-            onClick={() => {
-              if (!property) return;
-              const designT = EDITOR_TEMPLATES.find((t) => t.id === templateId) ?? EDITOR_TEMPLATES[0];
-              const propForEditor: PropertyForEditor = {
-                title: customTitle || property.title,
-                price: property.price,
-                currency: property.currency,
-                type: property.type,
-                transaction_type: property.transaction_type,
-                area_sqm: property.area_sqm,
-                rooms: property.rooms,
-                living_rooms: property.living_rooms,
-                city_name: property.city_name,
-                district_name: property.district_name,
-                cover_image: property.cover_image,
-                extra_images: property.extra_images,
-              };
-              const tmpl = buildPostTemplate(designT, propForEditor, customTitle || undefined, customPrice || undefined, customDesc || undefined);
-              setEditorTemplate(tmpl);
-              setEditorMode(true);
-            }}
-          >
-            <PenLine className="size-3.5" />
-            Editörde Düzenle
-          </Button>
-        )}
-        {editorMode && (
-          <Button variant="outline" size="sm" onClick={() => setEditorMode(false)}>
-            ← Önizlemeye Dön
-          </Button>
-        )}
-      </div>
-
-      {editorMode && editorTemplate ? (
-        /* Fabric.js interactive editor */
-        <FabricEditor
-          width={1080}
-          height={1350}
-          template={editorTemplate}
-          propertyData={property ? {
-            title: customTitle || property.title,
-            price: property.price,
-            currency: property.currency,
-            type: property.type,
-            transaction_type: property.transaction_type,
-            area_sqm: property.area_sqm,
-            rooms: property.rooms,
-            living_rooms: property.living_rooms,
-            city_name: property.city_name,
-            district_name: property.district_name,
-            cover_image: property.cover_image,
-            extra_images: property.extra_images,
-          } : null}
-          onExport={(dataUrl) => {
-            const link = document.createElement("a");
-            link.download = `nexos-${property?.title?.replace(/\s+/g, "-").toLowerCase() ?? "post"}-edited.png`;
-            link.href = dataUrl;
-            link.click();
-            toast.success("Düzenlenmiş görsel indirildi.");
-          }}
-        />
-      ) : (
-        /* Original Canvas 2D preview + platform previews */
-        <div className="grid gap-6 xl:grid-cols-2">
+      {editMode ? (
+        /* Edit mode: canvas + side panel */
+        <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+          {/* Canvas preview */}
           <div className="overflow-hidden rounded-lg border bg-muted">
             <canvas ref={canvasRef} className="w-full" style={{ aspectRatio: "1080/1350" }} />
           </div>
 
-          <div>
-            <SocialMediaPreview canvasRef={canvasRef} generated={generated} />
+          {/* Edit panel */}
+          <div className="space-y-4 rounded-lg border bg-background p-4">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Metinler</h4>
+
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground">Başlık</label>
+              <Input value={customTitle} onChange={(e) => setCustomTitle(e.target.value)} placeholder="İlan başlığı" className="h-8 text-sm" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground">Fiyat</label>
+              <Input value={customPrice} onChange={(e) => setCustomPrice(e.target.value)} placeholder="£285,000" className="h-8 text-sm" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground">Açıklama</label>
+              <Input value={customDesc} onChange={(e) => setCustomDesc(e.target.value)} placeholder="Detaylı bilgi için..." className="h-8 text-sm" />
+            </div>
+
+            <hr className="border-border" />
+
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Görseller</h4>
+            <p className="text-[11px] text-muted-foreground">Yıldıza tıklayarak ana görseli seçin, + ile yeni ekleyin</p>
+
+            <div className="grid grid-cols-4 gap-2">
+              {customImages.map((img, i) => (
+                <div key={i} className="group relative">
+                  <button
+                    type="button"
+                    onClick={() => { setEditingImageIndex(i); setMediaPickerOpen(true); }}
+                    className={`relative aspect-square w-full overflow-hidden rounded-lg border-2 transition-colors hover:border-primary ${i === 0 ? "border-primary" : "border-transparent"}`}
+                  >
+                    <img src={img} alt={`Görsel ${i + 1}`} className="h-full w-full object-cover" />
+                    {i === 0 && <span className="absolute left-0.5 top-0.5 rounded bg-primary px-1 text-[8px] font-bold text-primary-foreground">ANA</span>}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/30 group-hover:opacity-100">
+                      <PenLine className="size-4 text-white" />
+                    </div>
+                  </button>
+                  {i !== 0 && (
+                    <button
+                      type="button"
+                      title="Ana görsel yap"
+                      onClick={() => setCustomImages((prev) => { const next = [...prev]; const [moved] = next.splice(i, 1); next.unshift(moved); return next; })}
+                      className="absolute -right-1 -top-1 rounded-full bg-background p-0.5 shadow-sm border hover:text-primary"
+                    >
+                      <Star className="size-3" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => { setEditingImageIndex(customImages.length); setMediaPickerOpen(true); }}
+                className="flex aspect-square w-full items-center justify-center rounded-lg border-2 border-dashed text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                <span className="text-lg">+</span>
+              </button>
+            </div>
+
+            <MediaPicker
+              open={mediaPickerOpen}
+              onClose={() => setMediaPickerOpen(false)}
+              onSelect={(url) => {
+                setCustomImages((prev) => {
+                  const next = [...prev];
+                  if (editingImageIndex < next.length) { next[editingImageIndex] = url; } else { next.push(url); }
+                  return next;
+                });
+              }}
+              currentUrl={customImages[editingImageIndex] ?? ""}
+            />
+
+            <hr className="border-border" />
+
+            <div className="flex gap-2">
+              <Button size="sm" className="flex-1 gap-1.5" onClick={handleDownload} disabled={!generated}>
+                <Download className="size-3.5" />
+                PNG İndir
+              </Button>
+            </div>
           </div>
         </div>
+      ) : (
+        /* Preview mode: canvas + platform previews */
+        <>
+          <div className="grid gap-6 xl:grid-cols-2">
+            <div className="overflow-hidden rounded-lg border bg-muted">
+              <canvas ref={canvasRef} className="w-full" style={{ aspectRatio: "1080/1350" }} />
+            </div>
+
+            <div>
+              <SocialMediaPreview canvasRef={canvasRef} generated={generated} />
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

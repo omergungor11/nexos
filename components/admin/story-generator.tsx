@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import dynamic from "next/dynamic";
-import { Download, ImageIcon, Palette, RefreshCw, PenSquare, PenLine, Star, X, ArrowLeft } from "lucide-react";
+import { Download, ImageIcon, Palette, RefreshCw, PenSquare, Star, X, ArrowLeft } from "lucide-react";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,13 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { buildStoryTemplate, type StoryTemplateId as EditorStoryTemplateId } from "@/lib/editor/templates/story-templates";
-import type { PropertyForEditor, EditorTemplate } from "@/lib/editor/fabric-editor-types";
-
-const FabricEditor = dynamic(
-  () => import("@/components/admin/editor/fabric-editor").then((m) => m.FabricEditor),
-  { ssr: false, loading: () => <div className="flex items-center justify-center py-20 text-sm text-muted-foreground">Editör yükleniyor...</div> }
-);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1298,8 +1290,6 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
   const [customImages, setCustomImages] = useState<string[]>([]);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
   const [editingImageIndex, setEditingImageIndex] = useState<number>(0);
-  const [editorMode, setEditorMode] = useState(false);
-  const [editorTemplate, setEditorTemplate] = useState<EditorTemplate | null>(null);
 
   // Sync fields when property changes
   useEffect(() => {
@@ -1519,95 +1509,29 @@ export function StoryGenerator({ property }: StoryGeneratorProps) {
         currentUrl={customImages[editingImageIndex] ?? ""}
       />
 
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => void generateStory()}
-          disabled={generating}
-          className="gap-1.5"
-        >
-          <RefreshCw className={`size-3.5 ${generating ? "animate-spin" : ""}`} />
-          {generating ? "Oluşturuluyor..." : "Yeniden Oluştur"}
-        </Button>
-        {generated && !editorMode && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-            onClick={() => {
-              if (!property) return;
-              const propForEditor: PropertyForEditor = {
-                title: customTitle || property.title,
-                price: property.price,
-                currency: property.currency,
-                type: property.type,
-                transaction_type: property.transaction_type,
-                area_sqm: property.area_sqm,
-                rooms: property.rooms,
-                living_rooms: property.living_rooms,
-                city_name: property.city_name,
-                district_name: property.district_name,
-                cover_image: customImages[0] ?? property.cover_image,
-                extra_images: customImages.length > 1 ? customImages.slice(1) : property.extra_images,
-              };
-              const tmpl = buildStoryTemplate(templateId as EditorStoryTemplateId, propForEditor, customTitle || undefined, customPrice || undefined);
-              setEditorTemplate(tmpl);
-              setEditorMode(true);
-            }}
-          >
-            <PenLine className="size-3.5" />
-            Editörde Düzenle
-          </Button>
-        )}
-        {editorMode && (
-          <Button variant="outline" size="sm" onClick={() => setEditorMode(false)}>
-            ← Önizlemeye Dön
-          </Button>
-        )}
-      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => void generateStory()}
+        disabled={generating}
+        className="gap-1.5"
+      >
+        <RefreshCw className={`size-3.5 ${generating ? "animate-spin" : ""}`} />
+        {generating ? "Oluşturuluyor..." : "Yeniden Oluştur"}
+      </Button>
 
-      {editorMode && editorTemplate ? (
-        <FabricEditor
-          width={1080}
-          height={1920}
-          template={editorTemplate}
-          propertyData={property ? {
-            title: customTitle || property.title,
-            price: property.price,
-            currency: property.currency,
-            type: property.type,
-            transaction_type: property.transaction_type,
-            area_sqm: property.area_sqm,
-            rooms: property.rooms,
-            living_rooms: property.living_rooms,
-            city_name: property.city_name,
-            district_name: property.district_name,
-            cover_image: customImages[0] ?? property.cover_image,
-            extra_images: customImages.length > 1 ? customImages.slice(1) : property.extra_images,
-          } : null}
-          onExport={(dataUrl) => {
-            const link = document.createElement("a");
-            link.download = `nexos-story-${property?.title?.replace(/\s+/g, "-").toLowerCase() ?? "story"}-edited.png`;
-            link.href = dataUrl;
-            link.click();
-            toast.success("Düzenlenmiş story indirildi.");
-          }}
-        />
-      ) : (
-        /* Canvas preview — phone-sized 9:16 aspect ratio, max 320px wide */
-        <div className="flex justify-center">
-          <div
-            className="overflow-hidden rounded-2xl border-2 border-border bg-black shadow-lg"
-            style={{ width: "100%", maxWidth: 320 }}
-          >
-            <canvas
-              ref={canvasRef}
-              style={{ width: "100%", aspectRatio: "9/16", display: "block" }}
-            />
-          </div>
+      {/* Canvas preview — phone-sized 9:16 aspect ratio, max 320px wide */}
+      <div className="flex justify-center">
+        <div
+          className="overflow-hidden rounded-2xl border-2 border-border bg-black shadow-lg"
+          style={{ width: "100%", maxWidth: 320 }}
+        >
+          <canvas
+            ref={canvasRef}
+            style={{ width: "100%", aspectRatio: "9/16", display: "block" }}
+          />
         </div>
-      )}
+      </div>
     </div>
   );
 }
