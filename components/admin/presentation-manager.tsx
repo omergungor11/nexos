@@ -481,6 +481,20 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
         </div>
       )}
 
+      {/* Top-left logo (matches cover slide) */}
+      <div className="absolute top-6 left-6 z-10 flex items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 backdrop-blur-sm">
+        <Image
+          src="/logo-square.jpeg"
+          alt="Nexos"
+          width={28}
+          height={28}
+          className="rounded"
+        />
+        <span className="text-xs font-semibold tracking-wide text-white">
+          NEXOS
+        </span>
+      </div>
+
       {/* Custom banner text — shown above the price bar */}
       {bannerText && (
         <div
