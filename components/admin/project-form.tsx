@@ -35,6 +35,8 @@ import {
 } from "@/components/ui/select";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { LocationPicker } from "@/components/admin/location-picker";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import { Trash2 } from "lucide-react";
 
 import {
   DndContext,
@@ -89,6 +91,7 @@ type FormState = {
   status: string;
   is_featured: boolean;
   is_active: boolean;
+  custom_fields: Array<{ label: string; value: string }>;
 };
 
 type DistrictOption = { id: number; name: string };
@@ -288,6 +291,11 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
     status: project?.status ?? "selling",
     is_featured: project?.is_featured ?? false,
     is_active: project?.is_active ?? true,
+    custom_fields: Array.isArray(
+      (project as unknown as { custom_fields?: unknown })?.custom_fields
+    )
+      ? ((project as unknown as { custom_fields: Array<{ label: string; value: string }> }).custom_fields)
+      : [],
   });
 
   // DnD sensors
@@ -378,6 +386,9 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
       status: form.status,
       is_featured: form.is_featured,
       is_active: form.is_active,
+      custom_fields: form.custom_fields
+        .map((f) => ({ label: f.label.trim(), value: f.value.trim() }))
+        .filter((f) => f.label && f.value),
     };
 
     startTransition(async () => {
@@ -496,14 +507,12 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
           </Field>
 
           <Field label="Detaylı Açıklama" htmlFor="description">
-            <textarea
-              id="description"
-              name="description"
+            <RichTextEditor
               value={form.description}
-              onChange={handleChange}
-              rows={6}
+              onChange={(html) =>
+                setForm((prev) => ({ ...prev, description: html }))
+              }
               placeholder="Proje hakkında detaylı bilgi..."
-              className={textareaClass}
             />
           </Field>
 
@@ -663,6 +672,82 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
                 placeholder="120"
               />
             </Field>
+          </div>
+
+          {/* Custom fields — admin-defined key/value pairs saved with the project */}
+          <div className="space-y-3 rounded-lg border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold">Özel Alanlar</h3>
+                <p className="text-xs text-muted-foreground">
+                  İstediğiniz kadar etiket/değer ikilisi ekleyin. Boş bırakılanlar kaydedilmez.
+                </p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  setForm((prev) => ({
+                    ...prev,
+                    custom_fields: [...prev.custom_fields, { label: "", value: "" }],
+                  }))
+                }
+              >
+                <Plus className="size-4" /> Alan Ekle
+              </Button>
+            </div>
+
+            {form.custom_fields.length === 0 ? (
+              <p className="py-2 text-center text-xs text-muted-foreground">
+                Henüz özel alan eklenmedi.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {form.custom_fields.map((field, i) => (
+                  <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+                    <Input
+                      placeholder="Etiket (ör. Aidat)"
+                      value={field.label}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          custom_fields: prev.custom_fields.map((f, idx) =>
+                            idx === i ? { ...f, label: e.target.value } : f
+                          ),
+                        }))
+                      }
+                    />
+                    <Input
+                      placeholder="Değer (ör. £120/ay)"
+                      value={field.value}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          custom_fields: prev.custom_fields.map((f, idx) =>
+                            idx === i ? { ...f, value: e.target.value } : f
+                          ),
+                        }))
+                      }
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() =>
+                        setForm((prev) => ({
+                          ...prev,
+                          custom_fields: prev.custom_fields.filter((_, idx) => idx !== i),
+                        }))
+                      }
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </TabsContent>
 

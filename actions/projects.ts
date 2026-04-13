@@ -28,6 +28,7 @@ export type ProjectInput = {
   lat?: number;
   lng?: number;
   video_url?: string;
+  custom_fields?: Array<{ label: string; value: string }>;
 };
 
 export type ProjectUpdateInput = Partial<ProjectInput>;
@@ -157,6 +158,7 @@ export async function createProject(
     lat: data.lat ?? null,
     lng: data.lng ?? null,
     video_url: data.video_url ?? null,
+    custom_fields: data.custom_fields ?? [],
   };
 
   const { data: project, error } = await supabase
@@ -212,6 +214,7 @@ export async function updateProject(
   if (data.lat !== undefined) payload.lat = data.lat;
   if (data.lng !== undefined) payload.lng = data.lng;
   if (data.video_url !== undefined) payload.video_url = data.video_url;
+  if (data.custom_fields !== undefined) payload.custom_fields = data.custom_fields;
 
   const { data: project, error } = await supabase
     .from("projects")

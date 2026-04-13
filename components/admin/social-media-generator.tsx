@@ -34,6 +34,27 @@ import {
   POST_CHAR_LIMIT,
 } from "@/lib/social-media-templates";
 
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  TRY: "₺",
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+};
+
+function formatOptionPrice(
+  price: number | null,
+  currency: string,
+  pricingType?: string | null
+): string {
+  if (pricingType === "exchange") return "TAKAS";
+  if (pricingType === "offer") return "TEKLİF";
+  if (pricingType === "kat_karsiligi") return "KAT KARŞ.";
+  if (price == null || price <= 0) return "—";
+  const symbol = CURRENCY_SYMBOLS[currency] ?? currency;
+  const formatted = new Intl.NumberFormat("tr-TR").format(price);
+  return currency === "TRY" ? `${formatted} ${symbol}` : `${symbol}${formatted}`;
+}
+
 interface PropertyOption {
   id: string;
   listing_number: number;
@@ -205,7 +226,17 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
             ) : (
               filteredProperties.map((property) => (
                 <SelectItem key={property.id} value={property.id}>
-                  {formatListingNumber(property.listing_number)} — {property.title}
+                  <span className="flex w-full items-center justify-between gap-4">
+                    <span className="truncate">
+                      <span className="font-mono text-xs text-muted-foreground">
+                        {formatListingNumber(property.listing_number)}
+                      </span>{" "}
+                      — {property.title}
+                    </span>
+                    <span className="shrink-0 font-semibold text-primary tabular-nums">
+                      {formatOptionPrice(property.price, property.currency, property.pricing_type)}
+                    </span>
+                  </span>
                 </SelectItem>
               ))
             )}
