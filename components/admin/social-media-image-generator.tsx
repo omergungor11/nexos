@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import { Download, ImageIcon, Palette, PenLine, Star, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, ImageIcon, Palette, PenLine, Star, Trash2 } from "lucide-react";
 import { SocialMediaPreview } from "@/components/admin/social-media-preview";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { Button } from "@/components/ui/button";
@@ -186,6 +186,18 @@ const LAYOUT_LABELS: Record<LayoutType, string> = {
   herooverlay: "Hero Overlay",
   poster: "Poster",
   catalog: "Katalog",
+};
+
+// How many images each layout actually uses (cover counts as #1)
+const LAYOUT_IMAGE_COUNT: Record<LayoutType, number> = {
+  classic: 4,
+  fullimage: 1,
+  showcase: 4,
+  magazine: 4,
+  gallery: 4,
+  herooverlay: 4,
+  poster: 1,
+  catalog: 4,
 };
 
 // ---------------------------------------------------------------------------
@@ -1192,35 +1204,90 @@ export function SocialMediaImageGenerator({ property }: SocialMediaImageGenerato
 
             <hr className="border-border" />
 
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Görseller</h4>
-            <p className="text-[11px] text-muted-foreground">Yıldıza tıklayarak ana görseli seçin, + ile yeni ekleyin</p>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Görseller</h4>
+              <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                {LAYOUT_IMAGE_COUNT[template.layout]} görsel kullanılıyor
+              </span>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              İlk {LAYOUT_IMAGE_COUNT[template.layout]} görsel tasarıma girer. Ok butonları ile sırala, yıldız ile ana görseli değiştir.
+            </p>
 
-            <div className="grid grid-cols-4 gap-2">
-              {customImages.map((img, i) => (
-                <div key={i} className="group relative">
-                  <button
-                    type="button"
-                    onClick={() => { setEditingImageIndex(i); setMediaPickerOpen(true); }}
-                    className={`relative aspect-square w-full overflow-hidden rounded-lg border-2 transition-colors hover:border-primary ${i === 0 ? "border-primary" : "border-transparent"}`}
-                  >
-                    <img src={img} alt={`Görsel ${i + 1}`} className="h-full w-full object-cover" />
-                    {i === 0 && <span className="absolute left-0.5 top-0.5 rounded bg-primary px-1 text-[8px] font-bold text-primary-foreground">ANA</span>}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/30 group-hover:opacity-100">
-                      <PenLine className="size-4 text-white" />
-                    </div>
-                  </button>
-                  {i !== 0 && (
+            <div className="grid grid-cols-3 gap-2">
+              {customImages.map((img, i) => {
+                const usedSlots = LAYOUT_IMAGE_COUNT[template.layout];
+                const inUse = i < usedSlots;
+                return (
+                  <div key={i} className={`group relative ${inUse ? "" : "opacity-40"}`}>
                     <button
                       type="button"
-                      title="Ana görsel yap"
-                      onClick={() => setCustomImages((prev) => { const next = [...prev]; const [moved] = next.splice(i, 1); next.unshift(moved); return next; })}
-                      className="absolute -right-1 -top-1 rounded-full bg-background p-0.5 shadow-sm border hover:text-primary"
+                      onClick={() => { setEditingImageIndex(i); setMediaPickerOpen(true); }}
+                      className={`relative aspect-square w-full overflow-hidden rounded-lg border-2 transition-colors hover:border-primary ${i === 0 ? "border-primary" : "border-transparent"}`}
                     >
-                      <Star className="size-3" />
+                      <img src={img} alt={`Görsel ${i + 1}`} className="h-full w-full object-cover" />
+                      <span className="absolute left-0.5 top-0.5 rounded bg-background/85 px-1 text-[9px] font-bold text-foreground">
+                        {i === 0 ? "ANA" : `#${i + 1}`}
+                      </span>
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/30 group-hover:opacity-100">
+                        <PenLine className="size-4 text-white" />
+                      </div>
                     </button>
-                  )}
-                </div>
-              ))}
+
+                    {/* Action row: shift left, make main, shift right, remove */}
+                    <div className="absolute inset-x-0 bottom-0.5 flex items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                      <button
+                        type="button"
+                        title="Sola taşı"
+                        disabled={i === 0}
+                        onClick={() => setCustomImages((prev) => {
+                          if (i === 0) return prev;
+                          const next = [...prev];
+                          [next[i - 1], next[i]] = [next[i], next[i - 1]];
+                          return next;
+                        })}
+                        className="rounded-full bg-background p-0.5 shadow-sm border hover:text-primary disabled:opacity-30"
+                      >
+                        <ArrowLeft className="size-3" />
+                      </button>
+                      {i !== 0 && (
+                        <button
+                          type="button"
+                          title="Ana görsel yap"
+                          onClick={() => setCustomImages((prev) => { const next = [...prev]; const [moved] = next.splice(i, 1); next.unshift(moved); return next; })}
+                          className="rounded-full bg-background p-0.5 shadow-sm border hover:text-primary"
+                        >
+                          <Star className="size-3" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        title="Sağa taşı"
+                        disabled={i === customImages.length - 1}
+                        onClick={() => setCustomImages((prev) => {
+                          if (i === prev.length - 1) return prev;
+                          const next = [...prev];
+                          [next[i + 1], next[i]] = [next[i], next[i + 1]];
+                          return next;
+                        })}
+                        className="rounded-full bg-background p-0.5 shadow-sm border hover:text-primary disabled:opacity-30"
+                      >
+                        <ArrowRight className="size-3" />
+                      </button>
+                    </div>
+
+                    {/* Remove button */}
+                    <button
+                      type="button"
+                      title="Görseli kaldır"
+                      onClick={() => setCustomImages((prev) => prev.filter((_, idx) => idx !== i))}
+                      className="absolute -right-1 -top-1 rounded-full bg-background p-0.5 shadow-sm border text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="size-3" />
+                    </button>
+                  </div>
+                );
+              })}
               <button
                 type="button"
                 onClick={() => { setEditingImageIndex(customImages.length); setMediaPickerOpen(true); }}
