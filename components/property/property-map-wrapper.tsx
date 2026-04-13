@@ -18,12 +18,25 @@ interface PropertyMapProps {
   cityLng?: number | null;
   districtLat?: number | null;
   districtLng?: number | null;
+  neighborhoodLat?: number | null;
+  neighborhoodLng?: number | null;
 }
 
-export function PropertyMap({ lat, lng, title, address, cityLat, cityLng, districtLat, districtLng }: PropertyMapProps) {
-  // Use property coords, fallback to district, then city
-  const finalLat = lat ?? districtLat ?? cityLat;
-  const finalLng = lng ?? districtLng ?? cityLng;
+export function PropertyMap({
+  lat,
+  lng,
+  title,
+  address,
+  cityLat,
+  cityLng,
+  districtLat,
+  districtLng,
+  neighborhoodLat,
+  neighborhoodLng,
+}: PropertyMapProps) {
+  // property → neighborhood → district → city
+  const finalLat = lat ?? neighborhoodLat ?? districtLat ?? cityLat;
+  const finalLng = lng ?? neighborhoodLng ?? districtLng ?? cityLng;
   const isApproximate = lat == null || lng == null;
 
   if (finalLat == null || finalLng == null) {

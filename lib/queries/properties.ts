@@ -13,7 +13,7 @@ const PROPERTY_DETAIL_SELECT = `
   *,
   city:cities(id, name, slug, lat, lng),
   district:districts(id, name, slug, lat, lng),
-  neighborhood:neighborhoods(id, name, slug),
+  neighborhood:neighborhoods(id, name, slug, lat, lng),
   agent:agents(id, name, title, slug, phone, email, photo_url),
   images:property_images(id, url, alt_text, sort_order, is_cover),
   features:property_features(feature:features(id, name, slug, icon, category)),

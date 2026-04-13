@@ -414,6 +414,12 @@ export default async function PropertyDetailPage({ params }: Props) {
               cityLng={property.city?.lng}
               districtLat={property.district?.lat}
               districtLng={property.district?.lng}
+              neighborhoodLat={
+                (property.neighborhood as { lat?: number | null } | null)?.lat
+              }
+              neighborhoodLng={
+                (property.neighborhood as { lng?: number | null } | null)?.lng
+              }
             />
           </div>
 

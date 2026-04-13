@@ -2,6 +2,11 @@
 
 import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import {
+  geocodeCity,
+  geocodeDistrict,
+  geocodeNeighborhood,
+} from "@/lib/geocode";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -107,6 +112,15 @@ export async function createCity(
     return { error: error.message };
   }
 
+  // Auto-geocode in the background — don't block the admin response.
+  const coords = await geocodeCity(data.name);
+  if (coords && city) {
+    await supabase
+      .from("cities")
+      .update({ lat: coords.lat, lng: coords.lng })
+      .eq("id", (city as { id: number }).id);
+  }
+
   revalidateTag("locations", {});
   return { data: city as { id: number; name: string; slug: string } };
 }
@@ -136,6 +150,17 @@ export async function updateCity(
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Re-geocode if the name changed
+  if (data.name !== undefined && city) {
+    const coords = await geocodeCity(data.name);
+    if (coords) {
+      await supabase
+        .from("cities")
+        .update({ lat: coords.lat, lng: coords.lng })
+        .eq("id", id);
+    }
   }
 
   revalidateTag("locations", {});
@@ -186,6 +211,34 @@ export async function createDistrict(
     return { error: error.message };
   }
 
+  // Resolve parent city name so geocoding has proper context
+  const { data: parentCity } = await supabase
+    .from("cities")
+    .select("name, lat, lng")
+    .eq("id", data.city_id)
+    .single();
+
+  if (district && parentCity) {
+    const cityName = (parentCity as { name: string }).name;
+    const coords = await geocodeDistrict(data.name, cityName);
+    // Fall back to parent city coords if Nominatim can't find it
+    const finalCoords =
+      coords ??
+      ((parentCity as { lat: number | null; lng: number | null }).lat != null
+        ? {
+            lat: (parentCity as { lat: number; lng: number }).lat,
+            lng: (parentCity as { lat: number; lng: number }).lng,
+          }
+        : null);
+
+    if (finalCoords) {
+      await supabase
+        .from("districts")
+        .update({ lat: finalCoords.lat, lng: finalCoords.lng })
+        .eq("id", (district as { id: number }).id);
+    }
+  }
+
   revalidateTag("locations", {});
   return { data: district as { id: number; name: string; slug: string } };
 }
@@ -210,11 +263,30 @@ export async function updateDistrict(
     .from("districts")
     .update(payload)
     .eq("id", id)
-    .select("id, name, slug")
+    .select("id, name, slug, city_id")
     .single();
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Re-geocode if the name changed
+  if (data.name !== undefined && district) {
+    const cityId = (district as { city_id: number }).city_id;
+    const { data: parentCity } = await supabase
+      .from("cities")
+      .select("name")
+      .eq("id", cityId)
+      .single();
+
+    const cityName = (parentCity as { name: string } | null)?.name ?? "";
+    const coords = await geocodeDistrict(data.name, cityName);
+    if (coords) {
+      await supabase
+        .from("districts")
+        .update({ lat: coords.lat, lng: coords.lng })
+        .eq("id", id);
+    }
   }
 
   revalidateTag("locations", {});
@@ -265,6 +337,39 @@ export async function createNeighborhood(
     return { error: error.message };
   }
 
+  // Resolve parent district + city for geocoding context
+  const { data: parentDistrict } = await supabase
+    .from("districts")
+    .select("name, lat, lng, city:cities(name)")
+    .eq("id", data.district_id)
+    .single();
+
+  if (neighborhood && parentDistrict) {
+    const districtName = (parentDistrict as { name: string }).name;
+    const cityField = (parentDistrict as unknown as { city: { name: string } | { name: string }[] | null }).city;
+    const cityName = Array.isArray(cityField)
+      ? cityField[0]?.name ?? ""
+      : cityField?.name ?? "";
+
+    const coords = await geocodeNeighborhood(data.name, districtName, cityName);
+    // Fall back to district coords if Nominatim can't find it
+    const finalCoords =
+      coords ??
+      ((parentDistrict as { lat: number | null; lng: number | null }).lat != null
+        ? {
+            lat: (parentDistrict as { lat: number; lng: number }).lat,
+            lng: (parentDistrict as { lat: number; lng: number }).lng,
+          }
+        : null);
+
+    if (finalCoords) {
+      await supabase
+        .from("neighborhoods")
+        .update({ lat: finalCoords.lat, lng: finalCoords.lng })
+        .eq("id", (neighborhood as { id: number }).id);
+    }
+  }
+
   revalidateTag("locations", {});
   return { data: neighborhood as { id: number; name: string; slug: string } };
 }
@@ -289,11 +394,35 @@ export async function updateNeighborhood(
     .from("neighborhoods")
     .update(payload)
     .eq("id", id)
-    .select("id, name, slug")
+    .select("id, name, slug, district_id")
     .single();
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Re-geocode if the name changed
+  if (data.name !== undefined && neighborhood) {
+    const districtId = (neighborhood as { district_id: number }).district_id;
+    const { data: parentDistrict } = await supabase
+      .from("districts")
+      .select("name, city:cities(name)")
+      .eq("id", districtId)
+      .single();
+
+    const districtName = (parentDistrict as { name: string } | null)?.name ?? "";
+    const cityField = (parentDistrict as unknown as { city: { name: string } | { name: string }[] | null } | null)?.city;
+    const cityName = Array.isArray(cityField)
+      ? cityField[0]?.name ?? ""
+      : cityField?.name ?? "";
+
+    const coords = await geocodeNeighborhood(data.name, districtName, cityName);
+    if (coords) {
+      await supabase
+        .from("neighborhoods")
+        .update({ lat: coords.lat, lng: coords.lng })
+        .eq("id", id);
+    }
   }
 
   revalidateTag("locations", {});
