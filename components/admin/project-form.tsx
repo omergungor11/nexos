@@ -880,7 +880,16 @@ export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
               onValueChange={(v) => setForm((prev) => ({ ...prev, status: v ?? "selling" }))}
             >
               <SelectTrigger id="status" className="h-9 w-64">
-                <SelectValue />
+                <SelectValue>
+                  {
+                    {
+                      selling: "Satışta",
+                      under_construction: "Yapım Aşamasında",
+                      completed: "Tamamlandı",
+                      upcoming: "Yakında",
+                    }[form.status] ?? form.status
+                  }
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="selling">Satışta</SelectItem>
