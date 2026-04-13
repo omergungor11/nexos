@@ -101,7 +101,7 @@ export async function bulkImportProperties(
       type: (row.type ?? "apartment") as never,
       transaction_type: (row.transaction_type ?? "sale") as never,
       price: row.price ?? 0,
-      currency: row.currency ?? "TRY",
+      currency: row.currency ?? "GBP",
       city_id: cityId,
       is_active: false,
     });

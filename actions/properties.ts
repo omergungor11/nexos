@@ -243,7 +243,7 @@ export async function createProperty(
     transaction_type:
       data.transaction_type as TablesInsert<"properties">["transaction_type"],
     description: data.description ?? null,
-    currency: data.currency ?? "TRY",
+    currency: data.currency ?? "GBP",
     area_sqm: data.area_sqm ?? null,
     gross_area_sqm: data.gross_area_sqm ?? null,
     rooms: data.rooms ?? null,
