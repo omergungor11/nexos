@@ -59,6 +59,7 @@ export type PropertyCreateInput = {
   has_electricity?: boolean;
   has_water?: boolean;
   zoning_status?: string | null;
+  floor_area_ratio?: number | null;
   // Rental-specific
   min_rental_period?: string | null;
   rental_payment_interval?: string | null;

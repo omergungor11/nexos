@@ -104,6 +104,16 @@ export const TITLE_DEED_LABELS: Record<string, string> = {
   other: "Diğer",
 };
 
+export const ZONING_STATUS_LABELS: Record<string, string> = {
+  none: "İmar Yok",
+  residential: "Konut",
+  commercial: "Ticari",
+  mixed: "Karma",
+  industrial: "Sanayi",
+  tourism: "Turizm",
+  agricultural: "Tarım",
+};
+
 export const ROOM_OPTIONS = [
   "1+0",
   "1+1",

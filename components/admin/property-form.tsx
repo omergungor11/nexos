@@ -217,6 +217,7 @@ interface FormState {
   has_electricity: boolean;
   has_water: boolean;
   zoning_status: ZoningStatus | "";
+  floor_area_ratio: string;
   // Rental-specific
   min_rental_period: string;
   rental_payment_interval: RentalPaymentInterval | "";
@@ -557,6 +558,10 @@ function buildInitialState(
     has_electricity: (initialData as Record<string, unknown>)?.has_electricity as boolean ?? false,
     has_water: (initialData as Record<string, unknown>)?.has_water as boolean ?? false,
     zoning_status: ((initialData as Record<string, unknown>)?.zoning_status as ZoningStatus) ?? "",
+    floor_area_ratio:
+      (initialData as Record<string, unknown>)?.floor_area_ratio != null
+        ? String((initialData as Record<string, unknown>).floor_area_ratio)
+        : "",
     // Rental-specific
     min_rental_period: ((initialData as Record<string, unknown>)?.min_rental_period as string) ?? "",
     rental_payment_interval: ((initialData as Record<string, unknown>)?.rental_payment_interval as RentalPaymentInterval) ?? "",
@@ -900,6 +905,7 @@ export function PropertyForm({
       has_electricity: form.has_electricity || undefined,
       has_water: form.has_water || undefined,
       zoning_status: form.zoning_status || null,
+      floor_area_ratio: parseOptionalFloat(form.floor_area_ratio) ?? null,
       // Rental-specific
       min_rental_period: form.min_rental_period.trim() || null,
       rental_payment_interval: form.rental_payment_interval || null,
@@ -1892,28 +1898,48 @@ export function PropertyForm({
                 />
               </div>
 
-              <Field label="İmar Durumu" htmlFor="zoning_status" icon={FileCheck}>
-                <Select
-                  value={form.zoning_status || "__none__"}
-                  onValueChange={(v) =>
-                    setForm((prev) => ({ ...prev, zoning_status: v === "__none__" ? "" : v as ZoningStatus }))
-                  }
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <Field label="İmar Durumu" htmlFor="zoning_status" icon={FileCheck}>
+                  <Select
+                    value={form.zoning_status || "__none__"}
+                    onValueChange={(v) =>
+                      setForm((prev) => ({ ...prev, zoning_status: v === "__none__" ? "" : v as ZoningStatus }))
+                    }
+                  >
+                    <SelectTrigger id="zoning_status" className="w-full">
+                      <SelectValue placeholder="Seçiniz (opsiyonel)">
+                        {form.zoning_status ? ZONING_STATUS_OPTIONS[form.zoning_status as ZoningStatus] : "Belirtilmemiş"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                      {(Object.entries(ZONING_STATUS_OPTIONS) as [ZoningStatus, string][]).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field
+                  label="İmar Oranı (TAKS/KAKS)"
+                  htmlFor="floor_area_ratio"
+                  icon={FileCheck}
+                  hint="Ör: 0.40 (TAKS) veya 1.20 (KAKS)"
                 >
-                  <SelectTrigger id="zoning_status" className="w-full sm:w-64">
-                    <SelectValue placeholder="Seçiniz (opsiyonel)">
-                      {form.zoning_status ? ZONING_STATUS_OPTIONS[form.zoning_status as ZoningStatus] : "Belirtilmemiş"}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">Belirtilmemiş</SelectItem>
-                    {(Object.entries(ZONING_STATUS_OPTIONS) as [ZoningStatus, string][]).map(
-                      ([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
-              </Field>
+                  <Input
+                    id="floor_area_ratio"
+                    name="floor_area_ratio"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={form.floor_area_ratio}
+                    onChange={handleChange}
+                    placeholder="0.00"
+                  />
+                </Field>
+              </div>
             </>
           )}
         </TabsContent>

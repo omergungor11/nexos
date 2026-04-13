@@ -18,6 +18,9 @@ import {
   Mail,
   MessageCircle,
   User,
+  FileCheck,
+  LandPlot,
+  Ratio,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,6 +37,9 @@ import {
   TRANSACTION_TYPE_LABELS,
   PROPERTY_STATUS_LABELS,
   HEATING_TYPE_LABELS,
+  TITLE_DEED_LABELS,
+  ZONING_STATUS_LABELS,
+  LAND_TYPES,
 } from "@/lib/constants";
 import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import { PropertyLightbox } from "@/components/property/property-lightbox";
@@ -238,60 +244,119 @@ export default async function PropertyDetailPage({ params }: Props) {
 
           {/* Property Specs */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-            {property.rooms !== null && (
-              <SpecItem
-                icon={BedDouble}
-                label="Oda Sayısı"
-                value={formatRooms(property.rooms, property.living_rooms)}
-              />
+            {(LAND_TYPES as readonly string[]).includes(property.type) ? (
+              <>
+                {(property as unknown as { land_area_sqm?: number | null }).land_area_sqm != null && (
+                  <SpecItem
+                    icon={LandPlot}
+                    label="Arazi Alanı"
+                    value={formatArea(
+                      (property as unknown as { land_area_sqm: number }).land_area_sqm
+                    )}
+                  />
+                )}
+                {property.area_sqm && (
+                  <SpecItem
+                    icon={Maximize2}
+                    label="Net Alan"
+                    value={formatArea(property.area_sqm)}
+                  />
+                )}
+                {(property as unknown as { title_deed_type?: string | null }).title_deed_type && (
+                  <SpecItem
+                    icon={FileCheck}
+                    label="Koçan Türü"
+                    value={
+                      TITLE_DEED_LABELS[
+                        (property as unknown as { title_deed_type: string }).title_deed_type
+                      ] ?? "—"
+                    }
+                  />
+                )}
+                {(property as unknown as { zoning_status?: string | null }).zoning_status && (
+                  <SpecItem
+                    icon={FileCheck}
+                    label="İmar Durumu"
+                    value={
+                      ZONING_STATUS_LABELS[
+                        (property as unknown as { zoning_status: string }).zoning_status
+                      ] ?? "—"
+                    }
+                  />
+                )}
+                {(property as unknown as { floor_area_ratio?: number | null }).floor_area_ratio != null && (
+                  <SpecItem
+                    icon={Ratio}
+                    label="İmar Oranı"
+                    value={String(
+                      (property as unknown as { floor_area_ratio: number }).floor_area_ratio
+                    )}
+                  />
+                )}
+                <SpecItem
+                  icon={Eye}
+                  label="Görüntülenme"
+                  value={String(property.views_count)}
+                />
+              </>
+            ) : (
+              <>
+                {property.rooms !== null && (
+                  <SpecItem
+                    icon={BedDouble}
+                    label="Oda Sayısı"
+                    value={formatRooms(property.rooms, property.living_rooms)}
+                  />
+                )}
+                {property.area_sqm && (
+                  <SpecItem
+                    icon={Maximize2}
+                    label="Net Alan"
+                    value={formatArea(property.area_sqm)}
+                  />
+                )}
+                {property.gross_area_sqm && (
+                  <SpecItem
+                    icon={Maximize2}
+                    label="Brüt Alan"
+                    value={formatArea(property.gross_area_sqm)}
+                  />
+                )}
+                {property.floor !== null && (
+                  <SpecItem
+                    icon={Building2}
+                    label="Bulunduğu Kat"
+                    value={`${property.floor}/${property.total_floors ?? "?"}`}
+                  />
+                )}
+                {property.year_built && (
+                  <SpecItem
+                    icon={Calendar}
+                    label="Bina Yaşı"
+                    value={`${new Date().getFullYear() - property.year_built} yıl`}
+                  />
+                )}
+                {property.heating_type && property.heating_type !== "none" && (
+                  <SpecItem
+                    icon={Flame}
+                    label="Isıtma"
+                    value={HEATING_TYPE_LABELS[property.heating_type]}
+                  />
+                )}
+                {property.bathrooms !== null && (
+                  <SpecItem
+                    icon={Building2}
+                    label="Banyo"
+                    value={String(property.bathrooms)}
+                  />
+                )}
+                <SpecItem
+                  icon={Eye}
+                  label="Görüntülenme"
+                  value={String(property.views_count)}
+                />
+              </>
             )}
-            {property.area_sqm && (
-              <SpecItem
-                icon={Maximize2}
-                label="Net Alan"
-                value={formatArea(property.area_sqm)}
-              />
-            )}
-            {property.gross_area_sqm && (
-              <SpecItem
-                icon={Maximize2}
-                label="Brüt Alan"
-                value={formatArea(property.gross_area_sqm)}
-              />
-            )}
-            {property.floor !== null && (
-              <SpecItem
-                icon={Building2}
-                label="Bulunduğu Kat"
-                value={`${property.floor}/${property.total_floors ?? "?"}`}
-              />
-            )}
-            {property.year_built && (
-              <SpecItem
-                icon={Calendar}
-                label="Bina Yaşı"
-                value={`${new Date().getFullYear() - property.year_built} yıl`}
-              />
-            )}
-            {property.heating_type && property.heating_type !== "none" && (
-              <SpecItem
-                icon={Flame}
-                label="Isıtma"
-                value={HEATING_TYPE_LABELS[property.heating_type]}
-              />
-            )}
-            {property.bathrooms !== null && (
-              <SpecItem
-                icon={Building2}
-                label="Banyo"
-                value={String(property.bathrooms)}
-              />
-            )}
-            <SpecItem
-              icon={Eye}
-              label="Görüntülenme"
-              value={String(property.views_count)}
-            />
           </div>
 
           <Separator />
