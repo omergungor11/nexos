@@ -1,6 +1,56 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-04-13 (devam — ikinci blok)
+
+### Yapılanlar — Pricing Type & Land
+- **Migration 039/040**: `properties.pricing_type` (fixed/exchange/offer/kat_karsiligi) + `price_per_donum`; price NOT NULL kaldırıldı; `kat_karsiligi` sadece arazilerde görünür
+- **Migration 041**: `floor_area_ratio` (TAKS/KAKS) kolonu
+- **Form**: Fiyat Tipi radyo grubu (Sabit/Takas/Teklif + araziyse Kat Karşılığı), arazi ise Dönüm Başına Fiyat + İmar Oranı alanları
+- **`formatListingPrice`**: TAKASA UYGUN / TEKLİF / KAT KARŞILIĞI etiketleri (user: "takas" → "takasa uygun")
+- **Detay sayfası**: Arazilerde spec grid Oda/Banyo yerine Arazi Alanı / Net Alan / Koçan Türü / İmar Durumu / İmar Oranı gösteriyor
+
+### Yapılanlar — Harita / Lokasyon
+- **Migration 042**: ~70 popüler KKTC ilçesi gerçek koordinatlarla + null olanlar parent şehirden inherit
+- **Migration 043**: `neighborhoods.lat/lng` kolonları
+- **`lib/geocode.ts`**: OpenStreetMap Nominatim wrapper — KKTC viewbox, Kıbrıs sanity check, city→district→neighborhood için progresif sorgu listesi
+- **Auto-geocode**: createCity/updateCity/createDistrict/updateDistrict/createNeighborhood/updateNeighborhood artık otomatik koordinat yazar; bulamazsa üst seviyeye (şehir/ilçe) fallback
+- **Fallback zinciri**: property → neighborhood → district → city (4 seviyeli)
+
+### Yapılanlar — Property Card Swipe
+- **`hooks/use-card-image-preview.ts`**: index state, pointer handlers, klavye ok tuşları, isDragging (tıklama/swipe ayrımı)
+- **`components/property/card-image-preview.tsx`**: slider track, hover arrows (desktop), dot navigation (sliding window max 5), touch swipe
+- **PropertyCard refactor**: Link image alanından çıkarıldı → router.push ile programatik navigasyon. Arrow/dot tıklamaları stopPropagation
+- **Yayma**: Tüm mapper'lar (home, /emlak, vitrin, favoriler, ekibimiz, kampanya) `images[]` doldurur; `PROPERTY_LIST_SELECT` + `actions/favorites.ts` + kampanya query'lerine `alt_text, sort_order` eklendi
+
+### Yapılanlar — Sosyal Medya & Tasarım
+- **Konum label**: district → city fallback (önce "İskele, Kıbrıs" gösteriyordu, şimdi sadece "İskele")
+- **Neighborhood > district > city** öncelik: Mersinlik gibi ilanlar artık ilçe yerine mahalle gösteriyor
+- **FullImage gradient**: Overall 30% overlay kaldırıldı → alt kısımda yazı alanına doğru koyulaşan gradient (resim aydınlık)
+- **Görsel sıralama/sayaç**: Her tasarımın kaç görsel kullandığı rozet, hover'da ← → ⭐ 🗑️ butonları, kullanılmayan slotlar solukça
+- **Renk değişimi**: `#0f172a` → `#171717` (sunum + story + social media tasarımları, 5 dosya 52 yer)
+
+### Yapılanlar — Sunumlar & Proje Formu
+- **Null price crash fix**: `PropertyForPresentation.price` → `number | null`, `formatPrice` pricing_type-aware, Investment slide safePrice guard
+- **Photo slaytlarına logo**: Kapak slaytındaki gibi sol üstte Nexos logo + "NEXOS" yazısı
+- **Proje status label bug**: Edit modda base-ui Select ham "completed" gösteriyordu → Türkçe label map SelectValue children'a geçildi
+- **Proje form RichTextEditor**: Detaylı Açıklama artık TipTap (blog editörüyle aynı toolbar)
+- **Migration 044 — Özel Alanlar**: `projects.custom_fields JSONB`. Fiyat & Birimler tab'ında + Alan Ekle / 🗑️ ile sınırsız etiket/değer ikilisi
+
+### Migration'lar (tümü çalıştırıldı)
+- ✅ `039_property_pricing_type.sql` → 040 self-contained yapıldı
+- ✅ `040_pricing_type_kat_karsiligi.sql`
+- ✅ `041_floor_area_ratio.sql`
+- ✅ `042_district_coordinates.sql`
+- ✅ `043_neighborhood_coordinates.sql`
+- ✅ `044_project_custom_fields.sql`
+
+### Dikkat Edilecekler
+- **Nominatim**: Saniyede 1 istek limiti — admin tek tek kullanımda sorun yok. User-Agent header zorunlu (set edildi)
+- **Fallback zinciri** her zaman 4 seviyeli: property → neighborhood → district → city. Yeni yerlerde PropertyMap bileşeni kullanılıyorsa `neighborhoodLat/Lng` prop'unu da geçmeyi unutma
+- **pricing_type null-safe**: price null olabilir — tüm formatter/calculator'larda `price ?? 0` veya pricing_type kontrolü şart
+- **Renk**: Artık `#171717` kullanıyoruz, yeni tasarımlarda da aynı tonu kullan
+
 ## 2026-04-13
 
 ### Yapılanlar — Workflow Status Sistemi (Migration 038)
