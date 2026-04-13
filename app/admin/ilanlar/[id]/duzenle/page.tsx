@@ -32,15 +32,18 @@ export default async function AdminPropertyEditPage({ params }: Props) {
         .from("properties")
         .select(
           `
-          id, title, description, price, currency, type, status, transaction_type,
+          id, title, description, price, pricing_type, price_per_donum,
+          currency, type, status, transaction_type,
           area_sqm, gross_area_sqm, rooms, living_rooms, bathrooms,
           floor, total_floors, year_built, heating_type,
           parking, furnished, elevator, pool, garden, security_24_7, balcony_count,
           lat, lng, address,
           city_id, district_id, neighborhood_id,
-          is_featured, workflow_status, seo_title, seo_description, agent_id,
+          is_featured, workflow_status, show_on_map, seo_title, seo_description, agent_id,
           video_url, virtual_tour_url,
           pool_type, parking_type, land_area_sqm, title_deed_type, internal_notes,
+          has_road_access, has_electricity, has_water, zoning_status, floor_area_ratio,
+          min_rental_period, rental_payment_interval,
           images:property_images(id, url, alt_text, sort_order, is_cover, created_at, property_id)
         `
         )
@@ -103,11 +106,27 @@ export default async function AdminPropertyEditPage({ params }: Props) {
     created_at: img.created_at,
   }));
 
+  // Pull extra land/pricing/rental fields that the narrow `Property` Row type
+  // in types/supabase.ts doesn't expose yet. They exist in the DB (migrations
+  // 018, 039, 040, 041) and must be forwarded to the form so they aren't
+  // re-initialized to their defaults and overwritten on save.
+  const extra = property as Record<string, unknown>;
+
   const initialData = {
     id: property.id,
     title: property.title,
     description: property.description,
     price: property.price,
+    pricing_type: (extra.pricing_type as string | null) ?? "fixed",
+    price_per_donum: (extra.price_per_donum as number | null) ?? null,
+    has_road_access: (extra.has_road_access as boolean | null) ?? false,
+    has_electricity: (extra.has_electricity as boolean | null) ?? false,
+    has_water: (extra.has_water as boolean | null) ?? false,
+    zoning_status: (extra.zoning_status as string | null) ?? null,
+    floor_area_ratio: (extra.floor_area_ratio as number | null) ?? null,
+    min_rental_period: (extra.min_rental_period as string | null) ?? null,
+    rental_payment_interval: (extra.rental_payment_interval as string | null) ?? null,
+    show_on_map: (extra.show_on_map as boolean | null) ?? false,
     currency: property.currency,
     type: property.type,
     status: property.status,

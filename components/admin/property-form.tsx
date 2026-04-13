@@ -900,10 +900,11 @@ export function PropertyForm({
       agent_id: form.agent_id !== "__none__" ? form.agent_id : null,
       video_url: form.video_url.trim() || undefined,
       virtual_tour_url: form.virtual_tour_url.trim() || undefined,
-      // Land-specific
-      has_road_access: form.has_road_access || undefined,
-      has_electricity: form.has_electricity || undefined,
-      has_water: form.has_water || undefined,
+      // Land-specific. Pass booleans directly so unchecking persists —
+      // `x || undefined` would drop false and leave stale true in the DB.
+      has_road_access: form.has_road_access,
+      has_electricity: form.has_electricity,
+      has_water: form.has_water,
       zoning_status: form.zoning_status || null,
       floor_area_ratio: parseOptionalFloat(form.floor_area_ratio) ?? null,
       // Rental-specific

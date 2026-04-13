@@ -70,17 +70,22 @@ function normalizeProperties(
   return raw
     .filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null)
     .map((item) => {
-      const images = Array.isArray(item["images"]) ? item["images"] : [];
-      const coverImageObj = images.find(
-        (img: unknown) =>
-          typeof img === "object" && img !== null && (img as Record<string, unknown>)["is_cover"] === true
-      );
-      const coverImage =
-        coverImageObj !== undefined && typeof (coverImageObj as Record<string, unknown>)["url"] === "string"
-          ? (coverImageObj as Record<string, unknown>)["url"] as string
-          : images.length > 0 && typeof (images[0] as Record<string, unknown>)["url"] === "string"
-            ? (images[0] as Record<string, unknown>)["url"] as string
-            : null;
+      const imagesRaw = Array.isArray(item["images"]) ? item["images"] : [];
+      const imgs = imagesRaw
+        .filter((i): i is Record<string, unknown> => typeof i === "object" && i !== null)
+        .map((img) => ({
+          url: typeof img["url"] === "string" ? img["url"] : "",
+          alt_text: typeof img["alt_text"] === "string" ? img["alt_text"] : null,
+          is_cover: img["is_cover"] === true,
+          sort_order: typeof img["sort_order"] === "number" ? img["sort_order"] : 0,
+        }))
+        .filter((i) => i.url);
+      const sorted = [...imgs].sort((a, b) => {
+        if (a.is_cover) return -1;
+        if (b.is_cover) return 1;
+        return a.sort_order - b.sort_order;
+      });
+      const coverImage = sorted[0]?.url ?? null;
 
       const city = item["city"] as Record<string, unknown> | null;
       const district = item["district"] as Record<string, unknown> | null;
@@ -115,6 +120,9 @@ function normalizeProperties(
             }
           : null,
         cover_image: coverImage,
+        images: sorted
+          .slice(0, 8)
+          .map((img) => ({ url: img.url, alt_text: img.alt_text })),
       } satisfies PropertyListItem;
     });
 }

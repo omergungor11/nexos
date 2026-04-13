@@ -69,8 +69,18 @@ export default async function LandingPage({ params }: Props) {
     const { data: propData } = await query;
 
     properties = (propData ?? []).map((raw: Record<string, unknown>) => {
-      const images = raw.images as Array<{ url: string; is_cover: boolean }> | null;
-      const cover = images?.find((i) => i.is_cover) ?? images?.[0];
+      const imgs = raw.images as Array<{
+        url: string;
+        alt_text: string | null;
+        is_cover: boolean;
+        sort_order?: number | null;
+      }> | null;
+      const sorted = [...(imgs ?? [])].sort((a, b) => {
+        if (a.is_cover) return -1;
+        if (b.is_cover) return 1;
+        return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+      });
+      const cover = sorted[0];
       return {
         id: raw.id as string,
         slug: raw.slug as string,
@@ -86,10 +96,13 @@ export default async function LandingPage({ params }: Props) {
         status: "available" as const,
         is_featured: raw.is_featured as boolean,
         views_count: raw.views_count as number,
-    listing_number: (raw.listing_number as number) ?? 0,
+        listing_number: (raw.listing_number as number) ?? 0,
         city: raw.city as PropertyListItem["city"],
         district: raw.district as PropertyListItem["district"],
         cover_image: cover?.url ?? null,
+        images: sorted
+          .slice(0, 8)
+          .map((img) => ({ url: img.url, alt_text: img.alt_text })),
       };
     });
   }

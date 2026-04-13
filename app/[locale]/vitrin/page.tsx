@@ -50,8 +50,18 @@ export default async function VitrinPage({ params }: Props) {
 }
 
 function mapListItem(raw: Record<string, unknown>): PropertyListItem {
-  const images = raw.images as Array<{ url: string; is_cover: boolean }> | null;
-  const cover = images?.find((i) => i.is_cover) ?? images?.[0];
+  const images = raw.images as Array<{
+    url: string;
+    alt_text: string | null;
+    is_cover: boolean;
+    sort_order?: number | null;
+  }> | null;
+  const sorted = [...(images ?? [])].sort((a, b) => {
+    if (a.is_cover) return -1;
+    if (b.is_cover) return 1;
+    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  });
+  const cover = sorted[0];
   return {
     id: raw.id as string,
     slug: raw.slug as string,
@@ -71,5 +81,8 @@ function mapListItem(raw: Record<string, unknown>): PropertyListItem {
     city: raw.city as PropertyListItem["city"],
     district: raw.district as PropertyListItem["district"],
     cover_image: cover?.url ?? null,
+    images: sorted
+      .slice(0, 8)
+      .map((img) => ({ url: img.url, alt_text: img.alt_text })),
   };
 }

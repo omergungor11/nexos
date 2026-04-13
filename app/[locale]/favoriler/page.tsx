@@ -38,10 +38,10 @@ type RawFavoriteProperty = {
 function toPropertyListItem(raw: RawFavoriteProperty): PropertyListItem | null {
   if (!raw.city) return null;
 
-  const coverImage =
-    raw.images.find((img) => img.is_cover)?.url ??
-    raw.images[0]?.url ??
-    null;
+  const sorted = [...raw.images].sort((a, b) =>
+    a.is_cover ? -1 : b.is_cover ? 1 : 0
+  );
+  const coverImage = sorted[0]?.url ?? null;
 
   return {
     id: raw.id,
@@ -62,6 +62,9 @@ function toPropertyListItem(raw: RawFavoriteProperty): PropertyListItem | null {
     city: raw.city,
     district: raw.district,
     cover_image: coverImage,
+    images: sorted
+      .slice(0, 8)
+      .map((img) => ({ url: img.url, alt_text: img.alt_text })),
   };
 }
 
