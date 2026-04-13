@@ -477,6 +477,9 @@ function CheckboxField({
 function buildInitialState(
   initialData: Partial<InitialPropertyData> | undefined
 ): FormState {
+  // Defaults apply only when creating a brand new listing — editing an
+  // existing record must preserve whatever was (or wasn't) saved before.
+  const isNew = !initialData?.id;
   return {
     title: initialData?.title ?? "",
     description: initialData?.description ?? "",
@@ -517,7 +520,9 @@ function buildInitialState(
         : "",
     year_built:
       initialData?.year_built != null ? String(initialData.year_built) : "",
-    heating_type: (initialData?.heating_type as HeatingType) ?? "",
+    heating_type:
+      (initialData?.heating_type as HeatingType) ??
+      (isNew ? "air_condition" : ""),
     city_id:
       initialData?.city_id != null ? String(initialData.city_id) : "",
     district_id:
@@ -531,8 +536,10 @@ function buildInitialState(
     address: initialData?.address ?? "",
     lat: initialData?.lat != null ? String(initialData.lat) : "",
     lng: initialData?.lng != null ? String(initialData.lng) : "",
-    parking: initialData?.parking ?? false,
-    parking_type: (initialData as Record<string, unknown>)?.parking_type as ParkingType ?? "none",
+    parking: initialData?.parking ?? isNew,
+    parking_type:
+      ((initialData as Record<string, unknown>)?.parking_type as ParkingType) ??
+      (isNew ? "open" : "none"),
     furnished: initialData?.furnished ?? false,
     elevator: initialData?.elevator ?? false,
     pool: initialData?.pool ?? false,
@@ -542,7 +549,9 @@ function buildInitialState(
     balcony_count:
       initialData?.balcony_count != null
         ? String(initialData.balcony_count)
-        : "0",
+        : isNew
+          ? "1"
+          : "0",
     land_area_sqm:
       (initialData as Record<string, unknown>)?.land_area_sqm != null
         ? String((initialData as Record<string, unknown>).land_area_sqm)
