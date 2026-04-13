@@ -15,7 +15,7 @@ export type PropertyCreateInput = {
   description?: string;
   price: number;
   price_per_donum?: number | null;
-  pricing_type?: "fixed" | "exchange" | "offer";
+  pricing_type?: "fixed" | "exchange" | "offer" | "kat_karsiligi";
   currency?: "TRY" | "USD" | "EUR" | "GBP";
   type: string;
   transaction_type: string;

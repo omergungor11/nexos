@@ -12,6 +12,7 @@ export function formatListingPrice(
 ): string {
   if (pricingType === "exchange") return "TAKAS";
   if (pricingType === "offer") return "TEKLİF";
+  if (pricingType === "kat_karsiligi") return "KAT KARŞILIĞI";
   if (price == null || price <= 0) return "Fiyat Sorunuz";
   return formatPrice(price, currency);
 }

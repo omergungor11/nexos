@@ -177,7 +177,7 @@ interface FormState {
   property_type: PropertyType;
   status: PropertyStatus;
   price: string;
-  pricing_type: "fixed" | "exchange" | "offer";
+  pricing_type: "fixed" | "exchange" | "offer" | "kat_karsiligi";
   price_per_donum: string;
   currency: Currency;
   area_sqm: string;
@@ -488,7 +488,8 @@ function buildInitialState(
       ((initialData as Record<string, unknown>)?.pricing_type as
         | "fixed"
         | "exchange"
-        | "offer") ?? "fixed",
+        | "offer"
+        | "kat_karsiligi") ?? "fixed",
     price_per_donum:
       (initialData as Record<string, unknown>)?.price_per_donum != null
         ? String((initialData as Record<string, unknown>).price_per_donum)
@@ -701,7 +702,18 @@ export function PropertyForm({
 
   function handleSelectChange(name: keyof FormState, value: string | null) {
     if (value === null) return;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [name]: value };
+      // If type changes to non-land while pricing_type is kat_karsiligi, reset
+      if (
+        name === "property_type" &&
+        prev.pricing_type === "kat_karsiligi" &&
+        !isLandType(value)
+      ) {
+        next.pricing_type = "fixed";
+      }
+      return next;
+    });
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -1236,11 +1248,14 @@ export function PropertyForm({
         <TabsContent value="fiyat" className="mt-6 space-y-5">
           {/* Pricing type toggle */}
           <Field label="Fiyat Tipi" htmlFor="pricing_type" icon={Banknote}>
-            <div className="flex gap-2" role="radiogroup" id="pricing_type">
+            <div className="flex flex-wrap gap-2" role="radiogroup" id="pricing_type">
               {([
                 { v: "fixed", label: "Sabit Fiyat" },
                 { v: "exchange", label: "Takas" },
                 { v: "offer", label: "Teklif" },
+                ...(isLandType(form.property_type)
+                  ? [{ v: "kat_karsiligi", label: "Kat Karşılığı" } as const]
+                  : []),
               ] as const).map(({ v, label }) => (
                 <button
                   key={v}
@@ -1311,9 +1326,12 @@ export function PropertyForm({
 
           {form.pricing_type !== "fixed" && (
             <div className="rounded-md border border-dashed bg-muted/40 p-3 text-sm text-muted-foreground">
-              {form.pricing_type === "exchange"
-                ? "Bu ilan takasa açık olarak yayınlanacak — fiyat yerine 'TAKAS' etiketi gösterilecek."
-                : "Bu ilan teklife açık olarak yayınlanacak — fiyat yerine 'TEKLİF' etiketi gösterilecek."}
+              {form.pricing_type === "exchange" &&
+                "Bu ilan takasa açık olarak yayınlanacak — fiyat yerine 'TAKAS' etiketi gösterilecek."}
+              {form.pricing_type === "offer" &&
+                "Bu ilan teklife açık olarak yayınlanacak — fiyat yerine 'TEKLİF' etiketi gösterilecek."}
+              {form.pricing_type === "kat_karsiligi" &&
+                "Bu arazi kat karşılığı olarak yayınlanacak — fiyat yerine 'KAT KARŞILIĞI' etiketi gösterilecek."}
             </div>
           )}
 
