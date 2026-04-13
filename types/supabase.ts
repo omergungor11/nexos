@@ -26,6 +26,11 @@ export type PropertyTypeEnum =
 export type TransactionTypeEnum = "sale" | "rent";
 
 export type PropertyStatusEnum = "available" | "sold" | "rented" | "reserved";
+export type PropertyWorkflowStatusEnum =
+  | "draft"
+  | "published"
+  | "passive"
+  | "archived";
 
 export type HeatingTypeEnum =
   | "none"
@@ -295,6 +300,7 @@ export type Database = {
           agent_id: string | null;
           is_featured: boolean;
           is_active: boolean;
+          workflow_status: PropertyWorkflowStatusEnum;
           show_on_map: boolean;
           views_count: number;
           seo_title: string | null;
@@ -351,6 +357,7 @@ export type Database = {
           agent_id?: string | null;
           is_featured?: boolean;
           is_active?: boolean;
+          workflow_status?: PropertyWorkflowStatusEnum;
           show_on_map?: boolean;
           views_count?: number;
           seo_title?: string | null;
@@ -407,6 +414,7 @@ export type Database = {
           agent_id?: string | null;
           is_featured?: boolean;
           is_active?: boolean;
+          workflow_status?: PropertyWorkflowStatusEnum;
           show_on_map?: boolean;
           views_count?: number;
           seo_title?: string | null;
@@ -754,6 +762,7 @@ export type Database = {
       property_type_enum: PropertyTypeEnum;
       transaction_type_enum: TransactionTypeEnum;
       property_status_enum: PropertyStatusEnum;
+      property_workflow_status_enum: PropertyWorkflowStatusEnum;
       heating_type_enum: HeatingTypeEnum;
       currency_enum: CurrencyEnum;
       feature_category_enum: FeatureCategoryEnum;

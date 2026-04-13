@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatPrice, formatArea, formatRooms } from "@/lib/format";
+import { formatListingPrice, formatArea, formatRooms } from "@/lib/format";
 import {
   PROPERTY_TYPE_TKEYS,
   TRANSACTION_TYPE_TKEYS,
@@ -85,7 +85,11 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
           {/* Price badge on image */}
           <div className="absolute bottom-2 left-2 rounded-lg bg-black/70 px-3 py-1.5 backdrop-blur-sm">
             <p className="text-base font-bold text-white">
-              {formatPrice(property.price, property.currency)}
+              {formatListingPrice(
+                property.price,
+                property.currency,
+                (property as unknown as { pricing_type?: string }).pricing_type
+              )}
             </p>
           </div>
         </div>

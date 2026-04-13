@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BedDouble, Maximize2 } from "lucide-react";
-import { formatPrice, formatArea, formatRooms } from "@/lib/format";
+import { formatListingPrice, formatArea, formatRooms } from "@/lib/format";
 import {
   PROPERTY_TYPE_LABELS,
   TRANSACTION_TYPE_LABELS,
@@ -57,7 +57,11 @@ export function MapPropertyPopup({ property }: MapPropertyPopupProps) {
       {/* Content */}
       <div className="p-2.5">
         <p className="text-sm font-bold text-primary">
-          {formatPrice(property.price, property.currency)}
+          {formatListingPrice(
+            property.price,
+            property.currency,
+            (property as unknown as { pricing_type?: string }).pricing_type
+          )}
         </p>
 
         <h3 className="mt-0.5 line-clamp-2 text-xs font-semibold leading-snug text-gray-900">

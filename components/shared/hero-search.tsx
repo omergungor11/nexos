@@ -286,7 +286,7 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                       key={r.id}
                       type="button"
                       onClick={() => handleResultClick(r.slug)}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-gray-50"
+                      className="group flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-gray-50"
                     >
                       {cover && (
                         /* eslint-disable-next-line @next/next/no-img-element */
@@ -304,7 +304,9 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
                           {[r.district?.name, r.city?.name].filter(Boolean).join(", ")}
                         </p>
                       </div>
-                      <span className="shrink-0 text-xs font-bold text-primary sm:text-sm">
+                      <span
+                        className="shrink-0 rounded-lg bg-primary/5 px-2.5 py-1 text-sm font-extrabold tracking-tight text-primary shadow-sm ring-1 ring-primary/10 drop-shadow-[0_1px_1px_rgba(0,0,0,0.08)] transition-all duration-200 group-hover:scale-105 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-md group-hover:ring-primary sm:text-base"
+                      >
                         {formatPrice(r.price, r.currency)}
                       </span>
                     </button>

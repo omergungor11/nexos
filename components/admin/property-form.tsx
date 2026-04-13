@@ -160,6 +160,7 @@ interface InitialPropertyData {
   district_id: number | null;
   neighborhood_id: number | null;
   is_featured: boolean;
+  workflow_status?: string | null;
   seo_title: string | null;
   seo_description: string | null;
   agent_id: string | null;
@@ -176,6 +177,8 @@ interface FormState {
   property_type: PropertyType;
   status: PropertyStatus;
   price: string;
+  pricing_type: "fixed" | "exchange" | "offer";
+  price_per_donum: string;
   currency: Currency;
   area_sqm: string;
   gross_area_sqm: string;
@@ -481,6 +484,15 @@ function buildInitialState(
     property_type: (initialData?.type as PropertyType) ?? "apartment",
     status: (initialData?.status as PropertyStatus) ?? "available",
     price: initialData?.price != null ? String(initialData.price) : "",
+    pricing_type:
+      ((initialData as Record<string, unknown>)?.pricing_type as
+        | "fixed"
+        | "exchange"
+        | "offer") ?? "fixed",
+    price_per_donum:
+      (initialData as Record<string, unknown>)?.price_per_donum != null
+        ? String((initialData as Record<string, unknown>).price_per_donum)
+        : "",
     currency: (initialData?.currency as Currency) ?? "GBP",
     area_sqm:
       initialData?.area_sqm != null ? String(initialData.area_sqm) : "",
@@ -581,6 +593,21 @@ export function PropertyForm({
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("temel");
   const isEditMode = !!propertyId;
+
+  // Current workflow state drives the primary "save" button so that hitting
+  // Enter on an edit form doesn't silently flip a draft to published. Users
+  // still pick the explicit intent via the button row below.
+  const currentWorkflow = (initialData?.workflow_status ?? "draft") as
+    | "draft"
+    | "published"
+    | "passive"
+    | "archived";
+  const defaultSaveIntent: "draft" | "published" | "passive" =
+    currentWorkflow === "draft"
+      ? "draft"
+      : currentWorkflow === "passive"
+        ? "passive"
+        : "published";
 
   const [form, setForm] = useState<FormState>(() =>
     buildInitialState(initialData)
@@ -743,8 +770,10 @@ export function PropertyForm({
       next.title = "Başlık zorunludur.";
     }
 
-    if (!form.price.trim() || isNaN(Number(form.price)) || Number(form.price) <= 0) {
-      next.price = "Geçerli bir fiyat giriniz.";
+    if (form.pricing_type === "fixed") {
+      if (!form.price.trim() || isNaN(Number(form.price)) || Number(form.price) <= 0) {
+        next.price = "Geçerli bir fiyat giriniz.";
+      }
     }
 
     if (!form.city_id) {
@@ -814,7 +843,9 @@ export function PropertyForm({
     return {
       title: form.title.trim(),
       description: form.description.trim() || undefined,
-      price: Number(form.price),
+      price: form.pricing_type === "fixed" && form.price ? Number(form.price) : 0,
+      pricing_type: form.pricing_type,
+      price_per_donum: parseOptionalFloat(form.price_per_donum) ?? null,
       currency: form.currency,
       type: form.property_type,
       transaction_type: form.transaction_type,
@@ -868,16 +899,22 @@ export function PropertyForm({
   // Submit
   // ---------------------------------------------------------------------------
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!validate()) return;
+  function performSave(
+    workflowIntent: "draft" | "published" | "passive"
+  ) {
+    // Drafts skip the full field validation — only title is required.
+    if (workflowIntent !== "draft" && !validate()) return;
+    if (workflowIntent === "draft" && !form.title.trim()) {
+      toast.error("Taslak için en azından bir başlık girin.");
+      return;
+    }
 
     const payload = buildPayload();
 
     startTransition(async () => {
       try {
         if (isEditMode && propertyId) {
-          const result = await updateProperty(propertyId, { ...payload, is_active: true });
+          const result = await updateProperty(propertyId, { ...payload, workflow_status: workflowIntent });
           if (result.error) {
             toast.error(`Kayıt hatası: ${result.error}`);
             return;
@@ -887,10 +924,16 @@ export function PropertyForm({
           if (featureResult.error) {
             toast.error(`Özellikler kaydedilemedi: ${featureResult.error}`);
           }
-          toast.success("İlan başarıyla kaydedildi.");
+          toast.success(
+            workflowIntent === "draft"
+              ? "Taslak kaydedildi."
+              : workflowIntent === "passive"
+                ? "İlan pasife alındı."
+                : "İlan yayınlandı."
+          );
           router.push("/admin/ilanlar");
         } else {
-          const result = await createProperty({ ...payload, is_active: true });
+          const result = await createProperty({ ...payload, workflow_status: workflowIntent });
           if (result.error) {
             toast.error(`İlan oluşturulamadı: ${result.error}`);
             return;
@@ -899,7 +942,11 @@ export function PropertyForm({
           if (result.data && selectedFeatureIds.size > 0) {
             await syncPropertyFeatures(result.data.id, Array.from(selectedFeatureIds));
           }
-          toast.success("İlan başarıyla oluşturuldu.");
+          toast.success(
+            workflowIntent === "draft"
+              ? "Taslak oluşturuldu."
+              : "İlan yayınlandı."
+          );
           router.push("/admin/ilanlar");
         }
       } catch (err) {
@@ -914,7 +961,13 @@ export function PropertyForm({
   // ---------------------------------------------------------------------------
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        performSave(defaultSaveIntent);
+      }}
+      className="space-y-6"
+    >
       <Tabs value={activeTab} onValueChange={(v) => v && setActiveTab(v)}>
         <TabsList className="h-auto flex-wrap gap-1">
           {([
@@ -1181,50 +1234,115 @@ export function PropertyForm({
         {/* Tab 2: Fiyat & Özellikler                                         */}
         {/* ----------------------------------------------------------------- */}
         <TabsContent value="fiyat" className="mt-6 space-y-5">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <Field
-              label="Fiyat"
-              htmlFor="price"
-              required
-              error={errors.price}
-              icon={Banknote}
-              hint={form.price ? formatPriceDisplay(form.price) : undefined}
-            >
-              <Input
-                id="price"
-                name="price"
-                type="number"
-                min="0"
-                step="1"
-                value={form.price}
-                onChange={handleChange}
-                placeholder="0"
-                aria-invalid={!!errors.price}
-              />
-            </Field>
+          {/* Pricing type toggle */}
+          <Field label="Fiyat Tipi" htmlFor="pricing_type" icon={Banknote}>
+            <div className="flex gap-2" role="radiogroup" id="pricing_type">
+              {([
+                { v: "fixed", label: "Sabit Fiyat" },
+                { v: "exchange", label: "Takas" },
+                { v: "offer", label: "Teklif" },
+              ] as const).map(({ v, label }) => (
+                <button
+                  key={v}
+                  type="button"
+                  role="radio"
+                  aria-checked={form.pricing_type === v}
+                  onClick={() =>
+                    setForm((prev) => ({ ...prev, pricing_type: v }))
+                  }
+                  className={`flex-1 rounded-md border px-3 py-2 text-sm transition-colors ${
+                    form.pricing_type === v
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-input bg-background hover:bg-muted"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </Field>
 
-            <Field label="Para Birimi" htmlFor="currency" icon={Coins}>
-              <Select
-                value={form.currency}
-                onValueChange={(v) => handleSelectChange("currency", v)}
+          {form.pricing_type === "fixed" && (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <Field
+                label="Fiyat"
+                htmlFor="price"
+                required
+                error={errors.price}
+                icon={Banknote}
+                hint={form.price ? formatPriceDisplay(form.price) : undefined}
               >
-                <SelectTrigger id="currency" className="w-full">
-                  <SelectValue>
-                    {CURRENCY_LABELS[form.currency as Currency] ?? form.currency}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {(
-                    Object.entries(CURRENCY_LABELS) as [Currency, string][]
-                  ).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </div>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={form.price}
+                  onChange={handleChange}
+                  placeholder="0"
+                  aria-invalid={!!errors.price}
+                />
+              </Field>
+
+              <Field label="Para Birimi" htmlFor="currency" icon={Coins}>
+                <Select
+                  value={form.currency}
+                  onValueChange={(v) => handleSelectChange("currency", v)}
+                >
+                  <SelectTrigger id="currency" className="w-full">
+                    <SelectValue>
+                      {CURRENCY_LABELS[form.currency as Currency] ?? form.currency}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(
+                      Object.entries(CURRENCY_LABELS) as [Currency, string][]
+                    ).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+          )}
+
+          {form.pricing_type !== "fixed" && (
+            <div className="rounded-md border border-dashed bg-muted/40 p-3 text-sm text-muted-foreground">
+              {form.pricing_type === "exchange"
+                ? "Bu ilan takasa açık olarak yayınlanacak — fiyat yerine 'TAKAS' etiketi gösterilecek."
+                : "Bu ilan teklife açık olarak yayınlanacak — fiyat yerine 'TEKLİF' etiketi gösterilecek."}
+            </div>
+          )}
+
+          {/* Per-dönüm price — only for land types */}
+          {isLandType(form.property_type) && (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <Field
+                label="Dönüm Başına Fiyat"
+                htmlFor="price_per_donum"
+                icon={Banknote}
+                hint={
+                  form.price_per_donum
+                    ? `${formatPriceDisplay(form.price_per_donum)} / dönüm`
+                    : "İsteğe bağlı — dönüm başına birim fiyat"
+                }
+              >
+                <Input
+                  id="price_per_donum"
+                  name="price_per_donum"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={form.price_per_donum}
+                  onChange={handleChange}
+                  placeholder="0"
+                />
+              </Field>
+            </div>
+          )}
 
           {/* Rental-specific fields */}
           {(form.transaction_type === "rent" || form.transaction_type === "daily_rental") && (
@@ -1906,23 +2024,53 @@ export function PropertyForm({
       </Tabs>
 
       {/* ------------------------------------------------------------------- */}
-      {/* Form actions                                                         */}
+      {/* Form actions — workflow-aware save buttons                            */}
       {/* ------------------------------------------------------------------- */}
-      <div className="flex gap-3 border-t pt-6">
-        <Button type="submit" disabled={isPending}>
-          {isPending
-            ? isEditMode
-              ? "Kaydediliyor..."
-              : "Oluşturuluyor..."
-            : isEditMode
-              ? "Değişiklikleri Kaydet"
-              : "İlan Oluştur"}
-        </Button>
+      <div className="flex flex-wrap items-center gap-3 border-t pt-6">
         <Button
           type="button"
           variant="outline"
+          disabled={isPending}
+          onClick={() => performSave("draft")}
+        >
+          {isPending && defaultSaveIntent === "draft" ? "Kaydediliyor..." : "Taslak Kaydet"}
+        </Button>
+
+        <Button
+          type="button"
+          disabled={isPending}
+          onClick={() => performSave("published")}
+        >
+          {isPending && defaultSaveIntent === "published"
+            ? "Yayınlanıyor..."
+            : currentWorkflow === "published"
+              ? "Değişiklikleri Kaydet"
+              : "Yayınla"}
+        </Button>
+
+        {isEditMode && currentWorkflow === "published" && (
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isPending}
+            onClick={() => performSave("passive")}
+          >
+            Pasife Al
+          </Button>
+        )}
+
+        {isEditMode && currentWorkflow === "passive" && (
+          <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+            Şu an pasif
+          </span>
+        )}
+
+        <Button
+          type="button"
+          variant="ghost"
           onClick={() => router.push("/admin/ilanlar")}
           disabled={isPending}
+          className="ml-auto"
         >
           İptal
         </Button>

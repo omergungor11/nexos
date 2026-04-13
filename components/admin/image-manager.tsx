@@ -150,6 +150,8 @@ function SortableImageCard({
     <div ref={setNodeRef} style={style} className="group relative overflow-hidden rounded-lg border bg-muted">
       {/* Drag handle */}
       <button
+        type="button"
+        aria-label="Sürükle"
         className="absolute right-2 top-2 z-20 cursor-grab rounded bg-black/50 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
         {...attributes}
         {...listeners}

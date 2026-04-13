@@ -28,7 +28,7 @@ import {
   getPropertyBySlug,
   getRelatedProperties,
 } from "@/lib/queries/properties";
-import { formatPrice, formatArea, formatRooms, formatDate } from "@/lib/format";
+import { formatPrice, formatListingPrice, formatArea, formatRooms, formatDate } from "@/lib/format";
 import {
   PROPERTY_TYPE_LABELS,
   TRANSACTION_TYPE_LABELS,
@@ -210,8 +210,21 @@ export default async function PropertyDetailPage({ params }: Props) {
               </p>
             )}
             <p className="text-3xl font-bold text-primary">
-              {formatPrice(property.price, property.currency)}
+              {formatListingPrice(
+                property.price,
+                property.currency,
+                (property as unknown as { pricing_type?: string }).pricing_type
+              )}
             </p>
+            {(property as unknown as { price_per_donum?: number | null }).price_per_donum ? (
+              <p className="text-sm text-muted-foreground">
+                {formatPrice(
+                  (property as unknown as { price_per_donum: number }).price_per_donum,
+                  property.currency
+                )}{" "}
+                / dönüm
+              </p>
+            ) : null}
             <div className="flex items-center gap-2">
               <Button variant="outline" size="icon">
                 <Heart className="h-4 w-4" />

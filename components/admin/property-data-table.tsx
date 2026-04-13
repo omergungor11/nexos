@@ -11,8 +11,6 @@ import {
   ChevronsUpDownIcon,
   PencilIcon,
   Trash2Icon,
-  EyeIcon,
-  EyeOffIcon,
   StarIcon,
   CopyIcon,
   XIcon,
@@ -42,17 +40,18 @@ import {
 } from "@/components/ui/dialog";
 
 import {
-  togglePropertyStatus,
   togglePropertyFeatured,
   deleteProperty,
   duplicateProperty,
+  updatePropertyWorkflowStatus,
 } from "@/actions/properties";
 import {
-  bulkToggleActive,
   bulkDelete,
   bulkAssignAgent,
   bulkToggleFeatured,
+  bulkUpdateWorkflowStatus,
 } from "@/actions/properties-bulk";
+import type { PropertyWorkflowStatus } from "@/types/property";
 import {
   PROPERTY_TYPE_LABELS,
   TRANSACTION_TYPE_LABELS,
@@ -91,6 +90,7 @@ export type AdminPropertyRow = {
   transaction_type: string;
   status: string;
   is_active: boolean;
+  workflow_status: PropertyWorkflowStatus;
   is_featured: boolean;
   views_count: number;
   created_at: string;
@@ -98,6 +98,20 @@ export type AdminPropertyRow = {
   district: { name: string } | null;
   images: PropertyImage[];
   agent: Agent | null;
+};
+
+const WORKFLOW_LABELS: Record<PropertyWorkflowStatus, string> = {
+  draft: "Taslak",
+  published: "Yayında",
+  passive: "Pasif",
+  archived: "Arşiv",
+};
+
+const WORKFLOW_COLORS: Record<PropertyWorkflowStatus, string> = {
+  draft: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+  published: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400",
+  passive: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
+  archived: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400",
 };
 
 type SortKey = keyof Pick<
@@ -235,6 +249,7 @@ export function PropertyDataTable({
 }) {
   const [rows, setRows] = useState<AdminPropertyRow[]>(initialData);
   const [search, setSearch] = useState("");
+  const [workflowFilter, setWorkflowFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>(initialTypeFilter ?? "all");
   const [transactionFilter, setTransactionFilter] = useState<string>("all");
@@ -254,14 +269,12 @@ export function PropertyDataTable({
       result = result.filter((r) => r.title.toLowerCase().includes(q));
     }
 
+    if (workflowFilter !== "all") {
+      result = result.filter((r) => r.workflow_status === workflowFilter);
+    }
+
     if (statusFilter !== "all") {
-      if (statusFilter === "active") {
-        result = result.filter((r) => r.is_active);
-      } else if (statusFilter === "inactive") {
-        result = result.filter((r) => !r.is_active);
-      } else {
-        result = result.filter((r) => r.status === statusFilter);
-      }
+      result = result.filter((r) => r.status === statusFilter);
     }
 
     if (typeFilter !== "all") {
@@ -273,7 +286,7 @@ export function PropertyDataTable({
     }
 
     return result;
-  }, [rows, search, statusFilter, typeFilter, transactionFilter]);
+  }, [rows, search, workflowFilter, statusFilter, typeFilter, transactionFilter]);
 
   // Sorting
   const sorted = useMemo(() => {
@@ -315,16 +328,20 @@ export function PropertyDataTable({
     };
   }
 
-  function handleToggleActive(id: string, current: boolean) {
+  function handleWorkflowChange(id: string, next: PropertyWorkflowStatus) {
     startTransition(async () => {
-      const result = await togglePropertyStatus(id, !current);
+      const result = await updatePropertyWorkflowStatus(id, next);
       if (result.error) {
         toast.error(result.error);
       } else {
         setRows((prev) =>
-          prev.map((r) => (r.id === id ? { ...r, is_active: !current } : r))
+          prev.map((r) =>
+            r.id === id
+              ? { ...r, workflow_status: next, is_active: next === "published" }
+              : r
+          )
         );
-        toast.success(!current ? "İlan yayına alındı." : "İlan yayından kaldırıldı.");
+        toast.success(`Durum güncellendi: ${WORKFLOW_LABELS[next]}`);
       }
     });
   }
@@ -380,15 +397,21 @@ export function PropertyDataTable({
   }
 
   // Bulk action handlers
-  async function handleBulkActive(isActive: boolean) {
+  async function handleBulkWorkflow(next: PropertyWorkflowStatus) {
     setBulkPending(true);
     const ids = Array.from(selectedIds);
-    const result = await bulkToggleActive(ids, isActive);
+    const result = await bulkUpdateWorkflowStatus(ids, next);
     if (result.error) {
       toast.error(result.error);
     } else {
-      setRows((prev) => prev.map((r) => (selectedIds.has(r.id) ? { ...r, is_active: isActive } : r)));
-      toast.success(`${ids.length} ilan ${isActive ? "yayına alındı" : "yayından kaldırıldı"}.`);
+      setRows((prev) =>
+        prev.map((r) =>
+          selectedIds.has(r.id)
+            ? { ...r, workflow_status: next, is_active: next === "published" }
+            : r
+        )
+      );
+      toast.success(`${ids.length} ilan → ${WORKFLOW_LABELS[next]}`);
       clearSelection();
     }
     setBulkPending(false);
@@ -472,16 +495,36 @@ export function PropertyDataTable({
           className="h-8 w-48"
         />
 
-        <Select value={statusFilter} onValueChange={handleFilterChange(setStatusFilter)}>
+        <Select value={workflowFilter} onValueChange={handleFilterChange(setWorkflowFilter)}>
           <SelectTrigger className="h-8 w-40">
-            <SelectValue placeholder="Durum">
-              {statusFilter === "all" ? "Tüm Durumlar" : statusFilter === "active" ? "Yayında" : statusFilter === "inactive" ? "Yayında Değil" : statusFilter === "available" ? "Müsait" : statusFilter === "sold" ? "Satıldı" : statusFilter === "rented" ? "Kiralandı" : "Rezerve"}
+            <SelectValue placeholder="Yayın Durumu">
+              {workflowFilter === "all"
+                ? "Tüm Yayınlar"
+                : WORKFLOW_LABELS[workflowFilter as PropertyWorkflowStatus] ?? workflowFilter}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tüm Durumlar</SelectItem>
-            <SelectItem value="active">Yayında</SelectItem>
-            <SelectItem value="inactive">Yayında Değil</SelectItem>
+            <SelectItem value="all">Tüm Yayınlar</SelectItem>
+            <SelectItem value="draft">Taslak</SelectItem>
+            <SelectItem value="published">Yayında</SelectItem>
+            <SelectItem value="passive">Pasif</SelectItem>
+            <SelectItem value="archived">Arşiv</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={statusFilter} onValueChange={handleFilterChange(setStatusFilter)}>
+          <SelectTrigger className="h-8 w-40">
+            <SelectValue placeholder="Satış Durumu">
+              {statusFilter === "all"
+                ? "Tüm Satış"
+                : statusFilter === "available" ? "Müsait"
+                : statusFilter === "sold" ? "Satıldı"
+                : statusFilter === "rented" ? "Kiralandı"
+                : "Rezerve"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tüm Satış</SelectItem>
             <SelectItem value="available">Müsait</SelectItem>
             <SelectItem value="sold">Satıldı</SelectItem>
             <SelectItem value="rented">Kiralandı</SelectItem>
@@ -561,12 +604,17 @@ export function PropertyDataTable({
             {selectedIds.size} ilan seçili
           </span>
           <div className="flex flex-wrap items-center gap-1.5 ml-2">
-            <Button variant="outline" size="sm" disabled={bulkPending} onClick={() => handleBulkActive(true)}>
-              <EyeIcon className="size-3.5" /> Yayına Al
-            </Button>
-            <Button variant="outline" size="sm" disabled={bulkPending} onClick={() => handleBulkActive(false)}>
-              <EyeOffIcon className="size-3.5" /> Yayından Kaldır
-            </Button>
+            <Select onValueChange={(v: string | null) => { if (v) handleBulkWorkflow(v as PropertyWorkflowStatus); }}>
+              <SelectTrigger className="h-8 w-40">
+                <SelectValue placeholder="Durum Değiştir" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="published">Yayına Al</SelectItem>
+                <SelectItem value="passive">Pasife Al</SelectItem>
+                <SelectItem value="draft">Taslağa Al</SelectItem>
+                <SelectItem value="archived">Arşivle</SelectItem>
+              </SelectContent>
+            </Select>
             <Button variant="outline" size="sm" disabled={bulkPending} onClick={() => handleBulkFeatured(true)}>
               <StarIcon className="size-3.5" /> Öne Çıkar
             </Button>
@@ -749,21 +797,30 @@ export function PropertyDataTable({
                       <StatusBadge status={row.status} />
                     </td>
 
-                    {/* Active toggle */}
+                    {/* Workflow status dropdown */}
                     <td className="px-3 py-2">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={row.is_active ? "Yayından kaldır" : "Yayına al"}
-                        onClick={() => handleToggleActive(row.id, row.is_active)}
-                        title={row.is_active ? "Yayında — kaldırmak için tıkla" : "Yayında değil — yayına almak için tıkla"}
+                      <Select
+                        value={row.workflow_status}
+                        onValueChange={(v: string | null) => {
+                          if (v && v !== row.workflow_status) {
+                            handleWorkflowChange(row.id, v as PropertyWorkflowStatus);
+                          }
+                        }}
                       >
-                        {row.is_active ? (
-                          <EyeIcon className="size-4 text-green-600" />
-                        ) : (
-                          <EyeOffIcon className="size-4 text-muted-foreground" />
-                        )}
-                      </Button>
+                        <SelectTrigger
+                          className={`h-7 w-28 border-0 px-2 text-xs font-medium ${WORKFLOW_COLORS[row.workflow_status]}`}
+                        >
+                          <SelectValue>
+                            {WORKFLOW_LABELS[row.workflow_status]}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="draft">Taslak</SelectItem>
+                          <SelectItem value="published">Yayında</SelectItem>
+                          <SelectItem value="passive">Pasif</SelectItem>
+                          <SelectItem value="archived">Arşiv</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </td>
 
                     {/* Featured toggle */}

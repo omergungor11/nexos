@@ -3,7 +3,7 @@
 import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { TablesInsert, TablesUpdate } from "@/types/supabase";
-import type { Property } from "@/types/property";
+import type { Property, PropertyWorkflowStatus } from "@/types/property";
 import { logAdminAction } from "@/lib/admin-logger";
 
 // ---------------------------------------------------------------------------
@@ -14,6 +14,8 @@ export type PropertyCreateInput = {
   title: string;
   description?: string;
   price: number;
+  price_per_donum?: number | null;
+  pricing_type?: "fixed" | "exchange" | "offer";
   currency?: "TRY" | "USD" | "EUR" | "GBP";
   type: string;
   transaction_type: string;
@@ -46,6 +48,7 @@ export type PropertyCreateInput = {
   agent_id?: string | null;
   is_featured?: boolean;
   is_active?: boolean;
+  workflow_status?: PropertyWorkflowStatus;
   show_on_map?: boolean;
   seo_title?: string;
   seo_description?: string;
@@ -193,7 +196,7 @@ export async function createDraftProperty(
     city_id: cityId,
     type: "apartment" as TablesInsert<"properties">["type"],
     transaction_type: "sale" as TablesInsert<"properties">["transaction_type"],
-    is_active: false,
+    workflow_status: "draft",
     status: "available" as TablesInsert<"properties">["status"],
   };
 
@@ -278,6 +281,14 @@ export async function createProperty(
     video_url: data.video_url ?? null,
     virtual_tour_url: data.virtual_tour_url ?? null,
   };
+
+  // Workflow status drives publish state. If caller explicitly sets it, honor
+  // that. Otherwise fall back to legacy is_active (the DB trigger will sync).
+  if (data.workflow_status !== undefined) {
+    payload.workflow_status = data.workflow_status;
+  } else if (data.is_active !== undefined) {
+    payload.is_active = data.is_active;
+  }
 
   const { data: property, error } = await supabase
     .from("properties")
@@ -367,7 +378,11 @@ export async function updateProperty(
     payload.neighborhood_id = data.neighborhood_id;
   if (data.agent_id !== undefined) payload.agent_id = data.agent_id ?? null;
   if (data.is_featured !== undefined) payload.is_featured = data.is_featured;
-  if (data.is_active !== undefined) payload.is_active = data.is_active;
+  if (data.workflow_status !== undefined) {
+    payload.workflow_status = data.workflow_status;
+  } else if (data.is_active !== undefined) {
+    payload.is_active = data.is_active;
+  }
   if (data.show_on_map !== undefined) payload.show_on_map = data.show_on_map;
   if (data.seo_title !== undefined) payload.seo_title = data.seo_title;
   if (data.seo_description !== undefined)
@@ -419,8 +434,13 @@ export async function deleteProperty(
 }
 
 // ---------------------------------------------------------------------------
-// togglePropertyStatus
+// togglePropertyStatus (LEGACY — prefer updatePropertyWorkflowStatus)
 // ---------------------------------------------------------------------------
+//
+// Kept for backward compatibility while UI transitions to the 4-state workflow.
+// The DB sync trigger maps `is_active` writes onto `workflow_status`:
+//   is_active=true   → workflow_status='published'
+//   is_active=false  → workflow_status='passive' (unless already 'draft'/'archived')
 
 export async function togglePropertyStatus(
   id: string,
@@ -443,6 +463,76 @@ export async function togglePropertyStatus(
   revalidateTag("properties", {});
   void logAdminAction({ action: "toggle_status", entityType: "property", entityId: id, metadata: { is_active: isActive } });
   return { data: { id, is_active: isActive } };
+}
+
+// ---------------------------------------------------------------------------
+// updatePropertyWorkflowStatus
+// ---------------------------------------------------------------------------
+//
+// Explicit transition between draft/published/passive/archived. Source of
+// truth for publish state. The DB trigger keeps legacy `is_active` in sync.
+//
+// Validation guard: when transitioning TO 'published', require that the
+// property has at least one image and a non-placeholder title.
+
+export async function updatePropertyWorkflowStatus(
+  id: string,
+  status: PropertyWorkflowStatus
+): Promise<ActionResult<{ id: string; workflow_status: PropertyWorkflowStatus }>> {
+  const { error: authError, supabase } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  // Publish-gate validation
+  if (status === "published") {
+    const { data: prop, error: fetchError } = await supabase
+      .from("properties")
+      .select("title, price, city_id")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !prop) {
+      return { error: "İlan bulunamadı" };
+    }
+
+    if (!prop.title || prop.title === "Taslak İlan") {
+      return { error: "Yayınlamadan önce ilan başlığını girin" };
+    }
+    if (!prop.price || prop.price <= 0) {
+      return { error: "Yayınlamadan önce geçerli bir fiyat girin" };
+    }
+    if (!prop.city_id) {
+      return { error: "Yayınlamadan önce şehir seçin" };
+    }
+
+    const { count: imageCount } = await supabase
+      .from("property_images")
+      .select("id", { count: "exact", head: true })
+      .eq("property_id", id);
+
+    if (!imageCount || imageCount < 1) {
+      return { error: "Yayınlamadan önce en az bir görsel ekleyin" };
+    }
+  }
+
+  const { error } = await supabase
+    .from("properties")
+    .update({ workflow_status: status })
+    .eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateTag("properties", {});
+  void logAdminAction({
+    action: "workflow_transition",
+    entityType: "property",
+    entityId: id,
+    metadata: { workflow_status: status },
+  });
+  return { data: { id, workflow_status: status } };
 }
 
 // ---------------------------------------------------------------------------

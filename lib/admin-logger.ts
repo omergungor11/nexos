@@ -7,6 +7,7 @@ export type AdminAction =
   | "toggle_status"
   | "toggle_featured"
   | "toggle_published"
+  | "workflow_transition"
   | "assign_agent"
   | "bulk_update"
   | "bulk_delete"

@@ -46,6 +46,17 @@ export type PropertyType =
 
 export type PropertyStatus = "available" | "sold" | "rented" | "reserved";
 
+// Editorial workflow state. Separate from business PropertyStatus.
+//   draft     — not yet public; admin is authoring
+//   published — live, visible to public
+//   passive   — temporarily hidden (price edit, negotiation)
+//   archived  — long-term hidden (SEO tombstone)
+export type PropertyWorkflowStatus =
+  | "draft"
+  | "published"
+  | "passive"
+  | "archived";
+
 export type HeatingType =
   | "none"
   | "central"
@@ -187,6 +198,7 @@ export interface Property {
   agent_id: string | null;
   is_featured: boolean;
   is_active: boolean;
+  workflow_status: PropertyWorkflowStatus;
   show_on_map: boolean;
   views_count: number;
   seo_title: string | null;

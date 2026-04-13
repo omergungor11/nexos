@@ -38,7 +38,7 @@ export default async function AdminPropertyEditPage({ params }: Props) {
           parking, furnished, elevator, pool, garden, security_24_7, balcony_count,
           lat, lng, address,
           city_id, district_id, neighborhood_id,
-          is_featured, seo_title, seo_description, agent_id,
+          is_featured, workflow_status, seo_title, seo_description, agent_id,
           video_url, virtual_tour_url,
           pool_type, parking_type, land_area_sqm, title_deed_type, internal_notes,
           images:property_images(id, url, alt_text, sort_order, is_cover, created_at, property_id)

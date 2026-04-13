@@ -5,6 +5,17 @@ export function formatPrice(price: number, currency: string = "TRY"): string {
   return `${new Intl.NumberFormat("tr-TR").format(price)} ${symbol}`;
 }
 
+export function formatListingPrice(
+  price: number | null | undefined,
+  currency: string = "TRY",
+  pricingType: string | null | undefined = "fixed"
+): string {
+  if (pricingType === "exchange") return "TAKAS";
+  if (pricingType === "offer") return "TEKLİF";
+  if (price == null || price <= 0) return "Fiyat Sorunuz";
+  return formatPrice(price, currency);
+}
+
 export function formatArea(area: number | null): string {
   if (!area) return "—";
   return `${new Intl.NumberFormat("tr-TR").format(area)} m²`;
