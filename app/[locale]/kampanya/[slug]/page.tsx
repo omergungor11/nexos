@@ -53,7 +53,7 @@ export default async function LandingPage({ params }: Props) {
         area_sqm, rooms, living_rooms, floor, is_featured, views_count,
         city:cities(id, name, slug),
         district:districts(id, name, slug),
-        images:property_images(url, is_cover)
+        images:property_images(url, alt_text, sort_order, is_cover)
       `)
       .eq("is_active", true)
       .order("created_at", { ascending: false })

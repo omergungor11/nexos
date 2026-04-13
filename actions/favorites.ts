@@ -72,7 +72,7 @@ export async function getFavorites() {
         area_sqm, rooms, living_rooms, is_featured,
         city:cities(id, name, slug),
         district:districts(id, name, slug),
-        images:property_images(url, alt_text, is_cover)
+        images:property_images(url, alt_text, sort_order, is_cover)
       )
     `)
     .eq("user_id", user.id)

@@ -32,7 +32,7 @@ type RawFavoriteProperty = {
   is_featured: boolean;
   city: { id: number; name: string; slug: string } | null;
   district: { id: number; name: string; slug: string } | null;
-  images: { url: string; alt_text: string | null; is_cover: boolean }[];
+  images: { url: string; alt_text: string | null; is_cover: boolean; sort_order?: number | null }[];
 };
 
 function toPropertyListItem(raw: RawFavoriteProperty): PropertyListItem | null {

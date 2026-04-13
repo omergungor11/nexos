@@ -288,9 +288,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <SpecItem
                     icon={Ratio}
                     label="İmar Oranı"
-                    value={String(
-                      (property as unknown as { floor_area_ratio: number }).floor_area_ratio
-                    )}
+                    value={`%${Math.round((property as unknown as { floor_area_ratio: number }).floor_area_ratio)}`}
                   />
                 )}
                 <SpecItem

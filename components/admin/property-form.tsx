@@ -1924,21 +1924,27 @@ export function PropertyForm({
                 </Field>
 
                 <Field
-                  label="İmar Oranı (TAKS/KAKS)"
+                  label="İmar Oranı (%)"
                   htmlFor="floor_area_ratio"
                   icon={FileCheck}
-                  hint="Ör: 0.40 (TAKS) veya 1.20 (KAKS)"
+                  hint="Ör: 220 — detay sayfasında %220 olarak gösterilir"
                 >
-                  <Input
-                    id="floor_area_ratio"
-                    name="floor_area_ratio"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={form.floor_area_ratio}
-                    onChange={handleChange}
-                    placeholder="0.00"
-                  />
+                  <div className="relative">
+                    <Input
+                      id="floor_area_ratio"
+                      name="floor_area_ratio"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={form.floor_area_ratio}
+                      onChange={handleChange}
+                      placeholder="220"
+                      className="pr-8"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      %
+                    </span>
+                  </div>
                 </Field>
               </div>
             </>
