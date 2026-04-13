@@ -1,6 +1,76 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-04-13
+
+### Yapılanlar — Workflow Status Sistemi (Migration 038)
+- **4-state workflow**: `draft / published / passive / archived` enum + kolon + iki yönlü sync trigger (is_active ile)
+- **Admin data-table**: Yayın Durumu filtre ayrı (Satış Durumu filtre ayrı), renkli inline dropdown, bulk 4-durumlu select
+- **Form save butonları**: "Taslak Kaydet" / "Yayınla / Değişiklikleri Kaydet" / "Pasife Al" — publish-gate validation (başlık, fiyat, şehir, min 1 görsel)
+- **Enter safe**: Form submit mevcut workflow_status'u koruyor (accidental publish yok)
+
+### Yapılanlar — Arsa/Fiyat Bug'ları
+- **pricing_type + price_per_donum** DB'ye yazılmıyormuş → `createProperty` ve `updateProperty` payload'larına eklendi. Takas/teklif/kat karşılığı non-fixed pricing için price=null
+- **Publish-gate** pricing_type duyarlılığı: fixed değilse price > 0 zorunluluğu devre dışı
+- **Edit page SELECT eksik kolonlar**: pricing_type, price_per_donum, has_road/elektrik/su, zoning_status, floor_area_ratio, show_on_map, min_rental_period, rental_payment_interval — hepsi eklendi. Eksik select'ler formun default'larla DB'yi **ezmesine** sebep oluyordu
+- **`form.x || undefined` anti-pattern**: has_road_access/has_electricity/has_water — false değerler drop ediliyordu, düzeltildi
+- **İmar Oranı (%)**: step=1, sağda `%` suffix, detay sayfasında `%220` olarak render
+
+### Yapılanlar — Sosyal Medya Paneli Yeniden Yapılandırma
+- **Tab yapısı**: Instagram + Facebook → tek **Metin** tab. Görsel ayrı tab, Story ayrı tab, **Reels (Yakında)** placeholder eklendi
+- **Yeni post formatı**: Emoji-rich Turkish (🚀 özellikler, ✅ bullet'ler, 💎 fırsat, 📍📩 CTA, hashtag block). pricing_type duyarlı (TAKASA UYGUN/TEKLİF/KAT KARŞILIĞI)
+- **İlan seçici iyileştirme**: `#0042 — Başlık` (ilan no + title) + sağda **nexos sarısı** fiyat. Arama ilan no ile de çalışıyor
+- **Dropdown positioning fix**: `alignItemWithTrigger={false}` + `align="start"` — popup artık trigger altında doğru açılıyor
+
+### Yapılanlar — Image Manager & Editor & Görsel Optimizasyon
+- **Drag handle submit bug**: Native `<button>` drag handle form içindeyken default `type="submit"` → 8px threshold altında drag'ler click olarak yorumlanıp form submit ediyordu. `type="button"` eklendi
+- **Fabric editor boyut**: Scale hesabı iki boyutlu, container `maxHeight: calc(100vh - 280px)` + `minHeight: 420px`
+- **Social media image edit mode**: Grid `[1fr_280px]` → canvas `max-w-[420px]` ile preview mode ile uyumlu
+- **Hero search fiyat badge**: Font büyütüldü (sm→base), extrabold, gölge, hover'da primary invert + scale-105
+- **Vercel Pro alındı** — image optimization quota artık makul, kısa vadede başka değişiklik gerekmiyor
+
+### Yapılanlar — Rich Text Editor (TipTap)
+- **Açıklama alanı**: Textarea → **RichTextEditor** (Bold/İtalik/Strike/H2/H3/madde-numaralı liste/alıntı/link/undo-redo)
+- **Detay sayfasında**: HTML ise `dangerouslySetInnerHTML` + `.rte-content` style, değilse eski plain-text fallback (backwards compat)
+- **`.rte-content` custom CSS**: Tailwind v4 typography plugin yok — globals.css'te hand-styled (p/h2/h3/strong/em/s/ul/ol/li/blockquote/hr/a + empty placeholder)
+- **Deps**: @tiptap/react, @tiptap/pm, @tiptap/starter-kit, @tiptap/extension-link
+
+### Yapılanlar — Diğer Küçük İyileştirmeler
+- **Default currency**: TRY → **GBP** (sterlin) — form + createProperty + import + DB kolon default (migration 042)
+- **Yeni ilan form default'ları**: Isıtma=Klima, Otopark=Açık, Balkon=1 (sadece create mode, edit'te korunur)
+- **Price nullable**: Types/supabase + 2 caller (page.tsx hero, comparison-table) güncellendi
+
+### Migration'lar (Supabase Dashboard'da çalıştırıldı)
+- ✅ `038_property_workflow_status.sql` — workflow_status enum + kolon + sync trigger
+- ✅ `042_default_currency_gbp.sql` — properties.currency default 'TRY' → 'GBP'
+
+### Yarım Kalanlar
+- **Reels generator**: Tab'da "Yakında" placeholder var, asıl üretici yazılmadı
+- **Dashboard KPI kartları** (Aşama 3 workflow): Taslak/Yayında/Pasif/Arşiv sayımlı kartlar eklenmedi
+- **Otomatik transition**: 30 gün taslak → hatırlatma, 60 gün pasif → arşiv öner — planlanmış ama yapılmadı
+
+### Sıradakiler
+- Dashboard'a workflow_status KPI kartları (4 durum sayımı)
+- E-posta bildirimi (Resend entegrasyonu)
+- Blog etiket yönetimi admin UI
+- Performance: bundle analysis, lazy loading audit
+- Reels generator (video/animasyon)
+
+### Dikkat Edilecekler
+- **Base-ui Select**: `alignItemWithTrigger` default `true` — custom SelectItem children + SelectValue children beraber kullanıldığında width hesabı bozuluyor → `alignItemWithTrigger={false}` + `align="start"` koymak gerek
+- **`form.x || undefined` pattern**: Boolean alanlarda false değerleri droplayıp stale true bırakıyor. Yeni alan eklerken `form.x` direkt geçirilmeli
+- **Edit page SELECT**: Yeni kolon eklenince buraya da eklenmezse form default'larla DB'yi ezer. 038/039/040/041/042 sonrası edit page select full audit edildi
+- **Native `<button>` + dnd-kit**: Form içinde kullanılırken mutlaka `type="button"` eklemeli
+- **TipTap v3**: `setContent(html, { emitUpdate: false })` Next.js 16 hydration uyumlu
+- **PropertyWorkflowStatus DB trigger**: is_active ↔ workflow_status bidirectional sync sayesinde eski is_active yazan kod hâlâ çalışıyor
+
+### Aktif Context7 / Workflow Geçiş Durumu
+- Phase 0-7 **COMPLETED** (78/78 task)
+- Post-launch bu session'da workflow yönetimi + arsa pricing + sosyal medya sadeleştirme + zengin metin eklendi
+- Bir sonraki ağır iş: Reels üreteci + dashboard KPI widget'ları + otomatik transition
+
+---
+
 ## 2026-04-12
 
 ### Yapılanlar — Çeviri
