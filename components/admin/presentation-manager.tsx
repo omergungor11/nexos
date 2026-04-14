@@ -192,11 +192,12 @@ const DEFAULT_ENABLED_SLIDES: Set<SlideType> = new Set([
   "contact",
 ]);
 
-// SlideRenderer is laid out for a ~640×360 preview card. When captured for
-// PDF/PowerPoint at 1920×1080, the Tailwind font sizes (text-xs/sm/lg/xl…)
-// end up 3× smaller than they should be in a real slide deck. Render the
-// slide at its native size and scale it up via CSS transform so every
-// element — text, icons, absolute positions — grows together.
+// SlideRenderer is tuned for a ~640×360 preview card. The export surface
+// renders at that same logical size and html-to-image rasterises at
+// `pixelRatio: EXPORT_SLIDE_SCALE` to produce a crisp 1920×1080 PNG for
+// PDF/PowerPoint. Tried CSS `transform: scale(3)` first — looked fine in
+// the preview but occasionally got dropped by html-to-image's foreignObject
+// serialisation (preview OK, exported PDF broken); pixelRatio avoids that.
 const EXPORT_SLIDE_SCALE = 3;
 
 /**
@@ -1993,9 +1994,11 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
         // the browser's normal cache behavior and lets tiles load cleanly.
         const { toPng } = await import("html-to-image");
         const capture = toPng(surface, {
-          width: 1920,
-          height: 1080,
-          pixelRatio: 1,
+          width: 1920 / EXPORT_SLIDE_SCALE,
+          height: 1080 / EXPORT_SLIDE_SCALE,
+          // Raster at EXPORT_SLIDE_SCALE× so the PNG comes out at
+          // 1920×1080 even though the node is logically ~640×360.
+          pixelRatio: EXPORT_SLIDE_SCALE,
           cacheBust: false,
           backgroundColor: themeColors.bg,
           fetchRequestInit: { cache: "no-cache" },
@@ -2110,44 +2113,36 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
             zIndex: -1,
           }}
         >
+          {/*
+            SlideRenderer's Tailwind text classes (text-xs/sm/lg/xl…) are
+            tuned for a ~640×360 preview card. We render the export surface
+            at exactly that logical size — layout/typography look identical
+            to the in-admin preview — and rely on html-to-image's
+            `pixelRatio: EXPORT_SLIDE_SCALE` to rasterise at 1920×1080.
+            Earlier we used `transform: scale(3)` on a child node, but
+            CSS transforms occasionally get dropped in html-to-image's
+            foreignObject serialisation → preview looked fine, PDF came
+            out broken. pixelRatio sidesteps that entirely.
+          */}
           <div
             ref={exportSurfaceRef}
             style={{
-              width: 1920,
-              height: 1080,
+              width: 1920 / EXPORT_SLIDE_SCALE,
+              height: 1080 / EXPORT_SLIDE_SCALE,
               backgroundColor: themeColors.bg,
               overflow: "hidden",
             }}
           >
-            {/*
-              SlideRenderer's Tailwind text classes (text-xs/sm/lg/xl…) are
-              sized for the preview card (~640×360). Rendering them at the
-              true 1920×1080 export canvas made fonts look 3× too small in
-              the PDF/PowerPoint output. We render the slide at its native
-              640×360 logical size and transform-scale it 3× so every
-              element (text, icons, images, absolute positions) scales
-              proportionally. html-to-image captures the 1920×1080 parent
-              so the final PNG is unchanged aside from the larger text.
-            */}
-            <div
-              style={{
-                width: 1920 / EXPORT_SLIDE_SCALE,
-                height: 1080 / EXPORT_SLIDE_SCALE,
-                transform: `scale(${EXPORT_SLIDE_SCALE})`,
-                transformOrigin: "top left",
-              }}
-            >
-              {exportCurrent && (
-                <SlideRenderer
-                  property={exportCurrent.property}
-                  slideType={exportCurrent.slideType}
-                  theme={themeColors}
-                  photoIndex={exportCurrent.photoIndex}
-                  bannerText={exportCurrent.bannerText}
-                  customDescription={exportCurrent.customDescription}
-                />
-              )}
-            </div>
+            {exportCurrent && (
+              <SlideRenderer
+                property={exportCurrent.property}
+                slideType={exportCurrent.slideType}
+                theme={themeColors}
+                photoIndex={exportCurrent.photoIndex}
+                bannerText={exportCurrent.bannerText}
+                customDescription={exportCurrent.customDescription}
+              />
+            )}
           </div>
         </div>
       )}
