@@ -299,7 +299,8 @@
     "dailyRentalListings": "Tagesmiete Immobilien",
     "filters": "Filter",
     "found": "{count} Inserate gefunden",
-    "sortBy": "Sortieren nach"
+    "sortBy": "Sortieren nach",
+    "searchResults": "Suchergebnisse"
   },
   "team": {
     "title": "Unser Team",

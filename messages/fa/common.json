@@ -299,7 +299,8 @@
     "dailyRentalListings": "اجاره روزانه املاک",
     "filters": "فیلترها",
     "found": "{count} آگهی یافت شد",
-    "sortBy": "مرتب‌سازی بر اساس"
+    "sortBy": "مرتب‌سازی بر اساس",
+    "searchResults": "نتایج جستجو"
   },
   "team": {
     "title": "تیم ما",

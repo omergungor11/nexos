@@ -299,7 +299,8 @@
     "dailyRentalListings": "Daily Rental Properties",
     "filters": "Filters",
     "found": "{count} listings found",
-    "sortBy": "Sort by"
+    "sortBy": "Sort by",
+    "searchResults": "Search Results"
   },
   "team": {
     "title": "Our Team",
