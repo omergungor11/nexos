@@ -158,14 +158,29 @@ function SortableRow({
 
       <div className="flex-1 space-y-2">
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">
+          <label
+            className={[
+              "mb-1 block text-xs font-medium",
+              draft.label.trim()
+                ? "text-muted-foreground"
+                : "text-destructive",
+            ].join(" ")}
+          >
             Başlık <span className="text-destructive">*</span>
+            {!draft.label.trim() && (
+              <span className="ml-1 font-normal">— bu alana bir başlık yazın</span>
+            )}
           </label>
           <Input
             value={draft.label}
             onChange={(e) => update("label", e.target.value)}
             placeholder="ör. Zemin Kat, A Blok 2+1, Giriş Kat"
             required
+            className={
+              draft.label.trim()
+                ? undefined
+                : "border-destructive focus-visible:ring-destructive/30"
+            }
           />
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -268,16 +283,18 @@ export function FloorPlansEditor({
       if (urls.length > 0) {
         setDrafts((prev) => [
           ...prev,
-          ...urls.map((url, i) => ({
+          ...urls.map((url) => ({
             key: crypto.randomUUID(),
             url,
-            label: `Kat Planı ${prev.length + i + 1}`,
+            label: "",
             alt_text: "",
             area_sqm: "",
             rooms: "",
           })),
         ]);
-        toast.success(`${urls.length} görsel yüklendi.`);
+        toast.success(
+          `${urls.length} görsel yüklendi. Her plan için bir başlık giriniz.`,
+        );
       }
     } finally {
       setUploading(false);
@@ -320,11 +337,18 @@ export function FloorPlansEditor({
     });
   };
 
+  const missingLabel = drafts.some((d) => !d.label.trim());
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           {drafts.length} / {resolvedMax} kat planı
+          {missingLabel && (
+            <span className="ml-2 rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
+              Başlık eksik
+            </span>
+          )}
         </p>
         <div className="flex gap-2">
           <Button
