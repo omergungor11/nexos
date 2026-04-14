@@ -1776,27 +1776,42 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
       );
       if (cancelled) return;
 
-      // Wait for every <img> inside the surface to finish loading
+      // Force-eager any lazy-loading imgs (next/image defaults to lazy;
+      // off-screen surfaces would never trigger the IntersectionObserver).
       const imgs = Array.from(surface.querySelectorAll("img"));
-      await Promise.all(
-        imgs.map((img) => {
-          if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-          return new Promise<void>((resolve) => {
-            const done = () => resolve();
-            img.addEventListener("load", done, { once: true });
-            img.addEventListener("error", done, { once: true });
-          });
-        })
-      );
+      for (const img of imgs) {
+        if (img.getAttribute("loading") === "lazy") {
+          img.setAttribute("loading", "eager");
+        }
+        // Fetch priority hint (ignored by older browsers, harmless)
+        img.setAttribute("fetchpriority", "high");
+      }
+
+      // Wait for every <img> to either load or error. Cap each slide at
+      // 10 s so a single slow image can't hang the entire export.
+      const PER_SLIDE_TIMEOUT_MS = 10_000;
+      await Promise.race([
+        Promise.all(
+          imgs.map((img) => {
+            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+            return new Promise<void>((resolve) => {
+              const done = () => resolve();
+              img.addEventListener("load", done, { once: true });
+              img.addEventListener("error", done, { once: true });
+            });
+          })
+        ),
+        new Promise<void>((r) => setTimeout(r, PER_SLIDE_TIMEOUT_MS)),
+      ]);
       if (cancelled) return;
 
       // Small extra delay so fonts and backgrounds settle
-      await new Promise((r) => setTimeout(r, 80));
+      await new Promise((r) => setTimeout(r, 120));
       if (cancelled) return;
 
       try {
         const { default: html2canvas } = await import("html2canvas");
-        const canvas = await html2canvas(surface, {
+        const capture = html2canvas(surface, {
           useCORS: true,
           allowTaint: false,
           backgroundColor: themeColors.bg,
@@ -1806,13 +1821,28 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
           windowHeight: 1080,
           scale: 1,
           logging: false,
+          imageTimeout: 8000,
         });
+        const CAPTURE_TIMEOUT_MS = 15_000;
+        const canvas = (await Promise.race([
+          capture,
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error("html2canvas timed out")),
+              CAPTURE_TIMEOUT_MS
+            )
+          ),
+        ])) as HTMLCanvasElement;
         if (cancelled) return;
         exportCapturesRef.current.push(canvas.toDataURL("image/png"));
         setExportIdx((i) => i + 1);
       } catch (err) {
         console.error("html2canvas error:", err);
-        toast.error("Slayt kaydedilemedi, işlem durduruldu.");
+        toast.error(
+          `Slayt ${exportIdx + 1} kaydedilemedi: ${
+            err instanceof Error ? err.message : "bilinmeyen hata"
+          }`
+        );
         setExportJob(null);
         setExportIdx(0);
         exportCapturesRef.current = [];
@@ -1907,19 +1937,25 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Hidden export render surface */}
+      {/* Hidden export render surface.
+          Kept INSIDE the viewport (left:0, top:0) with opacity:0 so that
+          next/image's IntersectionObserver triggers loading. Off-screen
+          placement (e.g. left:-100000px) prevents lazy images from ever
+          loading and causes the export to hang. */}
       <div
         ref={exportSurfaceRef}
         aria-hidden
         style={{
           position: "fixed",
-          left: "-100000px",
+          left: 0,
           top: 0,
           width: 1920,
           height: 1080,
           backgroundColor: themeColors.bg,
           overflow: "hidden",
           pointerEvents: "none",
+          opacity: exporting ? 0.01 : 0,
+          visibility: exporting ? "visible" : "hidden",
           zIndex: -1,
         }}
       >
