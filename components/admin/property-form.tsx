@@ -178,6 +178,7 @@ interface FormState {
   category: PropertyCategory;
   property_type: PropertyType;
   status: PropertyStatus;
+  workflow_status: "draft" | "published" | "passive" | "archived";
   price: string;
   pricing_type: "fixed" | "exchange" | "offer" | "kat_karsiligi";
   price_per_donum: string;
@@ -526,6 +527,12 @@ function buildInitialState(
     category: initialData?.type ? detectCategory(initialData.type) : "residential",
     property_type: (initialData?.type as PropertyType) ?? "apartment",
     status: (initialData?.status as PropertyStatus) ?? "available",
+    workflow_status:
+      ((initialData?.workflow_status as
+        | "draft"
+        | "published"
+        | "passive"
+        | "archived") ?? "draft"),
     price: initialData?.price != null ? String(initialData.price) : "",
     pricing_type:
       ((initialData as Record<string, unknown>)?.pricing_type as

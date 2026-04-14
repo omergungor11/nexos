@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { ImageIcon, Bold, Italic, Heading2, Heading3, List, ListOrdered, Link2, Quote, Minus } from "lucide-react";
+import { ImageIcon, Bold, Italic, Heading2, Heading3, List, ListOrdered, Link2, Quote, Minus, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -364,6 +364,27 @@ export function BlogForm({ mode, post, categories = [], tags = [] }: BlogFormPro
               </button>
               <button type="button" title="Yatay Çizgi" onClick={() => document.execCommand("insertHorizontalRule")} className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
                 <Minus className="size-4" />
+              </button>
+              <div className="mx-1 h-5 w-px bg-border" />
+              <button
+                type="button"
+                title="Emoji klavyesini aç (sistem)"
+                onClick={() => {
+                  const platform = (navigator.platform || "").toLowerCase();
+                  const ua = (navigator.userAgent || "").toLowerCase();
+                  const isMac = platform.includes("mac") || ua.includes("mac");
+                  const isIOS = /iphone|ipad|ipod/.test(ua);
+                  const isAndroid = ua.includes("android");
+                  const shortcut = isMac
+                    ? "⌘ + ⌃ + Boşluk (veya fn tuşu)"
+                    : isIOS || isAndroid
+                    ? "Klavyedeki 😊 simgesine dokunun"
+                    : "Win + . (nokta)";
+                  toast.message("Emoji klavyesini aç", { description: shortcut, duration: 4000 });
+                }}
+                className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <Smile className="size-4" />
               </button>
             </div>
             {/* Editable area */}

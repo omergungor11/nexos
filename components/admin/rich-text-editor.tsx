@@ -17,8 +17,32 @@ import {
   Link as LinkIcon,
   Unlink,
   Minus,
+  Smile,
 } from "lucide-react";
 import { useEffect } from "react";
+import { toast } from "sonner";
+
+// ---------------------------------------------------------------------------
+// Native emoji picker helper — there's no web API to open the OS picker, so
+// we focus the editor and show a toast with the platform shortcut.
+// ---------------------------------------------------------------------------
+function openNativeEmojiPickerHint() {
+  if (typeof navigator === "undefined") return;
+  const platform = (navigator.platform || "").toLowerCase();
+  const ua = (navigator.userAgent || "").toLowerCase();
+  const isMac = platform.includes("mac") || ua.includes("mac");
+  const isIOS = /iphone|ipad|ipod/.test(ua);
+  const isAndroid = ua.includes("android");
+  const shortcut = isMac
+    ? "⌘ + ⌃ + Boşluk (veya fn tuşu)"
+    : isIOS || isAndroid
+    ? "Klavyedeki 😊 simgesine dokunun"
+    : "Win + . (nokta)";
+  toast.message("Emoji klavyesini aç", {
+    description: shortcut,
+    duration: 4000,
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Props
@@ -192,6 +216,18 @@ function Toolbar({ editor }: { editor: Editor }) {
         disabled={!editor.can().redo()}
       >
         <Redo2 className="size-4" />
+      </ToolbarButton>
+
+      <Separator />
+
+      <ToolbarButton
+        title="Emoji klavyesini aç (sistem)"
+        onClick={() => {
+          editor.chain().focus().run();
+          openNativeEmojiPickerHint();
+        }}
+      >
+        <Smile className="size-4" />
       </ToolbarButton>
     </div>
   );
