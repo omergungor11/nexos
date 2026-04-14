@@ -82,6 +82,7 @@ import {
   LAND_TYPES,
   RESIDENTIAL_TYPES,
   COMMERCIAL_TYPES,
+  ROOM_OPTIONS,
   type PropertyCategory,
 } from "@/lib/constants";
 
@@ -1481,6 +1482,59 @@ export function PropertyForm({
           {/* Room/floor/heating fields — hidden for land types */}
           {!isLandType(form.property_type) && (
             <>
+              {/* Oda Tipi preset — fills rooms + living_rooms in one go */}
+              <Field
+                label="Oda Tipi"
+                htmlFor="room_preset"
+                icon={BedDouble}
+                hint="Seçim yaptığınızda Oda ve Salon sayıları otomatik dolar. Farklı bir değer için aşağıdan manuel girin."
+              >
+                <Select
+                  value={
+                    (() => {
+                      const r = form.rooms;
+                      const l = form.living_rooms;
+                      if (!r) return "__none__";
+                      const code = l ? `${r}+${l}` : `${r}+0`;
+                      return ROOM_OPTIONS.includes(code) ? code : "__custom__";
+                    })()
+                  }
+                  onValueChange={(v) => {
+                    if (!v || v === "__none__" || v === "__custom__") return;
+                    if (v === "6+") {
+                      setForm((prev) => ({ ...prev, rooms: "6", living_rooms: "1" }));
+                      return;
+                    }
+                    const [r, l] = v.split("+");
+                    setForm((prev) => ({
+                      ...prev,
+                      rooms: r,
+                      living_rooms: l,
+                    }));
+                  }}
+                >
+                  <SelectTrigger id="room_preset" className="w-full sm:w-56">
+                    <SelectValue placeholder="Seçiniz">
+                      {
+                        (() => {
+                          const r = form.rooms;
+                          const l = form.living_rooms;
+                          if (!r) return "Belirtilmemiş";
+                          const code = l ? `${r}+${l}` : `${r}+0`;
+                          return code;
+                        })()
+                      }
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                    {ROOM_OPTIONS.map((opt) => (
+                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+
               <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
                 <Field label="Oda Sayısı" htmlFor="rooms" icon={BedDouble}>
                   <Input
