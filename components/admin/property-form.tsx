@@ -282,6 +282,16 @@ const PROPERTY_STATUS_LABELS: Record<PropertyStatus, string> = {
   reserved: "Rezerve",
 };
 
+const WORKFLOW_STATUS_LABELS: Record<
+  "draft" | "published" | "passive" | "archived",
+  string
+> = {
+  draft: "Taslak",
+  published: "Yayında",
+  passive: "Pasif",
+  archived: "Arşiv",
+};
+
 const HEATING_TYPE_LABELS: Record<HeatingType, string> = {
   none: "Yok",
   central: "Merkezi Sistem",
@@ -658,21 +668,6 @@ export function PropertyForm({
   const [activeTab, setActiveTab] = useState("temel");
   const isEditMode = !!propertyId;
 
-  // Current workflow state drives the primary "save" button so that hitting
-  // Enter on an edit form doesn't silently flip a draft to published. Users
-  // still pick the explicit intent via the button row below.
-  const currentWorkflow = (initialData?.workflow_status ?? "draft") as
-    | "draft"
-    | "published"
-    | "passive"
-    | "archived";
-  const defaultSaveIntent: "draft" | "published" | "passive" =
-    currentWorkflow === "draft"
-      ? "draft"
-      : currentWorkflow === "passive"
-        ? "passive"
-        : "published";
-
   const [form, setForm] = useState<FormState>(() =>
     buildInitialState(initialData)
   );
@@ -979,13 +974,14 @@ export function PropertyForm({
   // Submit
   // ---------------------------------------------------------------------------
 
-  function performSave(
-    workflowIntent: "draft" | "published" | "passive"
-  ) {
-    // Drafts skip the full field validation — only title is required.
-    if (workflowIntent !== "draft" && !validate()) return;
-    if (workflowIntent === "draft" && !form.title.trim()) {
-      toast.error("Taslak için en azından bir başlık girin.");
+  function performSave() {
+    const intent = form.workflow_status;
+
+    // Drafts/archived skip the full field validation — only title is required.
+    const isLooseValidation = intent === "draft" || intent === "archived";
+    if (!isLooseValidation && !validate()) return;
+    if (isLooseValidation && !form.title.trim()) {
+      toast.error("En azından bir başlık girin.");
       return;
     }
 
@@ -994,39 +990,40 @@ export function PropertyForm({
     startTransition(async () => {
       try {
         if (isEditMode && propertyId) {
-          const result = await updateProperty(propertyId, { ...payload, workflow_status: workflowIntent });
+          const result = await updateProperty(propertyId, {
+            ...payload,
+            workflow_status: intent,
+          });
           if (result.error) {
             toast.error(`Kayıt hatası: ${result.error}`);
             return;
           }
           // Sync features
-          const featureResult = await syncPropertyFeatures(propertyId, Array.from(selectedFeatureIds));
+          const featureResult = await syncPropertyFeatures(
+            propertyId,
+            Array.from(selectedFeatureIds),
+          );
           if (featureResult.error) {
             toast.error(`Özellikler kaydedilemedi: ${featureResult.error}`);
           }
-          toast.success(
-            workflowIntent === "draft"
-              ? "Taslak kaydedildi."
-              : workflowIntent === "passive"
-                ? "İlan pasife alındı."
-                : "İlan yayınlandı."
-          );
+          toast.success(`Kaydedildi — ${WORKFLOW_STATUS_LABELS[intent]}`);
           router.push("/admin/ilanlar");
         } else {
-          const result = await createProperty({ ...payload, workflow_status: workflowIntent });
+          const result = await createProperty({
+            ...payload,
+            workflow_status: intent,
+          });
           if (result.error) {
             toast.error(`İlan oluşturulamadı: ${result.error}`);
             return;
           }
-          // Sync features for new property
           if (result.data && selectedFeatureIds.size > 0) {
-            await syncPropertyFeatures(result.data.id, Array.from(selectedFeatureIds));
+            await syncPropertyFeatures(
+              result.data.id,
+              Array.from(selectedFeatureIds),
+            );
           }
-          toast.success(
-            workflowIntent === "draft"
-              ? "Taslak oluşturuldu."
-              : "İlan yayınlandı."
-          );
+          toast.success(`Oluşturuldu — ${WORKFLOW_STATUS_LABELS[intent]}`);
           router.push("/admin/ilanlar");
         }
       } catch (err) {
@@ -1044,7 +1041,7 @@ export function PropertyForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        performSave(defaultSaveIntent);
+        performSave();
       }}
       className="space-y-6"
     >
@@ -1179,7 +1176,7 @@ export function PropertyForm({
               </Select>
             </Field>
 
-            <Field label="Durum" htmlFor="status" required icon={CircleDot}>
+            <Field label="Satış Durumu" htmlFor="status" required icon={CircleDot}>
               <Select
                 value={form.status}
                 onValueChange={(v) => handleSelectChange("status", v)}
@@ -1193,6 +1190,36 @@ export function PropertyForm({
                   {(
                     Object.entries(PROPERTY_STATUS_LABELS) as [
                       PropertyStatus,
+                      string,
+                    ][]
+                  ).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field label="Yayın Durumu" htmlFor="workflow_status" required icon={Eye}>
+              <Select
+                value={form.workflow_status}
+                onValueChange={(v) =>
+                  v && setForm((prev) => ({
+                    ...prev,
+                    workflow_status: v as FormState["workflow_status"],
+                  }))
+                }
+              >
+                <SelectTrigger id="workflow_status" className="w-full">
+                  <SelectValue placeholder="Seçiniz">
+                    {WORKFLOW_STATUS_LABELS[form.workflow_status]}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {(
+                    Object.entries(WORKFLOW_STATUS_LABELS) as [
+                      FormState["workflow_status"],
                       string,
                     ][]
                   ).map(([value, label]) => (
@@ -2207,46 +2234,18 @@ export function PropertyForm({
       </Tabs>
 
       {/* ------------------------------------------------------------------- */}
-      {/* Form actions — workflow-aware save buttons                            */}
+      {/* Form actions                                                          */}
       {/* ------------------------------------------------------------------- */}
       <div className="flex flex-wrap items-center gap-3 border-t pt-6">
-        <Button
-          type="button"
-          variant="outline"
-          disabled={isPending}
-          onClick={() => performSave("draft")}
-        >
-          {isPending && defaultSaveIntent === "draft" ? "Kaydediliyor..." : "Taslak Kaydet"}
+        <Button type="button" disabled={isPending} onClick={() => performSave()}>
+          {isPending
+            ? "Kaydediliyor..."
+            : `Kaydet — ${WORKFLOW_STATUS_LABELS[form.workflow_status]}`}
         </Button>
 
-        <Button
-          type="button"
-          disabled={isPending}
-          onClick={() => performSave("published")}
-        >
-          {isPending && defaultSaveIntent === "published"
-            ? "Yayınlanıyor..."
-            : currentWorkflow === "published"
-              ? "Değişiklikleri Kaydet"
-              : "Yayınla"}
-        </Button>
-
-        {isEditMode && currentWorkflow === "published" && (
-          <Button
-            type="button"
-            variant="outline"
-            disabled={isPending}
-            onClick={() => performSave("passive")}
-          >
-            Pasife Al
-          </Button>
-        )}
-
-        {isEditMode && currentWorkflow === "passive" && (
-          <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-            Şu an pasif
-          </span>
-        )}
+        <span className="text-xs text-muted-foreground">
+          Yayın durumunu Temel Bilgiler sekmesinden değiştirebilirsin.
+        </span>
 
         <Button
           type="button"
