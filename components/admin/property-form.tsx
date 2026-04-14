@@ -128,6 +128,8 @@ export interface PropertyFormProps {
   mediaSlot?: React.ReactNode;
   analyticsSlot?: React.ReactNode;
   socialMediaSlot?: React.ReactNode;
+  subListingsSlot?: React.ReactNode;
+  floorPlansSlot?: React.ReactNode;
 }
 
 interface InitialPropertyData {
@@ -662,6 +664,8 @@ export function PropertyForm({
   mediaSlot,
   analyticsSlot,
   socialMediaSlot,
+  subListingsSlot,
+  floorPlansSlot,
 }: PropertyFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -1334,6 +1338,17 @@ export function PropertyForm({
               placeholder="https://my.matterport.com/show/?m=..."
             />
           </Field>
+
+          {/* Floor plans */}
+          {floorPlansSlot && (
+            <div className="border-t pt-6">
+              <h3 className="mb-1 text-sm font-semibold">Kat Planları</h3>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Her kat planı için başlık zorunludur. Sürükleyerek sıralayabilirsin.
+              </p>
+              {floorPlansSlot}
+            </div>
+          )}
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}
@@ -1511,7 +1526,14 @@ export function PropertyForm({
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-2">
+          <div
+            className={`grid gap-5 grid-cols-2 ${
+              ["villa", "twin_villa", "detached", "bungalow"].includes(form.property_type) ||
+              isLandType(form.property_type)
+                ? "sm:grid-cols-3"
+                : "sm:grid-cols-2"
+            }`}
+          >
             <Field label="Net Alan (m²)" htmlFor="area_sqm" icon={Ruler}>
               <Input
                 id="area_sqm"
@@ -1537,82 +1559,85 @@ export function PropertyForm({
                 placeholder="0"
               />
             </Field>
-          </div>
 
-          {/* Villa/Residential — Arazi Alanı */}
-          {(form.property_type === "villa" || form.property_type === "twin_villa" || form.property_type === "detached" || form.property_type === "bungalow" || isLandType(form.property_type)) && (
-            <Field label="Arazi Alanı (m²)" htmlFor="land_area_sqm" hint="Villanın veya arsanın toplam arazi büyüklüğü" icon={LandPlot}>
-              <Input
-                id="land_area_sqm"
-                name="land_area_sqm"
-                type="number"
-                min="0"
-                step="0.01"
-                value={form.land_area_sqm}
-                onChange={handleChange}
-                placeholder="0"
-                className="w-48"
-              />
-            </Field>
-          )}
+            {(["villa", "twin_villa", "detached", "bungalow"].includes(form.property_type) ||
+              isLandType(form.property_type)) && (
+              <Field
+                label="Arazi Alanı (m²)"
+                htmlFor="land_area_sqm"
+                hint="Villa veya arsanın toplam arazi büyüklüğü"
+                icon={LandPlot}
+              >
+                <Input
+                  id="land_area_sqm"
+                  name="land_area_sqm"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={form.land_area_sqm}
+                  onChange={handleChange}
+                  placeholder="0"
+                />
+              </Field>
+            )}
+          </div>
 
           {/* Room/floor/heating fields — hidden for land types */}
           {!isLandType(form.property_type) && (
             <>
-              {/* Oda Tipi preset — fills rooms + living_rooms in one go */}
-              <Field
-                label="Oda Tipi"
-                htmlFor="room_preset"
-                icon={BedDouble}
-                hint="Seçim yaptığınızda Oda ve Salon sayıları otomatik dolar. Farklı bir değer için aşağıdan manuel girin."
-              >
-                <Select
-                  value={
-                    (() => {
-                      const r = form.rooms;
-                      const l = form.living_rooms;
-                      if (!r) return "__none__";
-                      const code = l ? `${r}+${l}` : `${r}+0`;
-                      return ROOM_OPTIONS.includes(code) ? code : "__custom__";
-                    })()
-                  }
-                  onValueChange={(v) => {
-                    if (!v || v === "__none__" || v === "__custom__") return;
-                    if (v === "6+") {
-                      setForm((prev) => ({ ...prev, rooms: "6", living_rooms: "1" }));
-                      return;
-                    }
-                    const [r, l] = v.split("+");
-                    setForm((prev) => ({
-                      ...prev,
-                      rooms: r,
-                      living_rooms: l,
-                    }));
-                  }}
+              <div className="grid grid-cols-2 gap-5 sm:grid-cols-5">
+                <Field
+                  label="Oda Tipi"
+                  htmlFor="room_preset"
+                  icon={BedDouble}
+                  hint="Oda + Salon preset"
                 >
-                  <SelectTrigger id="room_preset" className="w-full sm:w-56">
-                    <SelectValue placeholder="Seçiniz">
-                      {
-                        (() => {
+                  <Select
+                    value={
+                      (() => {
+                        const r = form.rooms;
+                        const l = form.living_rooms;
+                        if (!r) return "__none__";
+                        const code = l ? `${r}+${l}` : `${r}+0`;
+                        return ROOM_OPTIONS.includes(code) ? code : "__custom__";
+                      })()
+                    }
+                    onValueChange={(v) => {
+                      if (!v || v === "__none__" || v === "__custom__") return;
+                      if (v === "6+") {
+                        setForm((prev) => ({ ...prev, rooms: "6", living_rooms: "1" }));
+                        return;
+                      }
+                      const [r, l] = v.split("+");
+                      setForm((prev) => ({
+                        ...prev,
+                        rooms: r,
+                        living_rooms: l,
+                      }));
+                    }}
+                  >
+                    <SelectTrigger id="room_preset" className="w-full">
+                      <SelectValue placeholder="Seçiniz">
+                        {(() => {
                           const r = form.rooms;
                           const l = form.living_rooms;
                           if (!r) return "Belirtilmemiş";
                           const code = l ? `${r}+${l}` : `${r}+0`;
                           return code;
-                        })()
-                      }
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">Belirtilmemiş</SelectItem>
-                    {ROOM_OPTIONS.map((opt) => (
-                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
+                        })()}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                      {ROOM_OPTIONS.map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
 
-              <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
                 <Field label="Oda Sayısı" htmlFor="rooms" icon={BedDouble}>
                   <Input
                     id="rooms"
@@ -1719,6 +1744,18 @@ export function PropertyForm({
                 </Field>
               </div>
             </>
+          )}
+
+          {/* Sub-listings */}
+          {subListingsSlot && (
+            <div className="border-t pt-6">
+              <h3 className="mb-1 text-sm font-semibold">Alt İlanlar / Birimler</h3>
+              <p className="mb-4 text-sm text-muted-foreground">
+                İlan içindeki farklı tip/birimleri buradan yönetebilirsin. Fiyat
+                boş bırakılırsa ana ilandan miras alınır.
+              </p>
+              {subListingsSlot}
+            </div>
           )}
 
         </TabsContent>
@@ -1991,28 +2028,96 @@ export function PropertyForm({
           {/* Arsa — Koçan Durumu + Altyapı */}
           {isLandType(form.property_type) && (
             <>
-              <Field label="Koçan Durumu" htmlFor="title_deed_type" hint="Kıbrıs'a özel tapu/koçan türü" icon={ScrollText}>
-                <Select
-                  value={form.title_deed_type || "__none__"}
-                  onValueChange={(v) =>
-                    setForm((prev) => ({ ...prev, title_deed_type: v === "__none__" ? "" : v as TitleDeedType }))
-                  }
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                <Field
+                  label="Koçan Durumu"
+                  htmlFor="title_deed_type"
+                  hint="Kıbrıs'a özel tapu/koçan türü"
+                  icon={ScrollText}
                 >
-                  <SelectTrigger id="title_deed_type" className="w-full sm:w-64">
-                    <SelectValue placeholder="Seçiniz (opsiyonel)">
-                      {form.title_deed_type ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType] : "Belirtilmemiş"}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">Belirtilmemiş</SelectItem>
-                    {(Object.entries(TITLE_DEED_OPTIONS) as [TitleDeedType, string][]).map(
-                      ([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
-              </Field>
+                  <Select
+                    value={form.title_deed_type || "__none__"}
+                    onValueChange={(v) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        title_deed_type: v === "__none__" ? "" : (v as TitleDeedType),
+                      }))
+                    }
+                  >
+                    <SelectTrigger id="title_deed_type" className="w-full">
+                      <SelectValue placeholder="Seçiniz (opsiyonel)">
+                        {form.title_deed_type
+                          ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType]
+                          : "Belirtilmemiş"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                      {(Object.entries(TITLE_DEED_OPTIONS) as [TitleDeedType, string][]).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field label="İmar Durumu" htmlFor="zoning_status" icon={FileCheck}>
+                  <Select
+                    value={form.zoning_status || "__none__"}
+                    onValueChange={(v) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        zoning_status: v === "__none__" ? "" : (v as ZoningStatus),
+                      }))
+                    }
+                  >
+                    <SelectTrigger id="zoning_status" className="w-full">
+                      <SelectValue placeholder="Seçiniz (opsiyonel)">
+                        {form.zoning_status
+                          ? ZONING_STATUS_OPTIONS[form.zoning_status as ZoningStatus]
+                          : "Belirtilmemiş"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                      {(Object.entries(ZONING_STATUS_OPTIONS) as [ZoningStatus, string][]).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field
+                  label="İmar Oranı (%)"
+                  htmlFor="floor_area_ratio"
+                  icon={FileCheck}
+                  hint="Ör: 220 → %220"
+                >
+                  <div className="relative">
+                    <Input
+                      id="floor_area_ratio"
+                      name="floor_area_ratio"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={form.floor_area_ratio}
+                      onChange={handleChange}
+                      placeholder="220"
+                      className="pr-8"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      %
+                    </span>
+                  </div>
+                </Field>
+              </div>
 
               <h4 className="text-sm font-semibold pt-2">Arsa Altyapı Özellikleri</h4>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -2037,55 +2142,6 @@ export function PropertyForm({
                   onChange={(c) => handleBooleanChange("has_water", c)}
                   icon={Droplets}
                 />
-              </div>
-
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <Field label="İmar Durumu" htmlFor="zoning_status" icon={FileCheck}>
-                  <Select
-                    value={form.zoning_status || "__none__"}
-                    onValueChange={(v) =>
-                      setForm((prev) => ({ ...prev, zoning_status: v === "__none__" ? "" : v as ZoningStatus }))
-                    }
-                  >
-                    <SelectTrigger id="zoning_status" className="w-full">
-                      <SelectValue placeholder="Seçiniz (opsiyonel)">
-                        {form.zoning_status ? ZONING_STATUS_OPTIONS[form.zoning_status as ZoningStatus] : "Belirtilmemiş"}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="__none__">Belirtilmemiş</SelectItem>
-                      {(Object.entries(ZONING_STATUS_OPTIONS) as [ZoningStatus, string][]).map(
-                        ([value, label]) => (
-                          <SelectItem key={value} value={value}>{label}</SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                </Field>
-
-                <Field
-                  label="İmar Oranı (%)"
-                  htmlFor="floor_area_ratio"
-                  icon={FileCheck}
-                  hint="Ör: 220 — detay sayfasında %220 olarak gösterilir"
-                >
-                  <div className="relative">
-                    <Input
-                      id="floor_area_ratio"
-                      name="floor_area_ratio"
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={form.floor_area_ratio}
-                      onChange={handleChange}
-                      placeholder="220"
-                      className="pr-8"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                      %
-                    </span>
-                  </div>
-                </Field>
               </div>
             </>
           )}

@@ -214,6 +214,49 @@ export interface Property {
   updated_at: string;
 }
 
+// ---------------------------------------------------------------------------
+// Sub-listings & floor plans (polymorphic under property / project)
+// ---------------------------------------------------------------------------
+
+export type SubListingParentType = "property" | "project";
+export type FloorPlanParentType = "property" | "project" | "sub_listing";
+export type SubListingAvailability = "available" | "reserved" | "sold" | "rented";
+
+export interface SubListing {
+  id: string;
+  parent_type: SubListingParentType;
+  parent_id: string;
+  label: string;
+  description: string | null;
+  rooms: number | null;
+  living_rooms: number | null;
+  bathrooms: number | null;
+  room_config: string | null;
+  area_sqm: number | null;
+  gross_area_sqm: number | null;
+  price: number | null;
+  currency: Currency | null;
+  availability: SubListingAvailability;
+  unit_count: number;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FloorPlan {
+  id: string;
+  parent_type: FloorPlanParentType;
+  parent_id: string;
+  url: string;
+  alt_text: string | null;
+  label: string;
+  area_sqm: number | null;
+  rooms: number | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BlogPost {
   id: string;
   title: string;

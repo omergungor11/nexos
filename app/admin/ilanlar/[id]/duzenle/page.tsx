@@ -11,6 +11,10 @@ import { PropertyForm } from "@/components/admin/property-form";
 import { ImageManager } from "@/components/admin/image-manager";
 import { PropertyAnalytics } from "@/components/admin/property-analytics";
 import { SocialMediaGenerator } from "@/components/admin/social-media-generator";
+import { SubListingsEditor } from "@/components/admin/sub-listings-editor";
+import { FloorPlansEditor } from "@/components/admin/floor-plans-editor";
+import { listSubListingsByParent } from "@/actions/sub-listings";
+import { listFloorPlansByParent } from "@/actions/floor-plans";
 import type { PropertyImage } from "@/types/property";
 
 export const metadata: Metadata = {
@@ -26,7 +30,15 @@ export default async function AdminPropertyEditPage({ params }: Props) {
 
   const supabase = await createClient();
 
-  const [propertyResult, cities, featuresByCategory, propertyFeatures, agentsResult] =
+  const [
+    propertyResult,
+    cities,
+    featuresByCategory,
+    propertyFeatures,
+    agentsResult,
+    subListingsResult,
+    floorPlansResult,
+  ] =
     await Promise.all([
       supabase
         .from("properties")
@@ -54,6 +66,8 @@ export default async function AdminPropertyEditPage({ params }: Props) {
       getFeaturesByCategory(),
       getPropertyFeatures(id),
       getAgents(),
+      listSubListingsByParent("property", id),
+      listFloorPlansByParent("property", id),
     ]);
 
   if (propertyResult.error || !propertyResult.data) {
@@ -230,6 +244,20 @@ export default async function AdminPropertyEditPage({ params }: Props) {
         mediaSlot={<ImageManager propertyId={id} initialImages={images} />}
         analyticsSlot={<PropertyAnalytics propertyId={id} />}
         socialMediaSlot={<SocialMediaGenerator properties={[socialProperty]} />}
+        subListingsSlot={
+          <SubListingsEditor
+            parentType="property"
+            parentId={id}
+            initial={subListingsResult.data ?? []}
+          />
+        }
+        floorPlansSlot={
+          <FloorPlansEditor
+            parentType="property"
+            parentId={id}
+            initial={floorPlansResult.data ?? []}
+          />
+        }
       />
     </div>
   );

@@ -237,6 +237,36 @@ function Toolbar({ editor }: { editor: Editor }) {
 // Main editor
 // ---------------------------------------------------------------------------
 
+/**
+ * Normalises a saved description into HTML the editor can understand.
+ * Older records were stored as plain text with `\n` separators; feeding
+ * that directly to TipTap collapses every line into a single paragraph.
+ * When the incoming value has no HTML tags, split on blank lines (or
+ * single newlines as a fallback) and wrap each chunk in `<p>`.
+ */
+function normalizeInitialContent(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (/<[a-z]/i.test(trimmed)) return trimmed; // already HTML
+
+  const escape = (s: string) =>
+    s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+  const parts = trimmed.split(/\n{2,}/);
+  if (parts.length === 1) {
+    // Single paragraph with inline `\n` → convert to <br/>.
+    return `<p>${escape(parts[0]).replace(/\n/g, "<br/>")}</p>`;
+  }
+  return parts
+    .map(
+      (p) => `<p>${escape(p).replace(/\n/g, "<br/>")}</p>`,
+    )
+    .join("");
+}
+
 export function RichTextEditor({
   value,
   onChange,
@@ -260,7 +290,7 @@ export function RichTextEditor({
         },
       }),
     ],
-    content: value || "",
+    content: normalizeInitialContent(value || ""),
     editorProps: {
       attributes: {
         class: "rte-content min-h-[160px] p-3 text-sm focus:outline-none",
@@ -278,7 +308,7 @@ export function RichTextEditor({
   useEffect(() => {
     if (!editor) return;
     const current = editor.getHTML();
-    const next = value || "";
+    const next = normalizeInitialContent(value || "");
     const normalizedCurrent = current === "<p></p>" ? "" : current;
     if (normalizedCurrent !== next) {
       editor.commands.setContent(next, { emitUpdate: false });

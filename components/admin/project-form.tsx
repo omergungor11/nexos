@@ -70,8 +70,20 @@ import { createClient } from "@/lib/supabase/client";
 type ProjectRecord = Record<string, any>;
 
 type ProjectFormProps =
-  | { mode: "create"; project?: never; cities: CityRow[] }
-  | { mode: "edit"; project: ProjectRecord; cities: CityRow[] };
+  | {
+      mode: "create";
+      project?: never;
+      cities: CityRow[];
+      subListingsSlot?: React.ReactNode;
+      floorPlansSlot?: React.ReactNode;
+    }
+  | {
+      mode: "edit";
+      project: ProjectRecord;
+      cities: CityRow[];
+      subListingsSlot?: React.ReactNode;
+      floorPlansSlot?: React.ReactNode;
+    };
 
 type FormState = {
   title: string;
@@ -252,7 +264,13 @@ function SortableGalleryItem({
 // Main form component
 // ---------------------------------------------------------------------------
 
-export function ProjectForm({ mode, project, cities }: ProjectFormProps) {
+export function ProjectForm({
+  mode,
+  project,
+  cities,
+  subListingsSlot,
+  floorPlansSlot,
+}: ProjectFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("temel");
