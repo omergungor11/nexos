@@ -198,7 +198,7 @@ const CATEGORIES: HelpCategory[] = [
 
 const TIPS = [
   { icon: Command, text: "⌘K (Mac) veya Ctrl+K (Windows) ile herhangi bir sayfadan hızlı arama yapabilirsiniz." },
-  { icon: Upload, text: "Görseller yüklenirken otomatik olarak WebP formatına sıkıştırılır. Maksimum 25 MB." },
+  { icon: Upload, text: "Görseller yüklenirken otomatik olarak WebP formatına sıkıştırılır. Maksimum 15 MB." },
   { icon: Eye, text: "İlanları haritada göstermek için Harita Yönetimi sayfasından toggle butonunu kullanın." },
   { icon: Map, text: "İlan koordinatı yoksa, şehir veya ilçe koordinatları otomatik olarak kullanılır." },
 ];

@@ -1,0 +1,42 @@
+name	parent	lat	lng	notes
+Lefkoşa (Nicosia)	ŞEHİR	35.1721	33.3647	Capital / Ana başkent
+Girne (Kyrenia)	ŞEHİR	35.3403	33.3192	Coastal city / Sahil şehri
+Gazimağusa (Famagusta)	ŞEHİR	35.1250	33.9417	Eastern coastal city / Doğu sahil şehri
+İskele (Trikomo)	ŞEHİR	35.2875	33.8917	Northeastern administrative center / KD idari merkez
+Güzelyurt (Morphou)	ŞEHİR	35.1981	32.9939	Northwestern city / GB şehir
+Lefke	ŞEHİR	35.1139	32.8499	Western town / Batı kasabası
+Karaoğlanoğlu	Girne	35.3424	33.2717	Residential area / Yerleşim alanı
+Alsancak (Karavas)	Girne	35.3441	33.1961	Coastal village / Sahil köyü
+Lapta (Lapithos)	Girne	35.3387	33.1723	Historic village / Tarihi köy
+Çatalköy	Girne	35.3213	33.3907	Residential area / Yerleşim alanı
+Ozanköy	Girne	35.3196	33.3534	Village / Köy
+Bellapais (Beşparmak)	Girne	35.3000	33.3500	Historic village / Tarihi köy
+Esentepe (Agios Amvrosios)	Girne	35.3394	33.5832	Coastal village / Sahil köyü
+Tatlısu (Akanthou)	İskele	35.4158	33.8307	Coastal village / Sahil köyü
+Karşıyaka (Vasilia)	Girne	35.3481	33.1212	Residential area / Yerleşim alanı
+Pia Bella	Girne	35.3338	33.3295	Resort area / Tatil bölgesi
+Long Beach	İskele	35.2623	33.9072	Beach/resort area / Plaj/tatil alanı
+Boğaz	İskele	35.3150	33.9506	Village / Köy
+Bafra	İskele	35.3795	34.0713	Village / Köy
+Yeniboğaziçi	İskele	35.2200	33.9035	Coastal area / Sahil alanı
+Mehmetçik	İskele	35.4221	34.0693	Village / Köy
+Büyükkonuk	İskele	35.4104	33.9936	Village / Köy
+Mersinlik	İskele	35.3965	33.8571	Village / Köy
+Dipkarpaz (Rizokarpaso)	İskele	35.5977	34.3807	Peninsula town / Yarımada kasabası
+Ardahan	İskele	35.3568	33.8860	Village / Köy
+Bahçeler	İskele	35.2864	33.9126	Village / Köy
+Çayırova	İskele	35.3660	34.0298	Village / Köy
+Salamis (Ruins)	Gazimağusa	35.1830	33.9000	Ancient archaeological site / Antik arkeoloji alanı
+Geçitkale (Lefkoniko)	Gazimağusa	35.2360	33.7225	Airport area / Havaalanı bölgesi
+Tuzla	Gazimağusa	35.1611	33.8831	Village / Köy
+Pyla (Beyarmudu)	Gazimağusa	35.0505	33.6591	Village on dividing line / Bölme hattında köy
+Hamitköy	Lefkoşa	35.2170	33.3752	Suburban area / Banliyö alanı
+Gönyeli	Lefkoşa	35.2315	33.2963	City district / Şehir ilçesi
+Haspolat	Lefkoşa	35.2219	33.4170	University area / Üniversite alanı
+Ortaköy	Lefkoşa	35.2003	33.3402	Suburb / Banliyö
+Yenikent	Lefkoşa	35.2045	33.3181	Suburb / Banliyö
+Gemikonağı	Güzelyurt	BELİRSİZ	BELİRSİZ	Village / Köy
+Yedidalga	Güzelyurt	BELİRSİZ	BELİRSİZ	Village / Köy
+Cengizköy	Lefke	35.1318	32.8651	Village / Köy
+Korucam (Kormakitis)	Girne	35.4040	32.9203	Coastal cape area / Sahil burnu alanı
+Girne Kalesi (Kyrenia Castle)	Girne	35.3418	33.3223	Historic landmark / Tarihi anıt

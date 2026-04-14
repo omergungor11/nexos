@@ -472,8 +472,8 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
     const supabase = createClient();
 
     for (const file of fileArr) {
-      if (file.size > 25 * 1024 * 1024) {
-        toast.error(`${file.name}: 25 MB sınırını aşıyor.`);
+      if (file.size > 15 * 1024 * 1024) {
+        toast.error(`${file.name}: 15 MB sınırını aşıyor.`);
         continue;
       }
 
@@ -738,7 +738,7 @@ export function GalleryManager({ initialImages, properties, cities, districts, m
                 dosya seçin
               </button>
             </div>
-            <span className="text-xs text-muted-foreground">JPEG, PNG, WebP — Maks. 5 MB</span>
+            <span className="text-xs text-muted-foreground">JPEG, PNG, WebP — Maks. 15 MB</span>
           </>
         )}
       </div>

@@ -94,8 +94,8 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
       return;
     }
 
-    if (file.size > 25 * 1024 * 1024) {
-      toast.error("Dosya boyutu 25 MB sınırını aşıyor.");
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error("Dosya boyutu 15 MB sınırını aşıyor.");
       return;
     }
 
@@ -302,7 +302,7 @@ export function MediaPicker({ open, onClose, onSelect, currentUrl }: MediaPicker
                     Dosya Seç
                   </Button>
                   <p className="mt-4 text-xs text-muted-foreground">
-                    JPEG, PNG veya WebP — Maks. 5 MB
+                    JPEG, PNG veya WebP — Maks. 15 MB
                   </p>
                 </>
               )}

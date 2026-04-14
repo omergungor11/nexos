@@ -45,7 +45,7 @@ interface ImageManagerProps {
 // ---------------------------------------------------------------------------
 
 const ACCEPTED_MIME_TYPES = "image/jpeg,image/png,image/webp";
-const MAX_FILE_SIZE_MB = 5;
+const MAX_FILE_SIZE_MB = 15;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 function sortImages(images: PropertyImage[]): PropertyImage[] {
@@ -55,6 +55,7 @@ function sortImages(images: PropertyImage[]): PropertyImage[] {
 const MAX_DIMENSION = 1920;
 
 function getQuality(fileSize: number): number {
+  if (fileSize > 10 * 1024 * 1024) return 0.6;
   if (fileSize > 5 * 1024 * 1024) return 0.65;
   if (fileSize > 3 * 1024 * 1024) return 0.7;
   if (fileSize > 1 * 1024 * 1024) return 0.75;

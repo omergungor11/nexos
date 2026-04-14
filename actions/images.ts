@@ -10,7 +10,7 @@ import type { TablesInsert, TablesUpdate } from "@/types/supabase";
 
 const STORAGE_BUCKET = "property-images";
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+const MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB
 
 type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];
 
@@ -113,7 +113,7 @@ export async function uploadMediaImage(
   }
 
   if (file.size > MAX_FILE_SIZE_BYTES) {
-    return { error: "Dosya boyutu 5 MB sınırını aşıyor" };
+    return { error: "Dosya boyutu 15 MB sınırını aşıyor" };
   }
 
   const safeName = sanitizeFilename(file.name);
@@ -192,7 +192,7 @@ export async function uploadPropertyImage(
   // --- File size validation ---
 
   if (file.size > MAX_FILE_SIZE_BYTES) {
-    return { error: "Dosya boyutu 5 MB sınırını aşıyor" };
+    return { error: "Dosya boyutu 15 MB sınırını aşıyor" };
   }
 
   // --- Build storage path ---

@@ -1299,7 +1299,7 @@ export function PropertyForm({
             <div>
               <h3 className="mb-1 text-sm font-semibold">Görseller</h3>
               <p className="mb-4 text-sm text-muted-foreground">
-                JPEG, PNG veya WebP formatında, maksimum 5 MB.
+                JPEG, PNG veya WebP formatında, maksimum 15 MB.
               </p>
               {mediaSlot}
             </div>
