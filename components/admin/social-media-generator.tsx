@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import {
   Copy,
@@ -9,6 +9,11 @@ import {
   Smartphone,
   Film,
   Search,
+  Bold,
+  Italic,
+  List,
+  Minus,
+  Smile,
 } from "lucide-react";
 import { SocialMediaImageGenerator } from "@/components/admin/social-media-image-generator";
 import { StoryGenerator } from "@/components/admin/story-generator";
@@ -369,6 +374,40 @@ interface PostEditorProps {
   onCopy: () => void;
 }
 
+const QUICK_EMOJIS = [
+  "🏠", "🏡", "🏢", "🏘️", "🏝️", "🌊", "🌅", "🌴",
+  "🔑", "💰", "💎", "⭐", "🌟", "✨", "🔥", "💫",
+  "📍", "📞", "📩", "💬", "📸", "📹", "🎥", "🎯",
+  "✅", "📈", "🚀", "🎉", "🎁", "💯", "👉", "▪️",
+  "❤️", "🙌", "👏", "🤝", "🌺", "🍀", "🛏️", "🛁",
+];
+
+// Unicode bold/italic transform — Instagram/Facebook support these natively
+const BOLD_MAP: Record<string, string> = {};
+const ITALIC_MAP: Record<string, string> = {};
+(() => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const boldStart = 0x1d400; // Mathematical bold A
+  const italicStart = 0x1d434; // Mathematical italic A
+  for (let i = 0; i < letters.length; i++) {
+    BOLD_MAP[letters[i]] = String.fromCodePoint(boldStart + i);
+    // italic gap: 'h' is reserved; use Planck constant fallback
+    const italic =
+      letters[i] === "h"
+        ? "\u210e"
+        : String.fromCodePoint(italicStart + i);
+    ITALIC_MAP[letters[i]] = italic;
+  }
+  const digitsBold = 0x1d7ce;
+  for (let i = 0; i < 10; i++) {
+    BOLD_MAP[String(i)] = String.fromCodePoint(digitsBold + i);
+  }
+})();
+
+function transform(text: string, map: Record<string, string>): string {
+  return [...text].map((ch) => map[ch] ?? ch).join("");
+}
+
 function PostEditor({
   text,
   onTextChange,
@@ -377,10 +416,145 @@ function PostEditor({
   onCopy,
 }: PostEditorProps) {
   const colorClass = getCharCountColor(charCount, charLimit);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [emojiOpen, setEmojiOpen] = useState(false);
+
+  // Apply a mutation to the current selection (or cursor point)
+  const withSelection = useCallback(
+    (mutate: (args: { selected: string; before: string; after: string }) => {
+      replacement: string;
+      caretOffset?: number;
+    }) => {
+      const el = textareaRef.current;
+      if (!el) return;
+      const start = el.selectionStart ?? 0;
+      const end = el.selectionEnd ?? 0;
+      const selected = text.slice(start, end);
+      const before = text.slice(0, start);
+      const after = text.slice(end);
+      const { replacement, caretOffset } = mutate({ selected, before, after });
+      const next = before + replacement + after;
+      onTextChange(next);
+      // Restore selection/caret on next tick
+      const newCaret =
+        caretOffset != null ? start + caretOffset : start + replacement.length;
+      requestAnimationFrame(() => {
+        el.focus();
+        el.setSelectionRange(newCaret, newCaret);
+      });
+    },
+    [text, onTextChange]
+  );
+
+  const applyBold = () =>
+    withSelection(({ selected }) => ({
+      replacement: selected ? transform(selected, BOLD_MAP) : "",
+    }));
+
+  const applyItalic = () =>
+    withSelection(({ selected }) => ({
+      replacement: selected ? transform(selected, ITALIC_MAP) : "",
+    }));
+
+  const insertBullet = () =>
+    withSelection(({ before }) => {
+      // Start new line if we're mid-line
+      const needsBreak = before.length > 0 && !before.endsWith("\n");
+      const prefix = needsBreak ? "\n• " : "• ";
+      return { replacement: prefix };
+    });
+
+  const insertDivider = () =>
+    withSelection(({ before }) => {
+      const needsBreak = before.length > 0 && !before.endsWith("\n");
+      const prefix = needsBreak ? "\n━━━━━━━━━━\n" : "━━━━━━━━━━\n";
+      return { replacement: prefix };
+    });
+
+  const insertEmoji = (emoji: string) => {
+    setEmojiOpen(false);
+    withSelection(() => ({ replacement: emoji }));
+  };
 
   return (
     <div className="space-y-2">
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center gap-1 rounded-md border bg-muted/30 p-1">
+        <button
+          type="button"
+          onClick={applyBold}
+          title="Kalın (𝐁) — seçili metni kalın Unicode'a çevirir"
+          className="inline-flex size-7 items-center justify-center rounded hover:bg-background"
+        >
+          <Bold className="size-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={applyItalic}
+          title="İtalik (𝐼) — seçili metni italik Unicode'a çevirir"
+          className="inline-flex size-7 items-center justify-center rounded hover:bg-background"
+        >
+          <Italic className="size-3.5" />
+        </button>
+        <span className="mx-1 h-4 w-px bg-border" aria-hidden />
+        <button
+          type="button"
+          onClick={insertBullet}
+          title="Madde işareti ekle"
+          className="inline-flex size-7 items-center justify-center rounded hover:bg-background"
+        >
+          <List className="size-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={insertDivider}
+          title="Ayraç çizgisi ekle"
+          className="inline-flex size-7 items-center justify-center rounded hover:bg-background"
+        >
+          <Minus className="size-3.5" />
+        </button>
+        <span className="mx-1 h-4 w-px bg-border" aria-hidden />
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setEmojiOpen((v) => !v)}
+            title="Emoji ekle"
+            className={`inline-flex items-center gap-1 rounded px-1.5 text-xs hover:bg-background ${
+              emojiOpen ? "bg-background" : ""
+            } h-7`}
+          >
+            <Smile className="size-3.5" />
+            Emoji
+          </button>
+          {emojiOpen && (
+            <>
+              {/* Click-outside backdrop */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setEmojiOpen(false)}
+                aria-hidden
+              />
+              <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-md border bg-popover p-2 shadow-md">
+                <div className="grid grid-cols-8 gap-1">
+                  {QUICK_EMOJIS.map((e) => (
+                    <button
+                      key={e}
+                      type="button"
+                      onClick={() => insertEmoji(e)}
+                      className="flex size-8 items-center justify-center rounded text-lg hover:bg-muted"
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
       <Textarea
+        ref={textareaRef}
         value={text}
         onChange={(e) => onTextChange(e.target.value)}
         className="min-h-48 resize-y font-mono text-sm leading-relaxed"
