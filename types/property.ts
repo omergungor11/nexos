@@ -197,6 +197,13 @@ export interface Property {
   neighborhood_id: number | null;
   agent_id: string | null;
   is_featured: boolean;
+  is_slider: boolean;
+  is_showcase: boolean;
+  is_deal: boolean;
+  slider_order: number | null;
+  featured_order: number | null;
+  showcase_order: number | null;
+  deal_order: number | null;
   is_active: boolean;
   workflow_status: PropertyWorkflowStatus;
   show_on_map: boolean;

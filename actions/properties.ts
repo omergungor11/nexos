@@ -47,6 +47,9 @@ export type PropertyCreateInput = {
   neighborhood_id?: number;
   agent_id?: string | null;
   is_featured?: boolean;
+  is_slider?: boolean;
+  is_showcase?: boolean;
+  is_deal?: boolean;
   is_active?: boolean;
   workflow_status?: PropertyWorkflowStatus;
   show_on_map?: boolean;
@@ -278,6 +281,9 @@ export async function createProperty(
     neighborhood_id: data.neighborhood_id ?? null,
     agent_id: data.agent_id ?? null,
     is_featured: data.is_featured ?? false,
+    is_slider: data.is_slider ?? false,
+    is_showcase: data.is_showcase ?? false,
+    is_deal: data.is_deal ?? false,
     show_on_map: data.show_on_map ?? false,
     seo_title: data.seo_title ?? null,
     seo_description: data.seo_description ?? null,
@@ -395,6 +401,9 @@ export async function updateProperty(
     payload.neighborhood_id = data.neighborhood_id;
   if (data.agent_id !== undefined) payload.agent_id = data.agent_id ?? null;
   if (data.is_featured !== undefined) payload.is_featured = data.is_featured;
+  if (data.is_slider !== undefined) payload.is_slider = data.is_slider;
+  if (data.is_showcase !== undefined) payload.is_showcase = data.is_showcase;
+  if (data.is_deal !== undefined) payload.is_deal = data.is_deal;
   if (data.workflow_status !== undefined) {
     payload.workflow_status = data.workflow_status;
   } else if (data.is_active !== undefined) {

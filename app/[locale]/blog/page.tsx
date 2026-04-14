@@ -1,8 +1,8 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/card";
+import { BlogCoverImage } from "@/components/shared/blog-cover-image";
 import { getBlogPosts, getBlogCategories } from "@/lib/queries/content";
 import { formatRelativeDate } from "@/lib/format";
 
@@ -83,11 +83,9 @@ export default async function BlogPage({ params, searchParams }: Props) {
               <Card className="group h-full gap-0 overflow-hidden py-0 transition-shadow hover:shadow-lg">
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   {post.cover_image ? (
-                    <Image
+                    <BlogCoverImage
                       src={post.cover_image}
                       alt={post.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                   ) : (
