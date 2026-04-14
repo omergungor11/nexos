@@ -194,6 +194,13 @@ const DEFAULT_ENABLED_SLIDES: Set<SlideType> = new Set([
   "contact",
 ]);
 
+// SlideRenderer is laid out for a ~640×360 preview card. When captured for
+// PDF/PowerPoint at 1920×1080, the Tailwind font sizes (text-xs/sm/lg/xl…)
+// end up 3× smaller than they should be in a real slide deck. Render the
+// slide at its native size and scale it up via CSS transform so every
+// element — text, icons, absolute positions — grows together.
+const EXPORT_SLIDE_SCALE = 3;
+
 const CURRENCY_SYMBOLS: Record<string, string> = {
   TRY: "₺",
   USD: "$",
@@ -1966,16 +1973,35 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
               overflow: "hidden",
             }}
           >
-            {exportCurrent && (
-              <SlideRenderer
-                property={exportCurrent.property}
-                slideType={exportCurrent.slideType}
-                theme={themeColors}
-                photoIndex={exportCurrent.photoIndex}
-                bannerText={exportCurrent.bannerText}
-                customDescription={exportCurrent.customDescription}
-              />
-            )}
+            {/*
+              SlideRenderer's Tailwind text classes (text-xs/sm/lg/xl…) are
+              sized for the preview card (~640×360). Rendering them at the
+              true 1920×1080 export canvas made fonts look 3× too small in
+              the PDF/PowerPoint output. We render the slide at its native
+              640×360 logical size and transform-scale it 3× so every
+              element (text, icons, images, absolute positions) scales
+              proportionally. html-to-image captures the 1920×1080 parent
+              so the final PNG is unchanged aside from the larger text.
+            */}
+            <div
+              style={{
+                width: 1920 / EXPORT_SLIDE_SCALE,
+                height: 1080 / EXPORT_SLIDE_SCALE,
+                transform: `scale(${EXPORT_SLIDE_SCALE})`,
+                transformOrigin: "top left",
+              }}
+            >
+              {exportCurrent && (
+                <SlideRenderer
+                  property={exportCurrent.property}
+                  slideType={exportCurrent.slideType}
+                  theme={themeColors}
+                  photoIndex={exportCurrent.photoIndex}
+                  bannerText={exportCurrent.bannerText}
+                  customDescription={exportCurrent.customDescription}
+                />
+              )}
+            </div>
           </div>
         </div>
       )}
