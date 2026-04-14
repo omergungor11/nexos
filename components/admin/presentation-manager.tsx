@@ -353,25 +353,30 @@ function OsmStaticMap({
  */
 function stripHtmlToText(input: string): string {
   if (!input) return "";
-  // Fast path: no tags → return trimmed original.
-  if (!/<[a-z!/]/i.test(input)) return input.trim();
 
-  const withBreaks = input
+  // Pre-decode entities first. Some rows ended up double-encoded by past
+  // form submissions ("&lt;p&gt;Text&lt;/p&gt;"), so the tag-strip regex
+  // below won't match unless we turn those entities back into real tags.
+  const decoded = input
+    .replace(/&nbsp;/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&");
+
+  // Fast path: no tags (even after decoding) → return trimmed original.
+  if (!/<[a-z!/]/i.test(decoded)) return decoded.trim();
+
+  const withBreaks = decoded
     // Closing block tags → newline boundary
     .replace(/<\/(p|div|li|h[1-6]|blockquote|tr)>/gi, "\n\n")
-    // <br> and self-closing breaks
+    // <br> and self-closing breaks (handles <br>, <br/>, <br />)
     .replace(/<br\s*\/?>/gi, "\n")
     // Bullet markers for <li> (opening tag) so lists read naturally
     .replace(/<li[^>]*>/gi, "• ")
     // Strip every remaining tag
     .replace(/<[^>]+>/g, "")
-    // Decode common entities
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
     // Collapse 3+ consecutive newlines into 2
     .replace(/\n{3,}/g, "\n\n")
     .trim();
@@ -485,13 +490,15 @@ function CoverSlide({ property, theme, note }: SlideProps) {
 
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-10 pt-8">
-        <Image
-          src="/logo-square.jpeg"
-          alt="Nexos"
-          width={56}
-          height={56}
-          className="rounded"
-        />
+        <div className="rounded-xl bg-white p-1.5 shadow-md">
+          <Image
+            src="/logo-square.jpeg"
+            alt="Nexos"
+            width={56}
+            height={56}
+            className="rounded-md block"
+          />
+        </div>
         <span
           className="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
           style={{ backgroundColor: theme.accent, color: "#171717" }}
@@ -668,13 +675,13 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
       )}
 
       {/* Top-left logo (matches cover slide) */}
-      <div className="absolute top-6 left-6 z-10">
+      <div className="absolute top-6 left-6 z-10 rounded-xl bg-white p-1.5 shadow-md">
         <Image
           src="/logo-square.jpeg"
           alt="Nexos"
           width={44}
           height={44}
-          className="rounded shadow-lg"
+          className="rounded-md block"
         />
       </div>
 
@@ -702,12 +709,6 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
           <p className="text-lg font-black" style={{ color: theme.text }}>
             {formatPrice(property.price, property.currency, property.pricing_type)}
           </p>
-        </div>
-        <div
-          className="rounded-full px-3 py-1 text-xs font-bold"
-          style={{ backgroundColor: `${theme.bg}aa`, color: theme.text }}
-        >
-          {photoIndex + 1} / {property.images.length}
         </div>
       </div>
 
@@ -773,42 +774,42 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
 
   return (
     <div
-      className="flex flex-col h-full px-7 py-4 gap-2.5"
+      className="flex flex-col h-full px-6 py-3 gap-2"
       style={{ backgroundColor: theme.bg }}
     >
       <div>
         <p
-          className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
+          className="text-[9px] font-bold uppercase tracking-widest"
           style={{ color: theme.accent }}
         >
           {property.title}
         </p>
-        <h2 className="text-lg font-black flex items-center gap-2" style={{ color: theme.text }}>
+        <h2 className="text-base font-black flex items-center gap-1.5" style={{ color: theme.text }}>
           <Sparkles className="size-4" style={{ color: theme.accent }} />
           Mülk Detayları
         </h2>
       </div>
 
-      <div className="flex-1 grid grid-cols-2 gap-2 content-start min-h-0">
+      <div className="flex-1 grid grid-cols-2 gap-1.5 content-start min-h-0">
         {items.map((item) => {
           const Icon = item.icon;
           return (
             <div
               key={item.label}
-              className="flex items-center gap-2.5 rounded-lg px-3 py-2"
+              className="flex items-center gap-2 rounded-md px-2.5 py-1.5"
               style={{ backgroundColor: theme.cardBg }}
             >
               <div
-                className="size-8 rounded-md flex items-center justify-center shrink-0"
+                className="size-6 rounded-md flex items-center justify-center shrink-0"
                 style={{ backgroundColor: `${theme.accent}22` }}
               >
-                <Icon className="size-4" style={{ color: theme.accent }} />
+                <Icon className="size-3.5" style={{ color: theme.accent }} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[9px] font-medium uppercase tracking-wide" style={{ color: theme.muted }}>
+                <p className="text-[8px] font-medium uppercase tracking-wide leading-tight" style={{ color: theme.muted }}>
                   {item.label}
                 </p>
-                <p className="text-xs font-black truncate" style={{ color: theme.text }}>
+                <p className="text-[11px] font-black truncate leading-tight" style={{ color: theme.text }}>
                   {item.value}
                 </p>
               </div>
@@ -818,13 +819,13 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
       </div>
 
       <div
-        className="flex items-center justify-between rounded-lg px-4 py-2"
+        className="flex items-center justify-between rounded-md px-3 py-1.5 shrink-0"
         style={{ backgroundColor: `${theme.accent}1a`, borderLeft: `3px solid ${theme.accent}` }}
       >
-        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>
+        <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>
           Fiyat
         </span>
-        <span className="text-base font-black" style={{ color: theme.accent }}>
+        <span className="text-sm font-black" style={{ color: theme.accent }}>
           {formatPrice(property.price, property.currency, property.pricing_type)}
         </span>
       </div>
@@ -1111,40 +1112,34 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
 
   return (
     <div
-      className="flex flex-col h-full px-6 py-3.5 gap-2"
+      className="flex flex-col h-full px-5 py-3 gap-1.5 overflow-hidden"
       style={{ backgroundColor: theme.bg }}
     >
       <div>
         <p
-          className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
+          className="text-[9px] font-bold uppercase tracking-widest"
           style={{ color: theme.accent }}
         >
           Yatırım Fırsatı
         </p>
-        <h2 className="text-lg font-black leading-tight" style={{ color: theme.text }}>
+        <h2 className="text-base font-black leading-tight" style={{ color: theme.text }}>
           Neden Kuzey Kıbrıs&apos;ta Gayrimenkul?
         </h2>
-        <p className="text-[10px]" style={{ color: theme.muted }}>
-          Akdeniz&apos;in yükselen yıldızı — veriler ile kanıtlanmış avantajlar
-        </p>
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-4 gap-1.5">
+      <div className="grid grid-cols-4 gap-1.5 shrink-0">
         {kpis.map((k, i) => (
           <div
             key={i}
-            className="rounded-md px-2 py-1.5 text-center"
+            className="rounded-md px-1.5 py-1 text-center"
             style={{ backgroundColor: `${theme.accent}15`, borderLeft: `2px solid ${theme.accent}` }}
           >
-            <p className="text-lg font-black leading-none" style={{ color: theme.accent }}>
+            <p className="text-base font-black leading-none" style={{ color: theme.accent }}>
               {k.value}
             </p>
-            <p className="text-[9px] font-bold uppercase tracking-wide mt-1" style={{ color: theme.text }}>
+            <p className="text-[8px] font-bold uppercase tracking-wide mt-0.5 leading-tight" style={{ color: theme.text }}>
               {k.label}
-            </p>
-            <p className="text-[8px] mt-0.5 leading-tight" style={{ color: theme.muted }}>
-              {k.sub}
             </p>
           </div>
         ))}
@@ -1157,20 +1152,20 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
           return (
             <div
               key={i}
-              className="rounded-md px-2.5 py-1.5 flex gap-2 items-start overflow-hidden"
+              className="rounded-md px-2 py-1.5 flex gap-1.5 items-start overflow-hidden"
               style={{ backgroundColor: theme.cardBg }}
             >
               <div
-                className="size-7 rounded-md shrink-0 flex items-center justify-center"
+                className="size-6 rounded-md shrink-0 flex items-center justify-center"
                 style={{ backgroundColor: `${theme.accent}22` }}
               >
-                <Icon className="size-3.5" style={{ color: theme.accent }} />
+                <Icon className="size-3" style={{ color: theme.accent }} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-black leading-tight mb-0.5" style={{ color: theme.text }}>
+                <p className="text-[10px] font-black leading-tight" style={{ color: theme.text }}>
                   {r.title}
                 </p>
-                <p className="text-[9px] leading-snug line-clamp-3" style={{ color: `${theme.text}b3` }}>
+                <p className="text-[8px] leading-snug line-clamp-3 mt-0.5" style={{ color: `${theme.text}b3` }}>
                   {r.text}
                 </p>
               </div>
@@ -1379,13 +1374,15 @@ function ContactSlide({ theme, note }: { theme: ThemeColors; note?: string }) {
       className="flex flex-col items-center justify-center h-full px-8 py-10 gap-5 text-center"
       style={{ backgroundColor: theme.bg }}
     >
-      <Image
-        src="/logo-square.jpeg"
-        alt="Nexos Investment"
-        width={96}
-        height={96}
-        className="rounded-2xl"
-      />
+      <div className="rounded-2xl bg-white p-2 shadow-md">
+        <Image
+          src="/logo-square.jpeg"
+          alt="Nexos Investment"
+          width={96}
+          height={96}
+          className="rounded-xl block"
+        />
+      </div>
 
       <div>
         <p
