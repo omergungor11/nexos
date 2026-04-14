@@ -20,7 +20,6 @@ import { CSS } from "@dnd-kit/utilities";
 import {
   ChevronLeft,
   ChevronRight,
-  Download,
   Maximize,
   Minimize,
   Search,
@@ -35,7 +34,6 @@ import {
   Globe,
   Building2,
   FileDown,
-  ImageDown,
   Settings2,
   Eye,
   EyeOff,
@@ -309,7 +307,7 @@ function CoverSlide({ property, theme, note }: SlideProps) {
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-10 pt-8">
         <div className="flex items-center gap-2.5">
           <Image
-            src="/logo-square.jpeg"
+            src="/logo-trans.png"
             alt="Nexos"
             width={36}
             height={36}
@@ -497,7 +495,7 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
       {/* Top-left logo (matches cover slide) */}
       <div className="absolute top-6 left-6 z-10 flex items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 backdrop-blur-sm">
         <Image
-          src="/logo-square.jpeg"
+          src="/logo-trans.png"
           alt="Nexos"
           width={28}
           height={28}
@@ -1203,7 +1201,7 @@ function ContactSlide({ theme, note }: { theme: ThemeColors; note?: string }) {
       style={{ backgroundColor: theme.bg }}
     >
       <Image
-        src="/logo-square.jpeg"
+        src="/logo-trans.png"
         alt="Nexos Investment"
         width={80}
         height={80}
@@ -1865,43 +1863,6 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exportJob, exportIdx]);
 
-  function handleDownloadCurrentPNG() {
-    if (!viewerRef.current) return;
-    const slideEl = viewerRef.current.querySelector("[data-slide-canvas]") as HTMLElement | null;
-    if (!slideEl) return;
-    // Basic screenshot approach using the native print method for current slide
-    const html = `<!DOCTYPE html>
-<html><head><style>
-  * { margin:0;padding:0;box-sizing:border-box; }
-  body { width:1280px;height:720px;overflow:hidden; }
-  @media print { @page { size: 1280px 720px; margin:0; } }
-</style></head><body>
-  <div style="width:1280px;height:720px;overflow:hidden;">${slideEl.innerHTML}</div>
-</body></html>`;
-    const win = window.open("", "_blank");
-    if (!win) return;
-    win.document.write(html);
-    win.document.close();
-    win.onload = () => { win.focus(); win.print(); };
-  }
-
-  function handleDownloadAllPNG() {
-    if (selectedProperties.length === 0) return;
-    // Export all enabled slides for all selected properties
-    const slideDivs = activeSlides
-      .map((s) => `<div style="width:1280px;height:720px;page-break-after:always;overflow:hidden;">Slayt: ${s.label}</div>`)
-      .join("");
-    const html = `<!DOCTYPE html><html><head><style>
-      * { margin:0;padding:0;box-sizing:border-box; }
-      @media print { @page { size: 1280px 720px; margin:0; } }
-    </style></head><body>${slideDivs}</body></html>`;
-    const win = window.open("", "_blank");
-    if (!win) return;
-    win.document.write(html);
-    win.document.close();
-    win.onload = () => { win.focus(); win.print(); };
-  }
-
   function openNoteEditor() {
     if (!noteKey) return;
     setNoteInput(slideNotes[noteKey] ?? "");
@@ -2561,24 +2522,6 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
           {/* Export buttons */}
           {!fullscreen && (
             <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadCurrentPNG}
-                className="gap-1.5"
-              >
-                <ImageDown className="size-3.5" />
-                Slaytı PNG İndir
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadAllPNG}
-                className="gap-1.5"
-              >
-                <Download className="size-3.5" />
-                Tümünü İndir
-              </Button>
               <Button
                 variant="outline"
                 size="sm"
