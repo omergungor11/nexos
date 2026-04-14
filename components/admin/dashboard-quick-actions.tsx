@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { PlusCircle, FileText, ExternalLink } from "lucide-react";
+import {
+  PlusCircle,
+  FileText,
+  ExternalLink,
+  Star,
+  Sparkles,
+  Flame,
+} from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 const QUICK_ACTIONS = [
@@ -21,6 +28,36 @@ const QUICK_ACTIONS = [
     color:
       "border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20",
     iconColor: "text-primary",
+    external: false,
+  },
+  {
+    label: "Öne Çıkar",
+    description: "Öne Çıkan ilan listesini düzenle",
+    href: "/admin/vitrin-yonetimi?tab=featured",
+    icon: Star,
+    color:
+      "border border-amber-400/50 bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-500/30 dark:hover:bg-amber-950/50",
+    iconColor: "text-amber-600 dark:text-amber-400",
+    external: false,
+  },
+  {
+    label: "Vitrin",
+    description: "Vitrin sayfası ilan listesini düzenle",
+    href: "/admin/vitrin-yonetimi?tab=showcase",
+    icon: Sparkles,
+    color:
+      "border border-violet-400/50 bg-violet-50 text-violet-800 hover:bg-violet-100 dark:bg-violet-950/30 dark:text-violet-300 dark:border-violet-500/30 dark:hover:bg-violet-950/50",
+    iconColor: "text-violet-600 dark:text-violet-400",
+    external: false,
+  },
+  {
+    label: "Fırsat",
+    description: "Fırsat ilanları listesini düzenle",
+    href: "/admin/vitrin-yonetimi?tab=deal",
+    icon: Flame,
+    color:
+      "border border-rose-400/50 bg-rose-50 text-rose-800 hover:bg-rose-100 dark:bg-rose-950/30 dark:text-rose-300 dark:border-rose-500/30 dark:hover:bg-rose-950/50",
+    iconColor: "text-rose-600 dark:text-rose-400",
     external: false,
   },
   {

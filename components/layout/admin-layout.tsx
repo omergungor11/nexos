@@ -378,6 +378,17 @@ export function AdminLayout({
             <ThemeSwitcher />
             <HelpMenu />
             <NotificationBell />
+            <Link
+              href="/admin/ayarlar"
+              className={cn(
+                "inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                pathname.startsWith("/admin/ayarlar") && "bg-muted text-foreground",
+              )}
+              title="Ayarlar"
+              aria-label="Ayarlar"
+            >
+              <Settings className="size-4" />
+            </Link>
             <div className="hidden items-center gap-2 lg:flex">
               <Avatar size="sm">
                 <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground text-xs">

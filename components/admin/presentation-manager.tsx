@@ -43,7 +43,10 @@ import {
   StickyNote,
   Palette,
   Sparkles,
+  Presentation as PresentationIcon,
+  LoaderCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -1652,6 +1655,26 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
 
   const viewerRef = useRef<HTMLDivElement>(null);
 
+  // ---------------------------------------------------------------------------
+  // Export (PDF / PPTX) state — drives the hidden render surface
+  // ---------------------------------------------------------------------------
+  type ExportTuple = {
+    property: PropertyForPresentation;
+    slideType: SlideType;
+    photoIndex?: number;
+    bannerText?: string;
+    customDescription?: string;
+  };
+  type ExportJob = {
+    mode: "pdf" | "pptx";
+    tuples: ExportTuple[];
+  };
+  const [exportJob, setExportJob] = useState<ExportJob | null>(null);
+  const [exportIdx, setExportIdx] = useState(0);
+  const exportCapturesRef = useRef<string[]>([]);
+  const exportSurfaceRef = useRef<HTMLDivElement>(null);
+  const exporting = exportJob !== null;
+
   // Derived
   const themeColors = THEMES[theme];
 
@@ -1794,18 +1817,196 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
     });
   }
 
-  function handleDownloadPDF() {
-    if (selectedProperties.length === 0) return;
-    const html = buildPrintHTML(selectedProperties, enabledSlides, themeColors);
-    const win = window.open("", "_blank");
-    if (!win) return;
-    win.document.write(html);
-    win.document.close();
-    win.onload = () => {
-      win.focus();
-      win.print();
-    };
+  // ---------------------------------------------------------------------------
+  // Build the full list of slides to export across all selected properties.
+  // Respects: slideOrder, enabledSlides, per-property photo index picks,
+  // photo banners and custom descriptions.
+  // ---------------------------------------------------------------------------
+  function buildExportTuples(): ExportTuple[] {
+    const tuples: ExportTuple[] = [];
+    for (const property of selectedProperties) {
+      // Per-property photo indices (fallback to first 3 if none picked)
+      const picked = Array.from(selectedPhotoIndices).sort((a, b) => a - b);
+      const photoIndices =
+        picked.length === 0
+          ? Array.from(
+              { length: Math.min(3, property.images.length) },
+              (_, i) => i
+            )
+          : picked.filter((i) => i < property.images.length);
+
+      // Walk slideOrder so the export matches the viewer order
+      for (const id of slideOrder) {
+        if (id.startsWith("photo-")) {
+          if (!enabledSlides.has("photo")) continue;
+          const idx = Number(id.slice("photo-".length));
+          if (!photoIndices.includes(idx)) continue;
+          tuples.push({
+            property,
+            slideType: "photo",
+            photoIndex: idx,
+            bannerText: photoBanners[`photo-${idx}`],
+          });
+        } else {
+          const type = id as SlideType;
+          if (!enabledSlides.has(type)) continue;
+          if (type === "photo") continue; // handled above
+          tuples.push({
+            property,
+            slideType: type,
+            customDescription:
+              type === "description"
+                ? customDescriptions[property.id]
+                : undefined,
+          });
+        }
+      }
+    }
+    return tuples;
   }
+
+  async function handleDownloadPDF() {
+    if (exporting) return;
+    const tuples = buildExportTuples();
+    if (tuples.length === 0) {
+      toast.error("İndirilebilecek slayt yok.");
+      return;
+    }
+    exportCapturesRef.current = [];
+    setExportIdx(0);
+    setExportJob({ mode: "pdf", tuples });
+  }
+
+  async function handleDownloadPPTX() {
+    if (exporting) return;
+    const tuples = buildExportTuples();
+    if (tuples.length === 0) {
+      toast.error("İndirilebilecek slayt yok.");
+      return;
+    }
+    exportCapturesRef.current = [];
+    setExportIdx(0);
+    setExportJob({ mode: "pptx", tuples });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Export orchestration: capture one slide at a time from the hidden surface,
+  // then advance. When exportIdx === tuples.length, finalize the output.
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (!exportJob) return;
+    const { tuples, mode } = exportJob;
+
+    // Finalize
+    if (exportIdx >= tuples.length) {
+      const captures = exportCapturesRef.current;
+      (async () => {
+        try {
+          if (mode === "pdf") {
+            const { default: jsPDF } = await import("jspdf");
+            const pdf = new jsPDF({
+              orientation: "landscape",
+              unit: "px",
+              format: [1920, 1080],
+              compress: true,
+            });
+            captures.forEach((dataUrl, i) => {
+              if (i > 0)
+                pdf.addPage([1920, 1080], "landscape");
+              pdf.addImage(dataUrl, "PNG", 0, 0, 1920, 1080);
+            });
+            pdf.save("nexos-sunum.pdf");
+            toast.success("PDF indirildi");
+          } else {
+            const { default: PptxGenJS } = await import("pptxgenjs");
+            const pptx = new PptxGenJS();
+            pptx.layout = "LAYOUT_WIDE"; // 13.333 × 7.5 inches, native 16:9
+            captures.forEach((dataUrl) => {
+              const slide = pptx.addSlide();
+              slide.background = { color: themeColors.bg.replace("#", "") };
+              slide.addImage({
+                data: dataUrl,
+                x: 0,
+                y: 0,
+                w: 13.333,
+                h: 7.5,
+              });
+            });
+            await pptx.writeFile({ fileName: "nexos-sunum.pptx" });
+            toast.success("PowerPoint indirildi");
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error("Dışa aktarma başarısız oldu.");
+        } finally {
+          exportCapturesRef.current = [];
+          setExportJob(null);
+          setExportIdx(0);
+        }
+      })();
+      return;
+    }
+
+    // Capture the currently-mounted slide on the hidden surface
+    let cancelled = false;
+    (async () => {
+      const surface = exportSurfaceRef.current;
+      if (!surface) return;
+
+      // Two rAFs to ensure React has committed + browser has painted
+      await new Promise<void>((r) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => r()))
+      );
+      if (cancelled) return;
+
+      // Wait for every <img> inside the surface to finish loading
+      const imgs = Array.from(surface.querySelectorAll("img"));
+      await Promise.all(
+        imgs.map((img) => {
+          if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+          return new Promise<void>((resolve) => {
+            const done = () => resolve();
+            img.addEventListener("load", done, { once: true });
+            img.addEventListener("error", done, { once: true });
+          });
+        })
+      );
+      if (cancelled) return;
+
+      // Small extra delay so fonts and backgrounds settle
+      await new Promise((r) => setTimeout(r, 80));
+      if (cancelled) return;
+
+      try {
+        const { default: html2canvas } = await import("html2canvas");
+        const canvas = await html2canvas(surface, {
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: themeColors.bg,
+          width: 1920,
+          height: 1080,
+          windowWidth: 1920,
+          windowHeight: 1080,
+          scale: 1,
+          logging: false,
+        });
+        if (cancelled) return;
+        exportCapturesRef.current.push(canvas.toDataURL("image/png"));
+        setExportIdx((i) => i + 1);
+      } catch (err) {
+        console.error("html2canvas error:", err);
+        toast.error("Slayt kaydedilemedi, işlem durduruldu.");
+        setExportJob(null);
+        setExportIdx(0);
+        exportCapturesRef.current = [];
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // Only re-run when the orchestrator wants to advance a step
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exportJob, exportIdx]);
 
   function handleDownloadCurrentPNG() {
     if (!viewerRef.current) return;
@@ -1878,8 +2079,45 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
     ? "fixed inset-0 z-50 flex flex-col bg-[#171717]"
     : "flex flex-col";
 
+  // ---------------------------------------------------------------------------
+  // Hidden export surface — renders the currently-capturing slide at 1920×1080
+  // off-screen. html2canvas reads from this ref in the export effect.
+  // ---------------------------------------------------------------------------
+  const exportCurrent =
+    exportJob && exportIdx < exportJob.tuples.length
+      ? exportJob.tuples[exportIdx]
+      : null;
+
   return (
     <div className="flex flex-col gap-6">
+      {/* Hidden export render surface */}
+      <div
+        ref={exportSurfaceRef}
+        aria-hidden
+        style={{
+          position: "fixed",
+          left: "-100000px",
+          top: 0,
+          width: 1920,
+          height: 1080,
+          backgroundColor: themeColors.bg,
+          overflow: "hidden",
+          pointerEvents: "none",
+          zIndex: -1,
+        }}
+      >
+        {exportCurrent && (
+          <SlideRenderer
+            property={exportCurrent.property}
+            slideType={exportCurrent.slideType}
+            theme={themeColors}
+            photoIndex={exportCurrent.photoIndex}
+            bannerText={exportCurrent.bannerText}
+            customDescription={exportCurrent.customDescription}
+          />
+        )}
+      </div>
+
       {/* ----------------------------------------------------------------- */}
       {/* Property selector                                                   */}
       {/* ----------------------------------------------------------------- */}
@@ -2451,12 +2689,35 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                 Tümünü İndir
               </Button>
               <Button
+                variant="outline"
                 size="sm"
-                onClick={handleDownloadPDF}
+                onClick={handleDownloadPPTX}
+                disabled={exporting}
                 className="gap-1.5"
               >
-                <FileDown className="size-3.5" />
-                PDF İndir
+                {exporting && exportJob?.mode === "pptx" ? (
+                  <LoaderCircle className="size-3.5 animate-spin" />
+                ) : (
+                  <PresentationIcon className="size-3.5" />
+                )}
+                {exporting && exportJob?.mode === "pptx"
+                  ? `${exportIdx}/${exportJob.tuples.length}`
+                  : "PowerPoint İndir"}
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleDownloadPDF}
+                disabled={exporting}
+                className="gap-1.5"
+              >
+                {exporting && exportJob?.mode === "pdf" ? (
+                  <LoaderCircle className="size-3.5 animate-spin" />
+                ) : (
+                  <FileDown className="size-3.5" />
+                )}
+                {exporting && exportJob?.mode === "pdf"
+                  ? `${exportIdx}/${exportJob.tuples.length}`
+                  : "PDF İndir"}
               </Button>
             </div>
           )}

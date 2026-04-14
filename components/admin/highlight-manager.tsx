@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 import {
@@ -169,9 +170,18 @@ function formatPrice(price: number | null, currency: string) {
 // ---------------------------------------------------------------------------
 
 export function HighlightManager({ initialProperties }: HighlightManagerProps) {
+  const searchParams = useSearchParams();
+  const initialTab = ((): HighlightFlag => {
+    const t = searchParams.get("tab");
+    if (t === "slider" || t === "featured" || t === "showcase" || t === "deal") {
+      return t;
+    }
+    return "slider";
+  })();
+
   const [properties, setProperties] =
     useState<HighlightedProperty[]>(initialProperties);
-  const [activeTab, setActiveTab] = useState<HighlightFlag>("slider");
+  const [activeTab, setActiveTab] = useState<HighlightFlag>(initialTab);
   const [addOpen, setAddOpen] = useState(false);
 
   return (
