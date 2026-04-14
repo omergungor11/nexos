@@ -767,6 +767,17 @@ export function ProjectForm({
               </div>
             )}
           </div>
+
+          {/* Sub-listings */}
+          {subListingsSlot && (
+            <div className="border-t pt-6">
+              <h3 className="mb-1 text-sm font-semibold">Alt İlanlar / Daire Tipleri</h3>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Site projesindeki farklı daire/villa tiplerini buradan ekleyebilirsin.
+              </p>
+              {subListingsSlot}
+            </div>
+          )}
         </TabsContent>
 
         {/* ================================================================ */}
@@ -875,6 +886,17 @@ export function ProjectForm({
               Sürükleyerek sıralayabilir, X ile kaldırabilirsiniz.
             </p>
           </div>
+
+          {/* Floor plans */}
+          {floorPlansSlot && (
+            <div className="border-t pt-6">
+              <h3 className="mb-1 text-sm font-semibold">Kat Planları</h3>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Kat planlarını yükleyin, her biri için başlık verin.
+              </p>
+              {floorPlansSlot}
+            </div>
+          )}
         </TabsContent>
 
         {/* ================================================================ */}

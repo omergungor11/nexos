@@ -19,7 +19,7 @@ Nexos Emlak — Next.js 16, Supabase ve Vercel ile geliştirilmiş kurumsal emla
 
 ## Mevcut Durum
 
-**Progress**: 78/78 task (%100) — Tüm phase'ler tamamlandı. Post-launch iyileştirmeler devam ediyor (workflow_status sistemi, arsa pricing, sosyal medya sadeleştirme, rich-text editor, PWA, galeri, blog kategorileri, admin geliştirmeleri).
+**Progress**: 78/78 task (%100) — Tüm phase'ler tamamlandı. Post-launch iyileştirmeler devam ediyor (vitrin yönetimi 4-flag sistemi, workflow_status, arsa pricing, sosyal medya sadeleştirme, rich-text editor, sub-listings + floor plans, PWA, admin geliştirmeleri).
 
 > Her yeni session'da `nexos-tasks/task-index.md` oku veya `/cold-start` çalıştır.
 

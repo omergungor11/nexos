@@ -1,6 +1,57 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-04-14
+
+### Yapılanlar — Vitrin Yönetimi (4 Bağımsız Highlight Flag)
+- **Migration 045**: `is_slider`, `is_showcase`, `is_deal` bool kolonları + `slider_order/featured_order/showcase_order/deal_order` int kolonları + 4 partial index
+- **Backend**: `actions/property-highlights.ts` — `toggleHighlight` (append order at end), `reorderHighlight` (rewrite order batch), `getHighlightedProperties` (admin için), `searchAvailableProperties` (Ekle modal'ı için)
+- **Queries**: `getSliderProperties`, `getShowcaseProperties` eklendi; `getDealProperties` artık `is_deal=true` filtresi (otomatik ucuz sıralama kaldırıldı)
+- **Admin UI `/admin/vitrin-yonetimi`**: 4 sekmeli (Slider/Öne Çıkan/Vitrin/Fırsat) + dnd-kit drag-drop sıralama + "İlan Ekle" modal (arama + ekleme)
+- **Form**: Yayın tab'ına 2×2 renkli toggle grid (4 flag)
+- **Sidebar**: Gayrimenkul grubuna "Vitrin Yönetimi" (Sparkles icon)
+- **Frontend**: Hero slider → `getSliderProperties` (featured fallback), `/vitrin` → `getShowcaseProperties` (featured fallback)
+- **Cross-list bug fix**: Aynı ilan birden fazla listeye eklenirken local state tüm flag'leri overwrite ediyordu → sadece tek flag/order patch'i; modal'da diğer sekme rozetleri (küçük pill'ler)
+
+### Yapılanlar — Property Form Layout Düzeltmeleri
+- **Yayın Durumu dropdown** Temel Bilgiler tab'ına eklendi (Satış Durumu'nun yanına) — 3'lü save buton yerine tek "Kaydet — {durum}"
+- **Sorumlu Danışman** grid içine taşındı (Yayın Durumu yanında)
+- **Alan grid**: Net + Brüt + Arazi → tek `grid-cols-3` satır
+- **Oda grid**: Oda Tipi preset + Oda/Salon/Banyo/Yıl → tek `grid-cols-5` satır
+- **Arazi grid**: Koçan + İmar Durumu + İmar Oranı → tek `grid-cols-3` satır (altında Yol/Elektrik/Su checkboxları)
+
+### Yapılanlar — Rich Text Editor İyileştirmeleri
+- **Plain-text preprocessing**: TipTap'e beslenmeden önce eski `"satır1\nsatır2\n\nsatır3"` formatı `<p>...<br/>...</p>` yapısına normalize ediliyor → editor ve detay sayfasında paragraflar ayrı görünüyor
+- **Emoji picker butonu**: Native OS emoji picker için hint (`Win+.` / `Ctrl+Cmd+Space`)
+
+### Migration'lar (tümü çalıştırıldı)
+- ✅ `045_property_highlight_flags.sql`
+- ✅ `046_sub_listings.sql` (başka session)
+- ✅ `047_floor_plans.sql` (başka session)
+
+### Dikkat Edilecekler
+- **Highlight flags bağımsız**: Bir ilan aynı anda Slider + Öne Çıkan + Vitrin + Fırsat olabilir. `toggleHighlight(id, flag, true)` sadece o flag + order yazar, diğerlerini etkilemez
+- **reorderHighlight**: Sadece order column'ı günceller, flag'leri değil. Remove için toggleHighlight kullanmak gerek
+- **AddPropertyDialog onAdded pattern**: Patch-style — sadece değişen flag/order'ı merge et, yeni obje spreadlenmiyor
+- **FormState.workflow_status**: Artık source of truth. Enter submit + Kaydet butonu hep `form.workflow_status` kullanıyor. Server publish-gate validation aynen çalışıyor (başlık/fiyat/şehir/min 1 görsel)
+- **RichTextEditor legacy input**: `normalizeInitialContent` fonksiyonu plain-text'i HTML paragraflara çeviriyor; HTML varsa dokunmuyor
+- **Alan grid responsive**: Arazi Alanı gösterilen türlerde `sm:grid-cols-3`, değilse `sm:grid-cols-2` (inline className check)
+
+### Yarım Kalanlar
+- **Reels generator**: Hâlâ "Yakında" placeholder
+- **Dashboard KPI kartları**: Workflow status sayıları (Taslak/Yayında/Pasif/Arşiv)
+- **Otomatik transition'lar**: 30 gün taslak hatırlatma, 60 gün pasif → arşiv
+
+### Sıradakiler
+- Reels üreteci (video/animasyon)
+- Dashboard'a 4-durum KPI kartları
+- E-posta bildirimi (Resend entegrasyonu)
+- Blog etiket yönetimi admin UI
+- Bundle analysis + lazy loading audit
+- Highlight flag'ler için dashboard widget'ı ("2 slider ilanı var, vitrinde 18 ilan")
+
+---
+
 ## 2026-04-13 (devam — ikinci blok)
 
 ### Yapılanlar — Pricing Type & Land

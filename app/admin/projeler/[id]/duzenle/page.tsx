@@ -5,6 +5,10 @@ import { ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCities } from "@/lib/queries/locations";
 import { ProjectForm } from "@/components/admin/project-form";
+import { SubListingsEditor } from "@/components/admin/sub-listings-editor";
+import { FloorPlansEditor } from "@/components/admin/floor-plans-editor";
+import { listSubListingsByParent } from "@/actions/sub-listings";
+import { listFloorPlansByParent } from "@/actions/floor-plans";
 
 export const metadata = {
   title: "Proje Düzenle — Admin",
@@ -28,7 +32,11 @@ export default async function AdminProjectEditPage({ params }: Props) {
     notFound();
   }
 
-  const cities = await getCities();
+  const [cities, subListingsResult, floorPlansResult] = await Promise.all([
+    getCities(),
+    listSubListingsByParent("project", id),
+    listFloorPlansByParent("project", id),
+  ]);
 
   return (
     <div className="p-6 space-y-6">
@@ -40,7 +48,25 @@ export default async function AdminProjectEditPage({ params }: Props) {
         Projeler
       </Link>
       <h1 className="text-xl font-semibold">Proje Düzenle</h1>
-      <ProjectForm mode="edit" project={project} cities={cities} />
+      <ProjectForm
+        mode="edit"
+        project={project}
+        cities={cities}
+        subListingsSlot={
+          <SubListingsEditor
+            parentType="project"
+            parentId={id}
+            initial={subListingsResult.data ?? []}
+          />
+        }
+        floorPlansSlot={
+          <FloorPlansEditor
+            parentType="project"
+            parentId={id}
+            initial={floorPlansResult.data ?? []}
+          />
+        }
+      />
     </div>
   );
 }
