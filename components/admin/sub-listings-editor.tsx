@@ -46,6 +46,7 @@ import {
   type SubListingInput,
 } from "@/actions/sub-listings";
 import { uploadMediaImage } from "@/actions/images";
+import { ROOM_OPTIONS } from "@/lib/constants";
 import type {
   SubListing,
   SubListingParentType,
@@ -100,6 +101,7 @@ interface Draft {
   description: string;
   property_type: string;
   cover_image: string;
+  gallery_images: string[];
   rooms: string;
   living_rooms: string;
   bathrooms: string;
@@ -118,6 +120,7 @@ function emptyDraft(): Draft {
     description: "",
     property_type: "",
     cover_image: "",
+    gallery_images: [],
     rooms: "",
     living_rooms: "",
     bathrooms: "",
@@ -138,6 +141,7 @@ function fromSubListing(s: SubListing): Draft {
     description: s.description ?? "",
     property_type: s.property_type ?? "",
     cover_image: s.cover_image ?? "",
+    gallery_images: s.gallery_images ?? [],
     rooms: s.rooms?.toString() ?? "",
     living_rooms: s.living_rooms?.toString() ?? "",
     bathrooms: s.bathrooms?.toString() ?? "",
@@ -161,6 +165,7 @@ function toPayload(d: Draft, sort_order: number): SubListingInput {
     description: d.description.trim() || null,
     property_type: d.property_type || null,
     cover_image: d.cover_image || null,
+    gallery_images: d.gallery_images,
     rooms: toNum(d.rooms),
     living_rooms: toNum(d.living_rooms),
     bathrooms: toNum(d.bathrooms),
@@ -354,7 +359,7 @@ function SortableRow({
             </Button>
           </div>
 
-          {/* Row 2: specs grid */}
+          {/* Row 2: specs grid — Oda + Oda Tipi preset + Banyo + m² */}
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <LabeledInput
               id={`${rowId}-rooms`}
@@ -363,13 +368,49 @@ function SortableRow({
               onChange={(v) => update("rooms", v)}
               type="number"
             />
-            <LabeledInput
-              id={`${rowId}-living`}
-              label="Salon"
-              value={draft.living_rooms}
-              onChange={(v) => update("living_rooms", v)}
-              type="number"
-            />
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">
+                Oda Tipi
+              </label>
+              <Select
+                value={(() => {
+                  const r = draft.rooms;
+                  const l = draft.living_rooms;
+                  if (!r) return "__none__";
+                  const code = l ? `${r}+${l}` : `${r}+0`;
+                  return ROOM_OPTIONS.includes(code) ? code : "__custom__";
+                })()}
+                onValueChange={(v) => {
+                  const next = v ?? "__none__";
+                  if (next === "__none__" || next === "__custom__") return;
+                  if (next === "6+") {
+                    onChange({ ...draft, rooms: "6", living_rooms: "1" });
+                    return;
+                  }
+                  const [r, l] = next.split("+");
+                  onChange({ ...draft, rooms: r, living_rooms: l });
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue>
+                    {(() => {
+                      const r = draft.rooms;
+                      const l = draft.living_rooms;
+                      if (!r) return "—";
+                      return l ? `${r}+${l}` : `${r}+0`;
+                    })()}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                  {ROOM_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <LabeledInput
               id={`${rowId}-bath`}
               label="Banyo"
@@ -446,6 +487,92 @@ function SortableRow({
               rows={3}
               className="text-sm"
             />
+          </div>
+
+          {/* Gallery — additional images beyond cover */}
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">
+              Galeri ({draft.gallery_images.length} görsel)
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {draft.gallery_images.map((url, i) => (
+                <div
+                  key={`${url}-${i}`}
+                  className="relative size-16 overflow-hidden rounded-md border"
+                >
+                  <Image
+                    src={url}
+                    alt={`${draft.label || "Alt ilan"} — görsel ${i + 1}`}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                    unoptimized
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = [...draft.gallery_images];
+                      next.splice(i, 1);
+                      onChange({ ...draft, gallery_images: next });
+                    }}
+                    className="absolute right-0.5 top-0.5 rounded-full bg-background/90 p-0.5 text-muted-foreground shadow hover:text-destructive"
+                    aria-label="Görseli kaldır"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </div>
+              ))}
+              <label
+                className={[
+                  "flex size-16 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-muted-foreground transition-colors",
+                  uploading ? "pointer-events-none opacity-60" : "hover:border-primary hover:text-primary",
+                ].join(" ")}
+                title="Galeriye görsel ekle"
+              >
+                {uploading ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <>
+                    <Plus className="size-4" />
+                    <span className="mt-0.5 text-[10px]">Ekle</span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  className="sr-only"
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files ?? []);
+                    e.target.value = "";
+                    if (files.length === 0) return;
+                    setUploading(true);
+                    const results = await Promise.all(
+                      files.map(async (f) => {
+                        const fd = new FormData();
+                        fd.append("file", f);
+                        const r = await uploadMediaImage(fd);
+                        if (r.error) {
+                          toast.error(`${f.name}: ${r.error}`);
+                          return null;
+                        }
+                        return r.data?.url ?? null;
+                      }),
+                    );
+                    setUploading(false);
+                    const urls = results.filter((u): u is string => !!u);
+                    if (urls.length > 0) {
+                      onChange({
+                        ...draft,
+                        gallery_images: [...draft.gallery_images, ...urls],
+                      });
+                      toast.success(`${urls.length} görsel eklendi.`);
+                    }
+                  }}
+                  disabled={uploading}
+                />
+              </label>
+            </div>
           </div>
         </div>
       </div>

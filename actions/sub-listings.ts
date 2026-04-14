@@ -26,6 +26,7 @@ export interface SubListingInput {
   description?: string | null;
   property_type?: string | null;
   cover_image?: string | null;
+  gallery_images?: string[];
   rooms?: number | null;
   living_rooms?: number | null;
   bathrooms?: number | null;
@@ -140,6 +141,7 @@ export async function upsertSubListings(
       description: item.description ?? null,
       property_type: item.property_type ?? null,
       cover_image: item.cover_image ?? null,
+      gallery_images: item.gallery_images ?? [],
       rooms: item.rooms ?? null,
       living_rooms: item.living_rooms ?? null,
       bathrooms: item.bathrooms ?? null,

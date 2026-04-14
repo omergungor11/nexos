@@ -230,6 +230,7 @@ export interface SubListing {
   description: string | null;
   property_type: string | null;
   cover_image: string | null;
+  gallery_images: string[];
   rooms: number | null;
   living_rooms: number | null;
   bathrooms: number | null;

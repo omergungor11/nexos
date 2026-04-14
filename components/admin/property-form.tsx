@@ -1746,6 +1746,130 @@ export function PropertyForm({
             </>
           )}
 
+          {/* Tapu / Koçan — every property type */}
+          <Field
+            label="Koçan Türü"
+            htmlFor="title_deed_type"
+            hint="Kıbrıs'a özel tapu/koçan türü"
+            icon={ScrollText}
+          >
+            <Select
+              value={form.title_deed_type || "__none__"}
+              onValueChange={(v) =>
+                setForm((prev) => ({
+                  ...prev,
+                  title_deed_type:
+                    v === "__none__" || !v ? "" : (v as TitleDeedType),
+                }))
+              }
+            >
+              <SelectTrigger id="title_deed_type" className="w-full sm:w-80">
+                <SelectValue placeholder="Seçiniz (opsiyonel)">
+                  {form.title_deed_type
+                    ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType]
+                    : "Belirtilmemiş"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                {(Object.entries(TITLE_DEED_OPTIONS) as [TitleDeedType, string][]).map(
+                  ([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectContent>
+            </Select>
+          </Field>
+
+          {/* Arsa-only — İmar Durumu + İmar Oranı + Altyapı */}
+          {isLandType(form.property_type) && (
+            <>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <Field label="İmar Durumu" htmlFor="zoning_status" icon={FileCheck}>
+                  <Select
+                    value={form.zoning_status || "__none__"}
+                    onValueChange={(v) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        zoning_status:
+                          v === "__none__" || !v ? "" : (v as ZoningStatus),
+                      }))
+                    }
+                  >
+                    <SelectTrigger id="zoning_status" className="w-full">
+                      <SelectValue placeholder="Seçiniz (opsiyonel)">
+                        {form.zoning_status
+                          ? ZONING_STATUS_OPTIONS[form.zoning_status as ZoningStatus]
+                          : "Belirtilmemiş"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                      {(Object.entries(ZONING_STATUS_OPTIONS) as [ZoningStatus, string][]).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field
+                  label="İmar Oranı (%)"
+                  htmlFor="floor_area_ratio"
+                  icon={FileCheck}
+                  hint="Ör: 220 → %220"
+                >
+                  <div className="relative">
+                    <Input
+                      id="floor_area_ratio"
+                      name="floor_area_ratio"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={form.floor_area_ratio}
+                      onChange={handleChange}
+                      placeholder="220"
+                      className="pr-8"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      %
+                    </span>
+                  </div>
+                </Field>
+              </div>
+
+              <h4 className="text-sm font-semibold pt-2">Arsa Altyapı Özellikleri</h4>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <CheckboxField
+                  id="has_road_access"
+                  label="Yol"
+                  checked={form.has_road_access}
+                  onChange={(c) => handleBooleanChange("has_road_access", c)}
+                  icon={Route}
+                />
+                <CheckboxField
+                  id="has_electricity"
+                  label="Elektrik"
+                  checked={form.has_electricity}
+                  onChange={(c) => handleBooleanChange("has_electricity", c)}
+                  icon={Zap}
+                />
+                <CheckboxField
+                  id="has_water"
+                  label="Su"
+                  checked={form.has_water}
+                  onChange={(c) => handleBooleanChange("has_water", c)}
+                  icon={Droplets}
+                />
+              </div>
+            </>
+          )}
+
           {/* Sub-listings */}
           {subListingsSlot && (
             <div className="border-t pt-6">
@@ -2065,129 +2189,6 @@ export function PropertyForm({
             </>
           )}
 
-          {/* Koçan Türü — shown for every property type (Kıbrıs'ta her ilan
-              için tapu/koçan türü kritik, arsaya özel değil) */}
-          <Field
-            label="Koçan Türü"
-            htmlFor="title_deed_type"
-            hint="Kıbrıs'a özel tapu/koçan türü"
-            icon={ScrollText}
-          >
-            <Select
-              value={form.title_deed_type || "__none__"}
-              onValueChange={(v) =>
-                setForm((prev) => ({
-                  ...prev,
-                  title_deed_type:
-                    v === "__none__" || !v ? "" : (v as TitleDeedType),
-                }))
-              }
-            >
-              <SelectTrigger id="title_deed_type" className="w-full sm:w-80">
-                <SelectValue placeholder="Seçiniz (opsiyonel)">
-                  {form.title_deed_type
-                    ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType]
-                    : "Belirtilmemiş"}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">Belirtilmemiş</SelectItem>
-                {(Object.entries(TITLE_DEED_OPTIONS) as [TitleDeedType, string][]).map(
-                  ([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ),
-                )}
-              </SelectContent>
-            </Select>
-          </Field>
-
-          {/* Arsa — İmar Durumu, İmar Oranı + Altyapı */}
-          {isLandType(form.property_type) && (
-            <>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <Field label="İmar Durumu" htmlFor="zoning_status" icon={FileCheck}>
-                  <Select
-                    value={form.zoning_status || "__none__"}
-                    onValueChange={(v) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        zoning_status: v === "__none__" ? "" : (v as ZoningStatus),
-                      }))
-                    }
-                  >
-                    <SelectTrigger id="zoning_status" className="w-full">
-                      <SelectValue placeholder="Seçiniz (opsiyonel)">
-                        {form.zoning_status
-                          ? ZONING_STATUS_OPTIONS[form.zoning_status as ZoningStatus]
-                          : "Belirtilmemiş"}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="__none__">Belirtilmemiş</SelectItem>
-                      {(Object.entries(ZONING_STATUS_OPTIONS) as [ZoningStatus, string][]).map(
-                        ([value, label]) => (
-                          <SelectItem key={value} value={value}>
-                            {label}
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
-                </Field>
-
-                <Field
-                  label="İmar Oranı (%)"
-                  htmlFor="floor_area_ratio"
-                  icon={FileCheck}
-                  hint="Ör: 220 → %220"
-                >
-                  <div className="relative">
-                    <Input
-                      id="floor_area_ratio"
-                      name="floor_area_ratio"
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={form.floor_area_ratio}
-                      onChange={handleChange}
-                      placeholder="220"
-                      className="pr-8"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                      %
-                    </span>
-                  </div>
-                </Field>
-              </div>
-
-              <h4 className="text-sm font-semibold pt-2">Arsa Altyapı Özellikleri</h4>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                <CheckboxField
-                  id="has_road_access"
-                  label="Yol"
-                  checked={form.has_road_access}
-                  onChange={(c) => handleBooleanChange("has_road_access", c)}
-                  icon={Route}
-                />
-                <CheckboxField
-                  id="has_electricity"
-                  label="Elektrik"
-                  checked={form.has_electricity}
-                  onChange={(c) => handleBooleanChange("has_electricity", c)}
-                  icon={Zap}
-                />
-                <CheckboxField
-                  id="has_water"
-                  label="Su"
-                  checked={form.has_water}
-                  onChange={(c) => handleBooleanChange("has_water", c)}
-                  icon={Droplets}
-                />
-              </div>
-            </>
-          )}
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}
