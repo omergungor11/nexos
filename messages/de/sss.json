@@ -25,11 +25,11 @@
         "items": [
           {
             "question": "Warum ist Nordzypern für Immobilieninvestitionen attraktiv?",
-            "answer": "Nordzypern gehört zu den am schnellsten wachsenden Immobilienmärkten im Mittelmeerraum. In den letzten 5 Jahren sind die Immobilienwerte jährlich um durchschnittlich 20–30 % gestiegen. Zu den wichtigsten Anziehungsfaktoren zählen niedrige Kaufkosten, hohe Mietrenditen (6–12 % jährlich), über 300 Sonnentage, die weite Verbreitung der englischen Sprache, die Nähe zur Türkei, die Grenznähe zur EU und ein wachsender Tourismussektor. Darüber hinaus sorgt die große Zahl an Universitätsstudenten für eine konstant starke Mietnachfrage."
+            "answer": "Nordzypern zählt seit einigen Jahren zu den dynamischsten Immobilienmärkten des Mittelmeerraums. Seit 2020 sind die Preise in den Küstengebieten deutlich gestiegen, mit jährlichen Wertsteigerungen je nach Lage und Projekt von rund 10-25 % (kein einzelner Wert — stark vom Mikromarkt abhängig). Vorteile: niedrige Einstiegspreise, Preisnotierung in Pfund, 300+ Sonnentage, weitverbreitetes Englisch, Direktflüge in die Türkei, wachsender Tourismussektor und anhaltende Mietnachfrage durch über 20 Universitäten. Vergangene Wertentwicklung garantiert jedoch keine zukünftigen Renditen; unabhängige Due Diligence und Rechtsberatung sind vor jeder Investition unerlässlich."
           },
           {
             "question": "Wie vergleichen sich die Immobilienpreise in Nordzypern mit anderen Mittelmeerländern?",
-            "answer": "Der Quadratmeterpreis in Nordzypern liegt durchschnittlich 40–60 % unter dem in Spanien, Griechenland, Südzypern und Italien. Beispielsweise kostet eine 1-Zimmer-Wohnung am Strand von Iskele Long Beach 80.000–120.000 GBP, während eine vergleichbare Immobilie in Südzypern über 200.000 EUR und an der Costa del Sol in Spanien über 180.000 EUR kostet. Dieser Preisvorteil zieht Käufer sowohl zum Wohnen als auch zur Kapitalanlage an."
+            "answer": "Die Quadratmeterpreise in Nordzypern liegen im Allgemeinen deutlich unter den Touristengebieten von Spanien, Südzypern, Griechenland und Italien. Ein strandnahes 1+1-Apartment in Iskele Long Beach wird aktuell für etwa 70.000-130.000 GBP gehandelt; eine vergleichbare Immobilie in Südzypern (Ayia Napa / Larnaka) liegt bei 180.000+ EUR, an der Costa del Sol bei 200.000+ EUR. Preise variieren nach Projekt, Fertigstellungsstand, Ausblick und Grundstücksanteil — aktuelle Zahlen finden Sie in unseren Angeboten."
           },
           {
             "question": "Welche Regionen stechen für Investitionen besonders hervor?",
@@ -41,7 +41,7 @@
           },
           {
             "question": "Wie viel Einkommen können Kurzzeitvermietungen (Airbnb) generieren?",
-            "answer": "In touristischen Gebieten wie Iskele Long Beach und Kyrenia können 1-Zimmer-Wohnungen in der Sommersaison (Juni–September) 50–120 GBP pro Nacht erzielen, 2-Zimmer-Wohnungen 80–180 GBP und Villen 150–400 GBP. Mit professionellem Management können jährliche Auslastungsraten von 60–75 % aufrechterhalten werden. Obwohl die Preise in den Wintermonaten sinken, kann die Einnahmekontinuität durch Universitätsstudenten und Langzeitmieter gesichert werden. Mit dem Nexos-Mietverwaltungsservice können wir Ihre Immobilie in Ihrem Auftrag verwalten."
+            "answer": "Kurzzeitvermietung in Nordzypern ist saisonabhängig. In der Hochsaison (Juni-September) in Iskele Long Beach und Kyrenia liegen die Tagespreise typisch bei: 1+1-Apartments 50-100 GBP, 2+1-Apartments 80-160 GBP, Villen 150-400 GBP. In der Nebensaison fallen sie deutlich. Die jährliche Auslastung mit professionellem Management und guter Lage liegt bei 60-85 %. Kommunale Genehmigung, Mehrwertsteuer-Registrierung und jährliche Einkommensteuererklärung sind erforderlich — der rechtliche und steuerliche Rahmen unterscheidet sich von Langzeitvermietung."
           }
         ]
       },
@@ -72,6 +72,10 @@
           {
             "question": "Welche Sprachen werden im Alltag gesprochen?",
             "answer": "Die Amtssprache ist Türkisch, aber Englisch ist sehr weit verbreitet. In Behörden, Banken, Krankenhäusern und den meisten Geschäften können Sie sich auf Englisch verständigen. Dank der Universitäten herrscht ein multikulturelles Umfeld. Es gibt auch russisch- und deutschsprachige Gemeinschaften. Dieses mehrsprachige Umfeld bietet ausländischen Investoren und Bewohnern großen Komfort."
+          },
+          {
+            "question": "Wie groß ist das Erdbebenrisiko? Worauf sollte man bei der Bausicherheit achten?",
+            "answer": "Die TRNC liegt nahe dem östlichen Mittelmeer-Seismikgürtel, befindet sich jedoch nicht in der gleichen Hochrisikozone wie die Nord-Süd-Verwerfungslinien der Türkei. In den letzten Jahren traten mehrere spürbare Erdbeben ohne nennenswerte Schäden auf. Bebensicherheit sollte dennoch Priorität haben: 1) Bevorzugen Sie neueren Bestand (letzte 10-15 Jahre) nach aktuellen TRNC-Baunormen. 2) Verlangen Sie die Statikpläne und die Baugenehmigung und prüfen Sie das Prüfgutachten. 3) Lassen Sie einen Ingenieur oder unabhängigen Gutachter zentrale Parameter prüfen — Betonfestigkeitsklasse (C30 oder höher), Bewehrungsqualität, Wandscheibenanteil. 4) Eine Erdbebenversicherung ist gesetzlich nicht zwingend, aber dringend empfohlen (ca. 100-250 GBP/Jahr)."
           }
         ]
       },
@@ -115,7 +119,7 @@
           },
           {
             "question": "Welche Kosten fallen beim Immobilienkauf an?",
-            "answer": "Grundbuchübertragungssteuer (6 %, üblicherweise zu gleichen Teilen zwischen Käufer und Verkäufer aufgeteilt – reduziert auf 3 % für Erstkäufer), Mehrwertsteuer (5 %, bei Neubauimmobilien), Stempelsteuer (0,5 %), Anwaltsgebühr (1–2 % des Immobilienwerts), Maklerprovision (3–5 %, üblicherweise vom Verkäufer gezahlt), Grundbuchgebühr und Übersetzergebühr (falls erforderlich). Die zusätzlichen Gesamtkosten betragen etwa 10–13 % des Immobilienwerts. Es ist wichtig, diese in Ihr Budget einzuplanen."
+            "answer": "Typische Kaufkosten in der TRNC: 1) Titelübertragungsgebühr — ca. 6 % des Immobilienwerts (eine Erstkäuferermäßigung kann gelten; beim Grundbuchamt bestätigen). Traditionell 50:50 zwischen Käufer und Verkäufer, kann jedoch vertraglich anders geregelt werden. 2) MwSt. — 5 % bei Neubauten (Erstverkauf); grundsätzlich nicht bei Grundstücken oder Wiederverkäufen. 3) Stempelsteuer — ca. 0,5 % des Vertragspreises (bei Registrierung im Grundbuchamt). 4) Anwaltskosten — typisch 1-1,5 % des Werts (ab ca. 1.000 GBP). 5) Maklerprovision — meist vom Verkäufer (3-5 % + MwSt.); gelegentlich vom Käufer. 6) Grundbuch-Registrierung und Verwaltungskosten. 7) Gebühren für den Antrag beim Ministerrat (ausländische Käufer). Insgesamt etwa 8-12 % des Immobilienwerts für zusätzliche Kosten einplanen."
           },
           {
             "question": "Gibt es Ratenzahlungsmöglichkeiten?",
@@ -124,6 +128,10 @@
           {
             "question": "Kann ich eine Immobilie kaufen, ohne sie persönlich besichtigt zu haben?",
             "answer": "Technisch möglich, aber wir empfehlen es nicht. Für Kunden, die aus dem Ausland kaufen, bieten wir jedoch folgende Services an: professionelle Videobesichtigungen und Live-Video-Rundgänge (WhatsApp/Zoom), detaillierte Fotografien und Drohnenaufnahmen, Gebietsvorstellungsvideos und die Möglichkeit, über eine Vollmacht zu handeln. Die ideale Option ist eine 2–3-tägige Erkundungsreise – wir unterstützen Sie auch bei Flughafentransfers und Unterkunftsarrangements."
+          },
+          {
+            "question": "Wie werden Wasser, Strom und Internet nach dem Kauf angeschlossen?",
+            "answer": "Nach der Titelübertragung laufen die Anschlüsse typischerweise wie folgt: 1) Strom (KIB-TEK) — Antrag beim lokalen KIB-TEK-Büro mit Titelurkunde, Ausweis und Wohnsitznachweis; Kaution ca. 100-300 GBP je nach Größe, offene Rechnungen des Vorbesitzers müssen vorab beglichen sein. 2) Wasser — Antrag bei der Gemeinde; Gebühren und Kaution variieren je Stadt. In manchen Komplexen wird Wasser zentral verteilt und vom Siteverwalter abgerechnet. 3) Internet — Hauptanbieter sind Telsim, Turkcell KKTC und Primetel. Glasfaser ist in den meisten Stadtzentren und Küstenanlagen verfügbar; Pakete 25-80 GBP monatlich. Installation 3-7 Werktage. Bei Nexos übernehmen wir die Anschlusseinrichtung per Vollmacht und bieten laufendes Rechnungsmanagement für Eigentümer, die nicht vor Ort leben."
           }
         ]
       },
@@ -133,15 +141,15 @@
         "items": [
           {
             "question": "Wie viele Arten von Grundbucheinträgen gibt es in Nordzypern?",
-            "answer": "Es gibt drei Hauptarten: 1) Türkischer Titel (Türk Koçanı) – Grundstücke, die vor 1974 in türkischem Besitz waren; dies ist die sicherste und wertvollste Titelart. 2) Äquivalenter Titel (ITEM) – Äquivalenzimmobilien, die türkischen Zyprioten zugeteilt wurden, die in den Süden migrierten; diese sind staatlich garantiert und zuverlässig. 3) Zuweisung (Tahsis) – vom Staat zugewiesenes Land; gewährt bedingte Eigentumsrechte und kann bestimmten Einschränkungen unterliegen. Die Titelart beeinflusst direkt den Wert und die Rechtssicherheit der Immobilie; Türkischer Titel und Äquivalenter Titel sind die bevorzugten Arten."
+            "answer": "In Nordzypern gibt es vier Haupttitelarten: 1) Vor-1974-Türkischer Titel (Türk Malı Koçan) — Immobilien, die vor 1974 im Eigentum türkischer Zyprer standen. Rechtlich am stärksten und meist am wertvollsten. 2) Äquivalent-Titel (Eşdeğer) — vergeben an türkische Zyprer, die aus dem Süden vertrieben wurden, als Ausgleich für hinterlassene Immobilien (Punktesystem). Staatlich abgesichert und marktgängig. 3) Zugeteilter Titel (Tahsis / TMD) — vom Staat nach 1974 an Einwanderer aus der Türkei vergeben. Der internationale rechtliche Status ist umstritten und wird ausländischen Käufern in der Regel nicht empfohlen. 4) Ausländertitel / Übertragener Titel — bereits an Ausländer übertragene Titel (mit Zustimmung des Ministerrats); ein neuer ausländischer Käufer durchläuft das Zustimmungsverfahren erneut. Beauftragen Sie stets vor dem Kauf eine unabhängige anwaltliche Titelrecherche und bewerten Sie das Risikoprofil der Titelart."
           },
           {
             "question": "Wie lange dauert die Grundbuchübertragung?",
-            "answer": "Für türkische Staatsbürger wird die Grundbuchübertragung in der Regel innerhalb von 1–2 Wochen abgeschlossen. Für ausländische Staatsangehörige kann der Prozess 3–12 Monate dauern, da eine Genehmigung des Ministerrats erforderlich ist. Während dieser Zeit wird der Kaufvertrag im Grundbuch eingetragen (Specific Performance), wodurch die Rechte des Käufers vollständig gesichert sind – die Immobilie kann weder an Dritte verkauft noch mit einer Hypothek belastet werden."
+            "answer": "Für türkische Staatsbürger, die keine Zustimmung des Ministerrats benötigen, ist die Titelübertragung in der Regel innerhalb weniger Tage bis 1-2 Wochen abgeschlossen. Für ausländische Käufer ist der Prozess anders: nach dem Gesetz über den Erwerb von Immobilien und langfristigen Pachtverhältnissen (Ausländer) geht der Antrag ans Innenministerium, durchläuft Polizei- und Militärüberprüfung und erhält dann die Zustimmung des Ministerrats. Nach den Änderungen von 2023 beträgt die durchschnittliche Dauer 6-12 Monate, in stark frequentierten Phasen länger. Während dieser Zeit muss der Kaufvertrag beim Grundbuchamt registriert werden (Specific Performance), um den Käufer zu schützen."
           },
           {
             "question": "Sollte ich meinen Vertrag im Grundbuch eintragen lassen?",
-            "answer": "Unbedingt ja – dies ist der wichtigste Schritt. Die Eintragung des Kaufvertrags im Grundbuch (Specific Performance) verhindert, dass die Immobilie an Dritte verkauft, mit einer Hypothek belastet oder einer Zwangsvollstreckung unterworfen wird. Diese Eintragung schützt Ihre gesetzlichen Rechte und ist Ihre wichtigste Absicherung bis zur Grundbuchübertragung. Die Eintragung wird von Ihrem Anwalt gegen eine geringe Gebühr vorgenommen."
+            "answer": "Ja — unbedingt, und für ausländische Käufer ist dies der kritischste Rechtsschritt in Nordzypern. Die Registrierung des Kaufvertrags beim Grundbuchamt innerhalb von 21 Tagen (nach Zahlung der Vertragsstempelsteuer) gewährt dem Käufer den Schutz der 'Specific Performance' nach dem Vertragsgesetz: Der Verkäufer kann die Immobilie nicht weiterverkaufen, keine Hypothek oder Pfandrecht eintragen lassen und nicht zugunsten eines anderen Käufers vom Vertrag zurücktreten. Ein Käufer, der die Registrierung versäumt, riskiert den Verlust aller Rechte bis zum Titelübertragung. Stempelsteuer: ca. 0,5 % des Vertragspreises; Registrierungsgebühren: fixer und wertabhängiger Anteil."
           },
           {
             "question": "Ist es obligatorisch, einen Anwalt zu beauftragen?",
@@ -149,7 +157,7 @@
           },
           {
             "question": "Kann ich Transaktionen über eine Vollmacht durchführen?",
-            "answer": "Ja, wenn Sie im Ausland leben, können Sie Ihren Anwalt oder eine Vertrauensperson über eine notariell beglaubigte Vollmacht bevollmächtigen. Die Vollmacht kann bei einem Notar oder Konsulat in der Türkei ausgestellt werden. Sie muss klar angeben, welche Transaktionen durchgeführt werden dürfen. Eine Apostille kann erforderlich sein. Diese Methode wird häufig von Investoren genutzt, die aus der Ferne kaufen."
+            "answer": "Ja — wenn Sie im Ausland leben, können Sie Ihrem Anwalt per apostillierter (Haager Konvention) oder durch das TRNC-Konsulat beglaubigter Vollmacht Vollmacht erteilen. In der Türkei beurkundete Vollmachten sind in der TRNC gültig; in anderen Ländern beurkundete benötigen eine Apostille (oder TRNC-Konsulatsbeglaubigung). Die Vollmacht muss die ermächtigten Handlungen ausdrücklich auflisten: Titelübertragung, Antrag beim Ministerrat, Kontoeröffnung, Unterzeichnung notarieller Verträge usw. Einer begrenzten Vollmacht nur für die erforderlichen Handlungen ist einer uneingeschränkten Generalvollmacht vorzuziehen. Gesamtkosten inkl. Übersetzung typisch 100-300 GBP."
           }
         ]
       },
@@ -159,15 +167,15 @@
         "items": [
           {
             "question": "Können Ausländer in Nordzypern Immobilien kaufen?",
-            "answer": "Ja, ausländische Staatsangehörige können in Nordzypern Immobilien erwerben. Es ist jedoch eine Genehmigung des Ministerrats erforderlich. Jeder ausländische Staatsbürger kann eine Immobilie auf seinen Namen erwerben (maximal 1 Dönüm = 1.338 m² Grundstücksfläche). Diese Begrenzung kann durch Gründung einer Firma in der TRNZ legal umgangen werden – viele Investoren bevorzugen diese Methode."
+            "answer": "Ja — ausländische natürliche Personen können in Nordzypern mit Zustimmung des Ministerrats Immobilien erwerben. Maßgeblich ist das Gesetz über den Erwerb von Immobilien und langfristigen Pachtverhältnissen (Ausländer) (Nr. 52/2008 und nachfolgende Änderungen). Aktuelle Regelungen erlauben einer ausländischen Person unter bestimmten Voraussetzungen den Erwerb mehrerer Immobilien, wobei kombinierte Fläche und Anzahl gesetzlich begrenzt sind. Da diese Grenzen im Laufe der Zeit mehrfach geändert wurden (zuletzt 2023), empfehlen wir dringend, vor dem Kauf die am Kauftag geltenden Grenzen schriftlich bei Ihrem Anwalt und bei uns zu bestätigen. Türkische Staatsbürger unterliegen diesem Zustimmungsverfahren nicht (siehe nächste Frage)."
           },
           {
             "question": "Was ist die Genehmigung des Ministerrats und wie erhält man sie?",
-            "answer": "Dies ist die offizielle Genehmigung, die für den Immobilienerwerb durch ausländische Staatsangehörige erforderlich ist. Antragsunterlagen umfassen: Passkopie, polizeiliches Führungszeugnis (mit Apostille), Kaufvertrag, Grundbuchkopie und Immobilienfotos. Ihr Anwalt reicht den Antrag beim Innenministerium ein; der Prozess kann 3–12 Monate dauern. Während dieser Zeit können Sie Ihre Immobilie nutzen, vermieten und renovieren – Ihr Vertrag ist durch die Grundbucheintragung geschützt."
+            "answer": "Die Zustimmung des Ministerrats ist die offizielle Genehmigung, die ein ausländischer Staatsbürger für den Immobilienerwerb in der TRNC benötigt. Der beim Innenministerium eingereichte Antrag umfasst in der Regel: Passkopie, Wohnsitznachweis, Führungszeugnis (apostilliert aus dem Herkunftsland), Passfotos, Kopie des Kaufvertrags, Grundbuchauszug und Antragsformulare. Ablauf: Antrag → Sicherheitsüberprüfung durch Polizei und Militär → Entscheidung des Ministerrats → Titelübertragung nach Genehmigung. Durchschnittliche Dauer nach 2023: 6-12 Monate. Die Registrierung des Kaufvertrags beim Grundbuchamt (Specific Performance) während dieses Zeitraums ist unerlässlich. Ihr Anwalt bereitet den Antrag vor und begleitet ihn."
           },
           {
             "question": "Gelten für türkische Staatsbürger andere Regeln?",
-            "answer": "Ja, türkische Staatsbürger genießen erhebliche Vorteile in Nordzypern: Eine Genehmigung des Ministerrats ist nicht erforderlich, und die Grundbuchübertragung erfolgt direkt und schnell. Es gibt keine Beschränkungen hinsichtlich der Anzahl der Immobilien oder der Grundstücksgröße – Sie können mehrere Immobilien erwerben. Die Erlangung einer Aufenthaltsgenehmigung ist einfacher. Der Zugang zu Bankkrediten ist breiter. Diese Vorteile machen türkische Staatsbürger zur aktivsten Käufergruppe auf dem nordzypriotalischen Immobilienmarkt."
+            "answer": "Ja — für türkische Staatsbürger gelten wichtige Ausnahmen. TC-Bürger unterliegen nicht dem Zustimmungsverfahren des Ministerrats: Die Titelübertragung erfolgt direkt beim Grundbuchamt und kann innerhalb weniger Tage abgeschlossen sein. Bearbeitet wird mit türkischem Personalausweis oder Reisepass. Die für Ausländer geltenden Beschränkungen bezüglich Immobilienanzahl und Grundstücksfläche gelten für TC-Bürger nicht in gleicher Form. Dies verschafft TC-Bürgern einen deutlichen Vorteil in Bezug auf Ablauf, Zeit und Rechtsverfahren."
           },
           {
             "question": "Können Briten, Russen oder andere Nationalitäten Immobilien kaufen?",
@@ -175,7 +183,11 @@
           },
           {
             "question": "Kann ich durch Firmengründung weitere Immobilien kaufen?",
-            "answer": "Ja, durch Gründung einer Gesellschaft mit beschränkter Haftung in der TRNZ können Sie die Beschränkung der Immobilienanzahl umgehen. Die Firmengründung dauert etwa 1–2 Wochen und kostet zwischen 1.500–3.000 GBP. Über eine Firma erworbene Immobilien erfordern keine Genehmigung des Ministerrats. Es können sich auch steuerliche Vorteile ergeben. Diese Methode ist ideal für Portfolio-Investoren und Käufer, die mehrere Immobilien erwerben möchten."
+            "answer": "Ja — in der TRNC können Sie eine registrierte Limited Company (Ltd.) gründen und darüber Immobilien erwerben; in bestimmten Fällen ermöglicht dies Investoren, die Grenzen für ausländische Einzelpersonen zu überschreiten. Die Gründung dauert ca. 2-4 Wochen; die Gesamtkosten (Anwalt, Eintragung, Stammkapital) liegen bei 2.000-4.000 GBP. Beachten Sie die laufenden Kosten und Pflichten: Körperschaftsteuer bei Veräußerungsgewinn, MwSt.-Besonderheiten, jährliche Prüfung, Buchhaltergebühren und Mietertragsberichterstattung. Für Portfolio-Investitionen effizient; bei einer Einzelimmobilie ist der Erwerb als natürliche Person in der Regel kosteneffektiver. Vor der Entscheidung sollte eine Gesamtkostenmodellierung mit einem Steuerberater erfolgen."
+          },
+          {
+            "question": "Wie und über welche Kanäle kann ich den Kaufpreis in die TRNC transferieren?",
+            "answer": "Die TRNC-Devisenkontrolle ist relativ flexibel, aber jede Zahlung sollte über eine Bank erfolgen und dokumentiert sein (mit Bezug zum Kaufvertrag). Gängige Wege: 1) Internationale SWIFT-Überweisung — direkt auf das TRNC-Konto des Verkäufers; bei hohen Beträgen können Nachweise (Kaufvertrag, Begründung) angefordert werden. 2) Eröffnung eines TRNC-Bankkontos und Zahlung von dort — der bevorzugte, vollständig nachvollziehbare Weg; für die Kontoeröffnung reichen Reisepass, Adresse und Referenzschreiben (1-5 Werktage). 3) Treuhandkonto — sicherere Option, Geld bleibt auf dem Anwaltstreuhandkonto bis zur Bedingungserfüllung. 4) Wise / Transferwise oder ähnliche Fintech — kostengünstig für kleine bis mittlere Beträge. Wichtig: hohe Barzahlungen werfen Geldwäsche-Probleme auf; nutzen Sie stets Bankkanäle und archivieren Sie Bankbelege mit dem Vertrag. Prüfen Sie auch die Ausfuhr- und Steuerbestimmungen in Ihrem Herkunftsland."
           }
         ]
       },
@@ -185,7 +197,7 @@
         "items": [
           {
             "question": "Kann ich durch Immobilienkauf eine Aufenthaltsgenehmigung erhalten?",
-            "answer": "Ja, ausländische Immobilieneigentümer können eine befristete Aufenthaltsgenehmigung beantragen. Die Aufenthaltsgenehmigung wird in der Regel für 1 Jahr erteilt und ist verlängerbar. Anträge werden bei der Einwanderungsbehörde des Innenministeriums gestellt. Erforderliche Unterlagen sind: Reisepass, Immobilientitel-/Vertragskopie, Banknachweis, Gesundheitsbericht und polizeiliches Führungszeugnis. Der Prozess dauert 2–4 Wochen."
+            "answer": "Ja — ausländische Immobilienbesitzer in der TRNC können eine 'vorübergehende Aufenthaltsgenehmigung' beantragen. Der Antrag wird beim Innenministerium / Einwanderungsbehörde mit folgenden Unterlagen gestellt: Reisepass und Kopien, Titelurkunde oder Kaufvertrag, TRNC-Gesundheitsprüfungsbericht, Führungszeugnis, zwei Passfotos, Einkommens-/Bankkontonachweis und Antragsgebühren. Die vorübergehende Aufenthaltsgenehmigung wird meist für 1 Jahr erteilt und ist bei weiterhin erfüllten Bedingungen verlängerbar. Da die Anforderungen sich ändern, bestätigen Sie die aktuellen Kriterien vor Antragstellung bei der Einwanderungsbehörde oder Ihrem Anwalt."
           },
           {
             "question": "Welche Rechte gewährt eine Aufenthaltsgenehmigung?",
@@ -193,7 +205,7 @@
           },
           {
             "question": "Ist es möglich, die TRNZ-Staatsbürgerschaft zu erhalten?",
-            "answer": "Die TRNZ-Staatsbürgerschaft ist unter bestimmten Voraussetzungen möglich, aber der Immobilienkauf führt nicht automatisch zur Staatsbürgerschaft. Die Staatsbürgerschaft wird in der Regel durch Heirat, langfristigen Aufenthalt (5+ Jahre) oder Investitionen in Betracht gezogen. Der Prozess hängt von einer Entscheidung des Ministerrats ab. Wir empfehlen, einen Anwalt für aktuelle Informationen zur Staatsbürgerschaft zu konsultieren."
+            "answer": "Die TRNC-Staatsbürgerschaft ist unter bestimmten Voraussetzungen möglich, wird aber nicht automatisch durch Immobilienbesitz erteilt. Hauptwege: 1) Durch Heirat — mit TRNC-Staatsbürger nach einer gesetzlich festgelegten Mindestwohnsitzdauer, 2) Langzeitaufenthalt — ununterbrochener rechtmäßiger Aufenthalt über die gesetzlich vorgesehenen Jahre mit nachgewiesener Bindung an das Land, 3) Ausnahmegründe — besondere Leistungen / Investitionen. Das Verfahren ist komplex und durch mehrfach geänderte Gesetze geprägt — aktuelle Wartezeiten, Sprach-/Kulturprüfungen und sonstige Kriterien variieren im Zeitverlauf. Vor Antragstellung sollte eine schriftliche Einschätzung zum aktuellen Rechtsstand bei einem im Einwanderungsrecht spezialisierten Anwalt eingeholt werden."
           },
           {
             "question": "Kann ich mich als Rentner in Nordzypern niederlassen?",
@@ -207,7 +219,7 @@
         "items": [
           {
             "question": "Ist eine Immobilieninvestition in Nordzypern rentabel?",
-            "answer": "In den letzten 5 Jahren wurde eine jährliche Wertsteigerung von 20–30 % beobachtet, insbesondere in den Regionen Iskele und Kyrenia. Langfristige Mietrenditen liegen bei 6–10 % jährlich und können bei Kurzzeitvermietung (Ferienvermietung) bis zu 10–15 % erreichen. Die Mietnachfrage bleibt dank Universitätsstudenten, Urlaubern, digitalen Nomaden und Rentnern konstant hoch. Die Möglichkeit, in Fremdwährung (GBP, EUR, USD) zu investieren, bietet einen zusätzlichen Vorteil. Wie bei jeder Investition bestehen jedoch Risiken, und wir empfehlen eine professionelle Beratung."
+            "answer": "Der nordzypriotische Immobilienmarkt ist in den letzten Jahren insbesondere in Küstengebieten deutlich gewachsen — vergangene Wertentwicklungen sind jedoch keine Garantie für künftige Renditen. Eine angemessene langfristige Nettomietrendite liegt bei rund 4-8 % pro Jahr; Kurzzeitvermietung mit professionellem Management kann 6-12 % erreichen. Wertsteigerungen schwanken stark nach Jahr und Lage. Typische Muster: Universitätsnähe — stabile Mietnachfrage und moderate Wertsteigerung; Küstentourismus (Long Beach, Bafra, Esentepe) — höhere Airbnb-Renditen, aber hohe Saisonvolatilität; Zentral-Kyrenia — etablierte Nachfrage und stabile Langzeitmieter. Für jede Investition sind unabhängige Due Diligence und Cashflow-Modellierung unerlässlich."
           },
           {
             "question": "Mit welchen Langzeitmieteinnahmen kann ich rechnen?",
@@ -215,7 +227,7 @@
           },
           {
             "question": "Kann ich eine Bankfinanzierung nutzen?",
-            "answer": "Banken in Nordzypern bieten Hypotheken an: bis zu 50–60 % des Immobilienwerts, mit Laufzeiten von 10–15 Jahren und jährlichen Zinssätzen von 8–12 %. Türkische Staatsbürger können auch Kredite von Banken in der Türkei nutzen. Britische Staatsbürger können Equity-Release- oder Überbrückungsfinanzierungsoptionen in Großbritannien in Betracht ziehen. Projektbezogene Ratenzahlungspläne sind in der Regel günstiger als Bankhypotheken."
+            "answer": "Hypothekenangebote in der TRNC sind begrenzt. Für TC-Bürger bieten einige TRNC-Banken Wohnungsbaudarlehen bis zu etwa 50-70 % Beleihungswert, 5-15 Jahre Laufzeit — TL-Zinssätze sind volatil und folgen der Zentralbankpolitik; Fremdwährungsdarlehen sind knapp. Für ausländische Staatsbürger ist ein Hypothekendarlehen selten; die meisten zahlen bar oder nutzen Ratenzahlungen des Bauträgers. Käufer aus UK oder EU nutzen oft Equity Release / Remortgage in ihrem Heimatland. Bauträger-Ratenpläne (siehe unten) sind häufig der praktischste Finanzierungsweg."
           },
           {
             "question": "Können Sie die Vermietung meiner Immobilie verwalten?",
@@ -223,7 +235,7 @@
           },
           {
             "question": "In welcher Währung sollte ich investieren?",
-            "answer": "Immobilienpreise in Nordzypern werden in der Regel in GBP (Britisches Pfund Sterling) angegeben, einige Projekte verwenden EUR oder USD. Angesichts der Abwertung der Türkischen Lira gegenüber Fremdwährungen ist eine Investition in Fremdwährung für den Werterhalt vorteilhaft. Mieteinnahmen werden in der Regel ebenfalls in GBP oder EUR erzielt. Zahlungspläne können in Fremdwährung festgelegt werden."
+            "answer": "Küstenprojekte in Nordzypern werden überwiegend in GBP ausgepreist; einige nutzen EUR oder USD. TL-Preise sind selten (meist ältere, an lokale Käufer gerichtete Immobilien). Angesichts der Wechselkursvolatilität der TL bieten in Sterling oder Euro notierte Immobilien für langfristige Anleger einen klareren Werterhalt. Die Währungswahl beeinflusst auch die Marktliquidität — an der Küste dominiert GBP, im Binnenmarkt ist TL verbreiteter."
           }
         ]
       },
@@ -237,7 +249,7 @@
           },
           {
             "question": "Welche Rechte habe ich als Mieter?",
-            "answer": "Ihre gesetzlichen Rechte während der Mietzeit: Sie können nicht ungerechtfertigt geräumt werden, die Kaution wird am Vertragsende zurückerstattet (bei schadenfreiem Zustand), der Vermieter darf die Immobilie nicht ohne Ankündigung betreten, Mieterhöhungen sind auf die jährliche Inflationsrate begrenzt, und der Vermieter ist für die Behebung struktureller Mängel verantwortlich. Bei Streitigkeiten können Sie das Mietgericht anrufen."
+            "answer": "Mietverhältnisse in der TRNC unterliegen dem Mietkontrollgesetz und den Vertragsbedingungen. Grundrechte des Mieters: keine Kündigung ohne rechtmäßigen Grund während der Vertragslaufzeit, Rückgabe der Kaution in voller Höhe am Vertragsende (ohne Schäden oder Rückstände), Betreten durch den Vermieter nur nach Ankündigung (in der Regel 24 Stunden) zu angemessener Zeit, jährliche Mieterhöhungen vertraglich und an geltende angemessene/gesetzliche Sätze gebunden, Verantwortung des Vermieters für Grundversorgung und sanitäre Verhältnisse, gerichtliches Verfahren bei Kündigungsstreitigkeiten. Gerichte oder Mietkontrollstellen lösen Auseinandersetzungen. Verträge sollten zweisprachig (Türkisch + Englisch) sein, von beiden Parteien unterzeichnet und jede Seite paraphiert werden."
           },
           {
             "question": "Gibt es haustierfreundliche Immobilien?",
@@ -249,7 +261,7 @@
           },
           {
             "question": "Ist Kurzzeitvermietung (Airbnb) legal?",
-            "answer": "Ja, Kurzzeitvermietung ist in der TRNZ legal und wird zunehmend verbreitet. Es wird jedoch empfohlen, eine touristische Vermietungslizenz bei der Gemeinde zu beantragen. Die steuerlichen Verpflichtungen unterscheiden sich von der Langzeitvermietung. Einige verwaltete Wohnanlagen können Kurzzeitvermietungsbeschränkungen haben – es ist wichtig, dies vor dem Kauf zu prüfen."
+            "answer": "Ja — Kurzzeit-Ferienvermietung ist in der TRNC legal und zunehmend verbreitet. Im gewerblichen Umfang erfordert sie typischerweise eine städtische Kurzzeit-/Betriebsgenehmigung, Einkommensteuererklärungen, MwSt.-Registrierung und gegebenenfalls Zustimmungen des Ministeriums für Tourismus und Umwelt. In Wohnanlagen kann die Verwaltungsordnung Kurzzeitvermietung einschränken — prüfen Sie den Verwaltungsplan vor dem Kauf. Airbnb- oder Booking-Gastgeber haben zusätzlich Plattformgebühren und Unterkunftssteuerpflichten. Professionelle Vermietungsunternehmen übernehmen den gesamten Prozess (Gastwechsel, Reinigung, Steuer, Reporting) als Komplettdienst."
           }
         ]
       },
@@ -285,11 +297,11 @@
         "items": [
           {
             "question": "Welche Steuern fallen auf Immobilieneigentum an?",
-            "answer": "Jährliche Grundsteuer: wird anhand des Immobilienwerts berechnet und ist sehr niedrig (50–300 TL pro Jahr). Mieteinkommensteuer: für erhaltene Mieteinnahmen muss eine Einkommensteuererklärung abgegeben werden, mit progressiven Steuersätzen von 10–30 %. Kapitalertragsteuer: bei Gewinn aus Immobilienverkäufen kann eine Steuer anfallen. Insgesamt sind die Steuersätze in Nordzypern erheblich niedriger als in der Türkei und europäischen Ländern."
+            "answer": "Die wichtigsten steuerlichen Verpflichtungen beim Immobilienbesitz in der TRNC: 1) Jährliche Grundsteuer — an die Gemeinde nach Immobilientyp, Fläche und Lage gezahlt. Beträge in TL, periodisch aktualisiert; für Wohnungen meist moderat, je nach Größe und Lage von wenigen Hundert bis einigen Tausend TL. Aktuelle Sätze bei der Gemeinde bestätigen. 2) Mieteinkommensteuer — Einkommensteuererklärung über Mieteinnahmen, progressive Tarife. 3) Veräußerungsgewinne — können beim Wiederverkauf fällig werden (professionelle/gewerbliche Verkäufer unterliegen anderen Quellensteuerregeln). 4) Anlagen-/Site-Gebühren — keine Steuer, sondern vertragliche Verpflichtung. Für Steuerplanung einen in der TRNC registrierten Buchhalter konsultieren."
           },
           {
             "question": "Wie hoch ist die Grundbuchübertragungssteuer?",
-            "answer": "Die Grundbuchübertragungssteuer beträgt 6 % des Immobilienwerts. Für Erstkäufer (einschließlich ausländischer Staatsangehöriger) wird dieser Satz jedoch auf 3 % reduziert – eine erhebliche Ersparnis. Käufer und Verkäufer teilen diese Steuer üblicherweise zu gleichen Teilen, obwohl dies Verhandlungssache ist. Hinzu kommt eine Stempelsteuer von 0,5 %. Die Mehrwertsteuer auf Neubauimmobilien beträgt 5 %."
+            "answer": "Die Titelübertragungsgebühr beträgt in der Regel rund 6 % des Immobilienwerts. Gesetzliche Erleichterungen und Freibeträge ändern sich im Zeitverlauf: historisch wurde eine Erstkäuferermäßigung (ca. 3 %) angewandt, solche Politiken werden periodisch angepasst. Traditionell teilen sich Käufer und Verkäufer 50:50, kann jedoch durch den Vertrag abweichen. Zusätzlich einzuplanen: Stempelsteuer (ca. 0,5 % des Vertragspreises), Grundbuchgebühren und MwSt. 5 % auf neue (Erstverkauf) Wohnungen. Am Kauftag geltende Sätze schriftlich beim Grundbuchamt oder Anwalt bestätigen lassen."
           },
           {
             "question": "Wie hoch sind die Wartungsgebühren?",
@@ -297,7 +309,7 @@
           },
           {
             "question": "Welche Kosten fallen beim Immobilienverkauf an?",
-            "answer": "Beim Verkauf: Anteil an der Grundbuchübertragungssteuer (typischerweise 3 % + 3 % mit dem Käufer geteilt), Maklerprovision (3–5 %, üblicherweise vom Verkäufer), gegebenenfalls Kapitalertragsteuer und Anwaltsgebühren. Wichtiger Hinweis: Es ist für Käufer und Verkäufer gleichermaßen wichtig, dass der Verkaufspreis im Vertrag korrekt angegeben wird, um die Rechtssicherheit zu gewährleisten."
+            "answer": "Beim Wiederverkauf fallen folgende Kosten an: 1) Aufteilung der Titelübertragungsgebühr (per Vertrag), 2) Maklerprovision (üblicherweise 3-5 % + MwSt. vom Verkäufer), 3) Veräußerungsgewinnsteuer auf den realisierten Gewinn — Freibeträge ändern sich jährlich, 4) Quellensteuer für professionelle Verkäufer (Bauträger, häufige Händler), 5) Anwaltskosten, 6) ggf. Vorfälligkeitsentschädigung. Wichtig: Die Angabe eines niedrigeren Verkaufspreises im Vertrag (anderswo verbreitete Praxis) ist in der TRNC unzulässig, birgt erhebliche straf-/zivilrechtliche Risiken für Käufer und Verkäufer und kann die Titelregistrierung ungültig machen. Bei Nexos empfehlen wir stets transparente Transaktionen zum wahren Preis."
           },
           {
             "question": "Ist eine Versicherung obligatorisch?",
@@ -351,7 +363,7 @@
         "items": [
           {
             "question": "Wie funktioniert das Gesundheitssystem?",
-            "answer": "Nordzypern verfügt über öffentliche und private Gesundheitseinrichtungen. Öffentliche Krankenhäuser bieten kostenlose Notfallversorgung. Private Krankenhäuser (Near East Hospital, Dr. Burhan Nalbantoğlu Staatskrankenhaus, Privatkliniken in Kyrenia) sind mit modernen Einrichtungen ausgestattet. Die meisten Ärzte wurden in Großbritannien, der Türkei oder EU-Ländern ausgebildet. Private Krankenversicherungen kosten 500–1.500 GBP jährlich und bieten umfassende Deckung."
+            "answer": "Die medizinische Versorgung in der TRNC erfolgt durch staatliche und private Einrichtungen. Wichtige staatliche Krankenhäuser: Dr. Burhan Nalbantoğlu Staatskrankenhaus in Nikosia (das größte), Staatskrankenhaus Famagusta, Dr. Akçiçek Staatskrankenhaus in Kyrenia. Führende private Anbieter: Near East Hospital (NEU, Nikosia), Kolan British Hospital (Nikosia), Universitätskrankenhaus Kyrenia und Hayat Hospital in Kyrenia — gut ausgestattet, oft international akkreditiert und meist englischsprachig. Ausländer haben Zugang zur Notfallversorgung in staatlichen Krankenhäusern; für umfassende Behandlung wird eine private Krankenversicherung dringend empfohlen (typisch 400-1.200 GBP jährlich). Die EU-EHIC-Karte gilt in der TRNC nicht."
           },
           {
             "question": "Ist Nordzypern sicher?",
@@ -359,7 +371,7 @@
           },
           {
             "question": "Was soll ich in einem Notfall tun?",
-            "answer": "Notrufnummern: 112 (allgemeiner Notruf), 199 (Feuerwehr), 155 (Polizei). Private Krankenhäuser verfügen über 24/7-Notaufnahmen. Bei Nexos stellen wir unseren Immobilieneigentümern einen Notfallkontakt-Leitfaden und eine rund um die Uhr erreichbare WhatsApp-Supportlinie zur Verfügung. Bei Bedarf für schwere medizinische Eingriffe ist ein Luftambulanztransfer in Krankenhäuser der Türkei möglich."
+            "answer": "Grundlegende Notrufnummern: 112 (zentraler Notruf / Krankenwagen), 155 (Polizei), 199 (Feuerwehr). Private Krankenhäuser betreiben eigene 24/7-Notaufnahmen. In schweren und spezialisierten Fällen ist eine Luftambulanz-Verlegung in die Türkei (meist Ankara, Istanbul, Adana) verfügbar und von den meisten umfassenden privaten Versicherungen abgedeckt. Nexos bietet Immobilienbesitzern eine 24/7 WhatsApp-Supportleitung, Kontakte zu Partnerkrankenhäusern und -ärzten sowie Unterstützung bei der Krankenwagenkoordination."
           }
         ]
       },
