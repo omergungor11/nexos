@@ -374,14 +374,6 @@ interface PostEditorProps {
   onCopy: () => void;
 }
 
-const QUICK_EMOJIS = [
-  "🏠", "🏡", "🏢", "🏘️", "🏝️", "🌊", "🌅", "🌴",
-  "🔑", "💰", "💎", "⭐", "🌟", "✨", "🔥", "💫",
-  "📍", "📞", "📩", "💬", "📸", "📹", "🎥", "🎯",
-  "✅", "📈", "🚀", "🎉", "🎁", "💯", "👉", "▪️",
-  "❤️", "🙌", "👏", "🤝", "🌺", "🍀", "🛏️", "🛁",
-];
-
 // Unicode bold/italic transform — Instagram/Facebook support these natively
 const BOLD_MAP: Record<string, string> = {};
 const ITALIC_MAP: Record<string, string> = {};
@@ -417,7 +409,29 @@ function PostEditor({
 }: PostEditorProps) {
   const colorClass = getCharCountColor(charCount, charLimit);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const [emojiOpen, setEmojiOpen] = useState(false);
+
+  // Triggering the native OS emoji picker from JS isn't supported by any web
+  // API — the user has to invoke their system shortcut. We focus the
+  // textarea (so the picker inserts at the caret) and show a toast with the
+  // right shortcut for their platform.
+  const openNativeEmojiPicker = () => {
+    textareaRef.current?.focus();
+    if (typeof navigator === "undefined") return;
+    const platform = (navigator.platform || "").toLowerCase();
+    const ua = (navigator.userAgent || "").toLowerCase();
+    const isMac = platform.includes("mac") || ua.includes("mac");
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isAndroid = ua.includes("android");
+    const shortcut = isMac
+      ? "⌘ + ⌃ + Boşluk (veya fn tuşu)"
+      : isIOS || isAndroid
+      ? "Klavyedeki 😊 simgesine dokunun"
+      : "Win + . (nokta)";
+    toast.message("Emoji klavyesini aç", {
+      description: shortcut,
+      duration: 4000,
+    });
+  };
 
   // Apply a mutation to the current selection (or cursor point)
   const withSelection = useCallback(
@@ -471,11 +485,6 @@ function PostEditor({
       return { replacement: prefix };
     });
 
-  const insertEmoji = (emoji: string) => {
-    setEmojiOpen(false);
-    withSelection(() => ({ replacement: emoji }));
-  };
-
   return (
     <div className="space-y-2">
       {/* Toolbar */}
@@ -514,43 +523,15 @@ function PostEditor({
           <Minus className="size-3.5" />
         </button>
         <span className="mx-1 h-4 w-px bg-border" aria-hidden />
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setEmojiOpen((v) => !v)}
-            title="Emoji ekle"
-            className={`inline-flex items-center gap-1 rounded px-1.5 text-xs hover:bg-background ${
-              emojiOpen ? "bg-background" : ""
-            } h-7`}
-          >
-            <Smile className="size-3.5" />
-            Emoji
-          </button>
-          {emojiOpen && (
-            <>
-              {/* Click-outside backdrop */}
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setEmojiOpen(false)}
-                aria-hidden
-              />
-              <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-md border bg-popover p-2 shadow-md">
-                <div className="grid grid-cols-8 gap-1">
-                  {QUICK_EMOJIS.map((e) => (
-                    <button
-                      key={e}
-                      type="button"
-                      onClick={() => insertEmoji(e)}
-                      className="flex size-8 items-center justify-center rounded text-lg hover:bg-muted"
-                    >
-                      {e}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={openNativeEmojiPicker}
+          title="Emoji klavyesini aç (sistem)"
+          className="inline-flex h-7 items-center gap-1 rounded px-1.5 text-xs hover:bg-background"
+        >
+          <Smile className="size-3.5" />
+          Emoji
+        </button>
       </div>
 
       <Textarea
