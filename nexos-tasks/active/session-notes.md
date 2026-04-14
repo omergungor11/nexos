@@ -1,6 +1,69 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-04-14 (akşam bloğu)
+
+### Yapılanlar — Sub-Listings & Floor Plans Faz C (Public Render)
+- `components/property/floor-plans-section.tsx` — grid + modal lightbox (ESC/arrow klavye, label/m²/oda meta), `bare` prop alt-ilan içinde başlıksız kullanım
+- `components/property/sub-listings-section.tsx` — availability filter pill'leri (Müsait/Rezerve/Satıldı/Kiralandı sayımlı), accordion satırları, parent currency fallback, `formatListingPrice` entegrasyonu
+- `actions/floor-plans.ts` → `listFloorPlansByParentIds` batch fetcher (N+1 engelleme)
+- `app/[locale]/emlak/[slug]/page.tsx` — property + sub-listings + property floor plans + sub-listing floor plans paralel fetch → UI: Sub-listings → Property floor plans → Açıklama
+- `app/[locale]/projeler/[slug]/page.tsx` — Gallery sonrası "Daire Tipleri" section, sonra "Kat Planları" section
+
+### Yapılanlar — Admin UX İyileştirmeleri
+- **Harita Yönetimi**: FullScreenMap'e `heightClass` prop'u, admin'de `h-[420px]` + `rounded-2xl border shadow-sm`
+- **Map Management tablosu**: Başlık `w-[260px]` + hücre `max-w-[180px]` + hover tooltip (`title` attribute)
+- **Admin sidebar scrollbar**: `globals.css` yeni `.admin-scroll` — idle görünmez, hover'da ince/theme-aware
+- **Dashboard Son Aktiviteler**: son 5 aktivite (`.slice(0, 5)`)
+- **Dashboard Hızlı İşlemler**: "Yeni İlan" primary sarı dolu, "Yeni Blog" primary outlined
+
+### Yapılanlar — /emlak Arama Sonuçları
+- Yeni `buildPageTitle(filters, cities, t)`: `?tip=apartment` → "Daire İlanları", `?islem=satilik&tip=villa` → "Satılık Villa İlanları", `?q=...` → "\"...\" Arama Sonuçları"
+- SearchBar başlık satırından `SortBar`'ın yeni `middleSlot` prop'una taşındı → `[68 ilan bulundu] [🔍] [Sıralama▼]`
+- 5 locale'a `listing.searchResults` key eklendi
+
+### Yapılanlar — SSS İçerik Revizyonu (KKTC Doğruluk)
+- `messages/tr/sss.json`: 24 yanıt düzeltildi + 3 yeni soru = 72 Q&A
+- `messages/en|de|ru|fa/sss.json`: aynı yamalar yerel olarak çevrildi
+- `scripts/patch-sss-translations.py` — reprodüktif multi-locale yama kaynağı
+- Kritik düzeltmeler: tapu türleri (İTEM terminolojisi kaldırıldı, Tahsis/TMD eklendi), yabancı edinim limitleri (Yasa 52/2008 + 2023), BK süresi 6-12 ay, Specific Performance 21 gün, vatandaşlık (5 yıl yanlışı kaldırıldı), hastane sınıflandırması, "geçmiş performans gelecek garantisi değildir" uyarıları
+- Yeni sorular: deprem/yapı güvenliği, abonelik kurulumu, ödeme transferi
+
+### Yapılanlar — Sunumlar PDF/PPTX Export Yeniden Yazımı
+- **Eski sorun**: `window.print()` → imajlar yüklenmeden tetikleniyordu, `buildPrintHTML` sadece 5/9 slayt tipini destekliyordu (photo/location/why_cyprus/investment atlıyordu)
+- **Yeni akış**: Gizli 1920×1080 off-screen surface + `<SlideRenderer />` ile canlı React render → `html-to-image` ile capture → `jsPDF` (PDF) veya `pptxgenjs` (PPTX)
+- **PowerPoint desteği**: LAYOUT_WIDE (13.333×7.5" native 16:9), yeni "PowerPoint İndir" butonu
+- **UX**: Butonlar disabled, progress counter "3/12", toast feedback
+- **4 düzeltme iterasyonu**:
+  1. `buildPrintHTML` silindi (183 satır ölü kod)
+  2. Lazy-image hang fix: surface viewport içine taşındı + `loading="eager"` force + 10s per-slide timeout + 15s html2canvas timeout
+  3. `lab()`/`oklch()` parse hatası: html2canvas → `html-to-image` geçişi (foreignObject SVG → browser native CSS)
+  4. Boş sayfa fix: opacity:0.01 yerine parent/inner clip yapısı (1×1 outer overflow:hidden, inner 1920×1080 opacity:1)
+
+### Yeni Paketler
+- `html-to-image` (capture pipeline)
+
+### Dikkat Edilecekler
+- **html-to-image computed style yakalar**: surface'a opacity/filter/clip-path **UYGULAMA** — parent clip frame kullan
+- **next/image lazy-load**: off-screen surface (left:-100000px) IntersectionObserver tetiklemiyor → görseller asla yüklenmiyor → hang. Surface viewport içinde kalmalı (1×1 clip wrapper)
+- **SSS TR source of truth**: diğer diller TR'den türetildi; TR değişirse `scripts/patch-sss-translations.py` güncellenip çalıştırılmalı
+- **emlak başlık üretici**: `PROPERTY_TYPE_LABELS`'a dayalı — yeni tip eklersen constants'a unutma
+- **Sub-listing'in kendi floor plan'ları**: polymorphic `parent_type='sub_listing'`. `listFloorPlansByParentIds` ile batch fetch
+
+### Yarım Kalanlar (bu session'dan)
+- Sub-listings + floor plans için gerçek veri ile manuel test (daire tipleri vs tek ilandaki birimler senaryoları)
+- Sunumlar — özel font gömme (Geist vb.) — html-to-image font-substitution durumu kontrol edilmeli
+
+### Sıradakiler
+- Dashboard workflow_status KPI kartları
+- Reels generator
+- Resend email entegrasyonu
+- Blog etiket yönetimi admin UI
+- Bundle/performance audit
+- Otomatik workflow transition'ları (30 gün taslak, 60 gün pasif→arşiv)
+
+---
+
 ## 2026-04-14
 
 ### Yapılanlar — Vitrin Yönetimi (4 Bağımsız Highlight Flag)
