@@ -200,6 +200,152 @@ const DEFAULT_ENABLED_SLIDES: Set<SlideType> = new Set([
 const EXPORT_SLIDE_SCALE = 3;
 
 /**
+ * Renders a static map at the given coordinates by stitching OpenStreetMap
+ * tiles as plain <img> elements — the same tile server the public site
+ * already uses for Leaflet. Avoids Google Maps' iframe (which renders
+ * blank in html-to-image captures).
+ *
+ * Math: Mercator → tile number per OSM slippy map convention. We compute
+ * the center point in world pixels, work out the visible tile range, and
+ * absolutely position each 256×256 tile image. A marker overlay sits at
+ * the exact geographic center.
+ */
+function OsmStaticMap({
+  lat,
+  lng,
+  zoom,
+  accent,
+}: {
+  lat: number;
+  lng: number;
+  zoom: number;
+  accent: string;
+}) {
+  const n = 2 ** zoom;
+  const xf = ((lng + 180) / 360) * n;
+  const latRad = (lat * Math.PI) / 180;
+  const yf =
+    (1 -
+      Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) /
+    2 * n;
+
+  // Center expressed in world pixels (256 px per tile).
+  const centerPxX = xf * 256;
+  const centerPxY = yf * 256;
+
+  // Container viewport (logical px inside SlideRenderer). Width × height
+  // aren't known at render time because the parent uses flex-1; OSM tiles
+  // are 256×256 and we just paint a generous 5×3 grid so any reasonable
+  // container (~640×360 logical → 1920×1080 after the export scale) is
+  // covered on every side. Extra tiles are simply clipped by the parent's
+  // `overflow: hidden`.
+  const cols = 5;
+  const rows = 3;
+  const halfWpx = (cols * 256) / 2;
+  const halfHpx = (rows * 256) / 2;
+  const viewportPxX = centerPxX - halfWpx;
+  const viewportPxY = centerPxY - halfHpx;
+
+  const centerTileX = Math.floor(xf);
+  const centerTileY = Math.floor(yf);
+  const tiles: Array<{ x: number; y: number; left: number; top: number }> = [];
+  const spanX = Math.floor(cols / 2);
+  const spanY = Math.floor(rows / 2);
+  for (let dy = -spanY; dy <= spanY; dy++) {
+    for (let dx = -spanX; dx <= spanX; dx++) {
+      const tx = centerTileX + dx;
+      const ty = centerTileY + dy;
+      if (ty < 0 || ty >= n) continue;
+      const wrappedX = ((tx % n) + n) % n;
+      // Position relative to the viewport's top-left.
+      const left = tx * 256 - viewportPxX;
+      const top = ty * 256 - viewportPxY;
+      tiles.push({ x: wrappedX, y: ty, left, top });
+    }
+  }
+
+  // Marker pin goes at the exact viewport center (parent centers content
+  // via absolute positioning + inset-0 — we just absolute-place a pin).
+  const markerLeft = halfWpx;
+  const markerTop = halfHpx;
+
+  return (
+    <div
+      className="absolute inset-0 overflow-hidden"
+      style={{ backgroundColor: "#e5e3df" }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: "50%",
+          width: cols * 256,
+          height: rows * 256,
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        {tiles.map((t) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={`${t.x}-${t.y}`}
+            src={`https://a.tile.openstreetmap.org/${zoom}/${t.x}/${t.y}.png`}
+            alt=""
+            width={256}
+            height={256}
+            crossOrigin="anonymous"
+            style={{
+              position: "absolute",
+              left: t.left,
+              top: t.top,
+              width: 256,
+              height: 256,
+              userSelect: "none",
+            }}
+          />
+        ))}
+
+        {/* Marker pin */}
+        <div
+          style={{
+            position: "absolute",
+            left: markerLeft,
+            top: markerTop,
+            transform: "translate(-50%, -100%)",
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))",
+            pointerEvents: "none",
+          }}
+        >
+          <svg width="36" height="48" viewBox="0 0 36 48" fill="none">
+            <path
+              d="M18 0C8.059 0 0 8.059 0 18c0 13.5 18 30 18 30s18-16.5 18-30c0-9.941-8.059-18-18-18z"
+              fill={accent}
+            />
+            <circle cx="18" cy="18" r="7" fill="#fff" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Attribution bar — required by OSM tile usage policy */}
+      <div
+        style={{
+          position: "absolute",
+          right: 4,
+          bottom: 4,
+          padding: "1px 6px",
+          fontSize: 9,
+          fontWeight: 500,
+          borderRadius: 3,
+          backgroundColor: "rgba(255,255,255,0.85)",
+          color: "#444",
+        }}
+      >
+        © OpenStreetMap
+      </div>
+    </div>
+  );
+}
+
+/**
  * Converts a possibly-HTML description string (TipTap output) into clean
  * plain text for slide rendering. Block-level tags (p / br / li / div / h*)
  * become newlines so paragraph structure survives for `whitespace-pre-line`
@@ -339,18 +485,13 @@ function CoverSlide({ property, theme, note }: SlideProps) {
 
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-10 pt-8">
-        <div className="flex items-center gap-2.5">
-          <Image
-            src="/logo-trans.png"
-            alt="Nexos"
-            width={36}
-            height={36}
-            className="rounded"
-          />
-          <span className="font-semibold text-lg tracking-wide" style={{ color: theme.text }}>
-            NEXOS
-          </span>
-        </div>
+        <Image
+          src="/logo-square.jpeg"
+          alt="Nexos"
+          width={56}
+          height={56}
+          className="rounded"
+        />
         <span
           className="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
           style={{ backgroundColor: theme.accent, color: "#171717" }}
@@ -527,17 +668,14 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
       )}
 
       {/* Top-left logo (matches cover slide) */}
-      <div className="absolute top-6 left-6 z-10 flex items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 backdrop-blur-sm">
+      <div className="absolute top-6 left-6 z-10">
         <Image
-          src="/logo-trans.png"
+          src="/logo-square.jpeg"
           alt="Nexos"
-          width={28}
-          height={28}
-          className="rounded"
+          width={44}
+          height={44}
+          className="rounded shadow-lg"
         />
-        <span className="text-xs font-semibold tracking-wide text-white">
-          NEXOS
-        </span>
       </div>
 
       {/* Custom banner text — shown above the price bar */}
@@ -860,14 +998,16 @@ function LocationSlide({ property, theme, note }: SlideProps) {
         </h2>
       </div>
 
-      {/* Map embed — Google Maps (no API key required) */}
+      {/* Map — OSM tile mosaic. Plain <img> tiles are captured by
+          html-to-image cleanly; iframes (Google Maps embed) come out
+          blank in the PDF because of cross-origin restrictions. */}
       <div className="flex-1 rounded-2xl overflow-hidden relative min-h-0">
         {hasCoords ? (
-          <iframe
-            src={`https://maps.google.com/maps?q=${property.lat},${property.lng}&z=14&output=embed`}
-            className="absolute inset-0 w-full h-full border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
+          <OsmStaticMap
+            lat={property.lat!}
+            lng={property.lng!}
+            zoom={14}
+            accent={theme.accent}
           />
         ) : (
           <div
@@ -1240,10 +1380,10 @@ function ContactSlide({ theme, note }: { theme: ThemeColors; note?: string }) {
       style={{ backgroundColor: theme.bg }}
     >
       <Image
-        src="/logo-trans.png"
+        src="/logo-square.jpeg"
         alt="Nexos Investment"
-        width={80}
-        height={80}
+        width={96}
+        height={96}
         className="rounded-2xl"
       />
 
