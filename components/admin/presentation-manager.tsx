@@ -490,13 +490,14 @@ function CoverSlide({ property, theme, note }: SlideProps) {
 
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-10 pt-8">
-        <div className="rounded-xl bg-white p-1.5 shadow-md">
+        <div className="rounded-xl bg-white px-3 py-2 shadow-md">
           <Image
-            src="/logo-square.jpeg"
+            src="/logo-trans.png"
             alt="Nexos"
-            width={56}
-            height={56}
-            className="rounded-md block"
+            width={140}
+            height={60}
+            className="block h-8 w-auto"
+            unoptimized
           />
         </div>
         <span
@@ -675,13 +676,14 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
       )}
 
       {/* Top-left logo (matches cover slide) */}
-      <div className="absolute top-6 left-6 z-10 rounded-xl bg-white p-1.5 shadow-md">
+      <div className="absolute top-6 left-6 z-10 rounded-xl bg-white px-2.5 py-1.5 shadow-md">
         <Image
-          src="/logo-square.jpeg"
+          src="/logo-trans.png"
           alt="Nexos"
-          width={44}
-          height={44}
-          className="rounded-md block"
+          width={140}
+          height={60}
+          className="block h-7 w-auto"
+          unoptimized
         />
       </div>
 
@@ -902,19 +904,20 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
           )}
         </div>
 
-        {/* Body */}
-        <div className="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden">
+        {/* Body — price footer removed so the full slide height is
+            available to the description text itself. */}
+        <div className="flex-1 flex flex-col gap-2.5 min-h-0 overflow-hidden">
           {descriptionText ? (
             <>
-              {/* Pull-quote: first sentence in larger italic */}
+              {/* Pull-quote: first sentence as a smaller italic lead */}
               {firstSentence && (
-                <div className="relative pl-5">
+                <div className="relative pl-4 shrink-0">
                   <div
                     className="absolute left-0 top-1 bottom-1 w-0.5 rounded"
                     style={{ backgroundColor: theme.accent }}
                   />
                   <p
-                    className="text-base italic leading-snug font-medium"
+                    className="text-[11px] italic leading-snug font-medium"
                     style={{ color: theme.text }}
                   >
                     {firstSentence}
@@ -924,11 +927,11 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
               {/* Rest of description */}
               {restText && (
                 <div
-                  className="flex-1 overflow-auto rounded-lg px-4 py-3"
+                  className="flex-1 overflow-hidden rounded-lg px-4 py-3"
                   style={{ backgroundColor: `${theme.cardBg}aa` }}
                 >
                   <p
-                    className="text-xs leading-relaxed whitespace-pre-line"
+                    className="text-[11px] leading-relaxed whitespace-pre-line"
                     style={{ color: `${theme.text}d0` }}
                   >
                     {restText}
@@ -946,22 +949,6 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
               </p>
             </div>
           )}
-        </div>
-
-        {/* Footer */}
-        <div
-          className="flex items-center gap-3 rounded-xl px-5 py-3"
-          style={{ backgroundColor: `${theme.accent}1a`, borderLeft: `3px solid ${theme.accent}` }}
-        >
-          <span
-            className="text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
-            style={{ backgroundColor: theme.accent, color: "#171717" }}
-          >
-            {labelForTransaction(property.transaction_type)}
-          </span>
-          <span className="font-black text-lg" style={{ color: theme.text }}>
-            {formatPrice(property.price, property.currency, property.pricing_type)}
-          </span>
         </div>
 
         {note && (
@@ -1374,13 +1361,14 @@ function ContactSlide({ theme, note }: { theme: ThemeColors; note?: string }) {
       className="flex flex-col items-center justify-center h-full px-8 py-10 gap-5 text-center"
       style={{ backgroundColor: theme.bg }}
     >
-      <div className="rounded-2xl bg-white p-2 shadow-md">
+      <div className="rounded-2xl bg-white px-5 py-3 shadow-md">
         <Image
-          src="/logo-square.jpeg"
+          src="/logo-trans.png"
           alt="Nexos Investment"
-          width={96}
-          height={96}
-          className="rounded-xl block"
+          width={280}
+          height={120}
+          className="block h-16 w-auto"
+          unoptimized
         />
       </div>
 
