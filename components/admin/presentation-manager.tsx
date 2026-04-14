@@ -199,6 +199,40 @@ const DEFAULT_ENABLED_SLIDES: Set<SlideType> = new Set([
 // element — text, icons, absolute positions — grows together.
 const EXPORT_SLIDE_SCALE = 3;
 
+/**
+ * Converts a possibly-HTML description string (TipTap output) into clean
+ * plain text for slide rendering. Block-level tags (p / br / li / div / h*)
+ * become newlines so paragraph structure survives for `whitespace-pre-line`
+ * consumers. Everything else is stripped. HTML entities are decoded.
+ */
+function stripHtmlToText(input: string): string {
+  if (!input) return "";
+  // Fast path: no tags → return trimmed original.
+  if (!/<[a-z!/]/i.test(input)) return input.trim();
+
+  const withBreaks = input
+    // Closing block tags → newline boundary
+    .replace(/<\/(p|div|li|h[1-6]|blockquote|tr)>/gi, "\n\n")
+    // <br> and self-closing breaks
+    .replace(/<br\s*\/?>/gi, "\n")
+    // Bullet markers for <li> (opening tag) so lists read naturally
+    .replace(/<li[^>]*>/gi, "• ")
+    // Strip every remaining tag
+    .replace(/<[^>]+>/g, "")
+    // Decode common entities
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    // Collapse 3+ consecutive newlines into 2
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return withBreaks;
+}
+
 const CURRENCY_SYMBOLS: Record<string, string> = {
   TRY: "₺",
   USD: "$",
@@ -601,7 +635,7 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
 
   return (
     <div
-      className="flex flex-col h-full px-8 py-5 gap-3"
+      className="flex flex-col h-full px-7 py-4 gap-2.5"
       style={{ backgroundColor: theme.bg }}
     >
       <div>
@@ -611,32 +645,32 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
         >
           {property.title}
         </p>
-        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
-          <Sparkles className="size-5" style={{ color: theme.accent }} />
+        <h2 className="text-lg font-black flex items-center gap-2" style={{ color: theme.text }}>
+          <Sparkles className="size-4" style={{ color: theme.accent }} />
           Mülk Detayları
         </h2>
       </div>
 
-      <div className="flex-1 grid grid-cols-2 gap-2.5 content-start">
+      <div className="flex-1 grid grid-cols-2 gap-2 content-start min-h-0">
         {items.map((item) => {
           const Icon = item.icon;
           return (
             <div
               key={item.label}
-              className="flex items-center gap-3 rounded-xl px-4 py-3"
+              className="flex items-center gap-2.5 rounded-lg px-3 py-2"
               style={{ backgroundColor: theme.cardBg }}
             >
               <div
-                className="size-10 rounded-lg flex items-center justify-center shrink-0"
+                className="size-8 rounded-md flex items-center justify-center shrink-0"
                 style={{ backgroundColor: `${theme.accent}22` }}
               >
-                <Icon className="size-5" style={{ color: theme.accent }} />
+                <Icon className="size-4" style={{ color: theme.accent }} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-medium uppercase tracking-wide" style={{ color: theme.muted }}>
+                <p className="text-[9px] font-medium uppercase tracking-wide" style={{ color: theme.muted }}>
                   {item.label}
                 </p>
-                <p className="text-sm font-black truncate" style={{ color: theme.text }}>
+                <p className="text-xs font-black truncate" style={{ color: theme.text }}>
                   {item.value}
                 </p>
               </div>
@@ -646,13 +680,13 @@ function DetailsSlide({ property, theme, note }: SlideProps) {
       </div>
 
       <div
-        className="flex items-center justify-between rounded-xl px-5 py-3"
+        className="flex items-center justify-between rounded-lg px-4 py-2"
         style={{ backgroundColor: `${theme.accent}1a`, borderLeft: `3px solid ${theme.accent}` }}
       >
         <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: theme.muted }}>
           Fiyat
         </span>
-        <span className="text-xl font-black" style={{ color: theme.accent }}>
+        <span className="text-base font-black" style={{ color: theme.accent }}>
           {formatPrice(property.price, property.currency, property.pricing_type)}
         </span>
       </div>
@@ -672,8 +706,13 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
     .filter(Boolean)
     .join(", ");
 
-  // Use custom description if provided, otherwise fall back to DB description
-  const descriptionText = customDescription?.trim() || property.description;
+  // Use custom description if provided, otherwise fall back to DB description.
+  // Descriptions saved through the TipTap rich-text editor arrive as HTML
+  // (`<p><strong>…</strong></p>`). Strip tags and decode entities so the slide
+  // shows clean plain text instead of literal markup. Paragraph boundaries
+  // become double newlines so `whitespace-pre-line` still gives visual breaks.
+  const rawDescription = customDescription?.trim() || property.description || "";
+  const descriptionText = stripHtmlToText(rawDescription);
   const bgImage = property.images[0];
 
   // Extract first sentence as pull-quote
@@ -932,39 +971,39 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
 
   return (
     <div
-      className="flex flex-col h-full px-8 py-5 gap-3"
+      className="flex flex-col h-full px-6 py-3.5 gap-2"
       style={{ backgroundColor: theme.bg }}
     >
       <div>
         <p
-          className="text-xs font-bold uppercase tracking-widest mb-1"
+          className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
           style={{ color: theme.accent }}
         >
           Yatırım Fırsatı
         </p>
-        <h2 className="text-2xl font-black" style={{ color: theme.text }}>
+        <h2 className="text-lg font-black leading-tight" style={{ color: theme.text }}>
           Neden Kuzey Kıbrıs&apos;ta Gayrimenkul?
         </h2>
-        <p className="text-xs mt-1" style={{ color: theme.muted }}>
+        <p className="text-[10px]" style={{ color: theme.muted }}>
           Akdeniz&apos;in yükselen yıldızı — veriler ile kanıtlanmış avantajlar
         </p>
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-1.5">
         {kpis.map((k, i) => (
           <div
             key={i}
-            className="rounded-lg px-3 py-2.5 text-center"
+            className="rounded-md px-2 py-1.5 text-center"
             style={{ backgroundColor: `${theme.accent}15`, borderLeft: `2px solid ${theme.accent}` }}
           >
-            <p className="text-2xl font-black leading-none" style={{ color: theme.accent }}>
+            <p className="text-lg font-black leading-none" style={{ color: theme.accent }}>
               {k.value}
             </p>
-            <p className="text-[11px] font-bold uppercase tracking-wide mt-1.5" style={{ color: theme.text }}>
+            <p className="text-[9px] font-bold uppercase tracking-wide mt-1" style={{ color: theme.text }}>
               {k.label}
             </p>
-            <p className="text-[10px] mt-0.5" style={{ color: theme.muted }}>
+            <p className="text-[8px] mt-0.5 leading-tight" style={{ color: theme.muted }}>
               {k.sub}
             </p>
           </div>
@@ -972,26 +1011,26 @@ function WhyCyprusSlide({ theme, note }: { theme: ThemeColors; note?: string }) 
       </div>
 
       {/* Reasons grid */}
-      <div className="flex-1 grid grid-cols-2 gap-2.5 min-h-0">
+      <div className="flex-1 grid grid-cols-2 gap-1.5 min-h-0">
         {reasons.map((r, i) => {
           const Icon = r.icon;
           return (
             <div
               key={i}
-              className="rounded-lg px-3.5 py-2.5 flex gap-3 items-start"
+              className="rounded-md px-2.5 py-1.5 flex gap-2 items-start overflow-hidden"
               style={{ backgroundColor: theme.cardBg }}
             >
               <div
-                className="size-9 rounded-md shrink-0 flex items-center justify-center"
+                className="size-7 rounded-md shrink-0 flex items-center justify-center"
                 style={{ backgroundColor: `${theme.accent}22` }}
               >
-                <Icon className="size-4" style={{ color: theme.accent }} />
+                <Icon className="size-3.5" style={{ color: theme.accent }} />
               </div>
-              <div className="min-w-0">
-                <p className="text-sm font-black leading-tight mb-1" style={{ color: theme.text }}>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-black leading-tight mb-0.5" style={{ color: theme.text }}>
                   {r.title}
                 </p>
-                <p className="text-[12px] leading-snug" style={{ color: `${theme.text}b3` }}>
+                <p className="text-[9px] leading-snug line-clamp-3" style={{ color: `${theme.text}b3` }}>
                   {r.text}
                 </p>
               </div>
