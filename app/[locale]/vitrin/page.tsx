@@ -1,6 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
-import { getFeaturedProperties } from "@/lib/queries/properties";
+import { getShowcaseProperties, getFeaturedProperties } from "@/lib/queries/properties";
 import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import type { PropertyListItem } from "@/types";
 
@@ -22,7 +22,13 @@ export default async function VitrinPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale });
 
-  const { data } = await getFeaturedProperties(50);
+  // Prefer the admin-curated showcase list; fall back to featured for
+  // freshly deployed sites that haven't populated the new flag yet.
+  const { data: showcase } = await getShowcaseProperties(50);
+  const data =
+    showcase && showcase.length > 0
+      ? showcase
+      : (await getFeaturedProperties(50)).data;
   const properties = (data ?? []).map(mapListItem);
 
   return (

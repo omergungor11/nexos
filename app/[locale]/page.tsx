@@ -30,7 +30,7 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { SmartPropertyCard } from "@/components/property/smart-property-card";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Link } from "@/i18n/navigation";
-import { getFeaturedProperties, getRecentProperties, getDealProperties, getPropertyTypeCounts, getPropertyCityCounts } from "@/lib/queries/properties";
+import { getFeaturedProperties, getRecentProperties, getDealProperties, getSliderProperties, getPropertyTypeCounts, getPropertyCityCounts } from "@/lib/queries/properties";
 import { CityShowcase } from "@/components/shared/city-showcase";
 import { HeroSlider, type HeroSlide } from "@/components/shared/hero-slider";
 import { CtaMiniForm } from "@/components/shared/cta-mini-form";
@@ -100,6 +100,7 @@ export default async function HomePage({ params }: Props) {
 
   const [
     { data: featured },
+    { data: slider },
     { data: recent },
     { data: deals },
     cities,
@@ -107,6 +108,7 @@ export default async function HomePage({ params }: Props) {
     { data: rawCityCounts },
   ] = await Promise.all([
     getFeaturedProperties(6),
+    getSliderProperties(8),
     getRecentProperties(8),
     getDealProperties(4),
     getCities(),
@@ -187,8 +189,10 @@ export default async function HomePage({ params }: Props) {
     t("about.features.consultancy"),
   ];
 
-  // Build hero slides from featured properties
-  const heroSlides: HeroSlide[] = (featured ?? []).slice(0, 5).map((raw) => {
+  // Build hero slides from the slider pool. Falls back to featured if the
+  // admin hasn't curated any slider entries yet.
+  const sliderSource = (slider && slider.length > 0 ? slider : featured) ?? [];
+  const heroSlides: HeroSlide[] = sliderSource.slice(0, 5).map((raw) => {
     const item = mapListItem(raw);
     const images = raw.images as Array<{ url: string; is_cover: boolean }> | null;
     const cover = images?.find((i) => i.is_cover) ?? images?.[0];
