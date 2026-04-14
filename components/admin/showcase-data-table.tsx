@@ -265,17 +265,17 @@ export function ShowcaseDataTable({ rows }: ShowcaseDataTableProps) {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem asChild>
-                                <Link href={`/teklif/${row.slug}`} target="_blank">
-                                  <Eye className="size-3.5" />
-                                  Önizle
-                                </Link>
+                              <DropdownMenuItem
+                                render={<Link href={`/teklif/${row.slug}`} target="_blank" />}
+                              >
+                                <Eye className="size-3.5" />
+                                Önizle
                               </DropdownMenuItem>
-                              <DropdownMenuItem asChild>
-                                <Link href={`/admin/teklifler/${row.id}/duzenle`}>
-                                  <Pencil className="size-3.5" />
-                                  Düzenle
-                                </Link>
+                              <DropdownMenuItem
+                                render={<Link href={`/admin/teklifler/${row.id}/duzenle`} />}
+                              >
+                                <Pencil className="size-3.5" />
+                                Düzenle
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem onClick={() => handleArchive(row)}>
