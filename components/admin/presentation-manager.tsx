@@ -1810,34 +1810,34 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
       if (cancelled) return;
 
       try {
-        const { default: html2canvas } = await import("html2canvas");
-        const capture = html2canvas(surface, {
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: themeColors.bg,
+        // html-to-image uses foreignObject SVG rendering, which lets the
+        // browser handle CSS natively — so modern color functions (oklch,
+        // lab, color-mix) from Tailwind v4 work without parser errors.
+        const { toPng } = await import("html-to-image");
+        const capture = toPng(surface, {
           width: 1920,
           height: 1080,
-          windowWidth: 1920,
-          windowHeight: 1080,
-          scale: 1,
-          logging: false,
-          imageTimeout: 8000,
+          pixelRatio: 1,
+          cacheBust: true,
+          backgroundColor: themeColors.bg,
+          fetchRequestInit: { cache: "no-cache" },
+          skipAutoScale: true,
         });
-        const CAPTURE_TIMEOUT_MS = 15_000;
-        const canvas = (await Promise.race([
+        const CAPTURE_TIMEOUT_MS = 20_000;
+        const dataUrl = (await Promise.race([
           capture,
-          new Promise((_, reject) =>
+          new Promise<string>((_, reject) =>
             setTimeout(
-              () => reject(new Error("html2canvas timed out")),
+              () => reject(new Error("capture timed out")),
               CAPTURE_TIMEOUT_MS
             )
           ),
-        ])) as HTMLCanvasElement;
+        ])) as string;
         if (cancelled) return;
-        exportCapturesRef.current.push(canvas.toDataURL("image/png"));
+        exportCapturesRef.current.push(dataUrl);
         setExportIdx((i) => i + 1);
       } catch (err) {
-        console.error("html2canvas error:", err);
+        console.error("slide capture error:", err);
         toast.error(
           `Slayt ${exportIdx + 1} kaydedilemedi: ${
             err instanceof Error ? err.message : "bilinmeyen hata"
