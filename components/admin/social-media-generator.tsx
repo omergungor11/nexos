@@ -203,7 +203,18 @@ export function SocialMediaGenerator({ properties }: SocialMediaGeneratorProps) 
           onValueChange={handlePropertyChange}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="İlan seçmek için tıklayın..." />
+            <SelectValue placeholder="İlan seçmek için tıklayın...">
+              {selectedProperty ? (
+                <span className="flex w-full items-center justify-between gap-4">
+                  <span className="truncate">
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {formatListingNumber(selectedProperty.listing_number)}
+                    </span>{" "}
+                    — {selectedProperty.title}
+                  </span>
+                </span>
+              ) : null}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent alignItemWithTrigger={false} align="start">
             <div className="sticky top-0 bg-popover p-2">

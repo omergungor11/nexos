@@ -29,6 +29,7 @@ import {
   Map,
   FolderKanban,
   HelpCircle,
+  Sparkles,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -71,6 +72,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/ilanlar", label: "İlanlar", icon: Building2, exact: false },
       { href: "/admin/projeler", label: "Projeler", icon: FolderKanban, exact: false },
+      { href: "/admin/vitrin-yonetimi", label: "Vitrin Yönetimi", icon: Sparkles, exact: false },
       { href: "/admin/harita", label: "Harita", icon: Map, exact: false },
     ],
   },

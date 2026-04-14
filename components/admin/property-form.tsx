@@ -209,6 +209,9 @@ interface FormState {
   land_area_sqm: string;
   title_deed_type: TitleDeedType | "";
   is_featured: boolean;
+  is_slider: boolean;
+  is_showcase: boolean;
+  is_deal: boolean;
   seo_title: string;
   seo_description: string;
   agent_id: string;
@@ -399,6 +402,40 @@ const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
 };
 
 // ---------------------------------------------------------------------------
+// HighlightToggle — compact switch used in the Yayın tab
+// ---------------------------------------------------------------------------
+
+function HighlightToggle({
+  id,
+  label,
+  hint,
+  checked,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  hint: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <label
+      htmlFor={id}
+      className={[
+        "flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors",
+        checked ? "border-primary/40 bg-primary/5" : "hover:bg-muted/50",
+      ].join(" ")}
+    >
+      <Switch id={id} checked={checked} onCheckedChange={onChange} />
+      <span className="flex-1">
+        <span className="block text-sm font-medium">{label}</span>
+        <span className="block text-xs text-muted-foreground">{hint}</span>
+      </span>
+    </label>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Field wrapper
 // ---------------------------------------------------------------------------
 
@@ -559,6 +596,9 @@ function buildInitialState(
         : "",
     title_deed_type: ((initialData as Record<string, unknown>)?.title_deed_type as TitleDeedType) ?? "",
     is_featured: initialData?.is_featured ?? false,
+    is_slider: ((initialData as Record<string, unknown>)?.is_slider as boolean) ?? false,
+    is_showcase: ((initialData as Record<string, unknown>)?.is_showcase as boolean) ?? false,
+    is_deal: ((initialData as Record<string, unknown>)?.is_deal as boolean) ?? false,
     seo_title: initialData?.seo_title ?? "",
     seo_description: initialData?.seo_description ?? "",
     agent_id: initialData?.agent_id ?? "__none__",
@@ -906,6 +946,9 @@ export function PropertyForm({
         ? Number(form.neighborhood_id)
         : undefined,
       is_featured: form.is_featured,
+      is_slider: form.is_slider,
+      is_showcase: form.is_showcase,
+      is_deal: form.is_deal,
       seo_title: form.seo_title.trim() || undefined,
       seo_description: form.seo_description.trim() || undefined,
       agent_id: form.agent_id !== "__none__" ? form.agent_id : null,
@@ -2097,24 +2140,43 @@ export function PropertyForm({
             />
           </Field>
 
-          <div className="flex items-center gap-3 rounded-lg border p-4">
-            <Switch
-              id="is_featured"
-              checked={form.is_featured}
-              onCheckedChange={(checked) =>
-                handleBooleanChange("is_featured", checked)
-              }
-            />
-            <label htmlFor="is_featured" className="cursor-pointer text-sm">
-              <span className="font-medium">
-                {form.is_featured ? "Öne Çıkarılıyor" : "Normal İlan"}
-              </span>
-              <span className="ml-1 text-muted-foreground">
-                {form.is_featured
-                  ? "— ilan ana sayfada öne çıkar"
-                  : "— standart listeleme sırası"}
-              </span>
-            </label>
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Vitrin Yerleşimi</p>
+            <p className="text-xs text-muted-foreground">
+              Bu ilanın görüneceği özel alanları seç. Sıralama
+              <span className="mx-0.5 font-mono text-[11px]">/admin/vitrin-yonetimi</span>
+              sayfasından drag-drop ile yapılır.
+            </p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <HighlightToggle
+                id="is_slider"
+                label="Slider"
+                hint="Anasayfa hero slider'ı"
+                checked={form.is_slider}
+                onChange={(v) => handleBooleanChange("is_slider", v)}
+              />
+              <HighlightToggle
+                id="is_featured"
+                label="Öne Çıkan"
+                hint="Listelerde yıldız rozeti"
+                checked={form.is_featured}
+                onChange={(v) => handleBooleanChange("is_featured", v)}
+              />
+              <HighlightToggle
+                id="is_showcase"
+                label="Vitrin"
+                hint="/vitrin galerisi"
+                checked={form.is_showcase}
+                onChange={(v) => handleBooleanChange("is_showcase", v)}
+              />
+              <HighlightToggle
+                id="is_deal"
+                label="Fırsat"
+                hint="Anasayfa fırsat bandı"
+                checked={form.is_deal}
+                onChange={(v) => handleBooleanChange("is_deal", v)}
+              />
+            </div>
           </div>
         </TabsContent>
 
