@@ -1,25 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
-import { OfferForm } from "@/components/admin/offer-form";
+import { ShowcaseForm } from "@/components/admin/showcase-form";
+import { getPropertiesForPicker } from "@/lib/queries/showcases";
+import { getAgents } from "@/lib/queries/content";
 
 export const metadata: Metadata = {
   title: "Yeni Teklif",
 };
 
 export default async function YeniTeklifPage() {
-  const supabase = await createClient();
+  const [available, agentsRes] = await Promise.all([
+    getPropertiesForPicker(),
+    getAgents(),
+  ]);
 
-  const { data: properties } = await supabase
-    .from("properties")
-    .select("id, title, price, currency")
-    .eq("is_active", true)
-    .order("title");
+  const agents = (agentsRes.data ?? []).map((a) => ({
+    id: a.id as string,
+    name: a.name as string,
+    phone: (a as { phone?: string | null }).phone ?? null,
+  }));
 
   return (
     <div className="space-y-6">
-      {/* Back link */}
       <div>
         <Link
           href="/admin/teklifler"
@@ -31,13 +34,20 @@ export default async function YeniTeklifPage() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Yeni Teklif Oluştur</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          Yeni Teklif Oluştur
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Müşteriye özel bir fiyat teklifi oluşturun.
+          Müşteri bilgilerini ve göndereceğin ilanları seçerek WhatsApp
+          paylaşımına hazır bir paket oluştur.
         </p>
       </div>
 
-      <OfferForm properties={properties ?? []} />
+      <ShowcaseForm
+        mode="create"
+        availableProperties={available}
+        agents={agents}
+      />
     </div>
   );
 }

@@ -1997,15 +1997,26 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
         // html-to-image uses foreignObject SVG rendering, which lets the
         // browser handle CSS natively — so modern color functions (oklch,
         // lab, color-mix) from Tailwind v4 work without parser errors.
+        //
+        // `cacheBust: true` appends a random query string to every image
+        // request; some tile CDNs (including tile.openstreetmap.org) refuse
+        // or rate-limit the altered URL, which then bubbles up as a non-
+        // Error rejection here ("bilinmeyen hata"). Leaving it off keeps
+        // the browser's normal cache behavior and lets tiles load cleanly.
         const { toPng } = await import("html-to-image");
         const capture = toPng(surface, {
           width: 1920,
           height: 1080,
           pixelRatio: 1,
-          cacheBust: true,
+          cacheBust: false,
           backgroundColor: themeColors.bg,
           fetchRequestInit: { cache: "no-cache" },
           skipAutoScale: true,
+          // Transparent 1×1 fallback: if a single image ever fails to
+          // inline (tile server hiccup, CORS edge case), it disappears
+          // instead of blowing up the whole slide.
+          imagePlaceholder:
+            "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
         });
         const CAPTURE_TIMEOUT_MS = 20_000;
         const dataUrl = (await Promise.race([
@@ -2022,11 +2033,18 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
         setExportIdx((i) => i + 1);
       } catch (err) {
         console.error("slide capture error:", err);
-        toast.error(
-          `Slayt ${exportIdx + 1} kaydedilemedi: ${
-            err instanceof Error ? err.message : "bilinmeyen hata"
-          }`
-        );
+        // Extract whatever message the rejection carries, even for non-
+        // Error values — html-to-image rejects with strings / objects in
+        // some failure modes, which surfaced as "bilinmeyen hata" before.
+        const reason =
+          err instanceof Error
+            ? err.message
+            : typeof err === "string"
+              ? err
+              : err && typeof err === "object" && "message" in err
+                ? String((err as { message: unknown }).message)
+                : "bilinmeyen hata";
+        toast.error(`Slayt ${exportIdx + 1} kaydedilemedi: ${reason}`);
         setExportJob(null);
         setExportIdx(0);
         exportCapturesRef.current = [];
