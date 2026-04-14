@@ -72,6 +72,10 @@
           {
             "question": "Günlük yaşamda hangi diller konuşuluyor?",
             "answer": "Resmi dil Türkçe'dir ancak İngilizce çok yaygın olarak konuşulmaktadır. Resmi kurumlar, bankalar, hastaneler ve çoğu işletmede İngilizce hizmet alabilirsiniz. Üniversiteler sayesinde çok kültürlü bir ortam mevcuttur. Ayrıca Rusça ve Almanca konuşan topluluklar da bulunmaktadır. Bu çok dilli ortam yabancı yatırımcılar ve yaşayanlar için büyük kolaylık sağlar."
+          },
+          {
+            "question": "Deprem riski nasıl? Yapı güvenliği için nelere bakmalıyım?",
+            "answer": "KKTC, Doğu Akdeniz'in aktif deprem kuşağına görece yakın olmakla birlikte, Türkiye'nin kuzey-güney fay hatları kadar yüksek riskli bir bölgede değildir. Son yıllarda hissedilir şiddette birkaç deprem yaşanmış ancak yıkıcı sonuçlara yol açmamıştır. Buna karşın deprem güvenliği yapı tercihinde öncelik olmalıdır: 1) Mümkün olduğunca yeni (son 10-15 yıl) ve mevcut KKTC İnşaat Yönetmeliği'ne uygun olarak projelendirilmiş yapılar tercih edin. 2) Statik proje ve inşaat ruhsatı belgelerini isteyin, yapı denetim raporunu kontrol edin. 3) Betonarme sınıfı (C30 ve üzeri tercih edilir), demir donatı kalitesi ve perde duvar oranı gibi kritik parametreleri inşaat mühendisine veya bağımsız eksperliğe sorgulatın. 4) Deprem sigortası yasal zorunluluk olmasa da güçlü tavsiye edilir (yıllık 100-250 GBP civarıdır)."
           }
         ]
       },
@@ -124,6 +128,10 @@
           {
             "question": "Mülkü görmeden satın alabilir miyim?",
             "answer": "Teknik olarak mümkündür ancak tavsiye etmiyoruz. Yine de yurt dışından alım yapan müşterilerimiz için şu hizmetleri sunuyoruz: profesyonel video tur ve canlı görüntülü gezi (WhatsApp/Zoom), detaylı fotoğraf ve drone çekimleri, bölge tanıtım videoları, vekâletname ile işlem yapma imkânı. En ideal seçenek 2-3 günlük bir keşif gezisi planlamaktır — havalimanı transferi ve konaklama organizasyonunda da yardımcı oluyoruz."
+          },
+          {
+            "question": "Mülk aldıktan sonra su, elektrik ve internet nasıl bağlatılır?",
+            "answer": "Tapu devri sonrası abonelik işlemleri genelde şöyle yapılır: 1) Elektrik (KIB-TEK) — tapu kopyası, kimlik ve ikametgâh ile bölgedeki KIB-TEK şubesine başvurulur, depozito yatırılır (yaklaşık 100-300 GBP, mülk büyüklüğüne göre), devreden önceki sahibin faturaları kapatılmış olmalıdır. 2) Su — belediyeye başvurulur; kentlere göre aidat ve depozito değişir. Bazı sitelerde su ortak sistem üzerinden dağıtılır ve site yönetimiyle muhatap olunur. 3) İnternet — Telsim, Turkcell KKTC ve Primetel başlıca sağlayıcılardır. Fiber altyapı çoğu kent merkezinde ve sahil sitelerinde mevcuttur; aylık 25-80 GBP arası paketler sunulur. Kurulum 3-7 iş günü alır. Nexos olarak mülk tesliminden itibaren tüm aboneliklerin kurulumunu vekâletle tamamlıyoruz; uzakta yaşayan sahiplerimize fatura yönetimi de dahildir."
           }
         ]
       },
@@ -176,6 +184,10 @@
           {
             "question": "Şirket kurarak daha fazla mülk alabilir miyim?",
             "answer": "Evet — KKTC'de tescilli limited şirket (Ltd.) kurarak mülk edinmek mümkündür ve belirli durumlarda yabancı gerçek kişi sınırlamalarının ötesine geçilmesine olanak sağlar. Şirket kuruluşu ortalama 2-4 hafta sürer, avukatlık + tescil + şirket sermayesi dahil maliyet 2.000-4.000 GBP arasıdır. Ancak dikkat: şirket üzerinden edinilen mülklerde kurumlar vergisi (kârlı satışta), KDV muafiyeti değişiklikleri, yıllık denetim, muhasebeci ücreti ve kira geliri beyanı gibi ek yükümlülükler doğar. Bu yapı portföy yatırımı için elverişlidir; tek mülk için genellikle maliyet-fayda açısından gerçek kişi edinimi daha avantajlıdır. Karar öncesi vergi danışmanı ile maliyet modellemesi yapılmalıdır."
+          },
+          {
+            "question": "Alım bedelini KKTC'ye nasıl ve hangi yollarla transfer edebilirim?",
+            "answer": "KKTC'de döviz kontrolü nispeten esnektir ancak her transfer banka kanalıyla ve belgeli (satış sözleşmesi referansı ile) yapılmalıdır. Yaygın yöntemler: 1) Uluslararası SWIFT havalesi — KKTC'deki satıcının banka hesabına doğrudan gönderim; büyük tutarlar için belgeye dayalı (satış sözleşmesi + gerekçe) bildirim istenebilir. 2) Alıcının kendi KKTC banka hesabını açıp oraya transfer edip buradan ödeme — tercih edilen ve takip edilebilir yoldur; hesap açma için pasaport, ikametgâh ve referans mektubu yeterlidir (1-5 iş günü). 3) Emanet (escrow) hesap — daha güvenli seçenek olarak avukatın müşteri hesabına yatırıp koşullu ödeme sağlanabilir. 4) Transferwise/Wise gibi fintech çözümleri küçük-orta tutarlar için düşük maliyetlidir. Önemli: nakit büyük ödeme yapılması kara para aklamayla mücadele mevzuatı açısından sorun yaratabilir; banka kanalı ve banka dekontları sözleşmeyle birlikte saklanmalıdır. Yurt dışından gelen alıcıların gönderen ülkelerindeki döviz çıkış limitleri ve vergi mevzuatı da kontrol edilmelidir."
           }
         ]
       },
