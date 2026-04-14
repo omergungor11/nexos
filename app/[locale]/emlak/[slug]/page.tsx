@@ -51,7 +51,15 @@ import { NearbyPlaces } from "@/components/property/nearby-places";
 import { VideoTour } from "@/components/property/video-tour";
 import { PropertyTimeline } from "@/components/property/property-timeline";
 import { PropertyContactForm } from "@/components/property/property-contact-form";
+import { SubListingsSection } from "@/components/property/sub-listings-section";
+import { FloorPlansSection } from "@/components/property/floor-plans-section";
+import { listSubListingsByParent } from "@/actions/sub-listings";
+import {
+  listFloorPlansByParent,
+  listFloorPlansByParentIds,
+} from "@/actions/floor-plans";
 import type { PropertyListItem } from "@/types";
+import type { Currency, FloorPlan } from "@/types/property";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
@@ -94,6 +102,25 @@ export default async function PropertyDetailPage({ params }: Props) {
   const { data: property } = await getPropertyBySlug(slug);
 
   if (!property) notFound();
+
+  // Sub-listings + floor plans (property-level and sub-listing-level)
+  const [subListingsResult, propertyFloorPlansResult] = await Promise.all([
+    listSubListingsByParent("property", property.id),
+    listFloorPlansByParent("property", property.id),
+  ]);
+  const subListings = subListingsResult.data ?? [];
+  const propertyFloorPlans = propertyFloorPlansResult.data ?? [];
+  const subListingPlansResult =
+    subListings.length > 0
+      ? await listFloorPlansByParentIds(
+          "sub_listing",
+          subListings.map((s) => s.id)
+        )
+      : { data: [] as FloorPlan[] };
+  const allFloorPlans = [
+    ...propertyFloorPlans,
+    ...(subListingPlansResult.data ?? []),
+  ];
 
   const images = (property.images ?? []).sort(
     (a: { sort_order: number }, b: { sort_order: number }) =>
@@ -358,6 +385,20 @@ export default async function PropertyDetailPage({ params }: Props) {
           </div>
 
           <Separator />
+
+          {/* Sub-listings (units / variants) */}
+          {subListings.length > 0 && (
+            <SubListingsSection
+              subListings={subListings}
+              parentCurrency={property.currency as Currency}
+              floorPlans={allFloorPlans}
+            />
+          )}
+
+          {/* Floor plans for the property itself */}
+          {propertyFloorPlans.length > 0 && (
+            <FloorPlansSection plans={propertyFloorPlans} />
+          )}
 
           {/* Description — supports both TipTap HTML (contains a tag) and
               legacy newline-separated plain text. */}

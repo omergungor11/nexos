@@ -19,6 +19,14 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getProjectBySlug } from "@/lib/queries/projects";
+import { SubListingsSection } from "@/components/property/sub-listings-section";
+import { FloorPlansSection } from "@/components/property/floor-plans-section";
+import { listSubListingsByParent } from "@/actions/sub-listings";
+import {
+  listFloorPlansByParent,
+  listFloorPlansByParentIds,
+} from "@/actions/floor-plans";
+import type { Currency, FloorPlan } from "@/types/property";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
@@ -62,6 +70,25 @@ export default async function ProjectDetailPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "projects" });
   const { data: project } = await getProjectBySlug(slug);
   if (!project) notFound();
+
+  const projectId = (project as { id: string }).id;
+  const [subListingsResult, projectFloorPlansResult] = await Promise.all([
+    listSubListingsByParent("project", projectId),
+    listFloorPlansByParent("project", projectId),
+  ]);
+  const subListings = subListingsResult.data ?? [];
+  const projectFloorPlans = projectFloorPlansResult.data ?? [];
+  const subListingPlansResult =
+    subListings.length > 0
+      ? await listFloorPlansByParentIds(
+          "sub_listing",
+          subListings.map((s) => s.id)
+        )
+      : { data: [] as FloorPlan[] };
+  const allFloorPlans = [
+    ...projectFloorPlans,
+    ...(subListingPlansResult.data ?? []),
+  ];
 
   const p = project as Record<string, unknown>;
   const title = p.title as string;
@@ -200,6 +227,27 @@ export default async function ProjectDetailPage({ params }: Props) {
                 </a>
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Sub-listings (daire tipleri) */}
+      {subListings.length > 0 && (
+        <section className="container mx-auto px-4 py-16">
+          <SubListingsSection
+            subListings={subListings}
+            parentCurrency={(currency as Currency) ?? "GBP"}
+            floorPlans={allFloorPlans}
+            heading="Daire Tipleri ve Birimler"
+          />
+        </section>
+      )}
+
+      {/* Project-level floor plans */}
+      {projectFloorPlans.length > 0 && (
+        <section className="bg-muted/20 py-16">
+          <div className="container mx-auto px-4">
+            <FloorPlansSection plans={projectFloorPlans} />
           </div>
         </section>
       )}

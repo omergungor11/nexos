@@ -299,7 +299,8 @@
     "dailyRentalListings": "Günlük Kiralık Emlak İlanları",
     "filters": "Filtreler",
     "found": "{count} ilan bulundu",
-    "sortBy": "Sırala"
+    "sortBy": "Sırala",
+    "searchResults": "Arama Sonuçları"
   },
   "team": {
     "title": "Ekibimiz",

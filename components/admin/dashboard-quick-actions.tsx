@@ -8,8 +8,9 @@ const QUICK_ACTIONS = [
     description: "Yeni bir emlak ilanı ekle",
     href: "/admin/ilanlar/yeni",
     icon: PlusCircle,
-    color: "bg-blue-50 text-blue-700 hover:bg-blue-100",
-    iconColor: "text-blue-600",
+    color:
+      "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
+    iconColor: "text-primary-foreground",
     external: false,
   },
   {
@@ -17,8 +18,9 @@ const QUICK_ACTIONS = [
     description: "Yeni bir blog yazısı oluştur",
     href: "/admin/blog/yeni",
     icon: FileText,
-    color: "bg-purple-50 text-purple-700 hover:bg-purple-100",
-    iconColor: "text-purple-600",
+    color:
+      "border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20",
+    iconColor: "text-primary",
     external: false,
   },
   {
@@ -26,7 +28,7 @@ const QUICK_ACTIONS = [
     description: "Canlı siteyi yeni sekmede aç",
     href: "/",
     icon: ExternalLink,
-    color: "bg-slate-50 text-foreground hover:bg-muted",
+    color: "border bg-background text-foreground hover:bg-muted",
     iconColor: "text-muted-foreground",
     external: true,
   },

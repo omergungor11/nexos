@@ -11,6 +11,7 @@ import { Pagination } from "@/components/property/listing/pagination";
 import { SearchBar } from "@/components/property/listing/search-bar";
 import { getProperties } from "@/lib/queries/properties";
 import { getCities } from "@/lib/queries/locations";
+import { PROPERTY_TYPE_LABELS } from "@/lib/constants";
 import type { PropertyFilters, PropertyListItem } from "@/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -45,26 +46,26 @@ export default async function EmlakPage({ params, searchParams }: Props) {
   const currentPage = filters.sayfa ?? 1;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  let pageTitle: string;
-  if (filters.islem === "satilik") {
-    pageTitle = t("listing.saleListings");
-  } else if (filters.islem === "kiralik") {
-    pageTitle = t("listing.rentListings");
-  } else if (filters.islem === "gunluk") {
-    pageTitle = t("listing.dailyRentalListings");
-  } else {
-    pageTitle = t("listing.allListings");
-  }
+  const pageTitle = buildPageTitle(filters, cities, t);
+  const hasFilters = Boolean(
+    filters.q ||
+      filters.tip?.length ||
+      filters.sehir ||
+      filters.ilce ||
+      filters.oda?.length ||
+      filters.fiyat_min ||
+      filters.fiyat_max
+  );
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold">{pageTitle}</h1>
-        <div className="w-full sm:max-w-md">
-          <Suspense>
-            <SearchBar />
-          </Suspense>
-        </div>
+        {hasFilters && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("listing.allListings")}
+          </p>
+        )}
       </div>
 
       <div className="flex gap-6">
@@ -104,7 +105,14 @@ export default async function EmlakPage({ params, searchParams }: Props) {
           </div>
 
           <Suspense>
-            <SortBar totalCount={totalCount} />
+            <SortBar
+              totalCount={totalCount}
+              middleSlot={
+                <Suspense>
+                  <SearchBar />
+                </Suspense>
+              }
+            />
           </Suspense>
 
           <PropertyGrid properties={properties} />
@@ -120,6 +128,67 @@ export default async function EmlakPage({ params, searchParams }: Props) {
       </div>
     </div>
   );
+}
+
+// ---------------------------------------------------------------------------
+// Build a human-friendly page title from active filters.
+// Examples:
+//   ?tip=apartment        → "Daire İlanları"
+//   ?islem=satilik&tip=villa → "Satılık Villa İlanları"
+//   ?sehir=iskele         → "İskele'deki İlanlar"
+//   ?q=deniz              → "'deniz' Arama Sonuçları"
+//   (no filters)          → "Tüm Emlak İlanları"
+// ---------------------------------------------------------------------------
+
+function buildPageTitle(
+  filters: PropertyFilters,
+  cities: Array<{ name: string; slug: string }>,
+  t: (k: string) => string
+): string {
+  // Free-text search takes precedence.
+  if (filters.q) {
+    return `"${filters.q}" ${t("listing.searchResults") || "Arama Sonuçları"}`;
+  }
+
+  const transactionLabel =
+    filters.islem === "satilik"
+      ? "Satılık"
+      : filters.islem === "kiralik"
+        ? "Kiralık"
+        : filters.islem === "gunluk"
+          ? "Günlük Kiralık"
+          : null;
+
+  // Property type(s) — pluralise joined list, keep the "Daire" noun singular.
+  const typeLabels =
+    filters.tip
+      ?.map((t) => PROPERTY_TYPE_LABELS[t])
+      .filter(Boolean) ?? [];
+  const typeLabel =
+    typeLabels.length === 0
+      ? null
+      : typeLabels.length === 1
+        ? typeLabels[0]
+        : typeLabels.slice(0, 2).join(" / ") +
+          (typeLabels.length > 2 ? ` +${typeLabels.length - 2}` : "");
+
+  const cityName = filters.sehir
+    ? cities.find((c) => c.slug === filters.sehir)?.name
+    : null;
+
+  // Compose.
+  const segments: string[] = [];
+  if (cityName) segments.push(`${cityName}'de`);
+  if (transactionLabel) segments.push(transactionLabel);
+  segments.push(typeLabel ?? t("listing.allListings"));
+
+  if (!transactionLabel && !typeLabel && !cityName) {
+    return t("listing.allListings");
+  }
+  if (typeLabel || transactionLabel) {
+    segments.push("İlanları");
+  }
+  return segments.join(" ");
 }
 
 function parseFilters(

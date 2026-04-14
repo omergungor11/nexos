@@ -198,7 +198,7 @@ export function AdminLayout({
       </div>
 
       {/* Navigation */}
-      <nav className={cn("flex-1 overflow-y-auto py-4", isCollapsed ? "px-2" : "px-3")}>
+      <nav className={cn("admin-scroll flex-1 overflow-y-auto py-4", isCollapsed ? "px-2" : "px-3")}>
         <div className="space-y-4">
           {NAV_GROUPS.map((group, gi) => (
             <div key={gi}>

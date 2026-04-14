@@ -66,15 +66,17 @@ export function DashboardActivityFeed({
   contacts,
   properties,
 }: DashboardActivityFeedProps) {
-  // Merge and sort by created_at descending
+  // Merge, sort by created_at descending, cap at 5 most recent
   const items: ActivityItem[] = [
     ...contacts.map((c): ActivityItem => ({ kind: "contact", data: c })),
     ...properties.map((p): ActivityItem => ({ kind: "property", data: p })),
-  ].sort(
-    (a, b) =>
-      new Date(b.data.created_at).getTime() -
-      new Date(a.data.created_at).getTime()
-  );
+  ]
+    .sort(
+      (a, b) =>
+        new Date(b.data.created_at).getTime() -
+        new Date(a.data.created_at).getTime()
+    )
+    .slice(0, 5);
 
   return (
     <Card>

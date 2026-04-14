@@ -1928,6 +1928,46 @@ export function PropertyForm({
             şekilde gösterilir.
           </p>
 
+          {/* Vitrin Yerleşimi — which curated lists this listing belongs to */}
+          <div className="space-y-2 rounded-lg border bg-muted/20 p-4">
+            <p className="text-sm font-medium">Vitrin Yerleşimi</p>
+            <p className="text-xs text-muted-foreground">
+              Bu ilanın görüneceği özel alanları seç. Sıralama
+              <span className="mx-0.5 font-mono text-[11px]">/admin/vitrin-yonetimi</span>
+              sayfasından drag-drop ile yapılır.
+            </p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <HighlightToggle
+                id="is_slider"
+                label="Slider"
+                hint="Anasayfa hero slider'ı"
+                checked={form.is_slider}
+                onChange={(v) => handleBooleanChange("is_slider", v)}
+              />
+              <HighlightToggle
+                id="is_featured"
+                label="Öne Çıkan"
+                hint="Listelerde yıldız rozeti"
+                checked={form.is_featured}
+                onChange={(v) => handleBooleanChange("is_featured", v)}
+              />
+              <HighlightToggle
+                id="is_showcase"
+                label="Vitrin"
+                hint="/vitrin galerisi"
+                checked={form.is_showcase}
+                onChange={(v) => handleBooleanChange("is_showcase", v)}
+              />
+              <HighlightToggle
+                id="is_deal"
+                label="Fırsat"
+                hint="Anasayfa fırsat bandı"
+                checked={form.is_deal}
+                onChange={(v) => handleBooleanChange("is_deal", v)}
+              />
+            </div>
+          </div>
+
           {/* Bina özellikleri — arsalar için gizle */}
           {!isLandType(form.property_type) && (
             <>
@@ -2025,45 +2065,48 @@ export function PropertyForm({
             </>
           )}
 
-          {/* Arsa — Koçan Durumu + Altyapı */}
+          {/* Koçan Türü — shown for every property type (Kıbrıs'ta her ilan
+              için tapu/koçan türü kritik, arsaya özel değil) */}
+          <Field
+            label="Koçan Türü"
+            htmlFor="title_deed_type"
+            hint="Kıbrıs'a özel tapu/koçan türü"
+            icon={ScrollText}
+          >
+            <Select
+              value={form.title_deed_type || "__none__"}
+              onValueChange={(v) =>
+                setForm((prev) => ({
+                  ...prev,
+                  title_deed_type:
+                    v === "__none__" || !v ? "" : (v as TitleDeedType),
+                }))
+              }
+            >
+              <SelectTrigger id="title_deed_type" className="w-full sm:w-80">
+                <SelectValue placeholder="Seçiniz (opsiyonel)">
+                  {form.title_deed_type
+                    ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType]
+                    : "Belirtilmemiş"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                {(Object.entries(TITLE_DEED_OPTIONS) as [TitleDeedType, string][]).map(
+                  ([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectContent>
+            </Select>
+          </Field>
+
+          {/* Arsa — İmar Durumu, İmar Oranı + Altyapı */}
           {isLandType(form.property_type) && (
             <>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-                <Field
-                  label="Koçan Durumu"
-                  htmlFor="title_deed_type"
-                  hint="Kıbrıs'a özel tapu/koçan türü"
-                  icon={ScrollText}
-                >
-                  <Select
-                    value={form.title_deed_type || "__none__"}
-                    onValueChange={(v) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        title_deed_type: v === "__none__" ? "" : (v as TitleDeedType),
-                      }))
-                    }
-                  >
-                    <SelectTrigger id="title_deed_type" className="w-full">
-                      <SelectValue placeholder="Seçiniz (opsiyonel)">
-                        {form.title_deed_type
-                          ? TITLE_DEED_OPTIONS[form.title_deed_type as TitleDeedType]
-                          : "Belirtilmemiş"}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="__none__">Belirtilmemiş</SelectItem>
-                      {(Object.entries(TITLE_DEED_OPTIONS) as [TitleDeedType, string][]).map(
-                        ([value, label]) => (
-                          <SelectItem key={value} value={value}>
-                            {label}
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
-                </Field>
-
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <Field label="İmar Durumu" htmlFor="zoning_status" icon={FileCheck}>
                   <Select
                     value={form.zoning_status || "__none__"}
@@ -2230,44 +2273,6 @@ export function PropertyForm({
             />
           </Field>
 
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Vitrin Yerleşimi</p>
-            <p className="text-xs text-muted-foreground">
-              Bu ilanın görüneceği özel alanları seç. Sıralama
-              <span className="mx-0.5 font-mono text-[11px]">/admin/vitrin-yonetimi</span>
-              sayfasından drag-drop ile yapılır.
-            </p>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <HighlightToggle
-                id="is_slider"
-                label="Slider"
-                hint="Anasayfa hero slider'ı"
-                checked={form.is_slider}
-                onChange={(v) => handleBooleanChange("is_slider", v)}
-              />
-              <HighlightToggle
-                id="is_featured"
-                label="Öne Çıkan"
-                hint="Listelerde yıldız rozeti"
-                checked={form.is_featured}
-                onChange={(v) => handleBooleanChange("is_featured", v)}
-              />
-              <HighlightToggle
-                id="is_showcase"
-                label="Vitrin"
-                hint="/vitrin galerisi"
-                checked={form.is_showcase}
-                onChange={(v) => handleBooleanChange("is_showcase", v)}
-              />
-              <HighlightToggle
-                id="is_deal"
-                label="Fırsat"
-                hint="Anasayfa fırsat bandı"
-                checked={form.is_deal}
-                onChange={(v) => handleBooleanChange("is_deal", v)}
-              />
-            </div>
-          </div>
         </TabsContent>
 
         {/* ----------------------------------------------------------------- */}

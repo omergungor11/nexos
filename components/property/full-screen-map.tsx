@@ -24,8 +24,19 @@ const FullScreenMapInner = dynamic(() => import("./full-screen-map-inner"), {
 interface FullScreenMapProps {
   properties: MapProperty[];
   projects?: MapProject[];
+  heightClass?: string;
 }
 
-export function FullScreenMap({ properties, projects = [] }: FullScreenMapProps) {
-  return <FullScreenMapInner properties={properties} projects={projects} />;
+export function FullScreenMap({
+  properties,
+  projects = [],
+  heightClass,
+}: FullScreenMapProps) {
+  return (
+    <FullScreenMapInner
+      properties={properties}
+      projects={projects}
+      heightClass={heightClass}
+    />
+  );
 }

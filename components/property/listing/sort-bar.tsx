@@ -13,9 +13,11 @@ import { SORT_KEYS, SORT_TKEYS } from "@/lib/constants";
 
 interface SortBarProps {
   totalCount: number;
+  /** Optional node rendered between the count and the sort dropdown. */
+  middleSlot?: React.ReactNode;
 }
 
-export function SortBar({ totalCount }: SortBarProps) {
+export function SortBar({ totalCount, middleSlot }: SortBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations();
@@ -32,15 +34,16 @@ export function SortBar({ totalCount }: SortBarProps) {
   }
 
   return (
-    <div className="flex items-center justify-between gap-4">
-      <p className="text-sm text-muted-foreground">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-sm text-muted-foreground shrink-0">
         {t("listing.found", { count: totalCount })}
       </p>
+      {middleSlot && <div className="w-full sm:max-w-sm sm:flex-1">{middleSlot}</div>}
       <Select
         value={searchParams.get("siralama") ?? "yeni"}
         onValueChange={handleSort}
       >
-        <SelectTrigger className="w-44">
+        <SelectTrigger className="w-full sm:w-44">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

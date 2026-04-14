@@ -66,6 +66,29 @@ export async function listFloorPlansByParent(
 }
 
 // ---------------------------------------------------------------------------
+// listByParentIds — batch fetcher for a set of parents of the same type.
+// Used on the public detail page to grab every sub-listing's plans in one
+// query without N+1 round-trips.
+// ---------------------------------------------------------------------------
+
+export async function listFloorPlansByParentIds(
+  parentType: FloorPlanParentType,
+  parentIds: string[]
+): Promise<ActionResult<FloorPlan[]>> {
+  if (parentIds.length === 0) return { data: [] };
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("floor_plans")
+    .select("*")
+    .eq("parent_type", parentType)
+    .in("parent_id", parentIds)
+    .order("sort_order", { ascending: true });
+
+  if (error) return { error: error.message };
+  return { data: (data ?? []) as unknown as FloorPlan[] };
+}
+
+// ---------------------------------------------------------------------------
 // upsertMany — same diff strategy as sub-listings
 // ---------------------------------------------------------------------------
 

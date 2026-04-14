@@ -465,7 +465,7 @@ export function MapManagementTable({
                   className="size-4 rounded border-gray-300"
                 />
               </th>
-              <th className="px-3 py-2.5 text-left">Başlık</th>
+              <th className="px-3 py-2.5 text-left w-[260px]">Başlık</th>
               <th className="px-3 py-2.5 text-left">Konum</th>
               <th className="px-3 py-2.5 text-left">Fiyat</th>
               <th className="px-3 py-2.5 text-center">Koordinat</th>
@@ -515,8 +515,13 @@ export function MapManagementTable({
                           unoptimized
                         />
                       </div>
-                      <div className="min-w-0">
-                        <p className="truncate font-medium text-sm">{row.title}</p>
+                      <div className="min-w-0 max-w-[180px]">
+                        <p
+                          className="truncate font-medium text-sm"
+                          title={row.title}
+                        >
+                          {row.title}
+                        </p>
                         <div className="flex gap-1 mt-0.5">
                           {isProject ? (
                             <Badge variant="outline" className="h-4 px-1 text-[10px] text-violet-700 border-violet-300">

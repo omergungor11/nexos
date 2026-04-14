@@ -157,32 +157,53 @@ function SortableRow({
       </div>
 
       <div className="flex-1 space-y-2">
-        <Input
-          value={draft.label}
-          onChange={(e) => update("label", e.target.value)}
-          placeholder="Başlık (ör. Zemin Kat, A Blok 2+1)"
-        />
-        <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">
+            Başlık <span className="text-destructive">*</span>
+          </label>
           <Input
-            value={draft.area_sqm}
-            onChange={(e) => update("area_sqm", e.target.value)}
-            placeholder="m²"
-            type="number"
-            step="0.01"
-          />
-          <Input
-            value={draft.rooms}
-            onChange={(e) => update("rooms", e.target.value)}
-            placeholder="Oda sayısı"
-            type="number"
+            value={draft.label}
+            onChange={(e) => update("label", e.target.value)}
+            placeholder="ör. Zemin Kat, A Blok 2+1, Giriş Kat"
+            required
           />
         </div>
-        <Input
-          value={draft.alt_text}
-          onChange={(e) => update("alt_text", e.target.value)}
-          placeholder="Alt metin (SEO)"
-          className="text-xs"
-        />
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">
+              Alan (m²)
+            </label>
+            <Input
+              value={draft.area_sqm}
+              onChange={(e) => update("area_sqm", e.target.value)}
+              placeholder="0"
+              type="number"
+              step="0.01"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">
+              Oda Sayısı
+            </label>
+            <Input
+              value={draft.rooms}
+              onChange={(e) => update("rooms", e.target.value)}
+              placeholder="0"
+              type="number"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-muted-foreground">
+            Alt Metin (SEO, opsiyonel)
+          </label>
+          <Input
+            value={draft.alt_text}
+            onChange={(e) => update("alt_text", e.target.value)}
+            placeholder="Görselin açıklaması"
+            className="text-xs"
+          />
+        </div>
       </div>
 
       <Button

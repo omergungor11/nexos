@@ -2,12 +2,16 @@
 
 import { useState, useTransition, useId } from "react";
 import { toast } from "sonner";
+import Image from "next/image";
 import {
   Plus,
   Trash2,
   GripVertical,
   LoaderCircle,
   Save,
+  Upload,
+  X,
+  ImageIcon,
 } from "lucide-react";
 import {
   DndContext,
@@ -41,6 +45,7 @@ import {
   upsertSubListings,
   type SubListingInput,
 } from "@/actions/sub-listings";
+import { uploadMediaImage } from "@/actions/images";
 import type {
   SubListing,
   SubListingParentType,
@@ -67,6 +72,23 @@ const AVAILABILITY_LABELS: Record<SubListingAvailability, string> = {
   rented: "Kiralandı",
 };
 
+// Keep the list short — only the types common in site / project units.
+// Other property types can still be modeled by leaving this blank.
+const PROPERTY_TYPE_OPTIONS: { value: string; label: string }[] = [
+  { value: "apartment", label: "Daire" },
+  { value: "villa", label: "Villa" },
+  { value: "twin_villa", label: "İkiz Villa" },
+  { value: "penthouse", label: "Penthouse" },
+  { value: "residence", label: "Rezidans" },
+  { value: "bungalow", label: "Bungalow" },
+  { value: "detached", label: "Müstakil Ev" },
+  { value: "building", label: "Bina" },
+  { value: "shop", label: "Dükkan" },
+  { value: "office", label: "Ofis" },
+  { value: "warehouse", label: "Depo" },
+  { value: "hotel", label: "Hotel" },
+];
+
 // ---------------------------------------------------------------------------
 // Internal draft shape — items without an id are new
 // ---------------------------------------------------------------------------
@@ -76,6 +98,8 @@ interface Draft {
   id?: string;
   label: string;
   description: string;
+  property_type: string;
+  cover_image: string;
   rooms: string;
   living_rooms: string;
   bathrooms: string;
@@ -92,6 +116,8 @@ function emptyDraft(): Draft {
     key: crypto.randomUUID(),
     label: "",
     description: "",
+    property_type: "",
+    cover_image: "",
     rooms: "",
     living_rooms: "",
     bathrooms: "",
@@ -110,6 +136,8 @@ function fromSubListing(s: SubListing): Draft {
     id: s.id,
     label: s.label,
     description: s.description ?? "",
+    property_type: s.property_type ?? "",
+    cover_image: s.cover_image ?? "",
     rooms: s.rooms?.toString() ?? "",
     living_rooms: s.living_rooms?.toString() ?? "",
     bathrooms: s.bathrooms?.toString() ?? "",
@@ -131,6 +159,8 @@ function toPayload(d: Draft, sort_order: number): SubListingInput {
     id: d.id,
     label: d.label.trim(),
     description: d.description.trim() || null,
+    property_type: d.property_type || null,
+    cover_image: d.cover_image || null,
     rooms: toNum(d.rooms),
     living_rooms: toNum(d.living_rooms),
     bathrooms: toNum(d.bathrooms),
@@ -157,6 +187,7 @@ function SortableRow({
   onChange: (d: Draft) => void;
   onRemove: () => void;
 }) {
+  const [uploading, setUploading] = useState(false);
   const {
     attributes,
     listeners,
@@ -165,6 +196,19 @@ function SortableRow({
     transition,
     isDragging,
   } = useSortable({ id: draft.key });
+
+  const handleFilePick = async (file: File) => {
+    setUploading(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    const result = await uploadMediaImage(fd);
+    setUploading(false);
+    if (result.error) {
+      toast.error(result.error);
+      return;
+    }
+    onChange({ ...draft, cover_image: result.data?.url ?? "" });
+  };
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -194,22 +238,99 @@ function SortableRow({
           <GripVertical className="size-4" />
         </button>
 
+        {/* Cover thumbnail + upload controls */}
+        <div className="flex shrink-0 flex-col items-center gap-1.5">
+          <div className="relative size-24 overflow-hidden rounded-md border bg-muted">
+            {draft.cover_image ? (
+              <>
+                <Image
+                  src={draft.cover_image}
+                  alt={draft.label || "Alt ilan görseli"}
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                  unoptimized
+                />
+                <button
+                  type="button"
+                  onClick={() => update("cover_image", "")}
+                  className="absolute right-1 top-1 rounded-full bg-background/90 p-0.5 text-muted-foreground shadow hover:text-destructive"
+                  aria-label="Görseli kaldır"
+                >
+                  <X className="size-3" />
+                </button>
+              </>
+            ) : (
+              <div className="flex size-full items-center justify-center text-muted-foreground/60">
+                <ImageIcon className="size-6" />
+              </div>
+            )}
+          </div>
+          <label
+            className={[
+              "inline-flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium transition-colors",
+              uploading ? "opacity-60 pointer-events-none" : "hover:bg-muted",
+            ].join(" ")}
+          >
+            {uploading ? (
+              <LoaderCircle className="size-3 animate-spin" />
+            ) : (
+              <Upload className="size-3" />
+            )}
+            {draft.cover_image ? "Değiştir" : "Görsel"}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void handleFilePick(f);
+                e.target.value = "";
+              }}
+              disabled={uploading}
+            />
+          </label>
+        </div>
+
         <div className="flex-1 space-y-3">
-          {/* Row 1: label + availability + remove */}
+          {/* Row 1: label + property_type + availability + remove */}
           <div className="flex flex-wrap items-center gap-2">
             <Input
               value={draft.label}
               onChange={(e) => update("label", e.target.value)}
               placeholder="Başlık (ör. A Blok 2+1, Teras Daire)"
-              className="min-w-[200px] flex-1"
+              className="min-w-[180px] flex-1"
             />
+            <Select
+              value={draft.property_type || "__none__"}
+              onValueChange={(v) => {
+                const next = v ?? "__none__";
+                update("property_type", next === "__none__" ? "" : next);
+              }}
+            >
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Tür (opsiyonel)">
+                  {draft.property_type
+                    ? PROPERTY_TYPE_OPTIONS.find((o) => o.value === draft.property_type)?.label ?? draft.property_type
+                    : "Tür"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Belirtilmemiş</SelectItem>
+                {PROPERTY_TYPE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Select
               value={draft.availability}
               onValueChange={(v) =>
                 update("availability", v as SubListingAvailability)
               }
             >
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-[130px]">
                 <SelectValue>{AVAILABILITY_LABELS[draft.availability]}</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -313,14 +434,19 @@ function SortableRow({
             />
           </div>
 
-          {/* Optional description */}
-          <Textarea
-            value={draft.description}
-            onChange={(e) => update("description", e.target.value)}
-            placeholder="Notlar (opsiyonel)"
-            rows={2}
-            className="text-sm"
-          />
+          {/* Description */}
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">
+              Açıklama
+            </label>
+            <Textarea
+              value={draft.description}
+              onChange={(e) => update("description", e.target.value)}
+              placeholder="Bu tip/birim hakkında kısa bir açıklama (konum, manzara, avantajlar, vb.)"
+              rows={3}
+              className="text-sm"
+            />
+          </div>
         </div>
       </div>
     </div>

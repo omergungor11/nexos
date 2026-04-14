@@ -167,7 +167,13 @@ export default async function AdminHaritaPage() {
       </div>
 
       {/* Map preview — same component used on public /harita page */}
-      <FullScreenMap properties={mapPreview} projects={mapProjects} />
+      <div className="overflow-hidden rounded-2xl border shadow-sm">
+        <FullScreenMap
+          properties={mapPreview}
+          projects={mapProjects}
+          heightClass="h-[420px]"
+        />
+      </div>
 
       <MapManagementTable
         initialData={properties}

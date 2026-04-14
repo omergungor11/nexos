@@ -118,6 +118,8 @@ function createProjectIcon(title: string): L.DivIcon {
 interface FullScreenMapInnerProps {
   properties: MapProperty[];
   projects?: MapProject[];
+  /** Override the default full-viewport height. */
+  heightClass?: string;
 }
 
 function formatPrice(price: number, currency: string) {
@@ -140,11 +142,12 @@ const TYPE_LABELS: Record<string, string> = {
 export default function FullScreenMapInner({
   properties,
   projects = [],
+  heightClass = "h-[calc(100vh-6rem)]",
 }: FullScreenMapInnerProps) {
   const [panelOpen, setPanelOpen] = useState(false);
 
   return (
-    <div className="relative h-[calc(100vh-6rem)] w-full overflow-hidden">
+    <div className={`relative w-full overflow-hidden ${heightClass}`}>
       {/* Count badge — clickable */}
       {(properties.length > 0 || projects.length > 0) && (
         <button
