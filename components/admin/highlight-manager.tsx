@@ -213,17 +213,58 @@ export function HighlightManager({ initialProperties }: HighlightManagerProps) {
               .filter((p) => p[TAB_META.find((t) => t.flag === activeTab)!.flagField])
               .map((p) => p.id),
           )}
+          otherFlagsByProperty={Object.fromEntries(
+            properties.map((p) => [
+              p.id,
+              TAB_META.filter(
+                (m) => m.flag !== activeTab && p[m.flagField],
+              ).map((m) => m.flag),
+            ]),
+          )}
           onClose={() => setAddOpen(false)}
-          onAdded={(newProp) => {
+          onAdded={(searchResult, flag) => {
+            const meta = TAB_META.find((t) => t.flag === flag)!;
             setProperties((prev) => {
-              const existing = prev.find((p) => p.id === newProp.id);
+              const existing = prev.find((p) => p.id === searchResult.id);
               if (existing) {
-                // Flip the flag on the already-tracked row.
+                // Flag already tracked — ONLY flip the single flag + its order.
+                // Preserve every other flag/order so a listing sitting in
+                // Slider + Fırsat doesn't lose its other memberships.
                 return prev.map((p) =>
-                  p.id === newProp.id ? { ...p, ...newProp } : p,
+                  p.id === searchResult.id
+                    ? ({
+                        ...p,
+                        [meta.flagField]: true,
+                        [meta.orderField]: 9999,
+                      } as HighlightedProperty)
+                    : p,
                 );
               }
-              return [...prev, newProp];
+              // Net-new row — other flags default to false.
+              return [
+                ...prev,
+                {
+                  id: searchResult.id,
+                  listing_number: searchResult.listing_number,
+                  slug: "",
+                  title: searchResult.title,
+                  price: searchResult.price,
+                  currency: searchResult.currency,
+                  type: "",
+                  transaction_type: "",
+                  city_name: searchResult.city_name,
+                  district_name: null,
+                  cover_image: searchResult.cover_image,
+                  is_slider: flag === "slider",
+                  is_featured: flag === "featured",
+                  is_showcase: flag === "showcase",
+                  is_deal: flag === "deal",
+                  slider_order: flag === "slider" ? 9999 : null,
+                  featured_order: flag === "featured" ? 9999 : null,
+                  showcase_order: flag === "showcase" ? 9999 : null,
+                  deal_order: flag === "deal" ? 9999 : null,
+                },
+              ];
             });
           }}
         />
@@ -490,13 +531,15 @@ function SortableRow({
 function AddPropertyDialog({
   flag,
   existingIds,
+  otherFlagsByProperty,
   onClose,
   onAdded,
 }: {
   flag: HighlightFlag;
   existingIds: Set<string>;
+  otherFlagsByProperty: Record<string, HighlightFlag[]>;
   onClose: () => void;
-  onAdded: (prop: HighlightedProperty) => void;
+  onAdded: (searchResult: SearchResult, flag: HighlightFlag) => void;
 }) {
   const [q, setQ] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -541,27 +584,7 @@ function AddPropertyDialog({
       toast.error(result.error);
       return;
     }
-    onAdded({
-      id: r.id,
-      listing_number: r.listing_number,
-      slug: "",
-      title: r.title,
-      price: r.price,
-      currency: r.currency,
-      type: "",
-      transaction_type: "",
-      city_name: r.city_name,
-      district_name: null,
-      cover_image: r.cover_image,
-      is_slider: flag === "slider",
-      is_featured: flag === "featured",
-      is_showcase: flag === "showcase",
-      is_deal: flag === "deal",
-      slider_order: flag === "slider" ? 9999 : null,
-      featured_order: flag === "featured" ? 9999 : null,
-      showcase_order: flag === "showcase" ? 9999 : null,
-      deal_order: flag === "deal" ? 9999 : null,
-    });
+    onAdded(r, flag);
     toast.success(`${meta.label} listesine eklendi.`);
   };
 
@@ -615,6 +638,7 @@ function AddPropertyDialog({
             <ul className="divide-y">
               {results.map((r) => {
                 const already = existingIds.has(r.id);
+                const otherFlags = otherFlagsByProperty[r.id] ?? [];
                 return (
                   <li
                     key={r.id}
@@ -639,7 +663,27 @@ function AddPropertyDialog({
                         </span>
                         {r.title}
                       </p>
-                      <p className="text-xs text-muted-foreground">{r.city_name}</p>
+                      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        {r.city_name}
+                        {otherFlags.length > 0 && (
+                          <span className="flex items-center gap-1">
+                            {otherFlags.map((f) => {
+                              const m = TAB_META.find((t) => t.flag === f)!;
+                              const Icon = m.icon;
+                              return (
+                                <span
+                                  key={f}
+                                  className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary"
+                                  title={`${m.label} listesinde`}
+                                >
+                                  <Icon className="size-2.5" />
+                                  {m.label}
+                                </span>
+                              );
+                            })}
+                          </span>
+                        )}
+                      </p>
                     </div>
                     <span className="shrink-0 text-sm font-semibold text-primary">
                       {formatPrice(r.price, r.currency)}
