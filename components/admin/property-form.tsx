@@ -1230,40 +1230,40 @@ export function PropertyForm({
                 </SelectContent>
               </Select>
             </Field>
-          </div>
 
-          {agents.length > 0 && (
-            <Field
-              label="Sorumlu Danışman"
-              htmlFor="agent_id"
-              hint="Bu ilanla ilgilenecek ekip üyesini seçin"
-              icon={UserCircle}
-            >
-              <Select
-                value={form.agent_id}
-                onValueChange={(v) =>
-                  handleSelectChange("agent_id", v)
-                }
+            {agents.length > 0 && (
+              <Field
+                label="Sorumlu Danışman"
+                htmlFor="agent_id"
+                icon={UserCircle}
               >
-                <SelectTrigger id="agent_id" className="w-full sm:w-80">
-                  <SelectValue placeholder="Danışman seçiniz (opsiyonel)">
-                    {form.agent_id && form.agent_id !== "__none__"
-                      ? (agents.find((a) => a.id === form.agent_id)?.name ?? form.agent_id)
-                      : form.agent_id === "__none__" ? "Danışman yok" : undefined}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__none__">Danışman yok</SelectItem>
-                  {agents.map((agent) => (
-                    <SelectItem key={agent.id} value={agent.id}>
-                      {agent.name}
-                      {agent.title ? ` — ${agent.title}` : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          )}
+                <Select
+                  value={form.agent_id}
+                  onValueChange={(v) => handleSelectChange("agent_id", v)}
+                >
+                  <SelectTrigger id="agent_id" className="w-full">
+                    <SelectValue placeholder="Danışman (opsiyonel)">
+                      {form.agent_id && form.agent_id !== "__none__"
+                        ? (agents.find((a) => a.id === form.agent_id)?.name ??
+                          form.agent_id)
+                        : form.agent_id === "__none__"
+                          ? "Danışman yok"
+                          : undefined}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Danışman yok</SelectItem>
+                    {agents.map((agent) => (
+                      <SelectItem key={agent.id} value={agent.id}>
+                        {agent.name}
+                        {agent.title ? ` — ${agent.title}` : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            )}
+          </div>
 
           {/* Internal notes */}
           <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 dark:border-amber-900/50 dark:bg-amber-950/20">
