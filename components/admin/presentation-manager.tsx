@@ -1938,38 +1938,47 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* Hidden export render surface.
-          Kept INSIDE the viewport (left:0, top:0) with opacity:0 so that
-          next/image's IntersectionObserver triggers loading. Off-screen
-          placement (e.g. left:-100000px) prevents lazy images from ever
-          loading and causes the export to hang. */}
-      <div
-        ref={exportSurfaceRef}
-        aria-hidden
-        style={{
-          position: "fixed",
-          left: 0,
-          top: 0,
-          width: 1920,
-          height: 1080,
-          backgroundColor: themeColors.bg,
-          overflow: "hidden",
-          pointerEvents: "none",
-          opacity: exporting ? 0.01 : 0,
-          visibility: exporting ? "visible" : "hidden",
-          zIndex: -1,
-        }}
-      >
-        {exportCurrent && (
-          <SlideRenderer
-            property={exportCurrent.property}
-            slideType={exportCurrent.slideType}
-            theme={themeColors}
-            photoIndex={exportCurrent.photoIndex}
-            bannerText={exportCurrent.bannerText}
-            customDescription={exportCurrent.customDescription}
-          />
-        )}
-      </div>
+          Parent acts as a 1x1 clipping frame inside the viewport so
+          next/image's IntersectionObserver can fire and images load.
+          The inner node is the real 1920x1080 surface captured by
+          html-to-image at full opacity — applying opacity to the
+          surface itself would also fade the captured PNG. */}
+      {exporting && (
+        <div
+          aria-hidden
+          style={{
+            position: "fixed",
+            left: 0,
+            top: 0,
+            width: 1,
+            height: 1,
+            overflow: "hidden",
+            pointerEvents: "none",
+            zIndex: -1,
+          }}
+        >
+          <div
+            ref={exportSurfaceRef}
+            style={{
+              width: 1920,
+              height: 1080,
+              backgroundColor: themeColors.bg,
+              overflow: "hidden",
+            }}
+          >
+            {exportCurrent && (
+              <SlideRenderer
+                property={exportCurrent.property}
+                slideType={exportCurrent.slideType}
+                theme={themeColors}
+                photoIndex={exportCurrent.photoIndex}
+                bannerText={exportCurrent.bannerText}
+                customDescription={exportCurrent.customDescription}
+              />
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ----------------------------------------------------------------- */}
       {/* Property selector                                                   */}
