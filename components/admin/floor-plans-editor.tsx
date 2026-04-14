@@ -10,6 +10,7 @@ import {
   LoaderCircle,
   Save,
   Upload,
+  ImageIcon,
 } from "lucide-react";
 import {
   DndContext,
@@ -33,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { upsertFloorPlans, type FloorPlanInput } from "@/actions/floor-plans";
 import { uploadMediaImage } from "@/actions/images";
+import { MediaPicker } from "@/components/admin/media-picker";
 import type { FloorPlan, FloorPlanParentType } from "@/types/property";
 
 // ---------------------------------------------------------------------------
@@ -252,6 +254,7 @@ export function FloorPlansEditor({
   );
   const [uploading, setUploading] = useState(false);
   const [pending, startTransition] = useTransition();
+  const [pickerOpen, setPickerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
@@ -338,6 +341,24 @@ export function FloorPlansEditor({
   };
 
   const missingLabel = drafts.some((d) => !d.label.trim());
+  const addFromGallery = (url: string) => {
+    if (drafts.length >= resolvedMax) {
+      toast.error(`En fazla ${resolvedMax} kat planı eklenebilir.`);
+      return;
+    }
+    setDrafts((prev) => [
+      ...prev,
+      {
+        key: crypto.randomUUID(),
+        url,
+        label: "",
+        alt_text: "",
+        area_sqm: "",
+        rooms: "",
+      },
+    ]);
+    toast.success("Galeriden görsel eklendi. Başlık girmeyi unutma.");
+  };
 
   return (
     <div className="space-y-4">
@@ -351,6 +372,16 @@ export function FloorPlansEditor({
           )}
         </p>
         <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setPickerOpen(true)}
+            disabled={drafts.length >= resolvedMax}
+          >
+            <ImageIcon className="size-4" />
+            Galeriden Seç
+          </Button>
           <Button
             type="button"
             variant="outline"
@@ -416,6 +447,12 @@ export function FloorPlansEditor({
           </SortableContext>
         </DndContext>
       )}
+
+      <MediaPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={(url) => addFromGallery(url)}
+      />
     </div>
   );
 }
