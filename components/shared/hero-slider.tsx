@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, BedDouble, Maximize2, ChevronLeft, ChevronRight } from "lucide-react";
@@ -70,9 +70,50 @@ export function HeroSlider({ slides, children }: HeroSliderProps) {
 
   const currentSlide = hasSlides ? slides[current] : null;
 
+  // Swipe / drag handlers — works on touch and desktop pointer devices.
+  const dragStartX = useRef<number | null>(null);
+  const draggedDx = useRef(0);
+  const didSwipe = useRef(false);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (totalSlides <= 1) return;
+    dragStartX.current = e.clientX;
+    draggedDx.current = 0;
+    didSwipe.current = false;
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (dragStartX.current == null) return;
+    draggedDx.current = e.clientX - dragStartX.current;
+  };
+  const onPointerUp = () => {
+    if (dragStartX.current == null) return;
+    if (Math.abs(draggedDx.current) > 50) {
+      didSwipe.current = true;
+      if (draggedDx.current < 0) next();
+      else prev();
+    }
+    dragStartX.current = null;
+    draggedDx.current = 0;
+  };
+  // Suppress the Link click that would otherwise fire right after a swipe
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (didSwipe.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      didSwipe.current = false;
+    }
+  };
+
   return (
     <section className="container mx-auto px-4 py-8">
-    <div className="relative flex min-h-[450px] items-center justify-center overflow-hidden rounded-2xl sm:min-h-[550px]">
+    <div
+      className="relative flex min-h-[450px] items-center justify-center overflow-hidden rounded-2xl touch-pan-y select-none sm:min-h-[550px]"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onClickCapture={onClickCapture}
+    >
       {/* Background images */}
       {hasSlides ? (
         slides.map((slide, i) => (
