@@ -55,7 +55,6 @@ import type { PropertyWorkflowStatus } from "@/types/property";
 import {
   PROPERTY_TYPE_LABELS,
   TRANSACTION_TYPE_LABELS,
-  PROPERTY_STATUS_LABELS,
 } from "@/lib/constants";
 import { formatPrice } from "@/lib/format";
 import { PropertyExportButtons } from "./property-export";
@@ -122,29 +121,6 @@ type SortKey = keyof Pick<
 type SortDir = "asc" | "desc";
 
 const PAGE_SIZE = 20;
-
-// ---------------------------------------------------------------------------
-// Status badge
-// ---------------------------------------------------------------------------
-
-function StatusBadge({ status }: { status: string }) {
-  const colorMap: Record<string, string> = {
-    available: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    sold: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-    rented: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    reserved: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  };
-
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-        colorMap[status] ?? "bg-muted text-muted-foreground"
-      }`}
-    >
-      {PROPERTY_STATUS_LABELS[status] ?? status}
-    </span>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Sort icon
@@ -689,13 +665,6 @@ export function PropertyDataTable({
               </th>
               <th className={thClass}>Şehir</th>
               <th className={thClass}>Danışman</th>
-              <th
-                className={thSortClass}
-                onClick={() => handleSort("status")}
-              >
-                Satış Durumu
-                <SortIcon column="status" currentKey={sortKey} currentDir={sortDir} />
-              </th>
               <th className={thClass}>Yayın</th>
               <th className={thClass}>Öne Çıkan</th>
               <th className={thClass}>İşlemler</th>
@@ -705,7 +674,7 @@ export function PropertyDataTable({
             {paginated.length === 0 ? (
               <tr>
                 <td
-                  colSpan={12}
+                  colSpan={11}
                   className="px-3 py-8 text-center text-muted-foreground"
                 >
                   İlan bulunamadı.
@@ -756,6 +725,7 @@ export function PropertyDataTable({
                         href={`/emlak/${row.slug}`}
                         className="font-medium hover:underline line-clamp-2"
                         target="_blank"
+                        title={row.title}
                       >
                         {row.title}
                       </Link>
@@ -792,10 +762,6 @@ export function PropertyDataTable({
                       {row.agent?.name ?? "—"}
                     </td>
 
-                    {/* Status */}
-                    <td className="px-3 py-2">
-                      <StatusBadge status={row.status} />
-                    </td>
 
                     {/* Workflow status dropdown */}
                     <td className="px-3 py-2">
