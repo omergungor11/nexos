@@ -336,10 +336,13 @@ function CoverSlide({ property, theme, note }: SlideProps) {
           {labelForType(property.type)}
         </p>
         <h1
-          className="font-black leading-tight mb-3"
+          className="font-black leading-tight mb-3 line-clamp-2"
           style={{
             color: theme.text,
-            fontSize: "clamp(1.3rem, 2.8vw, 2rem)",
+            fontSize: "1.5rem",
+            // `vw` was unreliable on the scaled export surface; this gives
+            // a predictable ~7% of slide height and the line-clamp keeps
+            // long titles to two lines max.
           }}
         >
           {property.title}
