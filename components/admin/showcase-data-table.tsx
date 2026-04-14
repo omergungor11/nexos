@@ -259,11 +259,13 @@ export function ShowcaseDataTable({ rows }: ShowcaseDataTableProps) {
                             showLabels={false}
                           />
                           <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" disabled={pending}>
-                                <MoreHorizontal className="size-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
+                            <DropdownMenuTrigger
+                              render={
+                                <Button variant="ghost" size="icon" disabled={pending}>
+                                  <MoreHorizontal className="size-4" />
+                                </Button>
+                              }
+                            />
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
                                 render={<Link href={`/teklif/${row.slug}`} target="_blank" />}

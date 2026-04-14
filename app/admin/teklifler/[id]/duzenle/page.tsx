@@ -57,12 +57,14 @@ export default async function TeklifDuzenlePage({ params }: Props) {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button asChild variant="outline" size="sm" className="gap-1.5">
-            <Link href={`/teklif/${showcase.slug}`} target="_blank">
-              <Eye className="size-3.5" />
-              Önizle
-            </Link>
-          </Button>
+          <Link
+            href={`/teklif/${showcase.slug}`}
+            target="_blank"
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border bg-background px-3 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
+          >
+            <Eye className="size-3.5" />
+            Önizle
+          </Link>
           <ShowcaseLinkActions
             slug={showcase.slug}
             customerName={showcase.customer_name}
