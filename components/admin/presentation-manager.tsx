@@ -688,32 +688,18 @@ function PhotoSlide({ property, theme, note, photoIndex = 0, bannerText }: Slide
         />
       </div>
 
-      {/* Custom banner text — shown above the price bar */}
+      {/* Custom banner text — sits at the bottom now that the title/price
+          bar has been removed. */}
       {bannerText && (
         <div
-          className="absolute left-0 right-0 z-10 flex items-center justify-center px-8 py-2"
-          style={{
-            bottom: "72px",
-            backgroundColor: `${theme.bg}cc`,
-          }}
+          className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-center px-8 py-3"
+          style={{ backgroundColor: `${theme.bg}cc` }}
         >
           <p className="text-sm font-medium text-center" style={{ color: theme.text }}>
             {bannerText}
           </p>
         </div>
       )}
-
-      {/* Bottom info bar */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 flex items-end justify-between px-8 pb-6">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: `${theme.text}99` }}>
-            {property.title}
-          </p>
-          <p className="text-lg font-black" style={{ color: theme.text }}>
-            {formatPrice(property.price, property.currency, property.pricing_type)}
-          </p>
-        </div>
-      </div>
 
       {note && (
         <div
