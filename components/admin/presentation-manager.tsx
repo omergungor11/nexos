@@ -201,152 +201,6 @@ const DEFAULT_ENABLED_SLIDES: Set<SlideType> = new Set([
 const EXPORT_SLIDE_SCALE = 3;
 
 /**
- * Renders a static map at the given coordinates by stitching OpenStreetMap
- * tiles as plain <img> elements — the same tile server the public site
- * already uses for Leaflet. Avoids Google Maps' iframe (which renders
- * blank in html-to-image captures).
- *
- * Math: Mercator → tile number per OSM slippy map convention. We compute
- * the center point in world pixels, work out the visible tile range, and
- * absolutely position each 256×256 tile image. A marker overlay sits at
- * the exact geographic center.
- */
-function OsmStaticMap({
-  lat,
-  lng,
-  zoom,
-  accent,
-}: {
-  lat: number;
-  lng: number;
-  zoom: number;
-  accent: string;
-}) {
-  const n = 2 ** zoom;
-  const xf = ((lng + 180) / 360) * n;
-  const latRad = (lat * Math.PI) / 180;
-  const yf =
-    (1 -
-      Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) /
-    2 * n;
-
-  // Center expressed in world pixels (256 px per tile).
-  const centerPxX = xf * 256;
-  const centerPxY = yf * 256;
-
-  // Container viewport (logical px inside SlideRenderer). Width × height
-  // aren't known at render time because the parent uses flex-1; OSM tiles
-  // are 256×256 and we just paint a generous 5×3 grid so any reasonable
-  // container (~640×360 logical → 1920×1080 after the export scale) is
-  // covered on every side. Extra tiles are simply clipped by the parent's
-  // `overflow: hidden`.
-  const cols = 5;
-  const rows = 3;
-  const halfWpx = (cols * 256) / 2;
-  const halfHpx = (rows * 256) / 2;
-  const viewportPxX = centerPxX - halfWpx;
-  const viewportPxY = centerPxY - halfHpx;
-
-  const centerTileX = Math.floor(xf);
-  const centerTileY = Math.floor(yf);
-  const tiles: Array<{ x: number; y: number; left: number; top: number }> = [];
-  const spanX = Math.floor(cols / 2);
-  const spanY = Math.floor(rows / 2);
-  for (let dy = -spanY; dy <= spanY; dy++) {
-    for (let dx = -spanX; dx <= spanX; dx++) {
-      const tx = centerTileX + dx;
-      const ty = centerTileY + dy;
-      if (ty < 0 || ty >= n) continue;
-      const wrappedX = ((tx % n) + n) % n;
-      // Position relative to the viewport's top-left.
-      const left = tx * 256 - viewportPxX;
-      const top = ty * 256 - viewportPxY;
-      tiles.push({ x: wrappedX, y: ty, left, top });
-    }
-  }
-
-  // Marker pin goes at the exact viewport center (parent centers content
-  // via absolute positioning + inset-0 — we just absolute-place a pin).
-  const markerLeft = halfWpx;
-  const markerTop = halfHpx;
-
-  return (
-    <div
-      className="absolute inset-0 overflow-hidden"
-      style={{ backgroundColor: "#e5e3df" }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "50%",
-          width: cols * 256,
-          height: rows * 256,
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        {tiles.map((t) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={`${t.x}-${t.y}`}
-            src={`https://a.tile.openstreetmap.org/${zoom}/${t.x}/${t.y}.png`}
-            alt=""
-            width={256}
-            height={256}
-            crossOrigin="anonymous"
-            style={{
-              position: "absolute",
-              left: t.left,
-              top: t.top,
-              width: 256,
-              height: 256,
-              userSelect: "none",
-            }}
-          />
-        ))}
-
-        {/* Marker pin */}
-        <div
-          style={{
-            position: "absolute",
-            left: markerLeft,
-            top: markerTop,
-            transform: "translate(-50%, -100%)",
-            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))",
-            pointerEvents: "none",
-          }}
-        >
-          <svg width="36" height="48" viewBox="0 0 36 48" fill="none">
-            <path
-              d="M18 0C8.059 0 0 8.059 0 18c0 13.5 18 30 18 30s18-16.5 18-30c0-9.941-8.059-18-18-18z"
-              fill={accent}
-            />
-            <circle cx="18" cy="18" r="7" fill="#fff" />
-          </svg>
-        </div>
-      </div>
-
-      {/* Attribution bar — required by OSM tile usage policy */}
-      <div
-        style={{
-          position: "absolute",
-          right: 4,
-          bottom: 4,
-          padding: "1px 6px",
-          fontSize: 9,
-          fontWeight: 500,
-          borderRadius: 3,
-          backgroundColor: "rgba(255,255,255,0.85)",
-          color: "#444",
-        }}
-      >
-        © OpenStreetMap
-      </div>
-    </div>
-  );
-}
-
-/**
  * Converts a possibly-HTML description string (TipTap output) into clean
  * plain text for slide rendering. Block-level tags (p / br / li / div / h*)
  * become newlines so paragraph structure survives for `whitespace-pre-line`
@@ -948,46 +802,63 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
   );
 }
 
-/** Slide 6 — Location with real map */
+/** Slide 6 — Location
+ *
+ * Third-party map embeds / tile mosaics kept coming out blank in the
+ * PDF capture (cross-origin iframes and tile CDNs don't play nicely
+ * with html-to-image). The pragmatic replacement: use the property's
+ * own cover photo as a full-bleed backdrop and overlay a prominent
+ * location card with a big pin icon, district/city and coordinates.
+ * No external fetches during capture → renders identically in the
+ * preview and in the exported PDF every single time.
+ */
 function LocationSlide({ property, theme, note }: SlideProps) {
   const location = [property.district_name, property.city_name]
     .filter(Boolean)
     .join(", ");
   const hasCoords = property.lat != null && property.lng != null;
+  const bgImage = property.images[0];
 
   return (
     <div
-      className="flex flex-col h-full px-8 py-6 gap-4"
+      className="relative flex flex-col h-full overflow-hidden"
       style={{ backgroundColor: theme.bg }}
     >
-      <div>
-        <p
-          className="text-xs font-bold uppercase tracking-widest mb-0.5"
-          style={{ color: theme.muted }}
-        >
-          {property.title}
-        </p>
-        <h2 className="text-xl font-black flex items-center gap-2" style={{ color: theme.text }}>
-          <MapPin className="size-5" style={{ color: theme.accent }} />
-          Konum
-        </h2>
-      </div>
-
-      {/* Map — OSM tile mosaic. Plain <img> tiles are captured by
-          html-to-image cleanly; iframes (Google Maps embed) come out
-          blank in the PDF because of cross-origin restrictions. */}
-      <div className="flex-1 rounded-2xl overflow-hidden relative min-h-0">
-        {hasCoords ? (
-          <OsmStaticMap
-            lat={property.lat!}
-            lng={property.lng!}
-            zoom={14}
-            accent={theme.accent}
-          />
-        ) : (
+      {/* Backdrop — property photo blurred + darkened */}
+      {bgImage && (
+        <>
+          <div className="absolute inset-0">
+            <Image src={bgImage} alt="" fill className="object-cover" />
+          </div>
           <div
-            className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-            style={{ backgroundColor: theme.cardBg }}
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(135deg, ${theme.bg}e6 0%, ${theme.bg}d9 50%, ${theme.bg}f2 100%)`,
+            }}
+          />
+        </>
+      )}
+
+      <div className="relative flex flex-col h-full px-8 py-6 gap-4">
+        {/* Header */}
+        <div>
+          <p
+            className="text-[10px] font-bold uppercase tracking-widest mb-0.5"
+            style={{ color: theme.muted }}
+          >
+            {property.title}
+          </p>
+          <h2 className="text-lg font-black flex items-center gap-1.5" style={{ color: theme.text }}>
+            <MapPin className="size-4" style={{ color: theme.accent }} />
+            Konum
+          </h2>
+        </div>
+
+        {/* Centered location card */}
+        <div className="flex-1 flex items-center justify-center min-h-0">
+          <div
+            className="rounded-2xl px-8 py-6 flex flex-col items-center text-center gap-3 shadow-lg"
+            style={{ backgroundColor: `${theme.cardBg}f2`, borderLeft: `4px solid ${theme.accent}` }}
           >
             <div
               className="size-14 rounded-full flex items-center justify-center"
@@ -995,47 +866,62 @@ function LocationSlide({ property, theme, note }: SlideProps) {
             >
               <MapPin className="size-7" style={{ color: theme.accent }} />
             </div>
-            <p className="text-sm font-medium" style={{ color: theme.muted }}>
-              Koordinat bilgisi mevcut değil
-            </p>
-            {location && (
-              <p className="text-xs" style={{ color: theme.muted }}>
-                {location}
+            <div>
+              <p
+                className="text-[9px] font-bold uppercase tracking-widest mb-1"
+                style={{ color: theme.muted }}
+              >
+                Konum
               </p>
+              <p className="text-lg font-black leading-tight" style={{ color: theme.text }}>
+                {location || "—"}
+              </p>
+            </div>
+            {hasCoords && (
+              <div
+                className="rounded-md px-3 py-1.5"
+                style={{ backgroundColor: `${theme.accent}1a` }}
+              >
+                <p className="text-[11px] font-mono font-bold" style={{ color: theme.accent }}>
+                  {property.lat!.toFixed(5)}, {property.lng!.toFixed(5)}
+                </p>
+              </div>
             )}
           </div>
-        )}
-      </div>
-
-      {/* Location info bar */}
-      <div className="flex items-center gap-4">
-        <div
-          className="flex-1 rounded-xl px-4 py-3"
-          style={{ backgroundColor: theme.cardBg }}
-        >
-          <p className="text-xs font-medium mb-0.5" style={{ color: theme.muted }}>Konum</p>
-          <p className="font-bold text-sm" style={{ color: theme.text }}>
-            {location || "—"}
-          </p>
         </div>
-        {hasCoords && (
-          <div
-            className="rounded-xl px-4 py-3"
-            style={{ backgroundColor: `${theme.accent}1a` }}
+
+        {/* Footer chips */}
+        <div className="flex items-center justify-center gap-2">
+          {property.district_name && (
+            <span
+              className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
+              style={{ backgroundColor: `${theme.accent}22`, color: theme.accent }}
+            >
+              {property.district_name}
+            </span>
+          )}
+          {property.city_name && (
+            <span
+              className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
+              style={{ backgroundColor: `${theme.accent}22`, color: theme.accent }}
+            >
+              {property.city_name}
+            </span>
+          )}
+          <span
+            className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
+            style={{ backgroundColor: `${theme.accent}22`, color: theme.accent }}
           >
-            <p className="text-xs font-medium mb-0.5" style={{ color: theme.muted }}>Koordinat</p>
-            <p className="font-bold text-xs font-mono" style={{ color: theme.accent }}>
-              {property.lat!.toFixed(4)}, {property.lng!.toFixed(4)}
-            </p>
-          </div>
+            Kuzey Kıbrıs
+          </span>
+        </div>
+
+        {note && (
+          <p className="text-xs text-right" style={{ color: theme.muted }}>
+            {note}
+          </p>
         )}
       </div>
-
-      {note && (
-        <p className="text-xs text-right" style={{ color: theme.muted }}>
-          {note}
-        </p>
-      )}
     </div>
   );
 }
