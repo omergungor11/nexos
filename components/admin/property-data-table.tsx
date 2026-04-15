@@ -226,9 +226,29 @@ export function PropertyDataTable({
   const [rows, setRows] = useState<AdminPropertyRow[]>(initialData);
   const [search, setSearch] = useState("");
   const [workflowFilter, setWorkflowFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [cityFilter, setCityFilter] = useState<string>("all");
+  const [districtFilter, setDistrictFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>(initialTypeFilter ?? "all");
   const [transactionFilter, setTransactionFilter] = useState<string>("all");
+
+  // Unique cities present in the current data set.
+  const cityOptions = useMemo(() => {
+    const names = new Set<string>();
+    for (const r of rows) if (r.city?.name) names.add(r.city.name);
+    return Array.from(names).sort((a, b) => a.localeCompare(b, "tr"));
+  }, [rows]);
+
+  // Districts narrowed to the currently-selected city (falls back to every
+  // district when "Tüm Şehirler" is active).
+  const districtOptions = useMemo(() => {
+    const names = new Set<string>();
+    for (const r of rows) {
+      if (!r.district?.name) continue;
+      if (cityFilter !== "all" && r.city?.name !== cityFilter) continue;
+      names.add(r.district.name);
+    }
+    return Array.from(names).sort((a, b) => a.localeCompare(b, "tr"));
+  }, [rows, cityFilter]);
   const [sortKey, setSortKey] = useState<SortKey | null>("created_at");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [page, setPage] = useState(1);
@@ -249,8 +269,12 @@ export function PropertyDataTable({
       result = result.filter((r) => r.workflow_status === workflowFilter);
     }
 
-    if (statusFilter !== "all") {
-      result = result.filter((r) => r.status === statusFilter);
+    if (cityFilter !== "all") {
+      result = result.filter((r) => r.city?.name === cityFilter);
+    }
+
+    if (districtFilter !== "all") {
+      result = result.filter((r) => r.district?.name === districtFilter);
     }
 
     if (typeFilter !== "all") {
@@ -262,7 +286,7 @@ export function PropertyDataTable({
     }
 
     return result;
-  }, [rows, search, workflowFilter, statusFilter, typeFilter, transactionFilter]);
+  }, [rows, search, workflowFilter, cityFilter, districtFilter, typeFilter, transactionFilter]);
 
   // Sorting
   const sorted = useMemo(() => {
@@ -488,23 +512,48 @@ export function PropertyDataTable({
           </SelectContent>
         </Select>
 
-        <Select value={statusFilter} onValueChange={handleFilterChange(setStatusFilter)}>
+        <Select
+          value={cityFilter}
+          onValueChange={(v: string | null) => {
+            const next = v ?? "all";
+            setCityFilter(next);
+            // Reset district whenever city changes — its list depends on city.
+            setDistrictFilter("all");
+            setPage(1);
+          }}
+        >
           <SelectTrigger className="h-8 w-40">
-            <SelectValue placeholder="Satış Durumu">
-              {statusFilter === "all"
-                ? "Tüm Satış"
-                : statusFilter === "available" ? "Müsait"
-                : statusFilter === "sold" ? "Satıldı"
-                : statusFilter === "rented" ? "Kiralandı"
-                : "Rezerve"}
+            <SelectValue placeholder="Şehir">
+              {cityFilter === "all" ? "Tüm Şehirler" : cityFilter}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tüm Satış</SelectItem>
-            <SelectItem value="available">Müsait</SelectItem>
-            <SelectItem value="sold">Satıldı</SelectItem>
-            <SelectItem value="rented">Kiralandı</SelectItem>
-            <SelectItem value="reserved">Rezerve</SelectItem>
+            <SelectItem value="all">Tüm Şehirler</SelectItem>
+            {cityOptions.map((name) => (
+              <SelectItem key={name} value={name}>
+                {name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={districtFilter}
+          onValueChange={handleFilterChange(setDistrictFilter)}
+          disabled={districtOptions.length === 0}
+        >
+          <SelectTrigger className="h-8 w-40">
+            <SelectValue placeholder="İlçe">
+              {districtFilter === "all" ? "Tüm İlçeler" : districtFilter}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tüm İlçeler</SelectItem>
+            {districtOptions.map((name) => (
+              <SelectItem key={name} value={name}>
+                {name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
