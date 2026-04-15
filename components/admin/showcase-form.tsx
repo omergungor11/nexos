@@ -27,7 +27,6 @@ import {
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { PropertyMultiPicker } from "@/components/admin/property-multi-picker";
 import {
-  createShowcase,
   createShowcasesBulk,
   updateShowcase,
 } from "@/actions/showcases";
@@ -512,7 +511,7 @@ export function ShowcaseForm({
             ) : (
               <MessageCircle className="size-4" />
             )}
-            Kaydet ve WhatsApp'a Gönder
+            Kaydet ve WhatsApp&apos;a Gönder
           </Button>
         )}
       </div>
@@ -697,7 +696,7 @@ function BulkSuccessScreen({
               {created.length} teklif oluşturuldu
             </h2>
             <p className="text-xs text-muted-foreground">
-              Her müşteriye kendi linkiyle WhatsApp'tan gönderebilirsin.
+              Her müşteriye kendi linkiyle WhatsApp&apos;tan gönderebilirsin.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
