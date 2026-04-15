@@ -256,17 +256,15 @@ export function PropertyDataTable({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkPending, setBulkPending] = useState(false);
 
-  // Filtering
-  const filtered = useMemo(() => {
+  // Rows matching every filter EXCEPT workflow status — drives both the
+  // final table and the status-chip counts (so "Yayında (5)" reflects the
+  // 5 published items that still match the current search / city / type).
+  const filteredExceptWorkflow = useMemo(() => {
     let result = rows;
 
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       result = result.filter((r) => r.title.toLowerCase().includes(q));
-    }
-
-    if (workflowFilter !== "all") {
-      result = result.filter((r) => r.workflow_status === workflowFilter);
     }
 
     if (cityFilter !== "all") {
@@ -286,7 +284,25 @@ export function PropertyDataTable({
     }
 
     return result;
-  }, [rows, search, workflowFilter, cityFilter, districtFilter, typeFilter, transactionFilter]);
+  }, [rows, search, cityFilter, districtFilter, typeFilter, transactionFilter]);
+
+  const workflowCounts = useMemo(() => {
+    const counts: Record<PropertyWorkflowStatus, number> = {
+      draft: 0,
+      published: 0,
+      passive: 0,
+      archived: 0,
+    };
+    for (const r of filteredExceptWorkflow) counts[r.workflow_status]++;
+    return counts;
+  }, [filteredExceptWorkflow]);
+
+  const filtered = useMemo(() => {
+    if (workflowFilter === "all") return filteredExceptWorkflow;
+    return filteredExceptWorkflow.filter(
+      (r) => r.workflow_status === workflowFilter
+    );
+  }, [filteredExceptWorkflow, workflowFilter]);
 
   // Sorting
   const sorted = useMemo(() => {
@@ -481,6 +497,84 @@ export function PropertyDataTable({
     "px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground whitespace-nowrap";
   const thSortClass = `${thClass} cursor-pointer select-none hover:text-foreground`;
 
+  const statusChips: Array<{
+    key: "all" | PropertyWorkflowStatus;
+    label: string;
+    count: number;
+    activeClass: string;
+  }> = [
+    {
+      key: "all",
+      label: "Tümü",
+      count: filteredExceptWorkflow.length,
+      activeClass: "bg-foreground text-background border-foreground",
+    },
+    {
+      key: "published",
+      label: "Yayında",
+      count: workflowCounts.published,
+      activeClass:
+        "bg-emerald-600 text-white border-emerald-600 dark:bg-emerald-500 dark:border-emerald-500",
+    },
+    {
+      key: "draft",
+      label: "Taslak",
+      count: workflowCounts.draft,
+      activeClass:
+        "bg-slate-600 text-white border-slate-600 dark:bg-slate-500 dark:border-slate-500",
+    },
+    {
+      key: "passive",
+      label: "Pasif",
+      count: workflowCounts.passive,
+      activeClass:
+        "bg-amber-600 text-white border-amber-600 dark:bg-amber-500 dark:border-amber-500",
+    },
+    {
+      key: "archived",
+      label: "Arşiv",
+      count: workflowCounts.archived,
+      activeClass:
+        "bg-rose-600 text-white border-rose-600 dark:bg-rose-500 dark:border-rose-500",
+    },
+  ];
+
+  const statusChipsRow = (
+    <div className="flex flex-wrap items-center gap-1.5">
+      {statusChips.map((chip) => {
+        const active = workflowFilter === chip.key;
+        return (
+          <button
+            key={chip.key}
+            type="button"
+            onClick={() => {
+              setWorkflowFilter(chip.key);
+              setPage(1);
+            }}
+            className={
+              "inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors " +
+              (active
+                ? chip.activeClass
+                : "border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground")
+            }
+          >
+            <span>{chip.label}</span>
+            <span
+              className={
+                "inline-flex min-w-[1.25rem] justify-center rounded-full px-1 text-[10px] font-semibold " +
+                (active
+                  ? "bg-white/20 text-current"
+                  : "bg-muted text-foreground")
+              }
+            >
+              {chip.count}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <div className="space-y-4">
       {/* Filters */}
@@ -621,6 +715,9 @@ export function PropertyDataTable({
           </span>
         </div>
       </div>
+
+      {/* Status chips — quick workflow filter, right under the filter row */}
+      {statusChipsRow}
 
       {/* Bulk Actions Toolbar */}
       {selectedIds.size > 0 && (
