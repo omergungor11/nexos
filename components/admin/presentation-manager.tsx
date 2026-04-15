@@ -121,6 +121,11 @@ interface SlideProps {
   photoIndex?: number;
   bannerText?: string;
   customDescription?: string;
+  /** Pre-composed OSM map as a base64 data URL. Populated by the export
+   *  orchestrator (and the preview when it finishes fetching) so the
+   *  LocationSlide can render a real map without the capture pipeline
+   *  having to inline external tiles. */
+  mapDataUrl?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -199,6 +204,125 @@ const DEFAULT_ENABLED_SLIDES: Set<SlideType> = new Set([
 // the preview but occasionally got dropped by html-to-image's foreignObject
 // serialisation (preview OK, exported PDF broken); pixelRatio avoids that.
 const EXPORT_SLIDE_SCALE = 3;
+
+/**
+ * Composes an OpenStreetMap static map into a single base64 data URL by
+ * fetching tiles with `fetch()` (respects CORS, no <img> tainting), drawing
+ * them on a client-side canvas, and overlaying a marker pin at the center.
+ *
+ * Why this lives in the export pipeline instead of the DOM: html-to-image
+ * has to inline every <img> at capture time, and external tile URLs are
+ * flaky — one failed inline request and the whole slide comes out blank.
+ * Precomputing a data URL sidesteps that completely: the captured DOM only
+ * contains `<img src="data:…"/>`, which is already inline.
+ *
+ * Math: standard OSM slippy map convention (Web Mercator). Calculates the
+ * center point in world pixels, figures out the tile range visible in a
+ * `width × height` viewport, draws each 256×256 tile at its offset.
+ */
+async function composeOsmStaticMap(
+  lat: number,
+  lng: number,
+  zoom: number,
+  width: number,
+  height: number,
+  accent = "#eab308",
+): Promise<string> {
+  const n = 2 ** zoom;
+  const xf = ((lng + 180) / 360) * n;
+  const latRad = (lat * Math.PI) / 180;
+  const yf =
+    ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n;
+
+  const centerPxX = xf * 256;
+  const centerPxY = yf * 256;
+  const viewportLeft = centerPxX - width / 2;
+  const viewportTop = centerPxY - height / 2;
+
+  const tileMinX = Math.floor(viewportLeft / 256);
+  const tileMaxX = Math.floor((viewportLeft + width) / 256);
+  const tileMinY = Math.floor(viewportTop / 256);
+  const tileMaxY = Math.floor((viewportTop + height) / 256);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas context not available");
+
+  // Base color — visible if any tile fails.
+  ctx.fillStyle = "#e5e3df";
+  ctx.fillRect(0, 0, width, height);
+
+  // Fetch every tile in parallel. Spread across a/b/c subdomains to stay
+  // inside tile.openstreetmap.org's per-subdomain request limits.
+  const subdomains = ["a", "b", "c"] as const;
+  const tileJobs: Promise<void>[] = [];
+  for (let ty = tileMinY; ty <= tileMaxY; ty++) {
+    for (let tx = tileMinX; tx <= tileMaxX; tx++) {
+      if (ty < 0 || ty >= n) continue;
+      const wrappedX = ((tx % n) + n) % n;
+      const sub = subdomains[(tx + ty) % subdomains.length];
+      const url = `https://${sub}.tile.openstreetmap.org/${zoom}/${wrappedX}/${ty}.png`;
+      const drawX = tx * 256 - viewportLeft;
+      const drawY = ty * 256 - viewportTop;
+      tileJobs.push(
+        (async () => {
+          try {
+            const res = await fetch(url, { mode: "cors" });
+            if (!res.ok) return;
+            const blob = await res.blob();
+            const bitmap = await createImageBitmap(blob);
+            ctx.drawImage(bitmap, drawX, drawY);
+            bitmap.close?.();
+          } catch {
+            // swallow — missing tile just leaves the base color showing
+          }
+        })(),
+      );
+    }
+  }
+  await Promise.all(tileJobs);
+
+  // Marker pin at the map center. Classic teardrop with accent fill +
+  // white dot + drop shadow.
+  const cx = width / 2;
+  const cy = height / 2;
+  const pinR = 22;
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.4)";
+  ctx.shadowBlur = 12;
+  ctx.shadowOffsetY = 4;
+  ctx.fillStyle = accent;
+  ctx.beginPath();
+  ctx.arc(cx, cy - pinR, pinR, Math.PI, 0, false);
+  ctx.lineTo(cx + pinR * 0.35, cy);
+  ctx.lineTo(cx, cy + pinR * 0.6);
+  ctx.lineTo(cx - pinR * 0.35, cy);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.arc(cx, cy - pinR, pinR * 0.4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // OSM attribution per tile usage policy.
+  ctx.fillStyle = "rgba(255,255,255,0.85)";
+  const attribW = 120;
+  const attribH = 16;
+  ctx.fillRect(width - attribW - 6, height - attribH - 6, attribW, attribH);
+  ctx.fillStyle = "#444";
+  ctx.font = "10px sans-serif";
+  ctx.textBaseline = "middle";
+  ctx.fillText(
+    "© OpenStreetMap",
+    width - attribW - 2,
+    height - attribH / 2 - 6,
+  );
+
+  return canvas.toDataURL("image/png");
+}
 
 /**
  * Converts a possibly-HTML description string (TipTap output) into clean
@@ -812,7 +936,7 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
  * No external fetches during capture → renders identically in the
  * preview and in the exported PDF every single time.
  */
-function LocationSlide({ property, theme, note }: SlideProps) {
+function LocationSlide({ property, theme, note, mapDataUrl }: SlideProps) {
   const location = [property.district_name, property.city_name]
     .filter(Boolean)
     .join(", ");
@@ -824,8 +948,26 @@ function LocationSlide({ property, theme, note }: SlideProps) {
       className="relative flex flex-col h-full overflow-hidden"
       style={{ backgroundColor: theme.bg }}
     >
-      {/* Backdrop — property photo blurred + darkened */}
-      {bgImage && (
+      {/* Backdrop: pre-composed OSM map when available; fall back to the
+          property photo so the slide still reads nicely if the map hasn't
+          composed yet (preview loading state). */}
+      {mapDataUrl ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={mapDataUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {/* Subtle vignette so the centered card stays readable */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at center, transparent 45%, ${theme.bg}99 100%)`,
+            }}
+          />
+        </>
+      ) : bgImage ? (
         <>
           <div className="absolute inset-0">
             <Image src={bgImage} alt="" fill className="object-cover" />
@@ -837,7 +979,7 @@ function LocationSlide({ property, theme, note }: SlideProps) {
             }}
           />
         </>
-      )}
+      ) : null}
 
       <div className="relative flex flex-col h-full px-8 py-6 gap-4">
         {/* Header */}
@@ -1313,6 +1455,7 @@ function SlideRenderer({
   photoIndex,
   bannerText,
   customDescription,
+  mapDataUrl,
 }: {
   property: PropertyForPresentation;
   slideType: SlideType;
@@ -1321,6 +1464,7 @@ function SlideRenderer({
   photoIndex?: number;
   bannerText?: string;
   customDescription?: string;
+  mapDataUrl?: string | null;
 }) {
   switch (slideType) {
     case "cover":
@@ -1334,7 +1478,7 @@ function SlideRenderer({
     case "description":
       return <DescriptionSlide property={property} theme={theme} note={note} customDescription={customDescription} />;
     case "location":
-      return <LocationSlide property={property} theme={theme} note={note} />;
+      return <LocationSlide property={property} theme={theme} note={note} mapDataUrl={mapDataUrl} />;
     case "why_cyprus":
       return <WhyCyprusSlide theme={theme} note={note} />;
     case "investment":
@@ -1536,6 +1680,12 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
   const exportCapturesRef = useRef<string[]>([]);
   const exportSurfaceRef = useRef<HTMLDivElement>(null);
   const exporting = exportJob !== null;
+
+  // Per-(lat,lng,zoom) cache of pre-composed OSM maps so a second export
+  // using the same property reuses the data URL without refetching tiles.
+  const mapCacheRef = useRef<Record<string, string>>({});
+  // Preview + export map URL for the currently-rendering LocationSlide.
+  const [currentMapDataUrl, setCurrentMapDataUrl] = useState<string | null>(null);
 
   // Derived
   const themeColors = THEMES[theme];
