@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { logAdminAction } from "@/lib/admin-logger";
 import type {
   PropertyShowcase,
+  ShowcaseBulkCreateInput,
   ShowcaseCreateInput,
   ShowcaseUpdateInput,
 } from "@/types/showcase";
@@ -122,6 +123,112 @@ export async function createShowcase(
   });
 
   return { data: showcase };
+}
+
+// ---------------------------------------------------------------------------
+// createShowcasesBulk — one payload, N recipients, N rows with unique slugs.
+// Rolls back all inserted rows if item-link inserts fail for any of them,
+// so a half-created batch never ends up in the DB.
+// ---------------------------------------------------------------------------
+
+const MAX_RECIPIENTS_PER_BULK = 50;
+
+export async function createShowcasesBulk(
+  input: ShowcaseBulkCreateInput
+): Promise<ActionResult<PropertyShowcase[]>> {
+  const { error: authError, supabase, userId } = await requireAdmin();
+  if (authError || !supabase) {
+    return { error: authError ?? "Kimlik doğrulama hatası" };
+  }
+
+  if (!input.title.trim()) return { error: "Başlık zorunludur." };
+  if (input.property_ids.length === 0)
+    return { error: "En az bir ilan seçmelisiniz." };
+  if (input.property_ids.length > MAX_PROPERTIES_PER_SHOWCASE) {
+    return {
+      error: `En fazla ${MAX_PROPERTIES_PER_SHOWCASE} ilan eklenebilir.`,
+    };
+  }
+  if (!input.recipients.length)
+    return { error: "En az bir müşteri eklemelisiniz." };
+  if (input.recipients.length > MAX_RECIPIENTS_PER_BULK) {
+    return {
+      error: `Tek seferde en fazla ${MAX_RECIPIENTS_PER_BULK} müşteri eklenebilir.`,
+    };
+  }
+
+  const cleaned = input.recipients.map((r) => ({
+    customer_name: r.customer_name.trim(),
+    customer_phone: r.customer_phone.trim(),
+  }));
+
+  for (const r of cleaned) {
+    if (!r.customer_name) return { error: "Tüm müşterilerin adı dolu olmalı." };
+    if (!r.customer_phone)
+      return { error: "Tüm müşterilerin telefonu dolu olmalı." };
+  }
+
+  const titleTrim = input.title.trim();
+  const descriptionTrim = input.description?.trim() || null;
+
+  const rowsToInsert = cleaned.map((r) => ({
+    slug: generateSlug(),
+    title: titleTrim,
+    description: descriptionTrim,
+    customer_name: r.customer_name,
+    customer_phone: r.customer_phone,
+    agent_id: input.agent_id ?? null,
+    created_by: userId,
+    expires_at: input.expires_at ?? null,
+  }));
+
+  const { data: createdRows, error: createErr } = await supabase
+    .from("property_showcases")
+    .insert(rowsToInsert)
+    .select();
+
+  if (createErr || !createdRows) {
+    return { error: createErr?.message ?? "Teklifler oluşturulamadı." };
+  }
+
+  const showcases = createdRows as unknown as PropertyShowcase[];
+
+  // Fan out property_showcase_items for every created showcase.
+  const itemRows = showcases.flatMap((s) =>
+    input.property_ids.map((pid, index) => ({
+      showcase_id: s.id,
+      property_id: pid,
+      sort_order: index,
+    }))
+  );
+
+  const { error: itemsErr } = await supabase
+    .from("property_showcase_items")
+    .insert(itemRows);
+
+  if (itemsErr) {
+    await supabase
+      .from("property_showcases")
+      .delete()
+      .in(
+        "id",
+        showcases.map((s) => s.id)
+      );
+    return { error: `İlanlar eklenemedi: ${itemsErr.message}` };
+  }
+
+  bust();
+  void logAdminAction({
+    action: "bulk_update",
+    entityType: "property",
+    metadata: {
+      showcase_ids: showcases.map((s) => s.id),
+      recipient_count: showcases.length,
+      property_count: input.property_ids.length,
+    },
+  });
+
+  return { data: showcases };
 }
 
 // ---------------------------------------------------------------------------

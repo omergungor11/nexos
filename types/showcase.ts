@@ -61,3 +61,14 @@ export type ShowcaseUpdateInput = Partial<
   property_ids?: string[];
   is_archived?: boolean;
 };
+
+export interface ShowcaseRecipient {
+  customer_name: string;
+  customer_phone: string;
+}
+
+// Bulk fan-out: same content, many recipients, one row + slug each.
+export interface ShowcaseBulkCreateInput
+  extends Omit<ShowcaseCreateInput, "customer_name" | "customer_phone"> {
+  recipients: ShowcaseRecipient[];
+}
