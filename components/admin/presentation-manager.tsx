@@ -1681,11 +1681,28 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
   const exportSurfaceRef = useRef<HTMLDivElement>(null);
   const exporting = exportJob !== null;
 
-  // Per-(lat,lng,zoom) cache of pre-composed OSM maps so a second export
-  // using the same property reuses the data URL without refetching tiles.
+  // Per-(lat,lng) cache of pre-composed OSM maps so a second export or
+  // a slide revisit reuses the data URL without refetching tiles.
   const mapCacheRef = useRef<Record<string, string>>({});
   // Preview + export map URL for the currently-rendering LocationSlide.
   const [currentMapDataUrl, setCurrentMapDataUrl] = useState<string | null>(null);
+
+  const ensureMapDataUrl = useCallback(
+    async (lat: number | null | undefined, lng: number | null | undefined) => {
+      if (lat == null || lng == null) return null;
+      const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+      if (mapCacheRef.current[key]) return mapCacheRef.current[key];
+      try {
+        const url = await composeOsmStaticMap(lat, lng, 14, 1280, 720);
+        mapCacheRef.current[key] = url;
+        return url;
+      } catch (err) {
+        console.warn("OSM static map compose failed:", err);
+        return null;
+      }
+    },
+    [],
+  );
 
   // Derived
   const themeColors = THEMES[theme];
@@ -1746,6 +1763,25 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
       return [...filtered, ...missing];
     });
   }, [allSlideItems]);
+
+  // When the active property changes (or the page first loads), kick off a
+  // background map compose for the preview. Non-blocking — the slide
+  // renders its photo fallback until the map is ready, then swaps to the
+  // composed OSM map. Cached so repeated visits are instant.
+  useEffect(() => {
+    let cancelled = false;
+    if (!activeProperty || activeProperty.lat == null || activeProperty.lng == null) {
+      setCurrentMapDataUrl(null);
+      return;
+    }
+    (async () => {
+      const url = await ensureMapDataUrl(activeProperty.lat, activeProperty.lng);
+      if (!cancelled) setCurrentMapDataUrl(url);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeProperty, ensureMapDataUrl]);
 
   // activeSlides: ordered by slideOrder, filtered by enabledSlides
   const activeSlides = useMemo(() => {
@@ -1965,6 +2001,27 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
       const surface = exportSurfaceRef.current;
       if (!surface) return;
 
+      // If this is a location slide with coordinates, make sure the OSM
+      // map is composed (cached after the first call) and swap it into
+      // state so the re-render sees it before the rAF/paint wait below.
+      const current = exportJob.tuples[exportIdx];
+      if (
+        current?.slideType === "location" &&
+        current.property.lat != null &&
+        current.property.lng != null
+      ) {
+        const url = await ensureMapDataUrl(
+          current.property.lat,
+          current.property.lng,
+        );
+        if (cancelled) return;
+        setCurrentMapDataUrl(url);
+      } else {
+        // Non-location slides don't care; clear so a stale map doesn't
+        // flash into the capture if React re-uses a subtree.
+        setCurrentMapDataUrl(null);
+      }
+
       // Two rAFs to ensure React has committed + browser has painted
       await new Promise<void>((r) =>
         requestAnimationFrame(() => requestAnimationFrame(() => r()))
@@ -2163,6 +2220,7 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                 photoIndex={exportCurrent.photoIndex}
                 bannerText={exportCurrent.bannerText}
                 customDescription={exportCurrent.customDescription}
+                mapDataUrl={currentMapDataUrl}
               />
             )}
           </div>
@@ -2593,6 +2651,7 @@ export function PresentationManager({ properties }: PresentationManagerProps) {
                       ? customDescriptions[activeProperty.id]
                       : undefined
                   }
+                  mapDataUrl={currentMapDataUrl}
                 />
               </div>
 
