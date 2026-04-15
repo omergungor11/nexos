@@ -337,6 +337,7 @@ export function ShowcaseForm({
   }
 
   return (
+    <div className="space-y-6">
     <form
       onSubmit={(e) => {
         e.preventDefault();
@@ -516,6 +517,24 @@ export function ShowcaseForm({
         )}
       </div>
     </form>
+
+      {/* Edit-mode only: clone this showcase to additional recipients */}
+      {mode === "edit" && initial && (
+        <AddRecipientsPanel
+          shared={{
+            title: title.trim(),
+            description: description.trim() || null,
+            agent_id: agentId === AGENT_NONE ? null : agentId,
+            expires_at: expiresAt
+              ? new Date(`${expiresAt}T23:59:59`).toISOString()
+              : null,
+            property_ids: propertyIds,
+          }}
+          agentName={agents.find((a) => a.id === agentId)?.name}
+          canSubmit={propertyIds.length > 0 && title.trim().length > 0}
+        />
+      )}
+    </div>
   );
 }
 
@@ -756,5 +775,196 @@ function BulkSuccessScreen({
         })}
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// AddRecipientsPanel — edit-mode companion that clones the current showcase
+// content to N additional recipients. Each clone becomes its own row + slug
+// via createShowcasesBulk, so the original row stays untouched.
+// ---------------------------------------------------------------------------
+
+interface AddRecipientsPanelProps {
+  shared: {
+    title: string;
+    description: string | null;
+    agent_id: string | null;
+    expires_at: string | null;
+    property_ids: string[];
+  };
+  agentName?: string;
+  canSubmit: boolean;
+}
+
+function AddRecipientsPanel({
+  shared,
+  agentName,
+  canSubmit,
+}: AddRecipientsPanelProps) {
+  const [pending, startTransition] = useTransition();
+  const [recipients, setRecipients] = useState<Recipient[]>([newRecipient()]);
+  const [bulkPaste, setBulkPaste] = useState("");
+  const [created, setCreated] = useState<PropertyShowcase[] | null>(null);
+
+  function handleAdd() {
+    setRecipients((rs) => [...rs, newRecipient()]);
+  }
+  function handleRemove(id: string) {
+    setRecipients((rs) => (rs.length <= 1 ? rs : rs.filter((r) => r.id !== id)));
+  }
+  function handleChange(id: string, patch: Partial<Recipient>) {
+    setRecipients((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+  }
+  function handleApplyPaste() {
+    const parsed = parseBulkPaste(bulkPaste);
+    if (parsed.length === 0) {
+      toast.error("Yapıştırdığın metinden telefon numarası okunamadı.");
+      return;
+    }
+    setRecipients((rs) => {
+      const hasTyped = rs.some((r) => r.name.trim() || r.phone.trim());
+      return hasTyped ? [...rs, ...parsed] : parsed;
+    });
+    setBulkPaste("");
+    toast.success(`${parsed.length} müşteri eklendi.`);
+  }
+
+  function validate(): string | null {
+    if (!canSubmit)
+      return "Önce teklifi kaydetmeniz ve en az bir ilan seçmeniz gerekiyor.";
+    const cleaned = recipients
+      .map((r) => ({ name: r.name.trim(), phone: r.phone.trim() }))
+      .filter((r) => r.name || r.phone);
+    if (cleaned.length === 0) return "En az bir müşteri ekleyin.";
+    for (const r of cleaned) {
+      if (!r.name) return "Her müşterinin adı dolu olmalı.";
+      if (!r.phone) return "Her müşterinin telefonu dolu olmalı.";
+      if (!isValidPhone(r.phone))
+        return `"${r.name}" için telefon numarası geçersiz görünüyor.`;
+    }
+    const seen = new Set<string>();
+    for (const r of cleaned) {
+      const norm = r.phone.replace(/\D/g, "");
+      if (seen.has(norm)) return `Aynı telefon tekrar girildi: ${r.phone}`;
+      seen.add(norm);
+    }
+    return null;
+  }
+
+  function handleSubmit() {
+    const err = validate();
+    if (err) {
+      toast.error(err);
+      return;
+    }
+    startTransition(async () => {
+      const result = await createShowcasesBulk({
+        ...shared,
+        recipients: recipients
+          .map((r) => ({
+            customer_name: r.name.trim(),
+            customer_phone: r.phone.trim(),
+          }))
+          .filter((r) => r.customer_name && r.customer_phone),
+      });
+      if (result.error || !result.data) {
+        toast.error(result.error ?? "Oluşturulamadı");
+        return;
+      }
+      toast.success(
+        result.data.length === 1
+          ? "Teklif oluşturuldu"
+          : `${result.data.length} yeni teklif oluşturuldu`
+      );
+      setCreated(result.data);
+      setRecipients([newRecipient()]);
+    });
+  }
+
+  function sendWhatsApp(s: PropertyShowcase) {
+    const url = `${window.location.origin}/teklif/${s.slug}`;
+    const message = buildShowcaseMessage({
+      customerName: s.customer_name,
+      title: s.title,
+      url,
+      agentName,
+    });
+    const waUrl = buildWhatsAppUrl({ phone: s.customer_phone, text: message });
+    if (!waUrl) {
+      toast.error("WhatsApp linki oluşturulamadı.");
+      return;
+    }
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+  }
+
+  return (
+    <section className="rounded-xl border border-dashed bg-card p-4 space-y-4">
+      <div>
+        <h2 className="text-sm font-semibold">
+          Bu Teklifi Başka Müşterilere de Gönder
+        </h2>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Aynı ilanlar ve başlıkla yeni teklifler oluşturur. Her müşteri kendi
+          kişisel linkini alır.
+        </p>
+      </div>
+
+      <RecipientRepeater
+        recipients={recipients}
+        onAdd={handleAdd}
+        onRemove={handleRemove}
+        onChange={handleChange}
+        bulkPaste={bulkPaste}
+        onBulkPasteChange={setBulkPaste}
+        onApplyPaste={handleApplyPaste}
+      />
+
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <Button
+          type="button"
+          onClick={handleSubmit}
+          disabled={pending || !canSubmit}
+          className="gap-1.5"
+        >
+          {pending ? (
+            <LoaderCircle className="size-4 animate-spin" />
+          ) : (
+            <Plus className="size-4" />
+          )}
+          Yeni Teklif Oluştur
+        </Button>
+      </div>
+
+      {created && created.length > 0 && (
+        <div className="divide-y rounded-lg border bg-background">
+          <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
+            Yeni oluşturulan teklifler
+          </div>
+          {created.map((s) => (
+            <div
+              key={s.id}
+              className="flex flex-wrap items-center justify-between gap-2 px-3 py-2"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium">
+                  {s.customer_name}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {s.customer_phone} · /teklif/{s.slug}
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => sendWhatsApp(s)}
+                className="gap-1.5 bg-[#25D366] text-white hover:bg-[#1ea952]"
+              >
+                <MessageCircle className="size-3.5" />
+                WhatsApp
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
