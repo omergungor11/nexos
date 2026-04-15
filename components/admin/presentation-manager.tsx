@@ -809,17 +809,63 @@ function DescriptionSlide({ property, theme, note, customDescription }: SlidePro
  * paragraph below. No external fetches, no capture surprises — PDF
  * and preview are guaranteed to match.
  */
-function LocationSlide({ property, theme, note }: SlideProps) {
-  const city = property.city_name;
-  const district = property.district_name;
+// Four corporate location-slide copy variants. Chosen deterministically
+// per property so the same listing always renders the same block (preview
+// matches PDF), but different listings rotate through all four angles.
+type LocationCopyKey = "yatirim" | "yasam" | "altyapi" | "turizm";
 
-  // Short copy that reads well whether the property is in a major city
-  // or a smaller district. Kept in Turkish to match the rest of the deck.
-  const districtLine = district
-    ? `${district}, ${city || "Kuzey Kıbrıs"}'ta yükselen değeri olan, altyapısı tamamlanmış ve yatırıma uygun bir bölgedir.`
-    : city
-      ? `${city}, Kuzey Kıbrıs'ın hızla gelişen ve yatırım değeri sürekli artan bölgelerinden biridir.`
-      : "Kuzey Kıbrıs, Akdeniz'in yükselen yatırım bölgelerinden biridir.";
+interface LocationCopy {
+  angle: string; // eyebrow line above the body
+  p1: (district: string, city: string) => string;
+  p2: string;
+}
+
+const LOCATION_COPY: Record<LocationCopyKey, LocationCopy> = {
+  yatirim: {
+    angle: "Yatırım Perspektifi",
+    p1: (district, city) =>
+      `${district}, ${city}'nin emlak pazarında stratejik bir konuma sahiptir. Bölge; istikrarlı talep ve uzun vadeli değer oluşumu için elverişli demografik ve ekonomik koşulları bir arada sunmaktadır.`,
+    p2:
+      "Kuzey Kıbrıs'ın olgunlaşan gayrimenkul piyasası, kurumsal yatırımcıların yerleşim kalitesi ve sosyal altyapı kriterleriyle değerlendirdiği bir segmenttir.",
+  },
+  yasam: {
+    angle: "Yaşam Kalitesi",
+    p1: (district, city) =>
+      `${district}, ${city}'nin seçkin yerleşim alanlarından biri olarak konut dokusu, peyzaj ve erişilebilirlik açısından ayırt edici özellikler taşımaktadır. Günlük ihtiyaçlara yakınlık ve sosyal tesisler, bölgenin kalıcı değerini tanımlar.`,
+    p2:
+      "Kuzey Kıbrıs'ın Akdeniz iklimi; kıyıya, yeşil alanlara ve kültürel merkezlere erişim kolaylığı ile birleşerek yüksek bir yaşam standardını mümkün kılmaktadır.",
+  },
+  altyapi: {
+    angle: "Altyapı ve Gelişim",
+    p1: (district, city) =>
+      `${district}, ulaşım ağlarının güçlendirildiği ve kamu hizmetlerinin iyileştirildiği bir coğrafyada yer almaktadır. ${city}'nin planlı gelişim eksenine paralel olarak bölgenin erişilebilirliği sürekli olarak artmaktadır.`,
+    p2:
+      "İdari, ticari ve sağlık tesislerinin merkezi yoğunluğu; çevre yerleşimlerdeki değer dinamiklerini olumlu yönde şekillendiren başlıca etkenler arasındadır.",
+  },
+  turizm: {
+    angle: "Turizm ve Doğal Çevre",
+    p1: (district, city) =>
+      `${district}, Akdeniz turizminin yoğun olduğu ${city} çevresinde, turist akışına ve sezonsal canlılığa yakın bir konumda bulunmaktadır. Bu yapı, gayrimenkul talebinin kısa ve uzun dönem arasında dengelenmesine zemin hazırlar.`,
+    p2:
+      "Bölgenin doğal coğrafyası — kıyı şeridi, yeşil alanlar ve kültür merkezleri — hem yerli hem yabancı talebi destekleyen kalıcı unsurlar olarak öne çıkmaktadır.",
+  },
+};
+
+/** Deterministic hash → pick a copy variant from a property id. */
+function pickLocationCopy(propertyId: string): LocationCopy {
+  const keys = Object.keys(LOCATION_COPY) as LocationCopyKey[];
+  let h = 0;
+  for (let i = 0; i < propertyId.length; i++) {
+    h = (h * 31 + propertyId.charCodeAt(i)) >>> 0;
+  }
+  return LOCATION_COPY[keys[h % keys.length]];
+}
+
+function LocationSlide({ property, theme, note }: SlideProps) {
+  const city = property.city_name || "Kuzey Kıbrıs";
+  const district = property.district_name || city;
+
+  const copy = pickLocationCopy(property.id);
 
   return (
     <div
@@ -842,20 +888,20 @@ function LocationSlide({ property, theme, note }: SlideProps) {
 
       {/* Location chips */}
       <div className="flex flex-wrap items-center gap-2">
-        {district && (
+        {property.district_name && (
           <span
             className="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider"
             style={{ backgroundColor: theme.accent, color: "#171717" }}
           >
-            {district}
+            {property.district_name}
           </span>
         )}
-        {city && (
+        {property.city_name && (
           <span
             className="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider"
             style={{ backgroundColor: `${theme.accent}33`, color: theme.accent }}
           >
-            {city}
+            {property.city_name}
           </span>
         )}
         <span
@@ -874,18 +920,17 @@ function LocationSlide({ property, theme, note }: SlideProps) {
           borderLeft: `4px solid ${theme.accent}`,
         }}
       >
+        <p
+          className="text-[10px] font-bold uppercase tracking-widest"
+          style={{ color: theme.accent }}
+        >
+          {copy.angle}
+        </p>
         <p className="text-sm leading-relaxed" style={{ color: theme.text }}>
-          {districtLine}
+          {copy.p1(district, city)}
         </p>
         <p className="text-xs leading-relaxed" style={{ color: `${theme.text}cc` }}>
-          Akdeniz'in ılıman iklimi, uzun turizm sezonu ve yükselen turist
-          sayısı sayesinde bölge kiralık ve satılık talebi açısından
-          canlılığını korumaktadır. Gelişen altyapı, yeni ulaşım yatırımları
-          ve düzenli fiyat artışları bu lokasyonu orta-uzun vade için
-          cazip kılmaktadır.
-        </p>
-        <p className="text-[11px] italic" style={{ color: theme.muted }}>
-          * Geçmiş performans gelecek getiri garantisi değildir.
+          {copy.p2}
         </p>
       </div>
 
