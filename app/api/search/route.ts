@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { parseSearchQuery } from "@/lib/search-parser";
 
 const SEARCH_SELECT = `
   id, slug, title, price, currency, type, transaction_type,
@@ -12,134 +13,6 @@ const SEARCH_SELECT = `
 const SEARCH_LIMIT = 10;
 const MIN_QUERY_LENGTH = 2;
 
-// ---------------------------------------------------------------------------
-// Keyword → filter maps (Turkish)
-// ---------------------------------------------------------------------------
-
-const TX_KEYWORDS: Record<string, string> = {
-  satılık: "sale",
-  satilik: "sale",
-  satılik: "sale",
-  kiralık: "rent",
-  kiralik: "rent",
-  günlük: "daily_rental",
-  gunluk: "daily_rental",
-  "günlük kiralık": "daily_rental",
-  "gunluk kiralik": "daily_rental",
-};
-
-const TYPE_KEYWORDS: Record<string, string> = {
-  daire: "apartment",
-  villa: "villa",
-  "ikiz villa": "twin_villa",
-  penthouse: "penthouse",
-  bungalow: "bungalow",
-  "müstakil": "detached",
-  mustakil: "detached",
-  "müstakil ev": "detached",
-  arsa: "residential_land",
-  dükkan: "shop",
-  dukkan: "shop",
-  ofis: "office",
-  tarla: "field",
-  otel: "hotel",
-  stüdyo: "studio",
-  studyo: "studio",
-};
-
-/** Normalize Turkish chars for matching */
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/İ/g, "i")
-    .replace(/I/g, "ı")
-    .replace(/ğ/g, "g")
-    .replace(/Ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/Ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/Ş/g, "s")
-    .replace(/ö/g, "o")
-    .replace(/Ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/Ç/g, "c");
-}
-
-interface ParsedQuery {
-  transactionType: string | null;
-  propertyType: string | null;
-  remainingText: string[];
-}
-
-function parseQuery(raw: string): ParsedQuery {
-  const lower = raw.toLowerCase().trim();
-  const normalized = normalize(raw);
-  let words = lower.split(/\s+/);
-  let transactionType: string | null = null;
-  let propertyType: string | null = null;
-
-  // Check multi-word phrases first (e.g. "günlük kiralık", "ikiz villa", "müstakil ev")
-  const fullPhrase = words.join(" ");
-  const fullNorm = normalize(fullPhrase);
-  for (const [kw, val] of Object.entries(TX_KEYWORDS)) {
-    if (fullPhrase.includes(kw) || fullNorm.includes(normalize(kw))) {
-      transactionType = val;
-      // Remove matched words
-      const kwWords = kw.split(" ");
-      words = words.filter((w) => !kwWords.includes(w) && !kwWords.includes(normalize(w)));
-      break;
-    }
-  }
-
-  const remaining = words.join(" ");
-  const remainNorm = normalize(remaining);
-  for (const [kw, val] of Object.entries(TYPE_KEYWORDS)) {
-    if (remaining.includes(kw) || remainNorm.includes(normalize(kw))) {
-      propertyType = val;
-      const kwWords = kw.split(" ");
-      words = words.filter((w) => !kwWords.includes(w) && !kwWords.includes(normalize(w)));
-      break;
-    }
-  }
-
-  // Single-word fallbacks (if multi-word didn't match)
-  if (!transactionType) {
-    for (let i = 0; i < words.length; i++) {
-      const w = words[i];
-      const n = normalize(w);
-      for (const [kw, val] of Object.entries(TX_KEYWORDS)) {
-        if (w === kw || n === normalize(kw)) {
-          transactionType = val;
-          words.splice(i, 1);
-          break;
-        }
-      }
-      if (transactionType) break;
-    }
-  }
-
-  if (!propertyType) {
-    for (let i = 0; i < words.length; i++) {
-      const w = words[i];
-      const n = normalize(w);
-      for (const [kw, val] of Object.entries(TYPE_KEYWORDS)) {
-        if (w === kw || n === normalize(kw)) {
-          propertyType = val;
-          words.splice(i, 1);
-          break;
-        }
-      }
-      if (propertyType) break;
-    }
-  }
-
-  return {
-    transactionType,
-    propertyType,
-    remainingText: words.filter((w) => w.length >= 2),
-  };
-}
-
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get("q");
 
@@ -147,7 +20,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ data: [], meta: { total: 0 } });
   }
 
-  const parsed = parseQuery(q.trim());
+  const parsed = parseSearchQuery(q.trim());
   const supabase = await createClient();
 
   let query = supabase
@@ -162,10 +35,16 @@ export async function GET(request: NextRequest) {
   if (parsed.propertyType) {
     query = query.eq("type", parsed.propertyType);
   }
+  if (parsed.rooms !== null) {
+    query = query.eq("rooms", parsed.rooms);
+  }
+  if (parsed.livingRooms !== null) {
+    query = query.eq("living_rooms", parsed.livingRooms);
+  }
 
   // Remaining text → check city/district names + title/address/description
   if (parsed.remainingText.length > 0) {
-    const textQ = parsed.remainingText.join(" ");
+    const textQ = parsed.remainingText;
     const pattern = `%${textQ}%`;
 
     // Look up city by name

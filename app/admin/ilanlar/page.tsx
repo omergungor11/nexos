@@ -26,7 +26,7 @@ export default async function AdminIlanlarPage({ searchParams }: Props) {
       .select(
         `
         id, listing_number, slug, title, price, currency, type, transaction_type, status,
-        is_active, workflow_status, is_featured, views_count, created_at,
+        is_active, workflow_status, is_featured, views_count, created_at, rooms, living_rooms, area_sqm,
         city:cities(name),
         district:districts(name),
         images:property_images(url, is_cover),

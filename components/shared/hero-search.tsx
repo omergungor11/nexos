@@ -6,6 +6,7 @@ import { Search, MapPin, Home, SlidersHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { PROPERTY_TYPE_TKEYS } from "@/lib/constants";
+import { parseSearchQuery, TX_TO_ISLEM } from "@/lib/search-parser";
 
 interface CityOption {
   id: number;
@@ -90,10 +91,28 @@ export function HeroSearch({ cities = [] }: HeroSearchProps) {
 
   function handleSearch() {
     const params = new URLSearchParams();
-    if (activeTab) params.set("islem", activeTab);
-    if (tip) params.set("tip", tip);
+    const parsed = query.trim() ? parseSearchQuery(query) : null;
+
+    // Transaction type: explicit tab > parsed from query text
+    const txParam =
+      activeTab ||
+      (parsed?.transactionType ? TX_TO_ISLEM[parsed.transactionType] ?? "" : "");
+    if (txParam) params.set("islem", txParam);
+
+    // Property type: explicit dropdown > parsed from query text
+    const tipParam = tip || parsed?.propertyType || "";
+    if (tipParam) params.set("tip", tipParam);
+
+    // City from dropdown
     if (city) params.set("sehir", city);
-    if (query.length >= 2) params.set("q", query);
+
+    // Room count parsed from query (e.g. "3+1")
+    if (parsed?.roomStr) params.set("oda", parsed.roomStr);
+
+    // Remaining free text (keywords stripped out)
+    const freeText = parsed?.remainingText ?? query.trim();
+    if (freeText.length >= 2) params.set("q", freeText);
+
     router.push(`/emlak?${params.toString()}`);
   }
 

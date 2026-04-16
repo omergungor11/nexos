@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 import { Search, X } from "lucide-react";
+import { parseSearchQuery, TX_TO_ISLEM } from "@/lib/search-parser";
 
 export function SearchBar() {
   const router = useRouter();
@@ -11,14 +12,39 @@ export function SearchBar() {
   const [value, setValue] = useState(currentQuery);
 
   const applySearch = useCallback(
-    (query: string) => {
+    (raw: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (query.trim()) {
-        params.set("q", query.trim());
+      params.delete("sayfa");
+
+      if (!raw.trim()) {
+        params.delete("q");
+        params.delete("oda");
+        router.push(`?${params.toString()}`);
+        return;
+      }
+
+      const parsed = parseSearchQuery(raw);
+
+      // Set structured filters parsed from the text
+      if (parsed.transactionType) {
+        params.set("islem", TX_TO_ISLEM[parsed.transactionType] ?? "");
+      }
+      if (parsed.propertyType) {
+        params.set("tip", parsed.propertyType);
+      }
+      if (parsed.roomStr) {
+        params.set("oda", parsed.roomStr);
+      } else {
+        params.delete("oda");
+      }
+
+      // Remaining free text
+      if (parsed.remainingText.length >= 2) {
+        params.set("q", parsed.remainingText);
       } else {
         params.delete("q");
       }
-      params.delete("sayfa");
+
       router.push(`?${params.toString()}`);
     },
     [router, searchParams]
@@ -41,7 +67,7 @@ export function SearchBar() {
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="İlan adı, açıklama veya adres ile ara..."
+        placeholder="3+1 satılık villa, daire, arsa..."
         className="flex h-10 w-full rounded-lg border border-input bg-background pl-9 pr-9 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
       {value && (

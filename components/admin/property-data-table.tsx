@@ -56,6 +56,7 @@ import {
   PROPERTY_TYPE_LABELS,
   TRANSACTION_TYPE_LABELS,
 } from "@/lib/constants";
+import { parseSearchQuery } from "@/lib/search-parser";
 import { formatPrice } from "@/lib/format";
 import { PropertyExportButtons } from "./property-export";
 import { PropertyImportDialog } from "./property-import-dialog";
@@ -93,6 +94,9 @@ export type AdminPropertyRow = {
   is_featured: boolean;
   views_count: number;
   created_at: string;
+  rooms: number | null;
+  living_rooms: number | null;
+  area_sqm: number | null;
   city: City | null;
   district: { name: string } | null;
   images: PropertyImage[];
@@ -263,8 +267,21 @@ export function PropertyDataTable({
     let result = rows;
 
     if (search.trim()) {
-      const q = search.trim().toLowerCase();
-      result = result.filter((r) => r.title.toLowerCase().includes(q));
+      const parsed = parseSearchQuery(search.trim());
+      result = result.filter((r) => {
+        // Structured: transaction type
+        if (parsed.transactionType && r.transaction_type !== parsed.transactionType) return false;
+        // Structured: property type
+        if (parsed.propertyType && r.type !== parsed.propertyType) return false;
+        // Structured: room count (e.g. "3+1")
+        if (parsed.rooms !== null && r.rooms !== parsed.rooms) return false;
+        if (parsed.livingRooms !== null && r.living_rooms !== parsed.livingRooms) return false;
+        // Free text: search in title
+        if (parsed.remainingText.length >= 2) {
+          if (!r.title.toLowerCase().includes(parsed.remainingText.toLowerCase())) return false;
+        }
+        return true;
+      });
     }
 
     if (cityFilter !== "all") {
