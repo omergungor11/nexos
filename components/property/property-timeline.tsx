@@ -72,9 +72,9 @@ export function PropertyTimeline({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold">İlan Geçmişi</h2>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground sm:gap-4">
           <span className="flex items-center gap-1">
             <Eye className="size-3.5" />
             {viewsCount} görüntülenme
@@ -118,15 +118,15 @@ export function PropertyTimeline({
                   {increased ? <TrendingUp className="size-4" /> : <TrendingDown className="size-4" />}
                 </div>
                 <div>
-                  <p className="text-sm">
+                  <p className="text-sm flex flex-wrap items-baseline gap-1">
                     <span className="line-through text-muted-foreground">
                       {formatPrice(d.old_price, d.currency)}
                     </span>
-                    {" → "}
+                    <span>→</span>
                     <span className="font-medium">
                       {formatPrice(d.new_price, d.currency)}
                     </span>
-                    <span className={`ml-2 text-xs font-medium ${increased ? "text-red-500" : "text-green-500"}`}>
+                    <span className={`text-xs font-medium ${increased ? "text-red-500" : "text-green-500"}`}>
                       {increased ? "+" : "-"}{pct}%
                     </span>
                   </p>

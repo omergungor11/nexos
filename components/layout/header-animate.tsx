@@ -28,7 +28,6 @@ function navDelay(i: number) {
 
 export function HeaderAnimate() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const t = useTranslations();
 
@@ -42,28 +41,14 @@ export function HeaderAnimate() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
-  // Scroll detection for header glass effect
-  useEffect(() => {
-    function handleScroll() {
-      setScrolled(window.scrollY > 20);
-    }
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={cn(
-        "sticky top-0 z-50 w-full border-b transition-all duration-300",
-        scrolled
-          ? "bg-background/80 backdrop-blur-xl shadow-sm border-border/50"
-          : "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-      )}
+      className="fixed top-0 left-0 right-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4"
     >
-      <div className="container mx-auto flex h-24 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between rounded-2xl bg-white px-5 shadow-[0_2px_20px_-4px_rgba(0,0,0,0.15)] sm:h-18 dark:bg-neutral-900 dark:shadow-[0_2px_20px_-4px_rgba(0,0,0,0.4)]">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -76,7 +61,7 @@ export function HeaderAnimate() {
               alt="Nexos Investment"
               width={300}
               height={80}
-              className="h-28 w-auto object-contain"
+              className="h-20 w-auto object-contain transition-all duration-500 sm:h-24"
               priority
             />
           </Link>

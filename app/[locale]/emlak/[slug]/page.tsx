@@ -189,7 +189,7 @@ export default async function PropertyDetailPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLdData} />
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto max-w-full px-4 py-6 overflow-hidden">
       {/* Breadcrumb */}
       <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/emlak" className="flex items-center gap-1 hover:text-foreground">
@@ -233,7 +233,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                 {PROPERTY_STATUS_LABELS[property.status]}
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold sm:text-3xl">
+            <h1 className="text-2xl font-bold sm:text-3xl break-words">
               {property.title}
             </h1>
             {location && (
@@ -242,7 +242,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                 {location}
               </p>
             )}
-            <p className="text-3xl font-bold text-primary">
+            <p className="text-2xl font-bold text-primary sm:text-3xl break-words">
               {formatListingPrice(
                 property.price,
                 property.currency,
@@ -512,7 +512,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                     className="flex h-10 w-full items-center gap-3 rounded-lg border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-muted"
                   >
                     <Phone className="h-4 w-4 shrink-0 text-primary" />
-                    {property.agent.phone}
+                    <span className="truncate">{property.agent.phone}</span>
                   </a>
                 )}
                 {property.agent.email && (

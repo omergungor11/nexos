@@ -215,11 +215,10 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       <JsonLd data={localBusinessJsonLd} />
-      {/* Hero Section with Slider */}
       {/* Hero Section */}
-      <section className="relative flex min-h-[calc(100vh-6rem)] items-center justify-center px-4 py-20">
-        <div className="absolute inset-0 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-900/70 to-slate-800/80" />
+      <section className="relative flex min-h-screen items-center justify-center px-4">
+        <div className="absolute inset-0 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center bg-fixed" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-slate-900/50 to-slate-900/80" />
         <div className="relative z-10 flex flex-col items-center gap-8 text-center">
           <div className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">

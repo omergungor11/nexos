@@ -156,7 +156,7 @@ export function SubListingsSection({
                 }`}
                 aria-expanded={isOpen}
               >
-                <div className="flex-1 min-w-[200px] space-y-1">
+                <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium">{s.label}</h3>
                     <span

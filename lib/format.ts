@@ -13,7 +13,7 @@ export function formatListingPrice(
   if (pricingType === "exchange") return "TAKASA UYGUN";
   if (pricingType === "offer") return "TEKLİF";
   if (pricingType === "kat_karsiligi") return "KAT KARŞILIĞI";
-  if (price == null || price <= 0) return "Fiyat Sorunuz";
+  if (price == null || price <= 0) return "Teklif Alın";
   return formatPrice(price, currency);
 }
 

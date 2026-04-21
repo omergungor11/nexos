@@ -1,6 +1,34 @@
 # Session Notes
 <!-- Her session için tarih, yapılanlar, yarım kalanlar, sıradakiler, notlar -->
 
+## 2026-04-21
+
+### Yapılanlar — Header & Hero UI Modernizasyonu
+- **Header**: `sticky top-0 border-b` → `fixed top-0` floating pill tasarımı
+  - `rounded-2xl` border-radius, `bg-white` düz beyaz kutu (blur efekt kaldırıldı)
+  - `shadow-[0_2px_20px_-4px_rgba(0,0,0,0.15)]` gölge — beyaz sayfa üzerinde belirgin
+  - Padding ile kenarlardan boşluk (`px-3 pt-3 sm:px-5 sm:pt-4`)
+  - Logo boyutu `h-28` → `h-20 sm:h-24` olarak küçültüldü
+  - Dark mode: `dark:bg-neutral-900` desteği
+- **Hero**: `min-h-[calc(100vh-6rem)]` → `min-h-screen` tam ekran
+  - `bg-fixed` parallax efekti eklendi
+  - Gradient hafifletildi: `from-black/60 via-slate-900/50 to-slate-900/80`
+- **Her iki header** versiyonu güncellendi (header.tsx + header-animate.tsx)
+- **Hydration hatası düzeltildi**: `scrolled` state tamamen kaldırıldı (artık scroll'a bağlı farklı class yok, statik className)
+
+### Yarım Kalanlar
+- Header tasarımının diğer sayfalarda (emlak, blog vs) test edilmesi
+- Mobil responsive kontrol
+
+### Sıradakiler
+- Dashboard workflow_status KPI kartları
+- Reels generator
+- Resend email entegrasyonu
+- Blog etiket yönetimi admin UI
+- Bundle/performance audit
+
+---
+
 ## 2026-04-14 (akşam bloğu)
 
 ### Yapılanlar — Sub-Listings & Floor Plans Faz C (Public Render)

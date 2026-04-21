@@ -135,6 +135,10 @@
   /* Rich-text content (TipTap editor + rendered detail page).
      Tailwind v4 has no typography plugin here, so we hand-style the
      generated HTML. Keep this list minimal. */
+  .rte-content {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
   .rte-content p {
     margin: 0 0 0.75em 0;
     line-height: 1.65;

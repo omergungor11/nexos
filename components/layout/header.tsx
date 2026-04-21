@@ -29,8 +29,8 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-24 items-center justify-between px-4">
+    <header className="fixed top-0 left-0 right-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
+      <div className="container mx-auto flex h-16 items-center justify-between rounded-2xl bg-white px-5 shadow-[0_2px_20px_-4px_rgba(0,0,0,0.15)] sm:h-18 dark:bg-neutral-900 dark:shadow-[0_2px_20px_-4px_rgba(0,0,0,0.4)]">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
@@ -38,7 +38,7 @@ export function Header() {
             alt="Nexos Investment"
             width={300}
             height={80}
-            className="h-28 w-auto object-contain"
+            className="h-20 w-auto object-contain transition-all duration-500 sm:h-24"
             priority
           />
         </Link>
@@ -66,7 +66,7 @@ export function Header() {
           <LanguageSwitcher />
           <a
             href="tel:+905488604030"
-            className="hidden items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground min-[1300px]:flex"
+            className="hidden items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground min-[1300px]:flex"
           >
             <Phone className="h-4 w-4" />
             +90 548 860 40 30
