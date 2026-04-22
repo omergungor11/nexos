@@ -153,6 +153,14 @@ export async function updateCity(
     payload.slug = slugify(data.name);
   }
   if (data.plate_code !== undefined) payload.plate_code = data.plate_code;
+  if (data.lat != null) payload.lat = data.lat;
+  if (data.lng != null) payload.lng = data.lng;
+
+  // If only coords provided and no other fields, do direct update without .single()
+  if (Object.keys(payload).length === 0) {
+    revalidateTag("locations", {});
+    return { error: "Güncellenecek alan bulunamadı" };
+  }
 
   const { data: city, error } = await supabase
     .from("cities")
@@ -165,13 +173,8 @@ export async function updateCity(
     return { error: error.message };
   }
 
-  // Use manual coords if provided, otherwise re-geocode if name changed
-  if (data.lat != null && data.lng != null) {
-    await supabase
-      .from("cities")
-      .update({ lat: data.lat, lng: data.lng })
-      .eq("id", id);
-  } else if (data.name !== undefined && city) {
+  // Auto-geocode only if name changed and no manual coords provided
+  if (data.name !== undefined && data.lat == null && city) {
     const coords = await geocodeCity(data.name);
     if (coords) {
       await supabase
@@ -282,6 +285,13 @@ export async function updateDistrict(
     payload.slug = slugify(data.name);
   }
   if (data.city_id !== undefined) payload.city_id = data.city_id;
+  if (data.lat != null) payload.lat = data.lat;
+  if (data.lng != null) payload.lng = data.lng;
+
+  if (Object.keys(payload).length === 0) {
+    revalidateTag("locations", {});
+    return { error: "Güncellenecek alan bulunamadı" };
+  }
 
   const { data: district, error } = await supabase
     .from("districts")
@@ -294,13 +304,8 @@ export async function updateDistrict(
     return { error: error.message };
   }
 
-  // Use manual coords if provided, otherwise re-geocode if name changed
-  if (data.lat != null && data.lng != null) {
-    await supabase
-      .from("districts")
-      .update({ lat: data.lat, lng: data.lng })
-      .eq("id", id);
-  } else if (data.name !== undefined && district) {
+  // Auto-geocode only if name changed and no manual coords provided
+  if (data.name !== undefined && data.lat == null && district) {
     const cityId = (district as { city_id: number }).city_id;
     const { data: parentCity } = await supabase
       .from("cities")
@@ -424,6 +429,13 @@ export async function updateNeighborhood(
     payload.slug = slugify(data.name);
   }
   if (data.district_id !== undefined) payload.district_id = data.district_id;
+  if (data.lat != null) payload.lat = data.lat;
+  if (data.lng != null) payload.lng = data.lng;
+
+  if (Object.keys(payload).length === 0) {
+    revalidateTag("locations", {});
+    return { error: "Güncellenecek alan bulunamadı" };
+  }
 
   const { data: neighborhood, error } = await supabase
     .from("neighborhoods")
@@ -436,13 +448,8 @@ export async function updateNeighborhood(
     return { error: error.message };
   }
 
-  // Use manual coords if provided, otherwise re-geocode if name changed
-  if (data.lat != null && data.lng != null) {
-    await supabase
-      .from("neighborhoods")
-      .update({ lat: data.lat, lng: data.lng })
-      .eq("id", id);
-  } else if (data.name !== undefined && neighborhood) {
+  // Auto-geocode only if name changed and no manual coords provided
+  if (data.name !== undefined && data.lat == null && neighborhood) {
     const districtId = (neighborhood as { district_id: number }).district_id;
     const { data: parentDistrict } = await supabase
       .from("districts")
