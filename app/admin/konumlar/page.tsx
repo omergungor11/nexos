@@ -11,6 +11,8 @@ type CityRow = {
   name: string;
   slug: string;
   plate_code: number | null;
+  lat: number | null;
+  lng: number | null;
 };
 
 type DistrictRow = {
@@ -18,6 +20,8 @@ type DistrictRow = {
   name: string;
   slug: string;
   city_id: number;
+  lat: number | null;
+  lng: number | null;
 };
 
 type NeighborhoodRow = {
@@ -25,6 +29,8 @@ type NeighborhoodRow = {
   name: string;
   slug: string;
   district_id: number;
+  lat: number | null;
+  lng: number | null;
 };
 
 export default async function AdminKonumlarPage() {
@@ -34,15 +40,15 @@ export default async function AdminKonumlarPage() {
     await Promise.all([
       supabase
         .from("cities")
-        .select("id, name, slug, plate_code")
+        .select("id, name, slug, plate_code, lat, lng")
         .order("name", { ascending: true }),
       supabase
         .from("districts")
-        .select("id, name, slug, city_id")
+        .select("id, name, slug, city_id, lat, lng")
         .order("name", { ascending: true }),
       supabase
         .from("neighborhoods")
-        .select("id, name, slug, district_id")
+        .select("id, name, slug, district_id, lat, lng")
         .order("name", { ascending: true }),
     ]);
 

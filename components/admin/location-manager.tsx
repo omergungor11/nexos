@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useCallback } from "react";
 import { toast } from "sonner";
-import { PlusIcon, PencilIcon, Trash2Icon, CheckIcon, XIcon } from "lucide-react";
+import {
+  PlusIcon,
+  PencilIcon,
+  Trash2Icon,
+  CheckIcon,
+  XIcon,
+  MapPinIcon,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +30,8 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
+
+import { GoogleMapPicker } from "@/components/admin/google-map-picker";
 
 import {
   createCity,
@@ -45,6 +54,8 @@ type CityRow = {
   name: string;
   slug: string;
   plate_code: number | null;
+  lat: number | null;
+  lng: number | null;
 };
 
 type DistrictRow = {
@@ -52,6 +63,8 @@ type DistrictRow = {
   name: string;
   slug: string;
   city_id: number;
+  lat: number | null;
+  lng: number | null;
 };
 
 type NeighborhoodRow = {
@@ -59,6 +72,8 @@ type NeighborhoodRow = {
   name: string;
   slug: string;
   district_id: number;
+  lat: number | null;
+  lng: number | null;
 };
 
 type ActiveTab = "cities" | "districts" | "neighborhoods";
@@ -108,7 +123,7 @@ function InlineEditInput({
         variant="ghost"
         size="icon-sm"
         onClick={onCancel}
-        aria-label="İptal"
+        aria-label="Iptal"
       >
         <XIcon className="size-4 text-muted-foreground" />
       </Button>
@@ -150,17 +165,128 @@ function DeleteConfirmDialog({
         <DialogHeader>
           <DialogTitle>Sil</DialogTitle>
           <DialogDescription>
-            &ldquo;{name}&rdquo; silinecek. Bu işlem geri alınamaz.
+            &ldquo;{name}&rdquo; silinecek. Bu islem geri alinamaz.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>Vazgeç</DialogClose>
+          <DialogClose render={<Button variant="outline" />}>Vazgec</DialogClose>
           <Button variant="destructive" onClick={handleDelete} disabled={isPending}>
             {isPending ? "Siliniyor..." : "Sil"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Map pin dialog — reusable for all location types
+// ---------------------------------------------------------------------------
+
+function MapPinDialog({
+  name,
+  lat,
+  lng,
+  onSave,
+}: {
+  name: string;
+  lat: number | null;
+  lng: number | null;
+  onSave: (coords: { lat: number; lng: number }) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    lat != null && lng != null ? { lat, lng } : null
+  );
+  const [isPending, startTransition] = useTransition();
+
+  const handleChange = useCallback(
+    (newCoords: { lat: number; lng: number }) => {
+      setCoords(newCoords);
+    },
+    []
+  );
+
+  function handleSave() {
+    if (!coords) return;
+    startTransition(async () => {
+      onSave(coords);
+      setOpen(false);
+    });
+  }
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (v) {
+          // Reset coords when opening
+          setCoords(lat != null && lng != null ? { lat, lng } : null);
+        }
+      }}
+    >
+      <DialogTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Konum belirle"
+            title={
+              lat != null
+                ? `${lat.toFixed(4)}, ${lng?.toFixed(4)}`
+                : "Konum belirle"
+            }
+          />
+        }
+      >
+        <MapPinIcon
+          className={`size-4 ${lat != null ? "text-green-600" : "text-muted-foreground"}`}
+        />
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Konum Belirle — {name}</DialogTitle>
+          <DialogDescription>
+            Haritaya tiklayarak veya arama yaparak tam konumu belirleyin.
+          </DialogDescription>
+        </DialogHeader>
+
+        <GoogleMapPicker
+          lat={lat}
+          lng={lng}
+          onChange={handleChange}
+          height="400px"
+        />
+
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline" />}>
+            Vazgec
+          </DialogClose>
+          <Button onClick={handleSave} disabled={isPending || !coords}>
+            {isPending ? "Kaydediliyor..." : "Konumu Kaydet"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Coordinate badge
+// ---------------------------------------------------------------------------
+
+function CoordBadge({ lat, lng }: { lat: number | null; lng: number | null }) {
+  if (lat == null || lng == null) {
+    return (
+      <span className="text-xs text-muted-foreground/50">Konum yok</span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded bg-green-50 px-1.5 py-0.5 text-[10px] font-mono text-green-700 dark:bg-green-950 dark:text-green-400">
+      <MapPinIcon className="size-2.5" />
+      {lat.toFixed(4)}, {lng.toFixed(4)}
+    </span>
   );
 }
 
@@ -188,7 +314,7 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
               : c
           )
         );
-        toast.success("İl güncellendi.");
+        toast.success("Il guncellendi.");
       }
       setEditingId(null);
     });
@@ -201,7 +327,7 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
         toast.error(result.error);
       } else {
         setCities((prev) => prev.filter((c) => c.id !== id));
-        toast.success("İl silindi.");
+        toast.success("Il silindi.");
       }
     });
   }
@@ -222,15 +348,33 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
           name: result.data.name,
           slug: result.data.slug,
           plate_code: null,
+          lat: null,
+          lng: null,
         };
         setCities((prev) =>
           [...prev, newCity].sort((a, b) =>
             a.name.localeCompare(b.name, "tr")
           )
         );
-        toast.success("İl eklendi.");
+        toast.success("Il eklendi.");
         setNewName("");
         setAddingNew(false);
+      }
+    });
+  }
+
+  function handleSaveCoords(cityId: number, coords: { lat: number; lng: number }) {
+    startTransition(async () => {
+      const result = await updateCity(cityId, { lat: coords.lat, lng: coords.lng });
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setCities((prev) =>
+          prev.map((c) =>
+            c.id === cityId ? { ...c, lat: coords.lat, lng: coords.lng } : c
+          )
+        );
+        toast.success("Konum kaydedildi.");
       }
     });
   }
@@ -243,7 +387,7 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
       <div className="flex justify-end">
         <Button size="sm" onClick={() => setAddingNew(true)}>
           <PlusIcon className="size-4" />
-          İl Ekle
+          Il Ekle
         </Button>
       </div>
 
@@ -251,9 +395,10 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
         <table className="min-w-full divide-y divide-border text-sm">
           <thead className="bg-muted/40">
             <tr>
-              <th className={thClass}>İl Adı</th>
+              <th className={thClass}>Il Adi</th>
               <th className={thClass}>Slug</th>
-              <th className={thClass}>İşlemler</th>
+              <th className={thClass}>Konum</th>
+              <th className={thClass}>Islemler</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border bg-background">
@@ -262,7 +407,7 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
               <tr>
                 <td className="px-3 py-2">
                   <Input
-                    placeholder="İl adı"
+                    placeholder="Il adi"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     className="h-7 w-40 text-sm"
@@ -275,6 +420,9 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
                 </td>
                 <td className="px-3 py-2 text-muted-foreground text-xs">
                   otomatik
+                </td>
+                <td className="px-3 py-2 text-muted-foreground text-xs">
+                  —
                 </td>
                 <td className="px-3 py-2">
                   <div className="flex gap-1">
@@ -291,7 +439,7 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
                       onClick={() => {
                         setAddingNew(false);
                         setNewName("");
-                                      }}
+                      }}
                     >
                       <XIcon className="size-4 text-muted-foreground" />
                     </Button>
@@ -303,10 +451,10 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
             {cities.length === 0 && !addingNew ? (
               <tr>
                 <td
-                  colSpan={3}
+                  colSpan={4}
                   className="px-3 py-6 text-center text-muted-foreground"
                 >
-                  Henüz il eklenmemiş.
+                  Henuz il eklenmemis.
                 </td>
               </tr>
             ) : (
@@ -327,12 +475,21 @@ function CitiesTab({ initialCities }: { initialCities: CityRow[] }) {
                     {city.slug}
                   </td>
                   <td className="px-3 py-2">
+                    <CoordBadge lat={city.lat} lng={city.lng} />
+                  </td>
+                  <td className="px-3 py-2">
                     <div className="flex items-center gap-1">
+                      <MapPinDialog
+                        name={city.name}
+                        lat={city.lat}
+                        lng={city.lng}
+                        onSave={(coords) => handleSaveCoords(city.id, coords)}
+                      />
                       <Button
                         variant="ghost"
                         size="icon-sm"
                         onClick={() => setEditingId(city.id)}
-                        aria-label="Düzenle"
+                        aria-label="Duzenle"
                       >
                         <PencilIcon className="size-4" />
                       </Button>
@@ -393,7 +550,7 @@ function DistrictsTab({
               : d
           )
         );
-        toast.success("İlçe güncellendi.");
+        toast.success("Ilce guncellendi.");
       }
       setEditingId(null);
     });
@@ -406,7 +563,7 @@ function DistrictsTab({
         toast.error(result.error);
       } else {
         setDistricts((prev) => prev.filter((d) => d.id !== id));
-        toast.success("İlçe silindi.");
+        toast.success("Ilce silindi.");
       }
     });
   }
@@ -429,16 +586,36 @@ function DistrictsTab({
           name: result.data.name,
           slug: result.data.slug,
           city_id: cityId,
+          lat: null,
+          lng: null,
         };
         setDistricts((prev) =>
           [...prev, newDistrict].sort((a, b) =>
             a.name.localeCompare(b.name, "tr")
           )
         );
-        toast.success("İlçe eklendi.");
+        toast.success("Ilce eklendi.");
         setNewName("");
         setNewCityId("");
         setAddingNew(false);
+      }
+    });
+  }
+
+  function handleSaveCoords(districtId: number, coords: { lat: number; lng: number }) {
+    startTransition(async () => {
+      const result = await updateDistrict(districtId, { lat: coords.lat, lng: coords.lng });
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setDistricts((prev) =>
+          prev.map((d) =>
+            d.id === districtId
+              ? { ...d, lat: coords.lat, lng: coords.lng }
+              : d
+          )
+        );
+        toast.success("Konum kaydedildi.");
       }
     });
   }
@@ -455,10 +632,10 @@ function DistrictsTab({
           onValueChange={(v) => setFilterCityId(v ?? "all")}
         >
           <SelectTrigger className="h-8 w-48">
-            <SelectValue placeholder="İle göre filtrele" />
+            <SelectValue placeholder="Ile gore filtrele" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tüm İller</SelectItem>
+            <SelectItem value="all">Tum Iller</SelectItem>
             {cities.map((c) => (
               <SelectItem key={c.id} value={String(c.id)}>
                 {c.name}
@@ -469,7 +646,7 @@ function DistrictsTab({
 
         <Button size="sm" onClick={() => setAddingNew(true)}>
           <PlusIcon className="size-4" />
-          İlçe Ekle
+          Ilce Ekle
         </Button>
       </div>
 
@@ -477,10 +654,11 @@ function DistrictsTab({
         <table className="min-w-full divide-y divide-border text-sm">
           <thead className="bg-muted/40">
             <tr>
-              <th className={thClass}>İlçe Adı</th>
-              <th className={thClass}>İl</th>
+              <th className={thClass}>Ilce Adi</th>
+              <th className={thClass}>Il</th>
               <th className={thClass}>Slug</th>
-              <th className={thClass}>İşlemler</th>
+              <th className={thClass}>Konum</th>
+              <th className={thClass}>Islemler</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border bg-background">
@@ -489,7 +667,7 @@ function DistrictsTab({
               <tr>
                 <td className="px-3 py-2">
                   <Input
-                    placeholder="İlçe adı"
+                    placeholder="Ilce adi"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     className="h-7 w-40 text-sm"
@@ -506,7 +684,7 @@ function DistrictsTab({
                     onValueChange={(v) => setNewCityId(v ?? "")}
                   >
                     <SelectTrigger className="h-7 w-36">
-                      <SelectValue placeholder="İl seç" />
+                      <SelectValue placeholder="Il sec" />
                     </SelectTrigger>
                     <SelectContent>
                       {cities.map((c) => (
@@ -519,6 +697,9 @@ function DistrictsTab({
                 </td>
                 <td className="px-3 py-2 text-muted-foreground text-xs">
                   otomatik
+                </td>
+                <td className="px-3 py-2 text-muted-foreground text-xs">
+                  —
                 </td>
                 <td className="px-3 py-2">
                   <div className="flex gap-1">
@@ -544,10 +725,10 @@ function DistrictsTab({
             {filtered.length === 0 && !addingNew ? (
               <tr>
                 <td
-                  colSpan={3}
+                  colSpan={5}
                   className="px-3 py-6 text-center text-muted-foreground"
                 >
-                  Bu ile ait ilçe bulunamadı.
+                  Bu ile ait ilce bulunamadi.
                 </td>
               </tr>
             ) : (
@@ -574,12 +755,23 @@ function DistrictsTab({
                     {district.slug}
                   </td>
                   <td className="px-3 py-2">
+                    <CoordBadge lat={district.lat} lng={district.lng} />
+                  </td>
+                  <td className="px-3 py-2">
                     <div className="flex items-center gap-1">
+                      <MapPinDialog
+                        name={district.name}
+                        lat={district.lat}
+                        lng={district.lng}
+                        onSave={(coords) =>
+                          handleSaveCoords(district.id, coords)
+                        }
+                      />
                       <Button
                         variant="ghost"
                         size="icon-sm"
                         onClick={() => setEditingId(district.id)}
-                        aria-label="Düzenle"
+                        aria-label="Duzenle"
                       >
                         <PencilIcon className="size-4" />
                       </Button>
@@ -661,7 +853,7 @@ function NeighborhoodsTab({
               : n
           )
         );
-        toast.success("Mahalle güncellendi.");
+        toast.success("Mahalle guncellendi.");
       }
       setEditingId(null);
     });
@@ -697,6 +889,8 @@ function NeighborhoodsTab({
           name: result.data.name,
           slug: result.data.slug,
           district_id: districtId,
+          lat: null,
+          lng: null,
         };
         setNeighborhoods((prev) =>
           [...prev, newNeighborhood].sort((a, b) =>
@@ -707,6 +901,30 @@ function NeighborhoodsTab({
         setNewName("");
         setNewDistrictId("");
         setAddingNew(false);
+      }
+    });
+  }
+
+  function handleSaveCoords(
+    neighborhoodId: number,
+    coords: { lat: number; lng: number }
+  ) {
+    startTransition(async () => {
+      const result = await updateNeighborhood(neighborhoodId, {
+        lat: coords.lat,
+        lng: coords.lng,
+      });
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setNeighborhoods((prev) =>
+          prev.map((n) =>
+            n.id === neighborhoodId
+              ? { ...n, lat: coords.lat, lng: coords.lng }
+              : n
+          )
+        );
+        toast.success("Konum kaydedildi.");
       }
     });
   }
@@ -727,10 +945,10 @@ function NeighborhoodsTab({
             }}
           >
             <SelectTrigger className="h-8 w-40">
-              <SelectValue placeholder="İl" />
+              <SelectValue placeholder="Il" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tüm İller</SelectItem>
+              <SelectItem value="all">Tum Iller</SelectItem>
               {cities.map((c) => (
                 <SelectItem key={c.id} value={String(c.id)}>
                   {c.name}
@@ -745,10 +963,10 @@ function NeighborhoodsTab({
             onValueChange={(v) => setFilterDistrictId(v ?? "all")}
           >
             <SelectTrigger className="h-8 w-40">
-              <SelectValue placeholder="İlçe" />
+              <SelectValue placeholder="Ilce" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tüm İlçeler</SelectItem>
+              <SelectItem value="all">Tum Ilceler</SelectItem>
               {cityFilteredDistricts.map((d) => (
                 <SelectItem key={d.id} value={String(d.id)}>
                   {d.name}
@@ -768,10 +986,11 @@ function NeighborhoodsTab({
         <table className="min-w-full divide-y divide-border text-sm">
           <thead className="bg-muted/40">
             <tr>
-              <th className={thClass}>Mahalle Adı</th>
-              <th className={thClass}>İlçe</th>
+              <th className={thClass}>Mahalle Adi</th>
+              <th className={thClass}>Ilce</th>
               <th className={thClass}>Slug</th>
-              <th className={thClass}>İşlemler</th>
+              <th className={thClass}>Konum</th>
+              <th className={thClass}>Islemler</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border bg-background">
@@ -780,7 +999,7 @@ function NeighborhoodsTab({
               <tr>
                 <td className="px-3 py-2">
                   <Input
-                    placeholder="Mahalle adı"
+                    placeholder="Mahalle adi"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     className="h-7 w-40 text-sm"
@@ -797,7 +1016,7 @@ function NeighborhoodsTab({
                     onValueChange={(v) => setNewDistrictId(v ?? "")}
                   >
                     <SelectTrigger className="h-7 w-40">
-                      <SelectValue placeholder="İlçe seç" />
+                      <SelectValue placeholder="Ilce sec" />
                     </SelectTrigger>
                     <SelectContent>
                       {districts.map((d) => (
@@ -810,6 +1029,9 @@ function NeighborhoodsTab({
                 </td>
                 <td className="px-3 py-2 text-muted-foreground text-xs">
                   otomatik
+                </td>
+                <td className="px-3 py-2 text-muted-foreground text-xs">
+                  —
                 </td>
                 <td className="px-3 py-2">
                   <div className="flex gap-1">
@@ -839,10 +1061,10 @@ function NeighborhoodsTab({
             {filtered.length === 0 && !addingNew ? (
               <tr>
                 <td
-                  colSpan={3}
+                  colSpan={5}
                   className="px-3 py-6 text-center text-muted-foreground"
                 >
-                  Bu filtreye ait mahalle bulunamadı.
+                  Bu filtreye ait mahalle bulunamadi.
                 </td>
               </tr>
             ) : (
@@ -869,12 +1091,26 @@ function NeighborhoodsTab({
                     {neighborhood.slug}
                   </td>
                   <td className="px-3 py-2">
+                    <CoordBadge
+                      lat={neighborhood.lat}
+                      lng={neighborhood.lng}
+                    />
+                  </td>
+                  <td className="px-3 py-2">
                     <div className="flex items-center gap-1">
+                      <MapPinDialog
+                        name={neighborhood.name}
+                        lat={neighborhood.lat}
+                        lng={neighborhood.lng}
+                        onSave={(coords) =>
+                          handleSaveCoords(neighborhood.id, coords)
+                        }
+                      />
                       <Button
                         variant="ghost"
                         size="icon-sm"
                         onClick={() => setEditingId(neighborhood.id)}
-                        aria-label="Düzenle"
+                        aria-label="Duzenle"
                       >
                         <PencilIcon className="size-4" />
                       </Button>
@@ -910,8 +1146,8 @@ export function LocationManager({
   const [activeTab, setActiveTab] = useState<ActiveTab>("cities");
 
   const tabs: { value: ActiveTab; label: string; count: number }[] = [
-    { value: "cities", label: "İller", count: initialCities.length },
-    { value: "districts", label: "İlçeler", count: initialDistricts.length },
+    { value: "cities", label: "Iller", count: initialCities.length },
+    { value: "districts", label: "Ilceler", count: initialDistricts.length },
     {
       value: "neighborhoods",
       label: "Mahalleler",

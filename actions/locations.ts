@@ -74,16 +74,22 @@ type ActionResult<T> =
 export type CityInput = {
   name: string;
   plate_code?: number;
+  lat?: number | null;
+  lng?: number | null;
 };
 
 export type DistrictInput = {
   name: string;
   city_id: number;
+  lat?: number | null;
+  lng?: number | null;
 };
 
 export type NeighborhoodInput = {
   name: string;
   district_id: number;
+  lat?: number | null;
+  lng?: number | null;
 };
 
 // ---------------------------------------------------------------------------
@@ -112,13 +118,20 @@ export async function createCity(
     return { error: error.message };
   }
 
-  // Auto-geocode in the background — don't block the admin response.
-  const coords = await geocodeCity(data.name);
-  if (coords && city) {
+  // Use manual coords if provided, otherwise auto-geocode
+  if (data.lat != null && data.lng != null && city) {
     await supabase
       .from("cities")
-      .update({ lat: coords.lat, lng: coords.lng })
+      .update({ lat: data.lat, lng: data.lng })
       .eq("id", (city as { id: number }).id);
+  } else {
+    const coords = await geocodeCity(data.name);
+    if (coords && city) {
+      await supabase
+        .from("cities")
+        .update({ lat: coords.lat, lng: coords.lng })
+        .eq("id", (city as { id: number }).id);
+    }
   }
 
   revalidateTag("locations", {});
@@ -152,8 +165,13 @@ export async function updateCity(
     return { error: error.message };
   }
 
-  // Re-geocode if the name changed
-  if (data.name !== undefined && city) {
+  // Use manual coords if provided, otherwise re-geocode if name changed
+  if (data.lat != null && data.lng != null) {
+    await supabase
+      .from("cities")
+      .update({ lat: data.lat, lng: data.lng })
+      .eq("id", id);
+  } else if (data.name !== undefined && city) {
     const coords = await geocodeCity(data.name);
     if (coords) {
       await supabase
@@ -211,31 +229,37 @@ export async function createDistrict(
     return { error: error.message };
   }
 
-  // Resolve parent city name so geocoding has proper context
-  const { data: parentCity } = await supabase
-    .from("cities")
-    .select("name, lat, lng")
-    .eq("id", data.city_id)
-    .single();
+  // Use manual coords if provided, otherwise auto-geocode with parent context
+  if (data.lat != null && data.lng != null && district) {
+    await supabase
+      .from("districts")
+      .update({ lat: data.lat, lng: data.lng })
+      .eq("id", (district as { id: number }).id);
+  } else {
+    const { data: parentCity } = await supabase
+      .from("cities")
+      .select("name, lat, lng")
+      .eq("id", data.city_id)
+      .single();
 
-  if (district && parentCity) {
-    const cityName = (parentCity as { name: string }).name;
-    const coords = await geocodeDistrict(data.name, cityName);
-    // Fall back to parent city coords if Nominatim can't find it
-    const finalCoords =
-      coords ??
-      ((parentCity as { lat: number | null; lng: number | null }).lat != null
-        ? {
-            lat: (parentCity as { lat: number; lng: number }).lat,
-            lng: (parentCity as { lat: number; lng: number }).lng,
-          }
-        : null);
+    if (district && parentCity) {
+      const cityName = (parentCity as { name: string }).name;
+      const coords = await geocodeDistrict(data.name, cityName);
+      const finalCoords =
+        coords ??
+        ((parentCity as { lat: number | null; lng: number | null }).lat != null
+          ? {
+              lat: (parentCity as { lat: number; lng: number }).lat,
+              lng: (parentCity as { lat: number; lng: number }).lng,
+            }
+          : null);
 
-    if (finalCoords) {
-      await supabase
-        .from("districts")
-        .update({ lat: finalCoords.lat, lng: finalCoords.lng })
-        .eq("id", (district as { id: number }).id);
+      if (finalCoords) {
+        await supabase
+          .from("districts")
+          .update({ lat: finalCoords.lat, lng: finalCoords.lng })
+          .eq("id", (district as { id: number }).id);
+      }
     }
   }
 
@@ -270,8 +294,13 @@ export async function updateDistrict(
     return { error: error.message };
   }
 
-  // Re-geocode if the name changed
-  if (data.name !== undefined && district) {
+  // Use manual coords if provided, otherwise re-geocode if name changed
+  if (data.lat != null && data.lng != null) {
+    await supabase
+      .from("districts")
+      .update({ lat: data.lat, lng: data.lng })
+      .eq("id", id);
+  } else if (data.name !== undefined && district) {
     const cityId = (district as { city_id: number }).city_id;
     const { data: parentCity } = await supabase
       .from("cities")
@@ -337,36 +366,42 @@ export async function createNeighborhood(
     return { error: error.message };
   }
 
-  // Resolve parent district + city for geocoding context
-  const { data: parentDistrict } = await supabase
-    .from("districts")
-    .select("name, lat, lng, city:cities(name)")
-    .eq("id", data.district_id)
-    .single();
+  // Use manual coords if provided, otherwise auto-geocode with parent context
+  if (data.lat != null && data.lng != null && neighborhood) {
+    await supabase
+      .from("neighborhoods")
+      .update({ lat: data.lat, lng: data.lng })
+      .eq("id", (neighborhood as { id: number }).id);
+  } else {
+    const { data: parentDistrict } = await supabase
+      .from("districts")
+      .select("name, lat, lng, city:cities(name)")
+      .eq("id", data.district_id)
+      .single();
 
-  if (neighborhood && parentDistrict) {
-    const districtName = (parentDistrict as { name: string }).name;
-    const cityField = (parentDistrict as unknown as { city: { name: string } | { name: string }[] | null }).city;
-    const cityName = Array.isArray(cityField)
-      ? cityField[0]?.name ?? ""
-      : cityField?.name ?? "";
+    if (neighborhood && parentDistrict) {
+      const districtName = (parentDistrict as { name: string }).name;
+      const cityField = (parentDistrict as unknown as { city: { name: string } | { name: string }[] | null }).city;
+      const cityName = Array.isArray(cityField)
+        ? cityField[0]?.name ?? ""
+        : cityField?.name ?? "";
 
-    const coords = await geocodeNeighborhood(data.name, districtName, cityName);
-    // Fall back to district coords if Nominatim can't find it
-    const finalCoords =
-      coords ??
-      ((parentDistrict as { lat: number | null; lng: number | null }).lat != null
-        ? {
-            lat: (parentDistrict as { lat: number; lng: number }).lat,
-            lng: (parentDistrict as { lat: number; lng: number }).lng,
-          }
-        : null);
+      const coords = await geocodeNeighborhood(data.name, districtName, cityName);
+      const finalCoords =
+        coords ??
+        ((parentDistrict as { lat: number | null; lng: number | null }).lat != null
+          ? {
+              lat: (parentDistrict as { lat: number; lng: number }).lat,
+              lng: (parentDistrict as { lat: number; lng: number }).lng,
+            }
+          : null);
 
-    if (finalCoords) {
-      await supabase
-        .from("neighborhoods")
-        .update({ lat: finalCoords.lat, lng: finalCoords.lng })
-        .eq("id", (neighborhood as { id: number }).id);
+      if (finalCoords) {
+        await supabase
+          .from("neighborhoods")
+          .update({ lat: finalCoords.lat, lng: finalCoords.lng })
+          .eq("id", (neighborhood as { id: number }).id);
+      }
     }
   }
 
@@ -401,8 +436,13 @@ export async function updateNeighborhood(
     return { error: error.message };
   }
 
-  // Re-geocode if the name changed
-  if (data.name !== undefined && neighborhood) {
+  // Use manual coords if provided, otherwise re-geocode if name changed
+  if (data.lat != null && data.lng != null) {
+    await supabase
+      .from("neighborhoods")
+      .update({ lat: data.lat, lng: data.lng })
+      .eq("id", id);
+  } else if (data.name !== undefined && neighborhood) {
     const districtId = (neighborhood as { district_id: number }).district_id;
     const { data: parentDistrict } = await supabase
       .from("districts")
